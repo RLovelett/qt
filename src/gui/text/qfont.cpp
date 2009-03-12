@@ -2591,10 +2591,10 @@ Q_GLOBAL_STATIC(QThreadStorage<QFontCache *>, theFontCache)
 
 QFontCache *QFontCache::instance()
 {
-    QFontCache *&fontCache = theFontCache()->localData();
-    if (!fontCache)
-        fontCache = new QFontCache;
-    return fontCache;
+    if (!theFontCache()->hasLocalData())
+        theFontCache()->setLocalData(new QFontCache);
+
+    return theFontCache()->localData();
 }
 
 void QFontCache::cleanup()
