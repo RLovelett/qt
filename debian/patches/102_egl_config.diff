@@ -1,0 +1,27 @@
+author: Abdiel Janulgue <abdiel.janulgue@nokia.com>
+
+* Give additional parameters before requesting GLES2 config
+
+--- a/src/opengl/qgl_x11egl.cpp
++++ b/src/opengl/qgl_x11egl.cpp
+@@ -56,13 +56,18 @@ bool QGLContext::chooseContext(const QGLContext* shareContext)
+ 
+     // Construct the configuration we need for this surface.
+     QEglProperties configProps;
++    d->glFormat.setAlphaBufferSize(0);
++    d->glFormat.setRedBufferSize(5);
++    d->glFormat.setGreenBufferSize(6);
++    d->glFormat.setBlueBufferSize(5);
++    d->glFormat.setDepthBufferSize(24);
+     qt_egl_set_format(configProps, devType, d->glFormat);
+     qt_egl_add_platform_config(configProps, device());
+     configProps.setRenderableType(QEglContext::OpenGL);
+ 
+     // Search for a matching configuration, reducing the complexity
+     // each time until we get something that matches.
+-    if (!d->eglContext->chooseConfig(configProps, QEglContext::BestPixelFormat)) {
++    if (!d->eglContext->chooseConfig(configProps, QEglContext::ExactPixelFormat)) {
+         delete d->eglContext;
+         d->eglContext = 0;
+         return false;
+

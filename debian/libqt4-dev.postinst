@@ -1,0 +1,44 @@
+#!/bin/sh
+
+set -e
+
+ARCHTYPE=`uname -m`
+SPECDIR=/usr/share/qt4/mkspecs
+
+rm -f ${SPECDIR}/default
+
+if [ "${ARCHTYPE}"x == "armx" ]; then
+  ln -s ${SPECDIR}/linux-g++-gles2 ${SPECDIR}/default
+elif [ "${ARCHTYPE}"x == "armelx" ]; then
+  ln -s ${SPECDIR}/linux-g++-gles2 ${SPECDIR}/default
+else
+  ln -s ${SPECDIR}/linux-g++-opengl ${SPECDIR}/default
+fi
+
+
+update-alternatives --install \
+    /usr/bin/moc moc "/usr/bin/moc" "40" \
+    --slave /usr/share/man/man1/moc.1.gz moc.1.gz \
+    "/usr/share/man/man1/moc.1.gz"
+
+update-alternatives --install \
+    /usr/bin/uic uic "/usr/bin/uic" "40" \
+    --slave /usr/share/man/man1/uic.1.gz uic.1.gz \
+    "/usr/share/man/man1/uic.1.gz"
+
+update-alternatives --install \
+    /usr/bin/qmake qmake "/usr/bin/qmake" "40" \
+    --slave /usr/share/man/man1/qmake.1.gz qmake.1.gz \
+    "/usr/share/man/man1/qmake.1.gz"
+
+update-alternatives --install \
+    /usr/bin/lupdate lupdate "/usr/bin/lupdate" "40" \
+    --slave /usr/share/man/man1/lupdate.1.gz lupdate.1.gz \
+    "/usr/share/man/man1/lupdate.1.gz"
+
+update-alternatives --install \
+    /usr/bin/lrelease lrelease "/usr/bin/lrelease" "40" \
+    --slave /usr/share/man/man1/lrelease.1.gz lrelease.1.gz \
+    "/usr/share/man/man1/lrelease.1.gz"
+
+#DEBHELPER#
