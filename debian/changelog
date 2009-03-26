@@ -1,3 +1,10 @@
+qt4-x11 (4.5.1~git20090326-0maemo1) unstable; urgency=low
+
+  * Pull from upstream.
+  * Add qdoc3 binary to qt4-dev-tools package.
+
+ -- Shane Bradley <shane.bradley@nokia.com>  Thu, 26 Mar 2009 14:17:39 +1000
+
 qt4-x11 (4.5.1~git20090324-0maemo1) unstable; urgency=low
 
   * Pull from upstream.
