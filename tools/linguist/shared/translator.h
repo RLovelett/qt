@@ -52,8 +52,6 @@
 
 QT_BEGIN_NAMESPACE
 
-Q_DECLARE_TYPEINFO(TranslatorMessage, Q_MOVABLE_TYPE);
-
 class QIODevice;
 
 // A struct of "interesting" data passed to and from the load and save routines
@@ -88,7 +86,7 @@ public:
     QString m_targetFileName;
     QDir m_sourceDir;
     QDir m_targetDir; // FIXME: TS spefic
-    QStringList m_dropTags;  // tags to be dropped 
+    QStringList m_dropTags;  // tags to be dropped
     QStringList m_errors;
     bool m_verbose;
     bool m_ignoreUnfinished;
@@ -130,6 +128,7 @@ public:
     void stripIdenticalSourceTranslations();
     void dropTranslations();
     QList<TranslatorMessage> findDuplicates() const;
+    void resolveDualEncoded();
     void makeFileNamesAbsolute(const QDir &originalPath);
 
     void setCodecName(const QByteArray &name);
