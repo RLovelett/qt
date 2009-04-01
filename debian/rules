@@ -212,8 +212,8 @@ common-install-arch::
 	find $(DEB_DESTDIR)/usr/lib -type f -name '*.prl' \
 		-exec sed -i -e "/^QMAKE_PRL_BUILD_DIR/d;s/\(QMAKE_PRL_LIBS =\).*/\1/" {} \;
 
-build/qt4-dev-tools::
-	$(MAKE) sub-tools-qdoc3
+#build/qt4-dev-tools::
+#	$(MAKE) sub-tools-qdoc3
 
 install/libqtcore4::
 	$(CURDIR)/bin/lrelease debian/translations/qt_ca.ts \
@@ -232,7 +232,7 @@ install/qt4-designer::
 		debian/desktop/designer.png.uu
 
 install/qt4-dev-tools::
-	install -D -p -m0644 $(CURDIR)/tools/qdoc3/qdoc3 debian/$(cdbs_curpkg)/usr/bin/qdoc3
+	#install -D -p -m0644 $(CURDIR)/tools/qdoc3/qdoc3 debian/$(cdbs_curpkg)/usr/bin/qdoc3
 	install -D -p -m0644 debian/desktop/assistant.desktop \
 		debian/$(cdbs_curpkg)/usr/share/applications/assistant.desktop
 	install -D -p -m0644 debian/desktop/linguist.desktop \
