@@ -1,6 +1,6 @@
-qt4-x11 (4.5.1~git20090331-0maemo1) unstable; urgency=low
+qt4-x11 (4.5.1~git20090417-0maemo1) unstable; urgency=low
 
   * Initial release.
 
- -- Shane Bradley <shane.bradley@nokia.com>  Tue, 31 Mar 2009 10:35:50 +1000
+ -- Shane Bradley <shane.bradley@nokia.com>  Fri, 17 Apr 2009 15:16:49 +1000
 
