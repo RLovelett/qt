@@ -399,6 +399,9 @@ QTransform QTransform::inverted(bool *invertible) const
 */
 QTransform & QTransform::translate(qreal dx, qreal dy)
 {
+    if (dx == 0 && dy == 0)
+        return *this;
+
     switch(type()) {
     case TxNone:
         affine._dx = dx;
@@ -435,7 +438,10 @@ QTransform & QTransform::translate(qreal dx, qreal dy)
 QTransform QTransform::fromTranslate(qreal dx, qreal dy)
 {
     QTransform transform(1, 0, 0, 1, dx, dy);
-    transform.m_dirty = TxTranslate;
+    if (dx == 0 && dy == 0)
+        transform.m_dirty = TxNone;
+    else
+        transform.m_dirty = TxTranslate;
     return transform;
 }
 
@@ -447,6 +453,9 @@ QTransform QTransform::fromTranslate(qreal dx, qreal dy)
 */
 QTransform & QTransform::scale(qreal sx, qreal sy)
 {
+    if (sx == 1 && sy == 1)
+        return *this;
+
     switch(type()) {
     case TxNone:
     case TxTranslate:
@@ -481,7 +490,10 @@ QTransform & QTransform::scale(qreal sx, qreal sy)
 QTransform QTransform::fromScale(qreal sx, qreal sy)
 {
     QTransform transform(sx, 0, 0, sy, 0, 0);
-    transform.m_dirty = TxScale;
+    if (sx == 1 && sy == 1)
+        transform.m_dirty = TxNone;
+    else
+        transform.m_dirty = TxScale;
     return transform;
 }
 
@@ -544,6 +556,9 @@ const qreal inv_dist_to_plane = 1. / 1024.;
 */
 QTransform & QTransform::rotate(qreal a, Qt::Axis axis)
 {
+    if (a == 0)
+        return *this;
+
     qreal sina = 0;
     qreal cosa = 0;
     if (a == 90. || a == -270.)
@@ -715,7 +730,15 @@ bool QTransform::operator!=(const QTransform &o) const
 */
 QTransform & QTransform::operator*=(const QTransform &o)
 {
-    TransformationType t = qMax(type(), o.type());
+    const TransformationType otherType = o.type();
+    if (otherType == TxNone)
+        return *this;
+
+    const TransformationType thisType = type();
+    if (thisType == TxNone)
+        return operator=(o);
+
+    TransformationType t = qMax(thisType, otherType);
     switch(t) {
     case TxNone:
         break;
@@ -1222,7 +1245,8 @@ static QPolygonF mapProjective(const QTransform &transform, const QPolygonF &pol
 */
 QPolygonF QTransform::map(const QPolygonF &a) const
 {
-    if (type() >= QTransform::TxProject)
+    TransformationType t = type();
+    if (t >= QTransform::TxProject)
         return mapProjective(*this, a);
 
     int size = a.size();
@@ -1231,7 +1255,6 @@ QPolygonF QTransform::map(const QPolygonF &a) const
     const QPointF *da = a.constData();
     QPointF *dp = p.data();
 
-    TransformationType t = type();
     for(i = 0; i < size; ++i) {
         MAP(da[i].xp, da[i].yp, dp[i].xp, dp[i].yp);
     }
@@ -1249,7 +1272,8 @@ QPolygonF QTransform::map(const QPolygonF &a) const
 */
 QPolygon QTransform::map(const QPolygon &a) const
 {
-    if (type() >= QTransform::TxProject)
+    TransformationType t = type();
+    if (t >= QTransform::TxProject)
         return mapProjective(*this, QPolygonF(a)).toPolygon();
 
     int size = a.size();
@@ -1258,7 +1282,6 @@ QPolygon QTransform::map(const QPolygon &a) const
     const QPoint *da = a.constData();
     QPoint *dp = p.data();
 
-    TransformationType t = type();
     for(i = 0; i < size; ++i) {
         qreal nx = 0, ny = 0;
         MAP(da[i].xp, da[i].yp, nx, ny);
@@ -1692,13 +1715,12 @@ QRect QTransform::mapRect(const QRect &rect) const
         return QRect(x, y, w, h);
     } else if (t < TxProject) {
         // see mapToPolygon for explanations of the algorithm.
-        qreal x0 = 0, y0 = 0;
-        qreal x, y;
-        MAP(rect.left(), rect.top(), x0, y0);
-        qreal xmin = x0;
-        qreal ymin = y0;
-        qreal xmax = x0;
-        qreal ymax = y0;
+        qreal x = 0, y = 0;
+        MAP(rect.left(), rect.top(), x, y);
+        qreal xmin = x;
+        qreal ymin = y;
+        qreal xmax = x;
+        qreal ymax = y;
         MAP(rect.right() + 1, rect.top(), x, y);
         xmin = qMin(xmin, x);
         ymin = qMin(ymin, y);
@@ -1759,13 +1781,12 @@ QRectF QTransform::mapRect(const QRectF &rect) const
         }
         return QRectF(x, y, w, h);
     } else if (t < TxProject) {
-        qreal x0 = 0, y0 = 0;
-        qreal x, y;
-        MAP(rect.x(), rect.y(), x0, y0);
-        qreal xmin = x0;
-        qreal ymin = y0;
-        qreal xmax = x0;
-        qreal ymax = y0;
+        qreal x = 0, y = 0;
+        MAP(rect.x(), rect.y(), x, y);
+        qreal xmin = x;
+        qreal ymin = y;
+        qreal xmax = x;
+        qreal ymax = y;
         MAP(rect.x() + rect.width(), rect.y(), x, y);
         xmin = qMin(xmin, x);
         ymin = qMin(ymin, y);
@@ -2061,10 +2082,11 @@ QTransform::operator QVariant() const
 Q_GUI_EXPORT
 bool qt_scaleForTransform(const QTransform &transform, qreal *scale)
 {
-    if (transform.type() <= QTransform::TxTranslate) {
+    const QTransform::TransformationType type = transform.type();
+    if (type <= QTransform::TxTranslate) {
         *scale = 1;
         return true;
-    } else if (transform.type() == QTransform::TxScale) {
+    } else if (type == QTransform::TxScale) {
         const qreal xScale = qAbs(transform.m11());
         const qreal yScale = qAbs(transform.m22());
         *scale = qMax(xScale, yScale);
@@ -2076,7 +2098,7 @@ bool qt_scaleForTransform(const QTransform &transform, qreal *scale)
     const qreal yScale = transform.m12() * transform.m12()
                          + transform.m22() * transform.m22();
     *scale = qSqrt(qMax(xScale, yScale));
-    return transform.type() == QTransform::TxRotate && qFuzzyCompare(xScale, yScale);
+    return type == QTransform::TxRotate && qFuzzyCompare(xScale, yScale);
 }
 
 QT_END_NAMESPACE
