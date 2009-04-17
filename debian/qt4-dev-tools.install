@@ -7,6 +7,7 @@ usr/bin/qcollectiongenerator
 usr/bin/qdbusviewer
 usr/bin/qhelpconverter
 usr/bin/qhelpgenerator
+usr/bin/qdbus
 usr/share/qt4/phrasebooks/*
 usr/share/qt4/translations/assistant_adp_de.qm
 usr/share/qt4/translations/assistant_adp_ja.qm
