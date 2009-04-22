@@ -106,7 +106,7 @@ Description: Qt 4 SVG module
 Package: libqt4-webkit
 Architecture: any
 Section: libs
-Depends:  libc6 (>= 2.5.0-1), libgcc1 (>= 1:4.2.1), libqt4-network (= ${binary:Version}), libqt-core (= ${binary:Version}), libqt-gui (= ${binary:Version}), libstdc++6 (>= 4.2.1)
+Depends:  libc6 (>= 2.5.0-1), libgcc1 (>= 1:4.2.1), libqt4-network (= ${binary:Version}), libqt4-core (= ${binary:Version}), libqt4-gui (= ${binary:Version}), libstdc++6 (>= 4.2.1)
 Description: Qt 4 WebKit module
  Qt is a cross-platform C++ application framework. Qt's primary feature
  is its rich set of widgets that provide standard GUI functionality.

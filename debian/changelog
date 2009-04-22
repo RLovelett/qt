@@ -1,3 +1,10 @@
+qt4-x11 (4.5.1~git20090422-0maemo1) unstable; urgency=low
+
+  * Pull from upstream.
+  * Fix dependencies on webkit package.
+
+ -- Shane Bradley <shane.bradley@nokia.com>  Wed, 22 Apr 2009 17:57:40 +1000
+
 qt4-x11 (4.5.1~git20090417-0maemo1) unstable; urgency=low
 
   * Initial release.
