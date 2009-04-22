@@ -1,7 +1,7 @@
 Source: qt4-x11
 Section: libs
 Priority: optional
-Maintainer: maemo integration <integration@maemo.org>
+Maintainer: Shane Bradley <shane.bradley@nokia.com>
 Uploaders: Brian Nelson <pyro@debian.org>, Sune Vuorela <debian@pusling.com>, Fathi Boudra <fabo@debian.org>, Ana Beatriz Guerrero Lopez <ana@debian.org>, Modestas Vainius <modestas@vainius.eu>
 Build-Depends: cdbs, debhelper (>= 5), flex,  doxygen, quilt, sharutils,
  libdbus-1-dev, libfreetype6-dev, libglib2.0-dev, libice-dev, libjpeg62-dev,
