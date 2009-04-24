@@ -1,3 +1,9 @@
+qt4-x11 (4.5.2~git20090424-0maemo1) unstable; urgency=low
+
+  * Pull from upstream.
+
+ -- Gareth Pethig <gareth.pethig@nokia.com>  Fri, 24 Apr 2009 18:45:22 +1000
+
 qt4-x11 (4.5.1~git20090422-0maemo1) unstable; urgency=low
 
   * Pull from upstream.
