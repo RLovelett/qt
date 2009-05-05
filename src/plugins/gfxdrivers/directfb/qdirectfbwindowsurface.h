@@ -3,7 +3,7 @@
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Qt Software Information (qt-info@nokia.com)
 **
-** This file is part of the documentation of the Qt Toolkit.
+** This file is part of the plugins of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,18 +39,74 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QUrl>
-#include <QWebView>
+#ifndef QDIRECFBWINDOWSURFACE_H
+#define QDIRECFBWINDOWSURFACE_H
 
-int main(int argc, char *argv[])
+#include "qdirectfbpaintengine.h"
+#include "qdirectfbpaintdevice.h"
+#include "qdirectfbscreen.h"
+
+#include <private/qpaintengine_raster_p.h>
+#include <private/qwindowsurface_qws_p.h>
+#include <directfb.h>
+
+#ifdef QT_DIRECTFB_TIMING
+#include <qdatetime.h>
+#endif
+
+QT_BEGIN_HEADER
+
+QT_MODULE(Gui)
+
+class QDirectFBWindowSurface : public QWSWindowSurface, public QDirectFBPaintDevice
 {
-    QApplication app(argc, argv);
-    QWidget *parent = 0;
-//! [Using QWebView]
-    QWebView *view = new QWebView(parent);
-    view->load(QUrl("http://qtsoftware.com/"));
-    view->show();
-//! [Using QWebView]
-    return app.exec();
-}
+public:
+    QDirectFBWindowSurface(DFBSurfaceFlipFlags flipFlags, QDirectFBScreen* scr);
+    QDirectFBWindowSurface(DFBSurfaceFlipFlags flipFlags, QDirectFBScreen* scr, QWidget *widget);
+    ~QDirectFBWindowSurface();
+
+    bool isValid() const;
+
+    void setGeometry(const QRect &rect, const QRegion &mask);
+
+    QString key() const { return QLatin1String("directfb"); }
+    QByteArray permanentState() const;
+    void setPermanentState(const QByteArray &state);
+
+    bool scroll(const QRegion &area, int dx, int dy);
+
+    bool move(const QPoint &offset);
+    QRegion move(const QPoint &offset, const QRegion &newClip);
+
+    QImage image() const { return QImage(); }
+    QPaintDevice *paintDevice() { return this; }
+    QPaintEngine *paintEngine() const;
+
+    void flush(QWidget *widget, const QRegion &region, const QPoint &offset);
+
+    void beginPaint(const QRegion &);
+    void endPaint(const QRegion &);
+
+    QImage *buffer(const QWidget *widget);
+
+private:
+#ifndef QT_NO_DIRECTFB_WM
+    void createWindow();
+    IDirectFBWindow *dfbWindow;
+#endif
+    QDirectFBPaintEngine *engine;
+
+    bool onscreen;
+
+    QList<QImage*> bufferImages;
+    DFBSurfaceFlipFlags flipFlags;
+    bool boundingRectFlip;
+#ifdef QT_DIRECTFB_TIMING
+    int frames;
+    QTime timer;
+#endif
+};
+
+QT_END_HEADER
+
+#endif // QDIRECFBWINDOWSURFACE_H

@@ -86,6 +86,7 @@ QT_BEGIN_NAMESPACE
 
 MainWindow::MainWindow(CmdLineParser *cmdLine, QWidget *parent)
     : QMainWindow(parent)
+    , m_filterCombo(0)
     , m_toolBarMenu(0)
     , m_cmdLine(cmdLine)
     , m_progressWidget(0)
@@ -217,12 +218,14 @@ MainWindow::MainWindow(CmdLineParser *cmdLine, QWidget *parent)
         if (!m_cmdLine->currentFilter().isEmpty()) {
             const QString &curFilter = m_cmdLine->currentFilter();
             m_helpEngine->setCurrentFilter(curFilter);
-            int idx = m_filterCombo->findText(curFilter);
-            if (idx >= 0) {
-                bool blocked = m_filterCombo->signalsBlocked();
-                m_filterCombo->blockSignals(true);
-                m_filterCombo->setCurrentIndex(idx);
-                m_filterCombo->blockSignals(blocked);
+            if (m_filterCombo) {
+                int idx = m_filterCombo->findText(curFilter);
+                if (idx >= 0) {
+                    bool blocked = m_filterCombo->signalsBlocked();
+                    m_filterCombo->blockSignals(true);
+                    m_filterCombo->setCurrentIndex(idx);
+                    m_filterCombo->blockSignals(blocked);
+                }
             }
         }
 
@@ -532,6 +535,8 @@ void MainWindow::setupActions()
         SLOT(copyAvailable(bool)));
     connect(m_centralWidget, SIGNAL(currentViewerChanged()), this,
         SLOT(updateNavigationItems()));
+    connect(m_centralWidget, SIGNAL(currentViewerChanged()), this,
+        SLOT(updateTabCloseAction()));
     connect(m_centralWidget, SIGNAL(forwardAvailable(bool)), this,
         SLOT(updateNavigationItems()));
     connect(m_centralWidget, SIGNAL(backwardAvailable(bool)), this,
@@ -694,8 +699,12 @@ void MainWindow::updateNavigationItems()
     m_printAction->setEnabled(hasCurrentViewer);
     m_nextAction->setEnabled(m_centralWidget->isForwardAvailable());
     m_backAction->setEnabled(m_centralWidget->isBackwardAvailable());
-    m_closeTabAction->setEnabled(hasCurrentViewer);
     m_newTabAction->setEnabled(hasCurrentViewer);
+}
+
+void MainWindow::updateTabCloseAction()
+{
+    m_closeTabAction->setEnabled(m_centralWidget->enableTabCloseAction());
 }
 
 void MainWindow::showTopicChooser(const QMap<QString, QUrl> &links,
@@ -868,7 +877,7 @@ void MainWindow::activateCurrentCentralWidgetTab()
 
 void MainWindow::showSearch()
 {
-    m_centralWidget->activateSearch();
+    m_centralWidget->activateSearchWidget();
 }
 
 void MainWindow::hideSearch()
