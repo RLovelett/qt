@@ -1,3 +1,5 @@
+author: Abdiel Janulgue <abdiel.janulgue@nokia.com>
+
 --- a/src/opengl/gl2paintengineex/qpaintengineex_opengl2.cpp
 +++ b/src/opengl/gl2paintengineex/qpaintengineex_opengl2.cpp
 @@ -1010,6 +1010,16 @@ bool QGL2PaintEngineEx::begin(QPaintDevice *pdev)
