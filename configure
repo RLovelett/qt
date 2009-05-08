@@ -279,7 +279,7 @@ if [ "$COMMERCIAL_USER" = "ask" ]; then
         if [ "$commercial" = "c" ]; then
             COMMERCIAL_USER="yes"
             break
-        else [ "$commercial" = "o" ];
+        elif [ "$commercial" = "o" ]; then
             COMMERCIAL_USER="no"
             break
         fi
@@ -2717,7 +2717,6 @@ if [ "$PLATFORM_MAC" = "yes" ]; then
 #   Build commmand line arguments we can pass to the compiler during configure tests
 #   by prefixing each arch with "-arch".
     CFG_MAC_ARCHS_GCC_FORMAT="${CFG_MAC_ARCHS/x86/i386}"
-    CFG_MAC_ARCHS_GCC_FORMAT="${CFG_MAC_ARCHS/i386_64/x86_64}"
     for ARCH in $CFG_MAC_ARCHS_GCC_FORMAT; do
         MAC_ARCHS_COMMANDLINE="$MAC_ARCHS_COMMANDLINE -arch $ARCH"
     done
@@ -5159,6 +5158,9 @@ if [ "$PLATFORM_QWS" = "yes" ]; then
            if [ -n "$QT_CFLAGS_DIRECTFB" ] || [ -n "$QT_LIBS_DIRECTFB" ]; then
                QMakeVar set QT_CFLAGS_DIRECTFB "$QT_CFLAGS_DIRECTFB"
                QMakeVar set QT_LIBS_DIRECTFB "$QT_LIBS_DIRECTFB"
+           fi
+           if [ "$CFG_QT3SUPPORT" = "yes" ]; then
+               QMakeVar set QT_DEFINES_DIRECTFB "QT3_SUPPORT"
            fi
 
            if ! "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/qws/directfb "DirectFB" $L_FLAGS $I_FLAGS $l_FLAGS $QT_CFLAGS_DIRECTFB $QT_LIBS_DIRECTFB; then
