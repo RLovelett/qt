@@ -11,7 +11,7 @@ Build-Depends: cdbs, debhelper (>= 5), flex,  doxygen, quilt, sharutils,
  zlib1g-dev, libgstreamer-plugins-base0.10-dev, libgstreamer0.10-dev, 
  libgles2-dev [arm armel !i386] | libgles2-sgx-img-dev [arm armel !i386], opengles-sgx-img-common-dev [arm armel !i386],
  libgl-dev [i386 !arm !armel], libgl1 [i386 !arm !armel],
- libxau-dev, libxcb1-dev, libxdmcp-dev, libxcb-xlib0-dev, libexpat1-dev,  opengles-sgx-img-common [arm armel !i386],
+ libxau-dev, libxcb1-dev, libxdmcp-dev, libexpat1-dev,  opengles-sgx-img-common [arm armel !i386],
  libsqlite3-dev, libsqlite3-0, libssl-dev
 Standards-Version: 3.7.3
 
