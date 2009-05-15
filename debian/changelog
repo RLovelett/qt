@@ -1,3 +1,9 @@
+qt4-x11 (4.5.2~git20090515-0maemo1) unstable; urgency=low
+
+  * Pull from upstream.
+
+ -- Gareth Pethig <gareth.pethig@nokia.com>  Fri, 15 May 2009 20:08:04 +1000
+
 qt4-x11 (4.5.2~git20090508-0maemo2) unstable; urgency=low
 
   * Changed control file as per Maemo patch.
