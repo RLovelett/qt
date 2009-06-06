@@ -93,6 +93,15 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
+    \fn QSqlRelation::QSqlRelation(const QString &tableName, const QString &indexColumn,
+                                   const QString &displayColumn, Qt::SortOrder order)
+
+    Constructs a QSqlRelation object and sorts \a displayColumn by \a order.
+
+    \sa sortOrder()
+*/
+
+/*!
     \fn QString QSqlRelation::tableName() const
 
     Returns the name of the table to which a foreign key refers.
@@ -110,6 +119,12 @@ QT_BEGIN_NAMESPACE
 
     Returns the column from table tableName() that should be
     presented to the user instead of a foreign key.
+*/
+
+/*!
+    \fn int QSqlRelation::sortOrder() const
+
+    Returns the current sort order or -1 if no order is set.
 */
 
 /*!
@@ -164,6 +179,8 @@ void QRelation::populateModel()
     if (!model) {
         model = new QSqlTableModel(m_parent, m_parent->database());
         model->setTable(rel.tableName());
+        if ( rel.sortOrder() == Qt::AscendingOrder || rel.sortOrder() == Qt::DescendingOrder )
+            model->setSort( model->record().indexOf( rel.displayColumn() ), (Qt::SortOrder)rel.sortOrder() );
         model->select();
     }
 }

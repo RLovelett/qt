@@ -56,17 +56,23 @@ public:
     QSqlRelation() {}
     QSqlRelation(const QString &aTableName, const QString &indexCol,
                const QString &displayCol)
-        : tName(aTableName), iColumn(indexCol), dColumn(displayCol) {}
+        : tName(aTableName), iColumn(indexCol), dColumn(displayCol), iOrder(-1) {}
+    QSqlRelation(const QString &aTableName, const QString &indexCol,
+               const QString &displayCol, Qt::SortOrder order)
+        : tName(aTableName), iColumn(indexCol), dColumn(displayCol), iOrder(order) {}
     inline QString tableName() const
     { return tName; }
     inline QString indexColumn() const
     { return iColumn; }
     inline QString displayColumn() const
     { return dColumn; }
+    inline int sortOrder() const
+    { return iOrder; }
     inline bool isValid() const
     { return !(tName.isEmpty() || iColumn.isEmpty() || dColumn.isEmpty()); }
 private:
     QString tName, iColumn, dColumn;
+    int iOrder;
 };
 
 class QSqlRelationalTableModelPrivate;
