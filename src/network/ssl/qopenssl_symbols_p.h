@@ -237,6 +237,11 @@ X509 *q_d2i_X509(X509 **a, unsigned char **b, long c);
 #endif
 char *q_ERR_error_string(unsigned long a, char *b);
 unsigned long q_ERR_get_error();
+int q_EVP_CipherInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *type, unsigned char *key, unsigned char *iv, int enc);
+int q_EVP_CipherUpdate(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl, unsigned char *in, int inl);
+int q_EVP_CipherFinal(EVP_CIPHER_CTX *ctx, unsigned char *outm, int *outl);
+int q_EVP_CIPHER_CTX_set_padding(EVP_CIPHER_CTX *x, int padding);
+const EVP_CIPHER *q_EVP_get_cipherbyname(const char *name);
 const EVP_CIPHER *q_EVP_des_ede3_cbc();
 int q_EVP_PKEY_assign(EVP_PKEY *a, int b, char *c);
 void q_EVP_PKEY_free(EVP_PKEY *a);
