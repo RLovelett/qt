@@ -224,7 +224,8 @@ class QSqlRelationalTableModelPrivate: public QSqlTableModelPrivate
     Q_DECLARE_PUBLIC(QSqlRelationalTableModel)
 public:
     QSqlRelationalTableModelPrivate()
-        : QSqlTableModelPrivate()
+        : QSqlTableModelPrivate(),
+        joinMode( QSqlRelationalTableModel::InnerJoin )
     {}
     QString relationField(const QString &tableName, const QString &fieldName) const;
 
@@ -237,6 +238,8 @@ public:
     void revertCachedRow(int row);
 
     void translateFieldNames(int row, QSqlRecord &values) const;
+
+    QSqlRelationalTableModel::JoinMode joinMode;
 };
 
 static void qAppendWhereClause(QString &query, const QString &clause1, const QString &clause2)
@@ -572,25 +575,45 @@ QString QSqlRelationalTableModel::selectStatement() const
                 fList.append(QString::fromLatin1(" AS %1_%2").arg(relTableName).arg(displayColumn));
             }
 
-            // this needs fixing!! the below if is borken.
-            tables.append(relation.tableName().append(QLatin1Char(' ')).append(relTableAlias));
-            if(!where.isEmpty())
-                where.append(QLatin1String(" AND "));
-            where.append(d->relationField(tableName(), d->db.driver()->escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName)));
-            where.append(QLatin1String(" = "));
-            where.append(d->relationField(relTableAlias, relation.indexColumn()));
+            if ( d->joinMode == QSqlRelationalTableModel::InnerJoin ) {
+                // this needs fixing!! the below if is borken.
+                tables.append(relation.tableName().append(QLatin1Char(' ')).append(relTableAlias));
+                if(!where.isEmpty())
+                    where.append(QLatin1String(" AND "));
+                where.append(d->relationField(tableName(), d->db.driver()->escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName)));
+                where.append(QLatin1String(" = "));
+                where.append(d->relationField(relTableAlias, relation.indexColumn()));
+            } else if ( d->joinMode == QSqlRelationalTableModel::LeftJoin ) {
+                QString tableEntry;
+                tableEntry.append( QLatin1String( "LEFT JOIN " ) );
+                tableEntry.append( relation.tableName() );
+                tableEntry.append( QLatin1Char(' ') );
+                tableEntry.append( relTableAlias );
+                tableEntry.append( QLatin1String( " ON " ) );
+                tableEntry.append( d->relationField(tableName(), d->db.driver()->escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName)) );
+                tableEntry.append( QLatin1String(" = ") );
+                tableEntry.append( d->relationField(relTableAlias, relation.indexColumn()) );
+                tables.append( tableEntry );
+            }
         } else {
             if (!fList.isEmpty())
                 fList.append(QLatin1String(", "));
             fList.append(d->relationField(tableName(), d->db.driver()->escapeIdentifier(rec.fieldName(i), QSqlDriver::FieldName)));
         }
     }
-    if (!tables.isEmpty())
-        tList.append(tables.join(QLatin1String(", ")));
     if (fList.isEmpty())
         return query;
-    if(!tList.isEmpty())
-        tList.prepend(QLatin1String(", "));
+    if ( d->joinMode == QSqlRelationalTableModel::InnerJoin ) {
+        if (!tables.isEmpty())
+            tList.append(tables.join(QLatin1String(", ")));
+        if (!tList.isEmpty())
+            tList.prepend(QLatin1String(", "));
+    } else if ( d->joinMode == QSqlRelationalTableModel::LeftJoin ) {
+       if (!tables.isEmpty())
+            tList.append(tables.join(QLatin1String(" ")));
+       if (!tList.isEmpty())
+            tList.prepend(QLatin1String(" "));
+    }
     tList.prepend(tableName());
     query.append(QLatin1String("SELECT "));
     query.append(fList).append(QLatin1String(" FROM ")).append(tList);
@@ -625,6 +648,22 @@ QSqlTableModel *QSqlRelationalTableModel::relationModel(int column) const
     if (!relation.model)
         relation.populateModel();
     return relation.model;
+}
+
+/*!
+    Sets the SQL join mode to show or hide rows with nulls.
+
+    In InnerJoin mode rows that have NULL values in fields with a
+    relation will not show. In LeftJoin mode these rows will be shown
+    so a value can be selected. Note that such a field can not be set
+    back to NULL.
+
+    \since 4.6
+*/
+void QSqlRelationalTableModel::setJoinMode( QSqlRelationalTableModel::JoinMode joinMode )
+{
+    Q_D(QSqlRelationalTableModel);
+    d->joinMode = joinMode;
 }
 
 /*!
