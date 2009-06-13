@@ -13,7 +13,7 @@ contains(QT_CONFIG, openssl) | contains(QT_CONFIG, openssl-linked) {
                ssl/qsslkey.h \
                ssl/qsslsocket.h \
                ssl/qsslsocket_openssl_p.h \
-               ssl/qsslsocket_openssl_symbols_p.h \
+               ssl/qopenssl_symbols_p.h \
                ssl/qsslsocket_p.h
     SOURCES += ssl/qssl.cpp \
                ssl/qsslcertificate.cpp \
@@ -23,7 +23,7 @@ contains(QT_CONFIG, openssl) | contains(QT_CONFIG, openssl-linked) {
                ssl/qsslkey.cpp \
                ssl/qsslsocket.cpp \
                ssl/qsslsocket_openssl.cpp \
-               ssl/qsslsocket_openssl_symbols.cpp
+               ssl/qopenssl_symbols.cpp
 
     # Include Qt's default CA bundle
     RESOURCES += network.qrc

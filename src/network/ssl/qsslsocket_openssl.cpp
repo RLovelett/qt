@@ -42,7 +42,7 @@
 //#define QSSLSOCKET_DEBUG
 
 #include "qsslsocket_openssl_p.h"
-#include "qsslsocket_openssl_symbols_p.h"
+#include "qopenssl_symbols_p.h"
 #include "qsslsocket.h"
 #include "qsslcertificate_p.h"
 #include "qsslcipher_p.h"

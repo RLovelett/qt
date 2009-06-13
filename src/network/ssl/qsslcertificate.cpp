@@ -106,7 +106,7 @@
     \value StateOrProvinceName "ST" The state or province.
 */
 
-#include "qsslsocket_openssl_symbols_p.h"
+#include "qopenssl_symbols_p.h"
 #include "qsslcertificate.h"
 #include "qsslcertificate_p.h"
 #include "qsslkey.h"

@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 
-#include "qsslsocket_openssl_symbols_p.h"
+#include "qopenssl_symbols_p.h"
 
 #include <QtCore/qlibrary.h>
 #include <QtCore/qmutex.h>

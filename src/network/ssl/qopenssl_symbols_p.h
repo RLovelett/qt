@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 
-#ifndef QSSLSOCKET_OPENSSL_SYMBOLS_P_H
-#define QSSLSOCKET_OPENSSL_SYMBOLS_P_H
+#ifndef QOPENSSL_SYMBOLS_P_H
+#define QOPENSSL_SYMBOLS_P_H
 
 //
 //  W A R N I N G

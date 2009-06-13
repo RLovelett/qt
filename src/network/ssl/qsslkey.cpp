@@ -55,7 +55,7 @@
     \sa QSslSocket, QSslCertificate, QSslCipher
 */
 
-#include "qsslsocket_openssl_symbols_p.h"
+#include "qopenssl_symbols_p.h"
 #include "qsslkey.h"
 #include "qsslkey_p.h"
 #include "qsslsocket.h"
