@@ -63,16 +63,17 @@ static bool openDocument(const QUrl &url)
 {
     if (!url.isValid())
         return false;
-
-    if (launch(url, QLatin1String("xdg-open")))
-        return true;
-
+    
     if (X11->desktopEnvironment == DE_GNOME && launch(url, QLatin1String("gnome-open"))) {
         return true;
     } else {
         if (X11->desktopEnvironment == DE_KDE && launch(url, QLatin1String("kfmclient exec")))
             return true;
     }
+
+#ifndef Q_WS_HILDON
+    if (launch(url, QLatin1String("xdg-open")))
+        return true;
 
     if (launch(url, QLatin1String("firefox")))
         return true;
@@ -82,7 +83,10 @@ static bool openDocument(const QUrl &url)
         return true;
     if (launch(url, QLatin1String("opera")))
         return true;
-
+#else
+    if (launch(url, QLatin1String("browser --url")))
+        return true;
+#endif
     return false;
 }
 
@@ -93,11 +97,13 @@ static bool launchWebBrowser(const QUrl &url)
     if (url.scheme() == QLatin1String("mailto"))
         return openDocument(url);
 
-    if (launch(url, QLatin1String("xdg-open")))
-        return true;
     if (launch(url, QString::fromLocal8Bit(getenv("DEFAULT_BROWSER"))))
         return true;
     if (launch(url, QString::fromLocal8Bit(getenv("BROWSER"))))
+        return true;
+
+#ifndef Q_WS_HILDON
+    if (launch(url, QLatin1String("xdg-open")))
         return true;
 
     if (X11->desktopEnvironment == DE_GNOME && launch(url, QLatin1String("gnome-open"))) {
@@ -115,6 +121,10 @@ static bool launchWebBrowser(const QUrl &url)
         return true;
     if (launch(url, QLatin1String("opera")))
         return true;
+#else
+    if (launch(url, QLatin1String("browser --url")))
+        return true;
+#endif
     return false;
 }
 
@@ -194,13 +204,25 @@ QString QDesktopServices::storageLocation(StandardLocation type)
     QString path;
     switch (type) {
     case DesktopLocation:
+#ifdef Q_WS_HILDON
+        path = QDir::homePath() + QLatin1String("/MyDocs");
+#else
         path = QDir::homePath() + QLatin1String("/Desktop");
+#endif
         break;
     case DocumentsLocation:
+#ifdef Q_WS_HILDON
+        path = QDir::homePath() + QLatin1String("/MyDocs/.documents");
+#else
         path = QDir::homePath() + QLatin1String("/Documents");
+#endif
        break;
     case PicturesLocation:
+#ifdef Q_WS_HILDON
+        path = QDir::homePath() + QLatin1String("/MyDocs/.images");
+#else
         path = QDir::homePath() + QLatin1String("/Pictures");
+#endif
         break;
 
     case FontsLocation:
@@ -208,11 +230,19 @@ QString QDesktopServices::storageLocation(StandardLocation type)
         break;
 
     case MusicLocation:
+#ifdef Q_WS_HILDON
+        path = QDir::homePath() + QLatin1String("/MyDocs/.sounds");
+#else
         path = QDir::homePath() + QLatin1String("/Music");
+#endif
         break;
 
     case MoviesLocation:
+#ifdef Q_WS_HILDON
+        path = QDir::homePath() + QLatin1String("/MyDocs/.videos");
+#else
         path = QDir::homePath() + QLatin1String("/Videos");
+#endif
         break;
 
     case ApplicationsLocation:
