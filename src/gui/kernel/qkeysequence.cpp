@@ -519,8 +519,14 @@ const QKeyBinding QKeySequencePrivate::keyBindings[] = {
     {QKeySequence::WhatsThis,               1,          Qt::SHIFT | Qt::Key_F1,                 QApplicationPrivate::KB_All},
     {QKeySequence::FindPrevious,            0,          Qt::SHIFT | Qt::Key_F3,                 QApplicationPrivate::KB_X11},
     {QKeySequence::FindPrevious,            1,          Qt::SHIFT | Qt::Key_F3,                 QApplicationPrivate::KB_Win},
+#ifdef Q_WS_HILDON
+    {QKeySequence::ZoomIn,                  1,          Qt::Key_F7,                             QApplicationPrivate::KB_Hildon},
+#endif
     {QKeySequence::ZoomIn,                  1,          Qt::CTRL | Qt::Key_Plus,                QApplicationPrivate::KB_All},
     {QKeySequence::NextChild,               0,          Qt::CTRL | Qt::Key_Comma,               QApplicationPrivate::KB_KDE},
+#ifdef Q_WS_HILDON
+    {QKeySequence::ZoomOut,                 1,          Qt::Key_F8,                             QApplicationPrivate::KB_Hildon},
+#endif
     {QKeySequence::ZoomOut,                 1,          Qt::CTRL | Qt::Key_Minus,               QApplicationPrivate::KB_All},
     {QKeySequence::PreviousChild,           0,          Qt::CTRL | Qt::Key_Period,              QApplicationPrivate::KB_KDE},
     {QKeySequence::HelpContents,            1,          Qt::CTRL | Qt::Key_Question,            QApplicationPrivate::KB_Mac},
