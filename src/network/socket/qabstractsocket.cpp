@@ -353,6 +353,10 @@
 
 #include <time.h>
 
+#ifdef Q_WS_HILDON
+#include <maemo/qmaemointernetconnectivity.h>
+#endif
+
 #define Q_CHECK_SOCKETENGINE(returnValue) do { \
     if (!d->socketEngine) { \
         return returnValue; \
@@ -1289,6 +1293,10 @@ void QAbstractSocket::connectToHostImplementation(const QString &hostName, quint
         QHostInfo::abortHostLookup(d->hostLookupId);
         d->hostLookupId = -1;
     }
+
+#ifdef Q_WS_HILDON
+    QMaemoInternetConnectivity::connectionRequest();
+#endif
 
 #ifndef QT_NO_NETWORKPROXY
     // Get the proxy information
