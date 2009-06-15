@@ -270,6 +270,9 @@ public:
         KB_KDE = 8,
         KB_Gnome = 16,
         KB_CDE = 32,
+#ifdef Q_WS_HILDON
+        KB_Hildon = 64,
+#endif
         KB_All = 0xffff
     };
 

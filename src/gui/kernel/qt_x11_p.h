@@ -324,6 +324,9 @@ enum DesktopEnvironment {
     DE_KDE,
     DE_GNOME,
     DE_CDE,
+#ifdef Q_WS_HILDON
+    DE_HILDON,
+#endif
     DE_4DWM
 };
 
