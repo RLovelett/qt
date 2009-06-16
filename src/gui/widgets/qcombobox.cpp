@@ -2920,7 +2920,7 @@ void QComboBox::wheelEvent(QWheelEvent *e)
 }
 #endif
 
-#ifndef QT_NO_CONTEXTMENU
+#if !defined(QT_NO_CONTEXTMENU) || !defined(Q_WS_HILDON)
 /*!
     \reimp
 */

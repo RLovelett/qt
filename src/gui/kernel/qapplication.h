@@ -382,6 +382,9 @@ private:
 #if defined(Q_WS_MAC) || defined(Q_WS_X11)
     Q_PRIVATE_SLOT(d_func(), void _q_alertTimeOut())
 #endif
+#ifdef Q_WS_HILDON
+    Q_PRIVATE_SLOT(d_func(), void _q_longPushTimeOut())
+#endif
 };
 
 QT_END_NAMESPACE

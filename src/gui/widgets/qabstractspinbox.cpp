@@ -1182,7 +1182,7 @@ void QAbstractSpinBox::timerEvent(QTimerEvent *event)
 
 void QAbstractSpinBox::contextMenuEvent(QContextMenuEvent *event)
 {
-#ifdef QT_NO_CONTEXTMENU
+#if (defined(QT_NO_CONTEXTMENU) || defined(Q_WS_HILDON))
     Q_UNUSED(event);
 #else
     Q_D(QAbstractSpinBox);

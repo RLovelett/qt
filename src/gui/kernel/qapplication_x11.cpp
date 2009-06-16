@@ -343,6 +343,11 @@ static Qt::MouseButtons mouseButtonState     = Qt::NoButton; // mouse button sta
 static Time        mouseButtonPressTime = 0;        // when was a button pressed
 static short        mouseXPos, mouseYPos;                // mouse pres position in act window
 static short        mouseGlobalXPos, mouseGlobalYPos; // global mouse press position
+#ifdef Q_WS_HILDON
+#define RIGHT_CLICK_TIME 2000
+static QPointer<QTimer> longPushTimer = 0; // hildon emulates right click with long press - needs a timer
+static QPointer<QWidget> qetWidget=0; 
+#endif
 
 extern QWidgetList *qt_modal_stack;                // stack of modal widgets
 
@@ -3039,6 +3044,50 @@ void QApplicationPrivate::_q_alertTimeOut()
     }
 }
 
+#ifdef Q_WS_HILDON
+void QApplicationPrivate::_q_longPushTimeOut(){
+
+    const int radius= 15;
+    const QPoint globalMousePressPos(mouseGlobalXPos,mouseGlobalYPos);
+    const QPoint globalCurrentPos= QCursor::pos();
+
+    // Exits if the cursor is not in the surrounding area
+    // of the press event
+    const QPoint deltaPos= globalMousePressPos - globalCurrentPos;
+    if ( qAbs(deltaPos.x())  >= radius ||
+         qAbs(deltaPos.y())  >= radius){
+        return;
+    }
+
+    // Gets the Widget under the mouse and the relative cursor position
+    QWidget *w;
+    QPoint pos;
+
+    if (qetWidget.isNull()){
+        return;
+    }
+
+    pos = qetWidget->mapFromGlobal(globalMousePressPos);
+    w = qetWidget->childAt(pos);
+    if (!w) {
+        w= qetWidget;
+        pos= w->mapFromGlobal(globalMousePressPos);
+    }
+
+    //Emulates the following events in the correct order
+    QMouseEvent mpe( QEvent::MouseButtonPress, pos, Qt::RightButton, 
+                     mouse_buttons, modifier_buttons );
+    QApplication::sendSpontaneousEvent(w, &mpe);
+
+    QContextMenuEvent e(QContextMenuEvent::Mouse, pos, modifier_buttons);
+    QApplication::sendSpontaneousEvent(w, &e);
+
+    QMouseEvent mre( QEvent::MouseButtonPress, pos, Qt::RightButton, 
+                     mouse_buttons, modifier_buttons );
+    QApplication::sendSpontaneousEvent(w, &mre);
+}
+#endif
+
 /*****************************************************************************
   Special lookup functions for windows that have been reparented recently
  *****************************************************************************/
@@ -4262,13 +4311,26 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
                 mouseButtonPressed == button &&
                 (long)event->xbutton.time -(long)mouseButtonPressTime
                 < QApplication::doubleClickInterval() &&
+#ifndef Q_WS_HILDON
                 qAbs(event->xbutton.x - mouseXPos) < 5 &&
                 qAbs(event->xbutton.y - mouseYPos) < 5) {
+#else
+                //Increasing the double click radius for fingers taps
+                qAbs(event->xbutton.x - mouseXPos) < 20 &&
+                qAbs(event->xbutton.y - mouseYPos) < 20) {
+#endif
                 type = QEvent::MouseButtonDblClick;
                 mouseButtonPressTime -= 2000;        // no double-click next time
             } else {
                 type = QEvent::MouseButtonPress;
                 mouseButtonPressTime = event->xbutton.time;
+#ifdef Q_WS_HILDON
+                qetWidget=this;
+                longPushTimer= new QTimer(qApp);// RMB emulation
+                longPushTimer->setSingleShot(true);
+                connect(longPushTimer, SIGNAL(timeout()),qApp, SLOT(_q_longPushTimeOut()));
+                longPushTimer->start(RIGHT_CLICK_TIME);
+#endif
             }
             mouseButtonPressed = button;        // save event params for
             mouseXPos = event->xbutton.x;                // future double click tests
@@ -4294,6 +4356,11 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
             }
 #endif
             type = QEvent::MouseButtonRelease;
+#ifdef Q_WS_HILDON
+            //Prevent crashes when the application doesn't receive a mouse press button
+            if (longPushTimer)
+                longPushTimer->stop();
+#endif
         }
     }
     mouseActWindow = effectiveWinId();                        // save some event params
