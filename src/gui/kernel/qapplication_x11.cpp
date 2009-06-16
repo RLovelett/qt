@@ -318,7 +318,10 @@ static bool        appDoGrab        = false;        // X11 grabbing override (gd
 static bool        app_save_rootinfo = false;        // save root info
 static bool        app_do_modal        = false;        // modal mode
 static Window        curWin = 0;                        // current window
-
+#ifdef Q_WS_HILDON
+//XInput events are managed by Qt for some input devices (eg. touchscreen)
+static bool are_xinput_events_used = false; 
+#endif
 
 // function to update the workarea of the screen - in qdesktopwidget_x11.cpp
 extern void qt_desktopwidget_update_workarea();
@@ -2348,7 +2351,9 @@ void qt_init(QApplicationPrivate *priv, int,
                 i,
                 j;
             bool gotStylus,
-                gotEraser;
+                 gotEraser,
+                 gotTouchscreen; //Maemo changes: Using XInput to get Touchscreen events
+
             XDeviceInfo *devices = 0, *devs;
             XInputClassInfo *ip;
             XAnyClassPtr any;
@@ -2361,6 +2366,9 @@ void qt_init(QApplicationPrivate *priv, int,
             const QString XFREENAMESTYLUS = QLatin1String("stylus");
             const QString XFREENAMEPEN = QLatin1String("pen");
             const QString XFREENAMEERASER = QLatin1String("eraser");
+#endif
+#ifdef Q_WS_HILDON
+            const QString XFREENAMETOUCHSCREEN = QLatin1String("touchscreen");
 #endif
 
             if (X11->ptrXListInputDevices) {
@@ -2392,16 +2400,31 @@ void qt_init(QApplicationPrivate *priv, int,
                     deviceType = QTabletEvent::XFreeEraser;
                     gotEraser = true;
                 }
+#ifdef Q_WS_HILDON
+                else if (devName.endsWith(XFREENAMETOUCHSCREEN)) {
+                    deviceType = QTabletEvent::Stylus;
+                    gotTouchscreen = true;
+                }
 #endif
+#endif //Q_OS_IRIX
+
                 if (deviceType == QTabletEvent::NoDevice)
                     continue;
 
+#ifdef Q_WS_HILDON
+                if (gotStylus || gotEraser || gotTouchscreen) {
+#else
                 if (gotStylus || gotEraser) {
+#endif
                     if (X11->ptrXOpenDevice)
                         dev = X11->ptrXOpenDevice(X11->display, devs->id);
 
                     if (!dev)
                         continue;
+
+#ifdef Q_WS_HILDON
+                    are_xinput_events_used = true;
+#endif
 
                     QTabletDeviceData device_data;
                     device_data.deviceType = deviceType;
@@ -2764,6 +2787,12 @@ QString QApplicationPrivate::appName() const
 {
     return QString::fromLocal8Bit(QT_PREPEND_NAMESPACE(appName));
 }
+
+#ifdef Q_WS_HILDON
+bool QApplicationPrivate::areXInputEventsUsed(){
+    return are_xinput_events_used;
+}
+#endif
 
 const char *QX11Info::appClass()                                // get application class
 {
