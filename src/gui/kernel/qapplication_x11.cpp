@@ -291,6 +291,30 @@ static const char * x11_atomnames = {
     // Xkb
     "_XKB_RULES_NAMES\0"
 
+    //Hildon Input Method Protocol
+#ifdef Q_WS_HILDON
+    // find the global im window
+    "_HILDON_IM_WINDOW\0"
+    // activate the input method
+    "_HILDON_IM_ACTIVATE\0"
+    //send sourrounding
+    "_HILDON_IM_SURROUNDING\0"
+    //send sourrounding header
+    "_HILDON_IM_SURROUNDING_CONTENT\0"
+    // send key event to im
+    "_HILDON_IM_KEY_EVENT\0"
+    // input method wants to insert data
+    "_HILDON_IM_INSERT_UTF8\0"
+    // input method wants to communicate with us
+    "_HILDON_IM_COM\0"
+    //### NOT USED YET
+    "_HILDON_IM_CLIPBOARD_COPIED\0"
+    //### NOT USED YET
+    "_HILDON_IM_CLIPBOARD_SELECTION_QUERY\0"
+    // tell im whether we have a selection or not
+    "_HILDON_IM_CLIPBOARD_SELECTION_REPLY\0"
+#endif
+
     // XEMBED
     "_XEMBED\0"
     "_XEMBED_INFO\0"
@@ -991,6 +1015,7 @@ bool QApplicationPrivate::x11_apply_settings()
             qt_xim_preferred_style = XIMPreeditNothing | XIMStatusNothing;
     }
 #endif
+#ifndef Q_WS_HILDON // hildon has its own input method
     QStringList inputMethods = QInputContextFactory::keys();
     if (inputMethods.size() > 2 && inputMethods.contains(QLatin1String("imsw-multi"))) {
         X11->default_im = QLatin1String("imsw-multi");
@@ -998,6 +1023,7 @@ bool QApplicationPrivate::x11_apply_settings()
         X11->default_im = settings.value(QLatin1String("DefaultInputMethod"),
                                          QLatin1String("xim")).toString();
     }
+#endif
 
     settings.endGroup(); // Qt
 
@@ -1691,8 +1717,11 @@ void qt_init(QApplicationPrivate *priv, int,
     X11->seen_badwindow = false;
 
     X11->motifdnd_active = false;
-
+#ifdef Q_WS_HILDON
+    X11->default_im = QLatin1String("hildon");
+#else
     X11->default_im = QLatin1String("imsw-multi");
+#endif
     priv->inputContext = 0;
 
     // colormap control
@@ -3164,7 +3193,17 @@ int QApplication::x11ClientMessage(QWidget* w, XEvent* event, bool passive_only)
         } else {
             if (passive_only) return 0;
             // All other are interactions
+
         }
+#ifdef Q_WS_HILDON
+    } else if (event->xclient.message_type == ATOM(_HILDON_IM_INSERT_UTF8)
+            || event->xclient.message_type == ATOM(_HILDON_IM_COM)
+            || event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING)
+            || event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING_CONTENT)) {
+        QInputContext *qic = w->inputContext();
+        if (qic && qic->x11FilterEvent(w, event))
+            return 0;
+#endif
     } else {
         X11->motifdndHandle(widget, event, passive_only);
     }

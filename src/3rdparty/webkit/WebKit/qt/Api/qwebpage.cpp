@@ -93,6 +93,10 @@
 #include "qwebnetworkinterface.h"
 #endif
 
+#ifdef Q_WS_HILDON
+#include <QInputContext>
+#endif
+
 using namespace WebCore;
 
 bool QWebPagePrivate::drtRun = false;
@@ -1009,6 +1013,18 @@ bool QWebPagePrivate::handleScrolling(QKeyEvent *ev)
 */
 QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
 {
+#ifdef Q_WS_HILDON
+    //Return input method query values only for input elements
+    Frame *frame = d->page->focusController()->focusedOrMainFrame();
+    if (!frame){
+         return QVariant();
+    }
+    Editor* editor = frame->editor();
+    if (!editor->canEdit()){
+        return QVariant();
+    }
+#endif	
+
     switch(property) {
     case Qt::ImMicroFocus: {
         Frame *frame = d->page->focusController()->focusedFrame();
@@ -1045,6 +1061,22 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     }
     case Qt::ImCurrentSelection:
         return QVariant(selectedText());
+#ifdef Q_WS_HILDON
+    case Qt::ImMode:{
+        int mode = HILDON_GTK_INPUT_MODE_FULL | HILDON_GTK_INPUT_MODE_DICTIONARY;
+        Frame *frame = d->page->focusController()->focusedFrame();
+        if (frame) {
+            Document *document = frame->document();
+            if (document) {
+                Element* element = static_cast<Element*>(document->focusedNode());
+                if (element && element->isPasswordField()) {
+                    mode = HILDON_GTK_INPUT_MODE_FULL | HILDON_GTK_INPUT_MODE_INVISIBLE;
+                }
+            }
+        }
+        return QVariant(mode);
+    }
+#endif
     default:
         return QVariant();
     }

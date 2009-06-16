@@ -8479,6 +8479,10 @@ QVariant QWidget::inputMethodQuery(Qt::InputMethodQuery query) const
         return QRect(width()/2, 0, 1, height());
     case Qt::ImFont:
         return font();
+#ifdef Q_WS_HILDON
+    case Qt::ImMode:
+        return QVariant(HILDON_GTK_INPUT_MODE_FULL);
+#endif
     default:
         return QVariant();
     }

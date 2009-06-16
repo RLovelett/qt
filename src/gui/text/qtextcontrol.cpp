@@ -915,6 +915,10 @@ void QTextControl::processEvent(QEvent *e, const QMatrix &matrix, QWidget *conte
         case QEvent::MouseButtonRelease: {
             QMouseEvent *ev = static_cast<QMouseEvent *>(e);
             d->mouseReleaseEvent(ev->button(), matrix.map(ev->pos()));
+#ifdef Q_OS_FREMANTLE
+            //MouseButtonRelease activate the Hildon Input Method
+            ev->ignore();
+#endif
             break; }
         case QEvent::MouseButtonDblClick: {
             QMouseEvent *ev = static_cast<QMouseEvent *>(e);
@@ -1817,6 +1821,12 @@ void QTextControlPrivate::inputMethodEvent(QInputMethodEvent *e)
         e->ignore();
         return;
     }
+#ifdef Q_WS_HILDON
+    //This code permits to set the cursor position via QInputMethodEvent
+    //In Hildon we need to do it when the user select the text from right to left
+    //with the fingers and so the fullscreen on-screen keyboard plugins is shown
+    int textCursorPosition= cursor.position();
+#endif
     cursor.beginEditBlock();
 
     cursor.removeSelectedText();
@@ -1827,7 +1837,14 @@ void QTextControlPrivate::inputMethodEvent(QInputMethodEvent *e)
         c.setPosition(c.position() + e->replacementStart());
         c.setPosition(c.position() + e->replacementLength(), QTextCursor::KeepAnchor);
         c.insertText(e->commitString());
+#ifndef Q_WS_HILDON
     }
+#else
+         textCursorPosition= c.position();
+    }else if (e->replacementStart()){
+        textCursorPosition += e->replacementStart();
+    }
+#endif   
 
     QTextBlock block = cursor.block();
     QTextLayout *layout = block.layout();
@@ -1853,6 +1870,9 @@ void QTextControlPrivate::inputMethodEvent(QInputMethodEvent *e)
     }
     layout->setAdditionalFormats(overrides);
     cursor.endEditBlock();
+#ifdef Q_WS_HILDON
+    cursor.setPosition(textCursorPosition);
+#endif
 }
 
 QVariant QTextControl::inputMethodQuery(Qt::InputMethodQuery property) const
@@ -1870,6 +1890,12 @@ QVariant QTextControl::inputMethodQuery(Qt::InputMethodQuery property) const
         return QVariant(block.text());
     case Qt::ImCurrentSelection:
         return QVariant(d->cursor.selectedText());
+#ifdef Q_WS_HILDON
+    case Qt::ImMode:{
+        int mode = HILDON_GTK_INPUT_MODE_FULL | HILDON_GTK_INPUT_MODE_AUTOCAP | HILDON_GTK_INPUT_MODE_DICTIONARY | HILDON_GTK_INPUT_MODE_MULTILINE;
+        return QVariant(mode);
+    }
+#endif
     default:
         return QVariant();
     }

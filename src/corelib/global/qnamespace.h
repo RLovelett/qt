@@ -1390,6 +1390,9 @@ public:
         ImFont,
         ImCursorPosition,
         ImSurroundingText,
+#ifdef Q_WS_HILDON
+	ImMode,
+#endif
         ImCurrentSelection
     };
 

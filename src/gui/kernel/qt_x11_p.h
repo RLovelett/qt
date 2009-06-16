@@ -648,6 +648,19 @@ struct QX11Data
         // Xkb
         _XKB_RULES_NAMES,
 
+#ifdef Q_WS_HILDON
+        _HILDON_IM_WINDOW,
+        _HILDON_IM_ACTIVATE,
+        _HILDON_IM_SURROUNDING,
+        _HILDON_IM_SURROUNDING_CONTENT,
+        _HILDON_IM_KEY_EVENT,
+        _HILDON_IM_INSERT_UTF8,
+        _HILDON_IM_COM,
+        _HILDON_IM_CLIPBOARD_COPIED,          //### NOT USED
+        _HILDON_IM_CLIPBOARD_SELECTION_QUERY, //### NOT USED
+        _HILDON_IM_CLIPBOARD_SELECTION_REPLY,
+#endif
+
         // XEMBED
         _XEMBED,
         _XEMBED_INFO,

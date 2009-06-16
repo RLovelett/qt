@@ -76,6 +76,24 @@ class QFont;
 class QPopupMenu;
 class QInputContextPrivate;
 
+#if defined(Q_WS_HILDON)
+// this one is from GtkIMContext
+enum HildonGtkInputMode
+{
+    HILDON_GTK_INPUT_MODE_ALPHA        = 1 << 0,
+    HILDON_GTK_INPUT_MODE_NUMERIC      = 1 << 1,
+    HILDON_GTK_INPUT_MODE_SPECIAL      = 1 << 2,
+    HILDON_GTK_INPUT_MODE_HEXA         = 1 << 3,
+    HILDON_GTK_INPUT_MODE_TELE         = 1 << 4,
+
+    HILDON_GTK_INPUT_MODE_FULL         = (HILDON_GTK_INPUT_MODE_ALPHA | HILDON_GTK_INPUT_MODE_NUMERIC | HILDON_GTK_INPUT_MODE_SPECIAL),
+
+    HILDON_GTK_INPUT_MODE_MULTILINE    = 1 << 28,
+    HILDON_GTK_INPUT_MODE_INVISIBLE    = 1 << 29,
+    HILDON_GTK_INPUT_MODE_AUTOCAP      = 1 << 30,
+    HILDON_GTK_INPUT_MODE_DICTIONARY   = 1 << 31
+};
+#endif
 
 class Q_GUI_EXPORT QInputContext : public QObject
 {
@@ -105,6 +123,9 @@ public:
 #if defined(Q_WS_X11)
     virtual bool x11FilterEvent( QWidget *keywidget, XEvent *event );
 #endif // Q_WS_X11
+#if defined(Q_WS_HILDON)
+    virtual void setInputMode(int mode) = 0;
+#endif
     virtual bool filterEvent( const QEvent *event );
 
     void sendEvent(const QInputMethodEvent &event);
