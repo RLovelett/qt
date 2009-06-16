@@ -613,6 +613,11 @@ struct QX11Data
 
         _NET_SYSTEM_TRAY_VISUAL,
 
+        // Hildon Menu
+#ifdef Q_WS_HILDON
+        _MB_GRAB_TRANSFER,
+#endif
+
         // Property formats
         COMPOUND_TEXT,
         TEXT,

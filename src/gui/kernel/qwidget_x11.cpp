@@ -68,6 +68,10 @@
 
 #include <stdlib.h>
 
+#ifdef Q_WS_HILDON
+#  include "qvarlengtharray.h"
+#endif
+
 //#define ALIEN_DEBUG
 
 // defined in qapplication_x11.cpp
@@ -2623,6 +2627,9 @@ void QWidgetPrivate::createTLSysExtra()
     extra->topextra->validWMState = 0;
     extra->topextra->waitingForMapNotify = 0;
     extra->topextra->userTimeWindow = 0;
+#ifdef Q_WS_HILDON
+    extra->topextra->customContextSet = 0;
+#endif
 }
 
 void QWidgetPrivate::deleteTLSysExtra()
@@ -2851,6 +2858,48 @@ Picture QX11Data::getSolidFill(int screen, const QColor &c)
 void QWidgetPrivate::setModal_sys()
 {
 }
+
+#ifdef Q_WS_HILDON
+/*
+    Sets the _NET_WM_CONTEXT_CUSTOM atom on the root window
+    then Hildon knows that the app is capable to display a global menu
+ */
+bool QWidgetPrivate::setCustomContext()
+{
+    Q_Q(QWidget);
+
+    QWidget *window = q->window();
+    QTLWExtra *x = window->d_func()->topData();
+    Q_ASSERT(x);
+
+    if (x->customContextSet)
+        return true;
+
+    WId windowHandle = window->winId();
+    Atom *oldAtoms = 0;
+    int count = 0;
+
+    if (!XGetWMProtocols(QX11Info::display(), windowHandle, &oldAtoms, &count)) {
+        qWarning("Hildon Integration: Unable to get WM Protocols");
+        return false;
+    }
+    Atom customContext = XInternAtom (QX11Info::display(), "_NET_WM_CONTEXT_CUSTOM", false);
+
+    // create a new list of atoms
+    QVarLengthArray<Atom, 8> newAtoms; //FIXME is the prealloc value okay?
+    newAtoms.append(oldAtoms, count);
+    newAtoms.append(customContext);
+    XFree(oldAtoms);
+
+    if (!XSetWMProtocols(QX11Info::display(), windowHandle, newAtoms.data(), newAtoms.count())) {
+        qWarning("Hildon Integration: Unable to set WM Protocols");
+        return false;
+    }
+
+    x->customContextSet = 1;
+    return true;
+}
+#endif
 
 void qt_x11_getX11InfoForWindow(QX11Info * xinfo, const QX11WindowAttributes &att)
 {
