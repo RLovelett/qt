@@ -278,6 +278,8 @@ void QMessageBoxPrivate::updateSize()
 #elif defined(Q_OS_WINCE)
     // the width of the screen, less the window border.
     int hardLimit = screenSize.width() - (q->frameGeometry().width() - q->geometry().width());
+#elif defined(Q_WS_HILDON)
+    int hardLimit = screenSize.width() - (q->frameGeometry().width() - q->geometry().width());
 #else
     int hardLimit = qMin(screenSize.width() - 480, 1000); // can never get bigger than this
     // on small screens allows the messagebox be the same size as the screen
@@ -290,10 +292,12 @@ void QMessageBoxPrivate::updateSize()
     int softLimit = qMin(hardLimit, 500);
 #else
     // note: ideally on windows, hard and soft limits but it breaks compat
-#ifndef Q_OS_WINCE
-    int softLimit = qMin(screenSize.width()/2, 500);
-#else
+#ifdef Q_WS_HILDON
+    int softLimit = qMin(screenSize.width() * 2 / 3, 500);
+#elif Q_OS_WINCE
     int softLimit = qMin(screenSize.width() * 3 / 4, 500);
+#else
+    int softLimit = qMin(screenSize.width()/2, 500);
 #endif //Q_OS_WINCE
 #endif
 
