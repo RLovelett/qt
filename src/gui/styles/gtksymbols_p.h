@@ -108,6 +108,9 @@ typedef GtkWidget* (*Ptr_gtk_scrolled_window_new)(GtkAdjustment*, GtkAdjustment*
 typedef gchar* (*Ptr_gtk_check_version)(guint, guint, guint);
 typedef GtkToolItem* (*Ptr_gtk_separator_tool_item_new) (void);
 typedef GtkWidget* (*Ptr_gtk_entry_new)(void);
+#ifdef Q_OS_FREMANTLE
+typedef GtkWidget* (*Ptr_gtk_text_view_new)(void);
+#endif
 typedef GtkWidget* (*Ptr_gtk_tree_view_new)(void);
 typedef GtkTreeViewColumn* (*Ptr_gtk_tree_view_get_column)(GtkTreeView *, gint);
 typedef GtkWidget* (*Ptr_gtk_combo_box_new)(void);
@@ -193,6 +196,11 @@ typedef void (*Ptr_gdk_x11_window_set_user_time) (GdkWindow *window, guint32);
 typedef XID  (*Ptr_gdk_x11_drawable_get_xid) (GdkDrawable *);
 typedef Display* (*Ptr_gdk_x11_drawable_get_xdisplay) ( GdkDrawable *);
 
+#ifdef Q_WS_HILDON
+typedef GtkWidget* (*Ptr_hildon_number_editor_new) (int,int);
+typedef void (*Ptr_gtk_widget_set_name) (GtkWidget *, const gchar *);
+#endif
+
 QT_BEGIN_NAMESPACE
 
 class QGtk
@@ -241,6 +249,9 @@ public:
     static Ptr_gtk_frame_new gtk_frame_new;
     static Ptr_gtk_statusbar_new gtk_statusbar_new;
     static Ptr_gtk_entry_new gtk_entry_new;
+#ifdef Q_OS_FREMANTLE
+    static Ptr_gtk_text_view_new gtk_text_view_new;
+#endif
     static Ptr_gtk_hscale_new gtk_hscale_new;
     static Ptr_gtk_vscale_new gtk_vscale_new;
     static Ptr_gtk_hscrollbar_new gtk_hscrollbar_new;
@@ -327,6 +338,12 @@ public:
 
     static Ptr_gconf_client_get_default gconf_client_get_default;
     static Ptr_gconf_client_get_string gconf_client_get_string;
+
+#ifdef Q_WS_HILDON
+    static Ptr_hildon_number_editor_new hildon_number_editor_new;
+    static Ptr_gtk_widget_set_name gtk_widget_set_name;
+#endif
+
 };
 
 // Helper to ensure that we have polished all our gtk widgets

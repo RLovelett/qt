@@ -32,7 +32,7 @@ x11|embedded|!macx-*:styles -= mac
 x11{
     QMAKE_CXXFLAGS += $$QT_CFLAGS_QGTKSTYLE
     LIBS += $$QT_LIBS_QGTKSTYLE
-    styles += gtk
+    styles += gtk hildon
 }
 
 contains( styles, mac ) {
@@ -113,6 +113,17 @@ contains( styles, gtk ) {
 	}
 } else {
 	DEFINES += QT_NO_STYLE_GTK
+}
+
+contains( styles, hildon ) {
+        HEADERS += styles/qhildonstyle.h
+        SOURCES += styles/qhildonstyle.cpp
+        !contains( styles, gtk ) {
+                styles += gtk
+                DEFINES+= QT_STYLE_GTK
+        }
+} else {
+        DEFINES += QT_NO_STYLE_GTK
 }
 
 contains( styles, cleanlooks ) {

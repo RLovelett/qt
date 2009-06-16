@@ -2611,6 +2611,11 @@ void QApplicationPrivate::x11_initialize_style()
         case DE_CDE:
             QApplicationPrivate::app_style = QStyleFactory::create(QLatin1String("cde"));
             break;
+#ifdef Q_WS_HILDON
+        case DE_HILDON:
+            QApplicationPrivate::app_style = QStyleFactory::create(QLatin1String("hildon"));
+        break;
+#endif
         default:
             // Don't do anything
             break;
