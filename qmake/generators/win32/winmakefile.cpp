@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the qmake application of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -626,7 +626,7 @@ void Win32MakefileGenerator::writeStandardParts(QTextStream &t)
     // do this here so we can set DEST_TARGET to be the complete path to the final target if it is needed.
     QString orgDestDir = var("DESTDIR");
     QString destDir = Option::fixPathToTargetOS(orgDestDir, false);
-    if (orgDestDir.endsWith('/') || orgDestDir.endsWith(Option::dir_sep))
+    if (!destDir.isEmpty() && (orgDestDir.endsWith('/') || orgDestDir.endsWith(Option::dir_sep)))
         destDir += Option::dir_sep;
     QString target = QString(project->first("TARGET")+project->first("TARGET_EXT"));
     target.remove("\"");

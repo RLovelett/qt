@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the test suite of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -1475,7 +1475,7 @@ void tst_CssParser::extractFontFamily_data()
     QTest::newRow("unquoted-family-name2") << "font-family: Times        New     Roman" << QString("Times New Roman");
     QTest::newRow("multiple") << "font-family: Times New Roman  , foobar, 'baz'" << QString("Times New Roman");
     QTest::newRow("multiple2") << "font-family: invalid,  Times New   Roman " << QString("Times New Roman");
-    QTest::newRow("invalid") << "font-family: invalid" << QFont().family();
+    QTest::newRow("invalid") << "font-family: invalid" << QFontInfo(QFont("invalid font")).family();
     QTest::newRow("shorthand") << "font: 12pt Times New Roman" << QString("Times New Roman");
     QTest::newRow("shorthand multiple quote") << "font: 12pt invalid, \"Times New Roman\" " << QString("Times New Roman");
     QTest::newRow("shorthand multiple") << "font: 12pt invalid, Times New Roman " << QString("Times New Roman");

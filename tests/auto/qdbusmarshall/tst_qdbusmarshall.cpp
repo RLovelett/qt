@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the test suite of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -83,6 +83,8 @@ private slots:
 
     void sendArgument_data();
     void sendArgument();
+
+    void sendErrors();
 
 private:
     QProcess proc;
@@ -780,6 +782,29 @@ void tst_QDBusMarshall::sendArgument()
 
     if (value.type() != QVariant::UserType)
         QCOMPARE(extracted, value);
+}
+
+void tst_QDBusMarshall::sendErrors()
+{
+    QDBusConnection con = QDBusConnection::sessionBus();
+
+    QVERIFY(con.isConnected());
+    QDBusMessage msg = QDBusMessage::createSignal("/foo", "local.interfaceName",
+                                                  "signalName");
+    msg << qVariantFromValue(QDBusObjectPath());
+
+    QTest::ignoreMessage(QtWarningMsg, "QDBusConnection: error: could not send signal path \"/foo\" interface \"local.interfaceName\" member \"signalName\"");
+    QVERIFY(!con.send(msg));
+
+    msg.setArguments(QVariantList());
+    QDBusObjectPath path;
+
+    QTest::ignoreMessage(QtWarningMsg, "QDBusObjectPath: invalid path \"abc\"");
+    path.setPath("abc");
+    msg << qVariantFromValue(path);
+
+    QTest::ignoreMessage(QtWarningMsg, "QDBusConnection: error: could not send signal path \"/foo\" interface \"local.interfaceName\" member \"signalName\"");
+    QVERIFY(!con.send(msg));
 }
 
 QTEST_MAIN(tst_QDBusMarshall)

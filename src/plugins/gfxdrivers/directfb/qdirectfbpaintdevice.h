@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the plugins of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -61,8 +61,6 @@ public:
     void lockDirectFB(uint flags);
     void unlockDirectFB();
 
-    inline bool forceRasterPrimitives() const { return forceRaster; }
-
     // Reimplemented from QCustomRasterPaintDevice:
     void* memory() const;
     QImage::Format format() const;
@@ -77,7 +75,6 @@ protected:
           dfbSurface(0),
           lockedImage(0),
           screen(scr),
-          forceRaster(false),
           lock(0),
           mem(0)
     {}
@@ -95,7 +92,6 @@ protected:
     QImage *lockedImage;
     QDirectFBScreen *screen;
     int bpl;
-    bool forceRaster;
     uint lock;
     uchar *mem;
 private:

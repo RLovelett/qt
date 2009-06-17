@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtGui module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -1520,6 +1520,10 @@ void QGraphicsItemPrivate::setVisibleHelper(bool newVisible, bool explicitly, bo
 
     // Check if there's nothing to do.
     if (visible == quint32(newVisible))
+        return;
+
+    // Don't show child if parent is not visible
+    if (parent && newVisible && !parent->d_ptr->visible)
         return;
 
     // Modify the property.
@@ -3717,7 +3721,7 @@ void QGraphicsItemPrivate::fullUpdateHelper(bool childrenOnly, bool maybeDirtyCl
         }
     }
     foreach (QGraphicsItem *child, children)
-        child->d_ptr->fullUpdateHelper(false, maybeDirtyClipPath);
+        child->d_ptr->fullUpdateHelper(false, maybeDirtyClipPath, ignoreOpacity);
     dirtyChildren = 1;
 }
 

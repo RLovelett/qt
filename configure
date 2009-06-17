@@ -3,7 +3,7 @@
 # Configures to build the Qt library
 #
 # Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-# Contact: Qt Software Information (qt-info@nokia.com)
+# Contact: Nokia Corporation (qt-info@nokia.com)
 #
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -311,7 +311,7 @@ elif [ $COMMERCIAL_USER = "yes" ]; then
             echo
             echo "You are using an old license file."
             echo
-            echo "Please install the license file supplied by Qt Software,"
+            echo "Please install the license file supplied by Nokia,"
             echo "or install the Qt Open Source Edition if you intend to"
             echo "develop free software."
             exit 1
@@ -2703,23 +2703,24 @@ fi
 if [ "$PLATFORM_MAC" = "yes" ]; then
 #   check -arch arguments for validity.
     ALLOWED="x86 ppc x86_64 ppc64 i386"
-    for i in $CFG_MAC_ARCHS 
+    # Save the list so we can re-write it using only valid values
+    CFG_MAC_ARCHS_IN="$CFG_MAC_ARCHS"
+    CFG_MAC_ARCHS=
+    for i in $CFG_MAC_ARCHS_IN
     do 
         if echo "$ALLOWED" | grep -w -v "$i" > /dev/null 2>&1; then
             echo "Unknown architecture: \"$i\". Supported architectures: x86[i386] ppc x86_64 ppc64";
             exit 2;
         fi
-    done
-
-#   replace "i386" with "x86" to support configuring with -arch i386 as an alias for x86.
-    CFG_MAC_ARCHS="${CFG_MAC_ARCHS/i386/x86}" 
-
-#   Build commmand line arguments we can pass to the compiler during configure tests
-#   by prefixing each arch with "-arch".
-    CFG_MAC_ARCHS_GCC_FORMAT="${CFG_MAC_ARCHS/x86/i386}"
-    CFG_MAC_ARCHS_GCC_FORMAT="${CFG_MAC_ARCHS_GCC_FORMAT/i386_64/x86_64}"
-    for ARCH in $CFG_MAC_ARCHS_GCC_FORMAT; do
-        MAC_ARCHS_COMMANDLINE="$MAC_ARCHS_COMMANDLINE -arch $ARCH"
+        if [ "$i" = "i386" -o "$i" = "x86" ]; then
+            # These are synonymous values
+            # CFG_MAC_ARCHS requires x86 while GCC requires i386
+            CFG_MAC_ARCHS="$CFG_MAC_ARCHS x86"
+            MAC_ARCHS_COMMANDLINE="$MAC_ARCHS_COMMANDLINE -arch i386"
+        else
+            CFG_MAC_ARCHS="$CFG_MAC_ARCHS $i"
+            MAC_ARCHS_COMMANDLINE="$MAC_ARCHS_COMMANDLINE -arch $i"
+        fi
     done
 fi
 
@@ -4129,14 +4130,14 @@ if true; then ###[ '!' -f "$outpath/bin/qmake" ];
             EXTRA_CXXFLAGS="$EXTRA_CXXFLAGS \$(CARBON_CFLAGS)"
             EXTRA_OBJS="qsettings_mac.o qcore_mac.o"
             EXTRA_SRCS="\"$relpath/src/corelib/io/qsettings_mac.cpp\" \"$relpath/src/corelib/kernel/qcore_mac.cpp\""
-	    if echo "$CFG_MAC_ARCHS" | grep x86 > /dev/null 2>&1; then
+	    if echo "$CFG_MAC_ARCHS" | grep x86 > /dev/null 2>&1; then # matches both x86 and x86_64
 		X86_CFLAGS="-arch i386"
 		X86_LFLAGS="-arch i386"
 		EXTRA_CFLAGS="$X86_CFLAGS $EXTRA_CFLAGS"
 		EXTRA_CXXFLAGS="$X86_CFLAGS $EXTRA_CXXFLAGS"
                 EXTRA_LFLAGS="$EXTRA_LFLAGS $X86_LFLAGS"
             fi
-	    if echo "$CFG_MAC_ARCHS" | grep ppc > /dev/null 2>&1; then
+	    if echo "$CFG_MAC_ARCHS" | grep ppc > /dev/null 2>&1; then # matches both ppc and ppc64
 		PPC_CFLAGS="-arch ppc"
 		PPC_LFLAGS="-arch ppc"
 		EXTRA_CFLAGS="$PPC_CFLAGS $EXTRA_CFLAGS"
@@ -7034,9 +7035,9 @@ BEGIN {
 
 FNR == 1 {
     if ( input_file ) {
-  if ( ! target_file )
-      target_file = third
-  print input_file >target_file
+        if ( ! target_file )
+            target_file = third
+        print input_file >target_file
     }
 
     matched_target = 0
@@ -7047,32 +7048,32 @@ FNR == 1 {
 
 /^(TARGET.*=)/ {
     if ( \$3 == "moc" || \$3 ~ /^Qt/ ) {
-  target_file = first
+        target_file = first
         matched_target = 1
     }
 }
 
 matched_target == 0 && /^(TEMPLATE.*=)/ {
     if ( \$3 == "subdirs" )
-  target_file = second
+        target_file = second
     else if ( \$3 == "lib" )
-  template_lib = 1
+        template_lib = 1
     else
-  target_file = third
+        target_file = third
 }
 
 matched_target == 0 && template_lib == 1 && /^(CONFIG.*=)/ {
     if ( \$0 ~ /plugin/ )
         target_file = third
     else
-  target_file = second
+        target_file = second
 }
 
 END {
     if ( input_file ) {
-  if ( ! target_file )
-      target_file = third
-  print input_file >>target_file
+        if ( ! target_file )
+            target_file = third
+        print input_file >>target_file
     }
 }
 

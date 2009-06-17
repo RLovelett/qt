@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtGui module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -1509,7 +1509,6 @@ QWidget *QWidget::keyboardGrabber()
 
 void QWidget::activateWindow()
 {
-    Q_D(QWidget);
     QWidget *tlw = window();
     if (tlw->isVisible() && !tlw->d_func()->topData()->embedded && !X11->deferred_map.contains(tlw)) {
         if (X11->userTime == 0)
@@ -2487,6 +2486,8 @@ void QWidgetPrivate::scroll_sys(int dx, int dy, const QRect &r)
     QRect sr = valid_rect ? r : clipRect();
     if (just_update)
         q->update();
+    else if (!valid_rect)
+        dirty.translate(dx, dy);
 
     int x1, y1, x2, y2, w = sr.width(), h = sr.height();
     if (dx > 0) {

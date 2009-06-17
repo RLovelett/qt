@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the test suite of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -2584,6 +2584,16 @@ void tst_QSortFilterProxyModel::task248868_dynamicSorting()
     for (int row = 0; row < proxy1.rowCount(QModelIndex()); ++row) {
         QModelIndex index = proxy1.index(row, 0, QModelIndex());
         QCOMPARE(proxy1.data(index, Qt::DisplayRole).toString(), expected.at(row));
+    }
+
+    //set up the sorting before seting the model up
+    QSortFilterProxyModel proxy2;
+    proxy2.setDynamicSortFilter(true);
+    proxy2.sort(0);
+    proxy2.setSourceModel(&model2);
+    for (int row = 0; row < proxy2.rowCount(QModelIndex()); ++row) {
+        QModelIndex index = proxy2.index(row, 0, QModelIndex());
+        QCOMPARE(proxy2.data(index, Qt::DisplayRole).toString(), expected.at(row));
     }
 }
 

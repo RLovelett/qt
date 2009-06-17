@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtGui module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -1723,7 +1723,7 @@ void QMessageBox::aboutQt(QWidget *parent, const QString &title)
     QMessageBox *msgBox = new QMessageBox(parent);
     msgBox->setAttribute(Qt::WA_DeleteOnClose);
     msgBox->setWindowTitle(title.isEmpty() ? tr("About Qt") : title);
-    msgBox->setText(translatedTextAboutQt);
+    msgBox->setInformativeText(translatedTextAboutQt);
 
     QPixmap pm(QLatin1String(":/trolltech/qmessagebox/images/qtlogo-64.png"));
     if (!pm.isNull())

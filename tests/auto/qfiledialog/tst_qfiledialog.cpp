@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the test suite of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -159,6 +159,7 @@ private slots:
     void task218353_relativePaths();
     void task251321_sideBarHiddenEntries();
     void task251341_sideBarRemoveEntries();
+    void task254490_selectFileMultipleTimes();
 
 private:
     QByteArray userSettings;
@@ -1979,6 +1980,38 @@ void tst_QFiledialog::task251341_sideBarRemoveEntries()
     QCOMPARE(mySideBar.urls(), expected);
 
     current.rmdir("testDir");
+}
+
+void tst_QFiledialog::task254490_selectFileMultipleTimes()
+{
+    QString tempPath = QDir::tempPath();
+    QTemporaryFile *t;
+    t = new QTemporaryFile;
+    t->open();
+    QNonNativeFileDialog fd(0, "TestFileDialog");
+
+    fd.setDirectory(tempPath);
+    fd.setViewMode(QFileDialog::List);
+    fd.setAcceptMode(QFileDialog::AcceptSave);
+    fd.setFileMode(QFileDialog::AnyFile);
+
+    //This should select the file in the QFileDialog
+    fd.selectFile(t->fileName());
+
+    //This should clear the selection and write it into the filename line edit
+    fd.selectFile("new_file.txt");
+
+    fd.show();
+    QTest::qWait(250);
+
+    QLineEdit *lineEdit = qFindChild<QLineEdit*>(&fd, "fileNameEdit");
+    QVERIFY(lineEdit);
+    QCOMPARE(lineEdit->text(),QLatin1String("new_file.txt"));
+    QListView *list = qFindChild<QListView*>(&fd, "listView");
+    QVERIFY(list);
+    QCOMPARE(list->selectionModel()->selectedRows(0).count(), 0);
+
+    t->deleteLater();
 }
 
 QTEST_MAIN(tst_QFiledialog)

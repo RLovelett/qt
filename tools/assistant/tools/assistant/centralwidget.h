@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Assistant of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -55,6 +55,7 @@ class QLabel;
 class QAction;
 class QCheckBox;
 class QLineEdit;
+class QTextBrowser;
 class QToolButton;
 
 class HelpViewer;
@@ -79,6 +80,10 @@ signals:
     void findNext();
     void findPrevious();
 
+protected:
+    void hideEvent(QHideEvent* event);
+    void showEvent(QShowEvent * event);
+
 private slots:
     void updateButtons();
 
@@ -94,6 +99,7 @@ private:
     QToolButton *toolPrevious;
     QCheckBox *checkWholeWords;
 
+    QPalette appPalette;
     friend class CentralWidget;
 };
 
@@ -176,7 +182,9 @@ private slots:
 private:
     void connectSignals();
     bool eventFilter(QObject *object, QEvent *e);
-    void find(QString ttf, bool forward, bool backward);
+    void find(const QString &ttf, bool forward, bool backward);
+    bool findInTextBrowser(QTextBrowser* browser, const QString &ttf,
+        bool forward, bool backward);
     void initPrinter();
     QString quoteTabTitle(const QString &title) const;
     void highlightSearchTerms();

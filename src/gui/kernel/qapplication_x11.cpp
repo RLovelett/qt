@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtGui module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -2057,14 +2057,6 @@ void qt_init(QApplicationPrivate *priv, int,
                 X11->xfixes_major = major;
             }
         }
-        if (X11->use_xfixes && X11->ptrXFixesSelectSelectionInput) {
-            const unsigned long eventMask =
-                XFixesSetSelectionOwnerNotifyMask | XFixesSelectionWindowDestroyNotifyMask | XFixesSelectionClientCloseNotifyMask;
-            X11->ptrXFixesSelectSelectionInput(X11->display, QX11Info::appRootWindow(0),
-                                               XA_PRIMARY, eventMask);
-            X11->ptrXFixesSelectSelectionInput(X11->display, QX11Info::appRootWindow(0),
-                                               ATOM(CLIPBOARD), eventMask);
-        }
 #endif // QT_NO_XFIXES
 
 #ifndef QT_NO_XCURSOR
@@ -2964,10 +2956,10 @@ QWidget *QApplication::topLevelAt(const QPoint &p)
                     Window wid = widget->internalWinId();
                     while (ctarget && !w) {
                         X11->ignoreBadwindow();
-                        XTranslateCoordinates(X11->display,
-                                              QX11Info::appRootWindow(screen),
-                                              ctarget, x, y, &unused, &unused, &ctarget);
-                        if (X11->badwindow())
+                        if (!XTranslateCoordinates(X11->display,
+                                                   QX11Info::appRootWindow(screen),
+                                                   ctarget, x, y, &unused, &unused, &ctarget)
+                                || X11->badwindow())
                             break;
                         if (ctarget == wid) {
                             // Found!

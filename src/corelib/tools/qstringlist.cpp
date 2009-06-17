@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtCore module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -620,8 +620,6 @@ int QtPrivate::QStringList_lastIndexOf(const QStringList *that, QRegExp &rx, int
     Returns the index position of the first occurrence of \a value in
     the list, searching forward from index position \a from. Returns
     -1 if no item matched.
-
-    By default, this function is case sensitive.
 
     \sa lastIndexOf(), contains(), QList::indexOf()
 */
