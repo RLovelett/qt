@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QMAEMOINTERNETCONNECTIVITY_P_H
 #define QMAEMOINTERNETCONNECTIVITY_P_H
 
@@ -68,129 +69,32 @@ class QMaemoICPrivate : public QObject
    };
 
 public:
-    QMaemoICPrivate():
-        connected(UNKNOWN),
-        icdInterface(0),
-        icdUiInterface(0)
-    {
-        if (!QDBusConnection::systemBus().isConnected()) {
-            qFatal("Cannot connect to the D-BUS session bus.");
-        }
-
-        //Creating D-Bus interfeces
-        icdInterface = new QDBusInterface(ICD_DBUS_SERVICE, ICD_DBUS_PATH, ICD_DBUS_INTERFACE, QDBusConnection::systemBus(), this);
-        icdUiInterface = new QDBusInterface(ICD_UI_DBUS_SERVICE, ICD_UI_DBUS_PATH, ICD_UI_DBUS_INTERFACE, QDBusConnection::systemBus(), this);
-
-        QDBusConnection::systemBus().connect(ICD_DBUS_SERVICE, ICD_DBUS_PATH, ICD_DBUS_INTERFACE, "status_changed",
-                                             this, SLOT(statusChangedSlot(QString, QString, QString, QString) ));
-
-        //Watching for changes in the proxy settings
-        QString httpProxyDir = QString("/system/http_proxy");
-        if (!QGConfBackend::self()->connect(httpProxyDir, proxySettingsChanged))
-            qWarning() << "QMaemoICPrivate fails to watch for GConf changes in " << httpProxyDir; 
-    }
-
-    ~QMaemoICPrivate(){
-    }
-
-    bool isConnected(){
-        if (connected == UNKNOWN)
-            checkConnectionStatus();
-        return connected;
-    }
+    QMaemoICPrivate();
+    ~QMaemoICPrivate();
+	
+    bool isConnected();
+	bool isAutoConnect();
     
     //Show connection dialog.
-    void connectionRequest()
-    {
-        if (isConnected()){
-            qDebug() << "The device is already connected";
-            return;
-        }
+    void connectionRequest();
 
-        QDBusMessage reply;
-        reply = icdUiInterface->call(ICD_UI_SHOW_CONNDLG_REQ, false); //### REMOVE ME
+    bool isHttpProxyUsed();
+    QString currentAPName();
+    QString lastAPName();
 
-#if 0 //TODO: We need a new data class to store IAP.
-        if (iap.isEmpty()){
-            //Show the the Access point list to the user
-            reply = icdUiInterface->call(ICD_UI_SHOW_CONNDLG_REQ, false);
-        }else{
-            //Connect to the last Access Point used
-            qDebug() << "Connecting to" << iap;
-            reply = icdInterface->call(ICD_CONNECT_REQ, iap, 0);
-        }
-#endif
-        if (reply.type() == QDBusMessage::ErrorMessage){
-            readErrorDBusErrorMsg(reply);
-            return;
-        }
-    }
-
-    bool isHttpProxyUsed()
-    {
-        if (connected != CONNECTED)
-            return false;
-        return QGConfBackend::self()->getValue("/system/http_proxy/use_http_proxy").toBool();
-    }
-
+    QString lastAPid();
 
     //Called by the QGConfBackend instance when the proxy parameters change.
-    static void proxySettingsChanged(QString& key, QVariant value){
-        qDebug() << "PROXY SETTINGS CHANGED" << key << value;
-        //emit qmic->proxySettingsChangedSig(key, value);
-    }
+    static void proxySettingsChanged(QString& key, QVariant value);
 
 private:
-    void checkConnectionStatus(){
-        QDBusMessage reply = icdInterface->call(ICD_GET_STATE_REQ);
-
-        if (reply.type() == QDBusMessage::ErrorMessage){
-            readErrorDBusErrorMsg(reply);
-            connected = UNKNOWN;
-            return;
-        }
-
-        QList<QVariant> values;
-        values = reply.arguments();
-        if (values.takeFirst().toInt()){
-            connected = CONNECTED;
-        }else{
-            connected = DISCONNECTED;
-        }
-    }
-
-    void readErrorDBusErrorMsg(const QDBusMessage& msg)
-    {
-        qWarning() << "QMaemoInternetConnectivity has received an error message." << endl
-                   << "Name: " << msg.errorName() << endl
-                   << "Message: " << msg.errorMessage();
-    }
+    void checkConnectionStatus();
+    void readErrorDBusErrorMsg(const QDBusMessage& msg);
 
 private Q_SLOTS:
     //Update the internal vars with the status_changed signals sent by the daemon via D-Bus
-    void statusChangedSlot(QString IAPname, QString networkType, QString state, QString errorCode){
-        qDebug() << "STATUS CHANGED" << IAPname << networkType << state << errorCode;
-
-        Q_UNUSED(networkType); //TODO
-
-        iap = IAPname;
-
-        if (!errorCode.isEmpty()){
-            connected= UNKNOWN;
-            qWarning() << errorCode;
-        }else if (state == "CONNECTED"){
-            connected = CONNECTED;
-            //emit icStatusChanged();
-        }else if (state == "CONNECTING"){
-            connected = CONNECTING;
-        }else if (state == "IDLE" && errorCode.isEmpty()){
-            connected = DISCONNECTED;
-            //emit icStatusChanged();
-        }else if (state == "DISCONNECTING"){
-            connected = DISCONNECTING;
-        }
-        qDebug() << "CHECK connected=" << connected;
-    }
+    void statusChangedSlot(QString IAPname, QString networkType,
+			QString state, QString errorCode);
 
 private:
    int connected;

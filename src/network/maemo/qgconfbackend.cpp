@@ -101,7 +101,7 @@ QVariant QGConfBackend::getValue(const QString &key)
             }
         } break;
         default:
-            qDebug("QGConfBackend::getGConfValue: Sorry, the type %d has not ported ", value->type);
+            qDebug("QGConfBackend::getGConfValue: Sorry, the type %d has not been ported ", value->type);
             return QVariant();
         }
 

@@ -55,6 +55,7 @@ class Q_NETWORK_EXPORT QMaemoInternetConnectivity
 {
     public: 
     static bool isConnected();
+    static QString currentAPName(); 
     static void connectionRequest();
     static bool isHttpProxyUsed();
 };
