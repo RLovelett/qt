@@ -30,3 +30,7 @@ embedded: SUBDIRS += makeqpf
 
 CONFIG+=ordered
 QTDIR_build:REQUIRES = "contains(QT_CONFIG, full-config)"
+
+unix {
+    SUBDIRS += gdb-python
+}
