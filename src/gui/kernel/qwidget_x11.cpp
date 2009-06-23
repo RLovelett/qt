@@ -2006,9 +2006,11 @@ void QWidgetPrivate::setNetWmWindowTypes()
         windowTypes.append(ATOM(_KDE_NET_WM_WINDOW_TYPE_OVERRIDE));
     }
 
-    // normal netwm type - default
-    windowTypes.append(ATOM(_NET_WM_WINDOW_TYPE_NORMAL));
+    if (windowTypes.isEmpty()) {
+        windowTypes.append(ATOM(_NET_WM_WINDOW_TYPE_NORMAL));
+    }
 
+    //FIXME Upstream Qt bug: XDeleteProperty won't never executed.
     if (!windowTypes.isEmpty()) {
         XChangeProperty(X11->display, q->winId(), ATOM(_NET_WM_WINDOW_TYPE), XA_ATOM, 32,
                         PropModeReplace, (unsigned char *) windowTypes.constData(),
