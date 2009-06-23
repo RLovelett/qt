@@ -234,6 +234,10 @@ public:
     void createEventDispatcher();
     QString appName() const;
 
+#ifdef Q_WS_HILDON
+    static bool areXInputEventsUsed();
+#endif
+
     static void dispatchEnterLeave(QWidget *enter, QWidget *leave);
 
     //modality

@@ -62,6 +62,10 @@
 #include <limits.h>
 #endif
 
+#if defined (Q_WS_HILDON)
+#   include <qinputcontext.h>
+#endif
+
 //#define QABSTRACTSPINBOX_QSBDEBUG
 #ifdef QABSTRACTSPINBOX_QSBDEBUG
 #  define QASBDEBUG qDebug
@@ -619,8 +623,27 @@ void QAbstractSpinBox::stepBy(int steps)
 }
 
 /*!
+ */
+QVariant QAbstractSpinBox::inputMethodQuery(Qt::InputMethodQuery query) const
+{    
+    Q_D(const QAbstractSpinBox);
+
+    switch(query) {
+#ifdef Q_WS_HILDON
+        case Qt::ImMode:{
+            int mode = HILDON_GTK_INPUT_MODE_NUMERIC;
+            return QVariant(mode);
+        }
+#endif
+        default:
+            return d->edit->inputMethodQuery(query);
+    }
+}
+
+/*!
     This function returns a pointer to the line edit of the spin box.
 */
+
 
 QLineEdit *QAbstractSpinBox::lineEdit() const
 {
@@ -659,7 +682,9 @@ void QAbstractSpinBox::setLineEdit(QLineEdit *lineEdit)
         d->edit->setParent(this);
 
     d->edit->setFrame(false);
+#ifndef Q_WS_HILDON
     d->edit->setAttribute(Qt::WA_InputMethodEnabled, false);
+#endif
     d->edit->setFocusProxy(this);
     d->edit->setAcceptDrops(false);
 

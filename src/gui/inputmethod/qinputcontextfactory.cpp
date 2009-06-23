@@ -71,6 +71,9 @@
 #ifdef Q_WS_MAC
 #include "qmacinputcontext_p.h"
 #endif
+#ifdef Q_WS_HILDON
+#include "qhildoninputcontext_p.h"
+#endif
 
 #include "private/qfactoryloader_p.h"
 #include "qmutex.h"
@@ -145,6 +148,11 @@ QInputContext *QInputContextFactory::create( const QString& key, QObject *parent
         result = new QMacInputContext;
     }
 #endif
+#if defined(Q_WS_HILDON)
+    if (key == QLatin1String("hildon")) {
+        result = new QHildonInputContext;
+    }
+#endif
 #if defined(QT_NO_LIBRARY) || defined(QT_NO_SETTINGS)
     Q_UNUSED(key);
 #else
@@ -182,6 +190,9 @@ QStringList QInputContextFactory::keys()
 #if defined(Q_WS_MAC)
     result << QLatin1String("mac");
 #endif
+#if defined (Q_WS_HILDON)
+    result << QLatin1String("hildon");
+#endif
 #if !defined(QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
     result += loader()->keys();
 #endif // QT_NO_LIBRARY
@@ -215,6 +226,10 @@ QStringList QInputContextFactory::languages( const QString &key )
 #endif
 #if defined(Q_WS_MAC)
     if (key == QLatin1String("mac"))
+        return QStringList(QString());
+#endif
+#if defined (Q_WS_HILDON)
+    if (key == QLatin1String("hildon"))
         return QStringList(QString());
 #endif
 #if defined(QT_NO_LIBRARY) || defined(QT_NO_SETTINGS)
@@ -271,6 +286,10 @@ QString QInputContextFactory::description( const QString &key )
 #if defined(Q_WS_MAC)
     if (key == QLatin1String("mac"))
         return QInputContext::tr( "Mac OS X input method" );
+#endif
+#if defined(Q_WS_HILDON)
+    if (key == QLatin1String("hildon"))
+        return QInputContext::tr("Hildon input method");
 #endif
 #if defined(QT_NO_LIBRARY) || defined(QT_NO_SETTINGS)
     Q_UNUSED(key);

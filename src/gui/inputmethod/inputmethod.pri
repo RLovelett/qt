@@ -8,8 +8,11 @@ SOURCES +=inputmethod/qinputcontextfactory.cpp \
           inputmethod/qinputcontextplugin.cpp \
           inputmethod/qinputcontext.cpp
 x11 {
-    HEADERS += inputmethod/qximinputcontext_p.h
-    SOURCES += inputmethod/qximinputcontext_x11.cpp
+    HEADERS += inputmethod/qximinputcontext_p.h \
+               inputmethod/qhildoninputcontext_p.h \
+               inputmethod/qhildoninputmethodprotocol.h
+    SOURCES += inputmethod/qximinputcontext_x11.cpp \
+               inputmethod/qhildoninputcontext_x11.cpp
 }
 win32 {
     HEADERS += inputmethod/qwininputcontext_p.h

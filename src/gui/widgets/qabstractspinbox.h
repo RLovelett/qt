@@ -159,6 +159,11 @@ Q_SIGNALS:
 protected:
     QAbstractSpinBox(QAbstractSpinBoxPrivate &dd, QWidget *parent = 0);
 
+#ifdef Q_WS_HILDON
+public:
+    QVariant inputMethodQuery(Qt::InputMethodQuery) const;
+#endif
+
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_editorTextChanged(const QString &))
     Q_PRIVATE_SLOT(d_func(), void _q_editorCursorPositionChanged(int, int))

@@ -291,6 +291,30 @@ static const char * x11_atomnames = {
     // Xkb
     "_XKB_RULES_NAMES\0"
 
+    //Hildon Input Method Protocol
+#ifdef Q_WS_HILDON
+    // find the global im window
+    "_HILDON_IM_WINDOW\0"
+    // activate the input method
+    "_HILDON_IM_ACTIVATE\0"
+    //send sourrounding
+    "_HILDON_IM_SURROUNDING\0"
+    //send sourrounding header
+    "_HILDON_IM_SURROUNDING_CONTENT\0"
+    // send key event to im
+    "_HILDON_IM_KEY_EVENT\0"
+    // input method wants to insert data
+    "_HILDON_IM_INSERT_UTF8\0"
+    // input method wants to communicate with us
+    "_HILDON_IM_COM\0"
+    //### NOT USED YET
+    "_HILDON_IM_CLIPBOARD_COPIED\0"
+    //### NOT USED YET
+    "_HILDON_IM_CLIPBOARD_SELECTION_QUERY\0"
+    // tell im whether we have a selection or not
+    "_HILDON_IM_CLIPBOARD_SELECTION_REPLY\0"
+#endif
+
     // XEMBED
     "_XEMBED\0"
     "_XEMBED_INFO\0"
@@ -318,7 +342,10 @@ static bool        appDoGrab        = false;        // X11 grabbing override (gd
 static bool        app_save_rootinfo = false;        // save root info
 static bool        app_do_modal        = false;        // modal mode
 static Window        curWin = 0;                        // current window
-
+#ifdef Q_WS_HILDON
+//XInput events are managed by Qt for some input devices (eg. touchscreen)
+static bool are_xinput_events_used = false; 
+#endif
 
 // function to update the workarea of the screen - in qdesktopwidget_x11.cpp
 extern void qt_desktopwidget_update_workarea();
@@ -988,6 +1015,7 @@ bool QApplicationPrivate::x11_apply_settings()
             qt_xim_preferred_style = XIMPreeditNothing | XIMStatusNothing;
     }
 #endif
+#ifndef Q_WS_HILDON // hildon has its own input method
     QStringList inputMethods = QInputContextFactory::keys();
     if (inputMethods.size() > 2 && inputMethods.contains(QLatin1String("imsw-multi"))) {
         X11->default_im = QLatin1String("imsw-multi");
@@ -995,6 +1023,7 @@ bool QApplicationPrivate::x11_apply_settings()
         X11->default_im = settings.value(QLatin1String("DefaultInputMethod"),
                                          QLatin1String("xim")).toString();
     }
+#endif
 
     settings.endGroup(); // Qt
 
@@ -1688,8 +1717,11 @@ void qt_init(QApplicationPrivate *priv, int,
     X11->seen_badwindow = false;
 
     X11->motifdnd_active = false;
-
+#ifdef Q_WS_HILDON
+    X11->default_im = QLatin1String("hildon");
+#else
     X11->default_im = QLatin1String("imsw-multi");
+#endif
     priv->inputContext = 0;
 
     // colormap control
@@ -2344,7 +2376,9 @@ void qt_init(QApplicationPrivate *priv, int,
                 i,
                 j;
             bool gotStylus,
-                gotEraser;
+                 gotEraser,
+                 gotTouchscreen; //Maemo changes: Using XInput to get Touchscreen events
+
             XDeviceInfo *devices = 0, *devs;
             XInputClassInfo *ip;
             XAnyClassPtr any;
@@ -2357,6 +2391,9 @@ void qt_init(QApplicationPrivate *priv, int,
             const QString XFREENAMESTYLUS = QLatin1String("stylus");
             const QString XFREENAMEPEN = QLatin1String("pen");
             const QString XFREENAMEERASER = QLatin1String("eraser");
+#endif
+#ifdef Q_WS_HILDON
+            const QString XFREENAMETOUCHSCREEN = QLatin1String("touchscreen");
 #endif
 
             if (X11->ptrXListInputDevices) {
@@ -2388,16 +2425,31 @@ void qt_init(QApplicationPrivate *priv, int,
                     deviceType = QTabletEvent::XFreeEraser;
                     gotEraser = true;
                 }
+#ifdef Q_WS_HILDON
+                else if (devName.endsWith(XFREENAMETOUCHSCREEN)) {
+                    deviceType = QTabletEvent::Stylus;
+                    gotTouchscreen = true;
+                }
 #endif
+#endif //Q_OS_IRIX
+
                 if (deviceType == QTabletEvent::NoDevice)
                     continue;
 
+#ifdef Q_WS_HILDON
+                if (gotStylus || gotEraser || gotTouchscreen) {
+#else
                 if (gotStylus || gotEraser) {
+#endif
                     if (X11->ptrXOpenDevice)
                         dev = X11->ptrXOpenDevice(X11->display, devs->id);
 
                     if (!dev)
                         continue;
+
+#ifdef Q_WS_HILDON
+                    are_xinput_events_used = true;
+#endif
 
                     QTabletDeviceData device_data;
                     device_data.deviceType = deviceType;
@@ -2760,6 +2812,12 @@ QString QApplicationPrivate::appName() const
 {
     return QString::fromLocal8Bit(QT_PREPEND_NAMESPACE(appName));
 }
+
+#ifdef Q_WS_HILDON
+bool QApplicationPrivate::areXInputEventsUsed(){
+    return are_xinput_events_used;
+}
+#endif
 
 const char *QX11Info::appClass()                                // get application class
 {
@@ -3131,7 +3189,17 @@ int QApplication::x11ClientMessage(QWidget* w, XEvent* event, bool passive_only)
         } else {
             if (passive_only) return 0;
             // All other are interactions
+
         }
+#ifdef Q_WS_HILDON
+    } else if (event->xclient.message_type == ATOM(_HILDON_IM_INSERT_UTF8)
+            || event->xclient.message_type == ATOM(_HILDON_IM_COM)
+            || event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING)
+            || event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING_CONTENT)) {
+        QInputContext *qic = w->inputContext();
+        if (qic && qic->x11FilterEvent(w, event))
+            return 0;
+#endif
     } else {
         X11->motifdndHandle(widget, event, passive_only);
     }
