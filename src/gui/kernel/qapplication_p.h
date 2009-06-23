@@ -418,6 +418,9 @@ public:
 #if defined(QT_MAC_USE_COCOA)
     void _q_runModalWindow();
 #endif
+#ifdef Q_WS_HILDON
+    void _q_longPushTimeOut();
+#endif
 #ifndef QT_NO_STYLE_STYLESHEET
     static QString styleSheet;
 #endif
