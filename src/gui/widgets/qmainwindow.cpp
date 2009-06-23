@@ -690,6 +690,10 @@ void QMainWindow::removeToolBarBreak(QToolBar *before)
 */
 void QMainWindow::addToolBar(Qt::ToolBarArea area, QToolBar *toolbar)
 {
+#ifdef Q_WS_HILDON
+    area = Qt::BottomToolBarArea;
+    toolbar->setMovable(false);
+#endif
     if (!checkToolBarArea(area, "QMainWindow::addToolBar"))
         return;
 
