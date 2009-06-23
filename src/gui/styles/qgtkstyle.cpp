@@ -1363,6 +1363,10 @@ void QGtkStyle::drawComplexControl(ComplexControl control, const QStyleOptionCom
                     if (focus)
                         GTK_WIDGET_SET_FLAGS(gtkEntry, GTK_HAS_FOCUS);
 #ifndef Q_OS_FREMANTLE
+                    // Required for inner blue highlight with clearlooks
+                    if (focus)
+                        GTK_WIDGET_SET_FLAGS(gtkEntry, GTK_HAS_FOCUS);
+
                     if (widget && widget->testAttribute(Qt::WA_SetPalette) &&
                         resolve_mask & (1 << QPalette::Base)) // Palette overridden by user
                         p->fillRect(contentRect, option->palette.base().color());
