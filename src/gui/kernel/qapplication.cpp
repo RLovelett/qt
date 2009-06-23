@@ -4952,6 +4952,10 @@ uint QApplicationPrivate::currentPlatform(){
     if (X11->desktopEnvironment == DE_CDE)
         platform |= KB_CDE;
 #endif
+#ifdef Q_WS_HILDON
+    if (X11->desktopEnvironment == DE_HILDON)
+       platform |= KB_Hildon;
+#endif
     return platform;
 }
 

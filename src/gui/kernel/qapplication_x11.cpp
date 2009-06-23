@@ -2271,6 +2271,10 @@ void qt_init(QApplicationPrivate *priv, int,
                         X11->desktopEnvironment = DE_KDE;
                     if (wmName == QLatin1String("Metacity"))
                         X11->desktopEnvironment = DE_GNOME;
+#ifdef Q_WS_HILDON
+                    if (wmName == QLatin1String("matchbox") || wmName == QLatin1String("hildon-desktop"))
+                        X11->desktopEnvironment = DE_HILDON;
+#endif
                 }
             }
         }
