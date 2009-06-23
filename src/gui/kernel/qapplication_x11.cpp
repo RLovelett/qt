@@ -126,6 +126,10 @@ extern "C" {
 
 #include "qwidget_p.h"
 
+#ifdef Q_WS_HILDON
+#  include "qmainwindow.h"
+#endif
+
 #include <private/qbackingstore_p.h>
 
 QT_BEGIN_NAMESPACE
@@ -252,6 +256,11 @@ static const char * x11_atomnames = {
     "_NET_WM_CM_S0\0"
 
     "_NET_SYSTEM_TRAY_VISUAL\0"
+
+    // Hildon Menu
+#ifdef Q_WS_HILDON
+    "_MB_GRAB_TRANSFER\0"
+#endif
 
     // Property formats
     "COMPOUND_TEXT\0"
@@ -2655,6 +2664,11 @@ void QApplicationPrivate::x11_initialize_style()
         case DE_CDE:
             QApplicationPrivate::app_style = QStyleFactory::create(QLatin1String("cde"));
             break;
+#ifdef Q_WS_HILDON
+        case DE_HILDON:
+            QApplicationPrivate::app_style = QStyleFactory::create(QLatin1String("hildon"));
+        break;
+#endif
         default:
             // Don't do anything
             break;
@@ -3186,6 +3200,16 @@ int QApplication::x11ClientMessage(QWidget* w, XEvent* event, bool passive_only)
             X11->xdndHandleDrop(widget, event, passive_only);
         } else if (event->xclient.message_type == ATOM(XdndFinished)) {
             X11->xdndHandleFinished(widget, event, passive_only);
+#ifdef Q_WS_HILDON
+        } else if (event->xclient.message_type == ATOM(_MB_GRAB_TRANSFER)) {
+
+            if (passive_only || !QApplicationPrivate::active_window)
+                return 0;
+
+            QMainWindow *mw=qobject_cast<QMainWindow*>(widget);
+            if (mw)
+              mw->showApplicationContextMenu();
+#endif
         } else {
             if (passive_only) return 0;
             // All other are interactions

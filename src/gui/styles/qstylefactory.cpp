@@ -57,6 +57,9 @@
 #ifndef QT_NO_STYLE_GTK
 #include "qgtkstyle.h"
 #endif
+#ifndef QT_NO_STYLE_HILDON
+#include "qhildonstyle.h"
+#endif
 #ifndef QT_NO_STYLE_WINDOWSXP
 #include "qwindowsxpstyle.h"
 #endif
@@ -169,6 +172,11 @@ QStyle *QStyleFactory::create(const QString& key)
         ret = new QGtkStyle;
     else
 #endif
+#ifndef QT_NO_STYLE_GTK
+    if (style == QLatin1String("hildon"))
+        ret = new QHildonStyle;
+    else
+#endif
 #ifndef QT_NO_STYLE_MAC
     if (style.left(9) == QLatin1String("macintosh")) {
         ret = new QMacStyle;
@@ -240,6 +248,10 @@ QStringList QStyleFactory::keys()
 #ifndef QT_NO_STYLE_GTK
     if (!list.contains(QLatin1String("GTK+")))
         list << QLatin1String("GTK+");
+#endif
+#ifndef QT_NO_STYLE_HILDON
+    if (!list.contains(QLatin1String("Hildon")))
+        list << QLatin1String("Hildon");
 #endif
 #ifndef QT_NO_STYLE_CLEANLOOKS
     if (!list.contains(QLatin1String("Cleanlooks")))

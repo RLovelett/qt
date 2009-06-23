@@ -263,8 +263,11 @@ QPalette QGtkStyle::standardPalette() const
     if (QGtk::isThemeAvailable()) {
         GtkStyle *style = QGtk::gtkStyle();
         GtkWidget *gtkButton = QGtk::gtkWidget(QLS("GtkButton"));
+#ifndef Q_OS_FREMANTLE
         GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("GtkEntry"));
-
+#else
+        GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("GtkTextView"));
+#endif
         GdkColor gdkBg, gdkBase, gdkText, gdkForeground, gdkSbg, gdkSfg;
         QColor bg, base, text, fg, highlight, highlightText;
         gdkBg = style->bg[GTK_STATE_NORMAL];
@@ -272,6 +275,8 @@ QPalette QGtkStyle::standardPalette() const
 
         // Our base and selected color is primarily used for text
         // so we assume a gtkEntry will have the most correct value
+        //NOTE: Reverse color in fremantle themes are set only for
+        //      GtkTextView widgets. GtkEntry returns a dark base color.
         gdkBase = gtkEntry->style->base[GTK_STATE_NORMAL];
         gdkText = gtkEntry->style->text[GTK_STATE_NORMAL];
         gdkSbg = gtkEntry->style->base[GTK_STATE_SELECTED];
@@ -1357,7 +1362,7 @@ void QGtkStyle::drawComplexControl(ComplexControl control, const QStyleOptionCom
                     // Required for inner blue highlight with clearlooks
                     if (focus)
                         GTK_WIDGET_SET_FLAGS(gtkEntry, GTK_HAS_FOCUS);
-
+#ifndef Q_OS_FREMANTLE
                     if (widget && widget->testAttribute(Qt::WA_SetPalette) &&
                         resolve_mask & (1 << QPalette::Base)) // Palette overridden by user
                         p->fillRect(contentRect, option->palette.base().color());
@@ -1366,7 +1371,18 @@ void QGtkStyle::drawComplexControl(ComplexControl control, const QStyleOptionCom
                                                 option->state & State_Enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE,
                                                 GTK_SHADOW_NONE, style, entryPath + QString::number(focus));
                     }
-
+#else
+                    //This code fill a rectangle in the middle of the combobox.
+                    //Using custom palette will draw a colored rectangle in the middle of the combobox.
+                    //The borders will be painted by paintShadow
+                    if (!comboBox->editable) {
+                        GdkColor gdkBg;
+                        QColor bg;
+                        gdkBg = gtkCombo->style->base[GTK_STATE_NORMAL];
+                        bg = QColor(gdkBg.red>>8, gdkBg.green>>8, gdkBg.blue>>8);
+                        p->fillRect(contentRect, bg);
+                    }
+#endif 
                     gtkCachedPainter.paintShadow(gtkEntry, comboBox->editable ? "entry" : "frame", frameRect, frameState,
                                            GTK_SHADOW_IN, gtkEntry->style, entryPath +
                                            QString::number(focus) + QString::number(comboBox->editable) +
@@ -1911,8 +1927,13 @@ void QGtkStyle::drawComplexControl(ComplexControl control, const QStyleOptionCom
                 QRect grooveRect = option->rect.adjusted(focusFrameMargin, outerSize + focusFrameMargin,
                                    -focusFrameMargin, -outerSize - focusFrameMargin);
 
+#ifdef Q_OS_FREMANTLE
+                gtkPainter.paintBox( scaleWidget, "trough-upper", grooveRect, state,
+                                     GTK_SHADOW_IN, style, QString(QLS("p%0")).arg(slider->sliderPosition));
+#else
                 gtkPainter.paintBox( scaleWidget, "trough", grooveRect, state,
                                      GTK_SHADOW_IN, style, QString(QLS("p%0")).arg(slider->sliderPosition));
+#endif
 
                 gboolean trough_side_details = false; // Indicates if the upper or lower scale background differs
                 if (!QGtk::gtk_check_version(2, 10, 0))
@@ -2699,9 +2720,16 @@ void QGtkStyle::drawControl(ControlElement element,
                                    pixelMetric(PM_ButtonShiftVertical, option, widget));
 
                 QFontMetrics fm(menuitem->font);
+#ifdef Q_WS_HILDON
+                int arrow_size = fm.ascent() + fm.descent();
+                gfloat arrow_scaling;
+                QGtk::gtk_widget_style_get(gtkMenu, "maemo-arrow-scaling", &arrow_scaling, NULL);
+                if (arrow_scaling == 0.0)
+                    arrow_scaling = 1.0;
+#else
                 int arrow_size = fm.ascent() + fm.descent() - 2 * gtkMenuItem->style->ythickness;
                 gfloat arrow_scaling = 0.8;
-
+#endif
                 // "arrow-scaling" is actually hardcoded and fails on hardy (see gtk+-2.12/gtkmenuitem.c)
                 // though the current documentation states otherwise
                 int horizontal_padding;

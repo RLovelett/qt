@@ -149,6 +149,9 @@ struct QTLWExtra {
     HICON winIconBig; // internal big Windows icon
     HICON winIconSmall; // internal small Windows icon
 #endif
+#ifdef Q_WS_HILDON
+    bool customContextSet;
+#endif
     QRect normalGeometry; // used by showMin/maximized/FullScreen
     QWindowSurface *windowSurface;
     QPainter *sharedPainter;
@@ -222,6 +225,9 @@ public:
 #ifdef Q_WS_QWS
     void setMaxWindowState_helper();
     void setFullScreenSize_helper();
+#endif
+#ifdef Q_WS_HILDON
+    bool setCustomContext();
 #endif
     void init(QWidget *desktopWidget, Qt::WindowFlags f);
     void create_sys(WId window, bool initializeWindow, bool destroyOldWindow);

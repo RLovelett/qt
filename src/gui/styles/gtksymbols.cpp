@@ -103,6 +103,9 @@ Ptr_gtk_frame_new QGtk::gtk_frame_new = 0;
 Ptr_gtk_expander_new QGtk::gtk_expander_new = 0;
 Ptr_gtk_statusbar_new QGtk::gtk_statusbar_new = 0;
 Ptr_gtk_entry_new QGtk::gtk_entry_new = 0;
+#ifdef Q_OS_FREMANTLE
+Ptr_gtk_text_view_new QGtk::gtk_text_view_new = 0;
+#endif
 Ptr_gtk_hscale_new QGtk::gtk_hscale_new = 0;
 Ptr_gtk_vscale_new QGtk::gtk_vscale_new = 0;
 Ptr_gtk_hscrollbar_new QGtk::gtk_hscrollbar_new = 0;
@@ -192,6 +195,11 @@ Ptr_gdk_x11_drawable_get_xdisplay QGtk::gdk_x11_drawable_get_xdisplay = 0;
 Ptr_gconf_client_get_default QGtk::gconf_client_get_default = 0;
 Ptr_gconf_client_get_string QGtk::gconf_client_get_string = 0;
 
+#ifdef Q_WS_HILDON
+Ptr_hildon_number_editor_new QGtk::hildon_number_editor_new = 0;
+Ptr_gtk_widget_set_name QGtk::gtk_widget_set_name = 0;
+#endif
+
 static QString classPath(GtkWidget *widget)
 {
     char* class_path;
@@ -208,6 +216,10 @@ static QString classPath(GtkWidget *widget)
 static void resolveGtk()
 {
     const QString GTK_PATH(QLS("gtk-x11-2.0"));
+#ifdef Q_WS_HILDON
+    const QString HILDON_PATH(QLS("hildon-1"));
+#endif
+
     QGtk::gtk_init = (Ptr_gtk_init)QLibrary::resolve(GTK_PATH, 0, "gtk_init");
     QGtk::gtk_window_new = (Ptr_gtk_window_new)QLibrary::resolve(GTK_PATH, 0, "gtk_window_new");
     QGtk::gtk_style_attach = (Ptr_gtk_style_attach)QLibrary::resolve(GTK_PATH, 0, "gtk_style_attach");
@@ -268,6 +280,9 @@ static void resolveGtk()
     QGtk::gtk_scrolled_window_new = (Ptr_gtk_scrolled_window_new)QLibrary::resolve(GTK_PATH, 0, "gtk_scrolled_window_new");
     QGtk::gtk_menu_shell_append = (Ptr_gtk_menu_shell_append)QLibrary::resolve(GTK_PATH, 0, "gtk_menu_shell_append");
     QGtk::gtk_entry_new = (Ptr_gtk_entry_new)QLibrary::resolve(GTK_PATH, 0, "gtk_entry_new");
+#ifdef Q_OS_FREMANTLE
+    QGtk::gtk_text_view_new  = (Ptr_gtk_text_view_new)QLibrary::resolve(GTK_PATH, 0, "gtk_text_view_new");
+#endif
     QGtk::gtk_tree_view_new = (Ptr_gtk_tree_view_new)QLibrary::resolve(GTK_PATH, 0, "gtk_tree_view_new");
     QGtk::gtk_combo_box_new = (Ptr_gtk_combo_box_new)QLibrary::resolve(GTK_PATH, 0, "gtk_combo_box_new");
     QGtk::gtk_progress_set_adjustment = (Ptr_gtk_progress_set_adjustment)QLibrary::resolve(GTK_PATH, 0, "gtk_progress_set_adjustment");
@@ -319,6 +334,10 @@ static void resolveGtk()
     QGtk::pango_font_description_get_weight = (Ptr_pango_font_description_get_weight)QLibrary::resolve(GTK_PATH, 0, "pango_font_description_get_weight");
     QGtk::pango_font_description_get_family = (Ptr_pango_font_description_get_family)QLibrary::resolve(GTK_PATH, 0, "pango_font_description_get_family");
     QGtk::pango_font_description_get_style = (Ptr_pango_font_description_get_style)QLibrary::resolve(GTK_PATH, 0, "pango_font_description_get_style");
+#ifdef Q_WS_HILDON
+    QGtk::hildon_number_editor_new = (Ptr_hildon_number_editor_new)QLibrary::resolve(HILDON_PATH, 0, "hildon_number_editor_new");
+    QGtk::gtk_widget_set_name = (Ptr_gtk_widget_set_name)QLibrary::resolve(GTK_PATH, 0, "gtk_widget_set_name");
+#endif
 }
 
 void QGtk::cleanup_gtk_widgets()
@@ -369,10 +388,17 @@ static QString getThemeName()
         foreach (const QString &rcPath, paths) {
             if (!rcPath.isEmpty()) {
                 QFile rcFile(rcPath);
+#ifdef Q_WS_HILDON //Fremantle
+                if (rcPath.contains(QLS("/etc/hildon/theme/gtk-2.0/gtkrc"))){
+                    QString slt = QFile::symLinkTarget("/etc/hildon/theme");
+                    themeName = slt.split(QLS("/")).last();
+                }else
+#endif
                 if (rcFile.exists() && rcFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
                     QTextStream in(&rcFile);
                     while(!in.atEnd()) {
                         QString line = in.readLine();
+#ifndef Q_WS_HILDON //Diablo
                         if (line.contains(QLS("gtk-theme-name"))) {
                             line = line.right(line.length() - line.indexOf(QLS("=")) - 1);
                             line.remove(QLS("\""));
@@ -380,6 +406,13 @@ static QString getThemeName()
                             themeName = line;
                             break;
                         }
+#else
+                        QRegExp rx("include \"/usr/share/themes/([\\d\\w]*)/gtk-2.0/gtkrc\"");
+                        if (rx.indexIn(line, 0) != -1) {
+                            themeName = rx.cap(1);
+                        }
+#endif
+
                     }
                 }
             }
@@ -470,6 +503,13 @@ static void init_gtk_menu()
     GtkWidget *gtkMenu = QGtk::gtk_menu_new();
     QGtk::gtk_menu_item_set_submenu((GtkMenuItem*)(gtkMenuBarItem), gtkMenu);
     QGtk::gtk_widget_realize(gtkMenu);
+#ifdef Q_WS_HILDON
+    //Application context menu.
+    GtkWidget *gtkContainerMenu = QGtk::gtk_menu_new();
+    QGtk::gtk_widget_set_name(gtkContainerMenu, "menu_force_with_corners");
+    QGtk::gtk_widget_realize(gtkContainerMenu);
+    add_widget_to_map(gtkContainerMenu);
+#endif
 
     GtkWidget *gtkMenuItem = QGtk::gtk_menu_item_new();
     QGtk::gtk_menu_shell_append((GtkMenuShell*)gtkMenu, gtkMenuItem);
@@ -667,6 +707,9 @@ void QGtk::initGtkWidgets()
             add_widget(QGtk::gtk_combo_box_new());
             add_widget(QGtk::gtk_combo_box_entry_new());
             add_widget(QGtk::gtk_entry_new());
+#ifdef Q_OS_FREMANTLE
+            add_widget(QGtk::gtk_text_view_new());
+#endif
             add_widget(QGtk::gtk_frame_new(NULL));
             add_widget(QGtk::gtk_expander_new(""));
             add_widget(QGtk::gtk_statusbar_new());
@@ -684,6 +727,10 @@ void QGtk::initGtkWidgets()
             init_gtk_treeview();
             add_widget(QGtk::gtk_vscale_new((GtkAdjustment*)(QGtk::gtk_adjustment_new(1, 0, 1, 0, 0, 0))));
             add_widget(QGtk::gtk_vscrollbar_new(NULL));
+#ifdef Q_WS_HILDON
+            //ComboBoxes buttons
+            add_widget(QGtk::hildon_number_editor_new(0,1));
+#endif
         }
         else // Rebuild map
         {

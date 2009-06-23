@@ -79,6 +79,9 @@
 #   include <private/qt_cocoa_helpers_mac_p.h>
 #endif
 
+#ifdef Q_WS_HILDON
+#   include <qmainwindow.h>
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -2315,6 +2318,16 @@ QMenu::event(QEvent *e)
             keyPressEvent(ke);
             return true;
         }
+#ifdef Q_WS_HILDON
+        //HACK
+        if (ke->key() == Qt::Key_F4){
+            QMainWindow *mw = qobject_cast<QMainWindow*>(parent());
+            if (mw){
+                mw->showApplicationContextMenu();
+                return true;
+            }
+        }
+#endif
     } break;
     case QEvent::ContextMenu:
         if(QMenuPrivate::menuDelayTimer.isActive()) {

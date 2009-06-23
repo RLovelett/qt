@@ -185,6 +185,12 @@ public:
     QT3_SUPPORT_CONSTRUCTOR QMainWindow(QWidget *parent, const char *name, Qt::WindowFlags flags = 0);
 #endif
 
+#ifdef Q_WS_HILDON
+public Q_SLOTS:
+    //NOTE API Changed.
+    void showApplicationContextMenu();
+#endif
+
 #ifndef QT_NO_DOCKWIDGET
 public Q_SLOTS:
     void setAnimated(bool enabled);
