@@ -113,6 +113,19 @@ void QMainWindowPrivate::init()
     explicitIconSize = false;
 
     q->setAttribute(Qt::WA_Hover);
+
+#ifdef Q_WS_HILDON
+    //Binding F4 button
+    QAction *showAppContextMenuAct = new QAction(q);
+    showAppContextMenuAct->setShortcut(Qt::Key_F4);
+    q->connect(showAppContextMenuAct, SIGNAL(triggered()),q , SLOT(showApplicationContextMenu()));
+    q->addAction(showAppContextMenuAct);
+    //Binding F6 button
+    QAction *toggleWindowStateAct = new QAction(q);
+    toggleWindowStateAct->setShortcut(Qt::Key_F6);
+    q->connect(toggleWindowStateAct, SIGNAL(triggered()),q , SLOT(toggleWindowState()));
+    q->addAction(toggleWindowStateAct);
+#endif
 }
 
 /*

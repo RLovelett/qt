@@ -197,6 +197,12 @@ public Q_SLOTS:
     void setDockNestingEnabled(bool enabled);
 #endif
 
+#ifdef Q_WS_HILDON
+public Q_SLOTS:
+    //NOTE API Changed.
+    void toggleWindowState();
+#endif
+
 Q_SIGNALS:
     void iconSizeChanged(const QSize &iconSize);
     void toolButtonStyleChanged(Qt::ToolButtonStyle toolButtonStyle);
