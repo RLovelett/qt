@@ -62,7 +62,6 @@ public:
     bool isComposing() const;
     void setFocusWidget(QWidget *w);
     bool eventFilter(QObject *obj, QEvent *event);
-    void setInputMode(int mode);
     void update();
 
 protected:

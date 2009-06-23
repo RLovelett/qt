@@ -123,9 +123,6 @@ public:
 #if defined(Q_WS_X11)
     virtual bool x11FilterEvent( QWidget *keywidget, XEvent *event );
 #endif // Q_WS_X11
-#if defined(Q_WS_HILDON)
-    virtual void setInputMode(int mode) = 0;
-#endif
     virtual bool filterEvent( const QEvent *event );
 
     void sendEvent(const QInputMethodEvent &event);

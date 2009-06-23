@@ -689,11 +689,6 @@ bool QHildonInputContext::eventFilter(QObject *obj, QEvent *event)
     return QObject::eventFilter(obj, event);
 }
 
-void QHildonInputContext::setInputMode(int mode){
-    inputMode = mode;
-    inputModeChanged();
-}
-
 //TODO
 void QHildonInputContext::update()
 {
