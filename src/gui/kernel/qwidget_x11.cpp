@@ -757,7 +757,10 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
         Atom protocols[4];
         int n = 0;
         protocols[n++] = ATOM(WM_DELETE_WINDOW);        // support del window protocol
+#ifndef Q_OS_FREMANTLE
+	//This is just a workaround
         protocols[n++] = ATOM(WM_TAKE_FOCUS);                // support take focus window protocol
+#endif
         protocols[n++] = ATOM(_NET_WM_PING);                // support _NET_WM_PING protocol
         if (flags & Qt::WindowContextHelpButtonHint)
             protocols[n++] = ATOM(_NET_WM_CONTEXT_HELP);
