@@ -10,7 +10,7 @@ SOURCES +=inputmethod/qinputcontextfactory.cpp \
 x11 {
     HEADERS += inputmethod/qximinputcontext_p.h \
                inputmethod/qhildoninputcontext_p.h \
-               inputmethod/qhildoninputmethodprotocol.h
+               inputmethod/qhildoninputmethodprotocol_p.h
     SOURCES += inputmethod/qximinputcontext_x11.cpp \
                inputmethod/qhildoninputcontext_x11.cpp
 }

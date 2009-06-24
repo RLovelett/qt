@@ -41,7 +41,7 @@
 #define QHILDONINPUTCONTEXT_P_H
 
 #include "QtGui/qinputcontext.h"
-#include "qhildoninputmethodprotocol.h"
+#include "qhildoninputmethodprotocol_p.h"
 
 #ifdef Q_WS_HILDON
 
