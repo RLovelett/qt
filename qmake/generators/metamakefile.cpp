@@ -292,7 +292,7 @@ SubdirsMetaMakefileGenerator::init()
         return false;
     init_flag = true;
 
-    if(Option::recursive) {
+    if(Option::recursive || project->values("CONFIG").indexOf("recursive") != -1) {
         QString old_output_dir = QDir::cleanPath(Option::output_dir);
 	QString old_output = Option::output.fileName();
         QString oldpwd = QDir::cleanPath(qmake_getpwd());
