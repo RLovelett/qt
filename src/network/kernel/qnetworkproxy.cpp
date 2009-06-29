@@ -1241,8 +1241,9 @@ void QNetworkProxyFactory::setApplicationProxyFactory(QNetworkProxyFactory *fact
     function. Future versions of Qt may lift some of the limitations
     listed here.
 
-    On MacOS X, this function will ignore the Proxy Auto Configuration
-    settings, since it cannot execute the associated ECMAScript code.
+    On MacOS X 10.4 and earlier, this function will ignore the Proxy
+    Auto Configuration settings. On MacOS X 10.5 and later, this
+    function will honor the Proxy Auto Configuration settings.
 */
 
 /*!
