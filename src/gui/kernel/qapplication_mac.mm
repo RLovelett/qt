@@ -1049,7 +1049,7 @@ void qt_init(QApplicationPrivate *priv, int)
         if (GetCurrentProcess(&psn) == noErr) {
             // Jambi needs to transform itself since most people aren't "used"
             // to putting things in bundles, but other people may actually not
-            // want to tranform the process (running as a helper or somethng)
+            // want to tranform the process (running as a helper or something)
             // so don't do that for them. This means checking both LSUIElement
             // and LSBackgroundOnly. If you set them both... well, you
             // shouldn't do that.
@@ -1747,7 +1747,7 @@ QApplicationPrivate::globalEventProcessor(EventHandlerCallRef er, EventRef event
                     if(window) {
                         HIViewRef hiview;
                         if(HIViewGetViewForMouseEvent(HIViewGetRoot(window), event, &hiview) == noErr) {
-                            widget = QWidget::find((WId)hiview);;
+                            widget = QWidget::find((WId)hiview);
                             if (widget) {
                                 // Make sure we didn't pass over a widget with a "fake hole" in it.
                                 QWidget *otherWidget = QApplication::widgetAt(where.h, where.v);
@@ -1909,7 +1909,7 @@ QApplicationPrivate::globalEventProcessor(EventHandlerCallRef er, EventRef event
                 QApplication::sendSpontaneousEvent(widget, &e);
                 if (e.isAccepted()) {
 #if defined(DEBUG_MOUSE_MAPS)
-                    qDebug("Bail out early due to table acceptance");
+                    qDebug("Bail out early due to tablet acceptance");
 #endif
                     break;
                 }
