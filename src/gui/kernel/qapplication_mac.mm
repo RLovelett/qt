@@ -1865,16 +1865,20 @@ QApplicationPrivate::globalEventProcessor(EventHandlerCallRef er, EventRef event
 
             QMacTabletHash *tabletHash = qt_mac_tablet_hash();
             if (!tabletHash->contains(tabletPointRec.deviceID)) {
-                qWarning("QCocoaView handleTabletEvent: This tablet device is unknown"
-                        " (received no proximity event for it). Discarding event.");
+                qWarning("handleTabletEvent: This tablet device is unknown"
+                         " (received no proximity event for it). Discarding event.");
                 return false;
             }
             QTabletDeviceData &deviceData = tabletHash->operator[](tabletPointRec.deviceID);
             if (t == QEvent::TabletPress) {
                 deviceData.widgetToGetPress = widget;
-            } else if (t == QEvent::TabletRelease && deviceData.widgetToGetPress) {
-                widget = deviceData.widgetToGetPress;
-                deviceData.widgetToGetPress = 0;
+                qt_button_down = widget;
+            } else if (t == QEvent::TabletRelease) {
+                qt_button_down = 0;
+                if (deviceData.widgetToGetPress) {
+                    widget = deviceData.widgetToGetPress;
+                    deviceData.widgetToGetPress = 0;
+                }
             }
 
             if (widget) {
