@@ -180,7 +180,7 @@ static QNetworkProxy proxyFromDictionary(CFDictionaryRef dict)
     return QNetworkProxy(proxyType, hostName, port, user, password);
 }
 
-const char * cfurlErrorDescription(CFURLError errorCode)
+static const char * cfurlErrorDescription(CFURLError errorCode)
 {
     switch (errorCode) {
         case kCFURLUnknownError:
