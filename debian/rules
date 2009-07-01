@@ -133,6 +133,8 @@ config.status:
 				-system-sqlite \
 				-plugin-sql-sqlite \
 				-openssl \
+				-gtkstyle \
+				-hildon \
 				$(EXTRA_CONFIGURE_OPTS)
 
 clean::
