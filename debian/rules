@@ -135,6 +135,7 @@ config.status:
 				-openssl \
 				-gtkstyle \
 				-hildon \
+				-continue \
 				$(EXTRA_CONFIGURE_OPTS)
 
 clean::
