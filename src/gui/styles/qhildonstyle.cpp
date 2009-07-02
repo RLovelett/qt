@@ -41,7 +41,7 @@
 
 #include "qgtkpainter_p.h"
 
-#if !defined(QT_NO_STYLE_HILDON)
+#if !defined(QT_NO_STYLE_HILDON) && defined(Q_WS_HILDON)
 
 QT_BEGIN_NAMESPACE
 
