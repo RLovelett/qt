@@ -888,7 +888,9 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
         KeySym upper = NoSymbol;
 
         if (commitString.isEmpty()){
-            currentChar = translateKeySym(keysym).at(0);
+            QString ks = translateKeySym(keysym);
+            if (!ks.isEmpty())
+                currentChar = ks.at(0);
         }else{
             currentChar = commitString.at(0);
         }
