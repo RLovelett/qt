@@ -430,7 +430,7 @@ QLibraryInfo::location(LibraryLocation loc)
         if (loc == PrefixPath) {
             // we make the prefix path absolute to the executable's directory
 #ifdef QT_BUILD_QMAKE
-            return QFileInfo(qmake_libraryInfoFile()).absolutePath();
+            return QDir::toNativeSeparators(QFileInfo(qmake_libraryInfoFile()).absolutePath());
 #else
             if (QCoreApplication::instance()) {
 #ifdef Q_OS_MAC
@@ -450,10 +450,10 @@ QLibraryInfo::location(LibraryLocation loc)
 #endif
         } else {
             // we make any other path absolute to the prefix directory
-            return QDir(location(PrefixPath)).absoluteFilePath(ret);
+            return QDir::toNativeSeparators(QDir(location(PrefixPath)).absoluteFilePath(ret));
         }
     }
-    return ret;
+    return QDir::toNativeSeparators(ret);
 }
 
 /*!
