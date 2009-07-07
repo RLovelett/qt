@@ -423,6 +423,7 @@ NPError PluginView::setValue(NPPVariable variable, void* value)
         return NPERR_NO_ERROR;
 #if defined(XP_MACOSX)
     case NPPVpluginDrawingModel:
+        m_drawingModel = (NPDrawingModel)((int)value);
         return NPERR_NO_ERROR;
     case NPPVpluginEventModel:
         return NPERR_NO_ERROR;
@@ -551,6 +552,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_instance(0)
 #if defined(XP_MACOSX)
     , m_isWindowed(false)
+    , m_drawingModel(NPDrawingModelQuickDraw)
 #else
     , m_isWindowed(true)
 #endif

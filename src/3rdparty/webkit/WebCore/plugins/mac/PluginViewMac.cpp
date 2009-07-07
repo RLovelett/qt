@@ -406,7 +406,7 @@ void PluginView::updatePluginWidget()
 
 void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 {
-    if (!m_isStarted) {
+    if (!m_isStarted || (m_drawingModel != NPDrawingModelCoreGraphics)) {
         paintMissingPluginIcon(context, rect);
         return;
     }

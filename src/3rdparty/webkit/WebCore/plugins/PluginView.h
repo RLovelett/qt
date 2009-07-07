@@ -278,6 +278,7 @@ public:
 private:
 
 #if defined(XP_MACOSX)
+        NPDrawingModel m_drawingModel;
         NP_CGContext m_npCgContext;
         OwnPtr<Timer<PluginView> > m_nullEventTimer;
 
