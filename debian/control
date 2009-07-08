@@ -12,7 +12,7 @@ Build-Depends: cdbs, debhelper (>= 5), flex,  doxygen, quilt, sharutils,
  libgles2-dev [arm armel !i386] | libgles2-sgx-img-dev [arm armel !i386], opengles-sgx-img-common-dev [arm armel !i386],
  libgl-dev [i386 !arm !armel], libgl1 [i386 !arm !armel],
  libxau-dev, libxcb1-dev, libxdmcp-dev, libexpat1-dev,  opengles-sgx-img-common [arm armel !i386],
- libsqlite3-dev, libsqlite3-0, libssl-dev
+ libsqlite3-dev, libsqlite3-0, libssl-dev, icd2-osso-ic-dev, libgtk2.0-dev, libhildon1-dev
 Standards-Version: 3.7.3
 
 Package: libqt4-core
