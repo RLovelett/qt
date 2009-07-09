@@ -176,6 +176,9 @@ Ptr_gtk_file_chooser_get_filenames QGtk::gtk_file_chooser_get_filenames = 0;
 Ptr_gtk_file_chooser_set_current_name QGtk::gtk_file_chooser_set_current_name = 0;
 Ptr_gtk_dialog_run QGtk::gtk_dialog_run = 0;
 Ptr_gtk_file_chooser_set_filename QGtk::gtk_file_chooser_set_filename = 0;
+#ifdef Q_WS_HILDON
+Ptr_hildon_file_chooser_dialog_new QGtk::hildon_file_chooser_dialog_new = 0;
+#endif
 
 Ptr_gdk_pixbuf_get_pixels QGtk::gdk_pixbuf_get_pixels = 0;
 Ptr_gdk_pixbuf_get_width QGtk::gdk_pixbuf_get_width = 0;
@@ -218,6 +221,7 @@ static void resolveGtk()
     const QString GTK_PATH(QLS("gtk-x11-2.0"));
 #ifdef Q_WS_HILDON
     const QString HILDON_PATH(QLS("hildon-1"));
+    const QString HILDONFM_PATH("hildonfm");
 #endif
 
     QGtk::gtk_init = (Ptr_gtk_init)QLibrary::resolve(GTK_PATH, 0, "gtk_init");
@@ -239,6 +243,9 @@ static void resolveGtk()
     QGtk::gtk_file_chooser_set_current_name = (Ptr_gtk_file_chooser_set_current_name)QLibrary::resolve(GTK_PATH, 0, "gtk_file_chooser_set_current_name");
     QGtk::gtk_dialog_run = (Ptr_gtk_dialog_run)QLibrary::resolve(GTK_PATH, 0, "gtk_dialog_run");
     QGtk::gtk_file_chooser_set_filename = (Ptr_gtk_file_chooser_set_filename)QLibrary::resolve(GTK_PATH, 0, "gtk_file_chooser_set_filename");
+#ifdef Q_WS_HILDON
+    QGtk::hildon_file_chooser_dialog_new = (Ptr_hildon_file_chooser_dialog_new)QLibrary::resolve(HILDONFM_PATH, 2, "hildon_file_chooser_dialog_new");
+#endif
 
     QGtk::gdk_pixbuf_get_pixels = (Ptr_gdk_pixbuf_get_pixels)QLibrary::resolve(GTK_PATH, 0, "gdk_pixbuf_get_pixels");
     QGtk::gdk_pixbuf_get_width = (Ptr_gdk_pixbuf_get_width)QLibrary::resolve(GTK_PATH, 0, "gdk_pixbuf_get_width");
@@ -803,7 +810,11 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
 
     QFileInfo fileinfo(dir);
     if (dir.isEmpty())
+#ifndef Q_WS_HILDON
+        return;
+#else
         fileinfo.setFile(QDir::currentPath());
+#endif
     fileinfo.makeAbsolute();
     if (fileinfo.isDir()) {
         QGtk::gtk_file_chooser_set_current_folder((GtkFileChooser*)gtkFileChooser, qPrintable(dir));
@@ -814,18 +825,20 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
         QGtk::gtk_file_chooser_set_filename((GtkFileChooser*)gtkFileChooser, qPrintable(dir));
     }
 }
-
+#include <QDebug>
 QString QGtk::openFilename(QWidget *parent, const QString &caption, const QString &dir, const QString &filter,
                             QString *selectedFilter, QFileDialog::Options options)
 {
-
+#ifdef Q_WS_HILDON
+    GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_OPEN);  
+#else
     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
                                                              NULL,
                                                              GTK_FILE_CHOOSER_ACTION_OPEN,
                                                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                                              GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                                              NULL);
-
+#endif
     setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options);
 
     QWidget modal_widget;
@@ -834,27 +847,35 @@ QString QGtk::openFilename(QWidget *parent, const QString &caption, const QStrin
     QApplicationPrivate::enterModal(&modal_widget);
 
     QString filename;
+#ifdef Q_WS_HILDON
+    if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_OK) {
+#else
     if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_ACCEPT) {
+#endif
         char *gtk_filename = QGtk::gtk_file_chooser_get_filename ((GtkFileChooser*)gtkFileChooser);
         filename = QString::fromUtf8(gtk_filename);
         g_free (gtk_filename);
     }
-
     QApplicationPrivate::leaveModal(&modal_widget);
     gtk_widget_destroy (gtkFileChooser);
     return filename;
+
 }
 
 
 QString QGtk::openDirectory(QWidget *parent, const QString &caption, const QString &dir, QFileDialog::Options options)
 {
+ qDebug() << "DIR" << dir;
+#ifdef Q_WS_HILDON
+    GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);  
+#else
     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
                                                              NULL,
                                                              GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
                                                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                                              GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                                              NULL);
-
+#endif
     setupGtkFileChooser(gtkFileChooser, parent, dir, QString(), 0, options);
     QWidget modal_widget;
     modal_widget.setAttribute(Qt::WA_NoChildEventsForParent, true);
@@ -862,7 +883,11 @@ QString QGtk::openDirectory(QWidget *parent, const QString &caption, const QStri
     QApplicationPrivate::enterModal(&modal_widget);
 
     QString filename;
+#ifdef Q_WS_HILDON
+    if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_OK) {
+#else
     if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_ACCEPT) {
+#endif
         char *gtk_filename = QGtk::gtk_file_chooser_get_filename ((GtkFileChooser*)gtkFileChooser);
         filename = QString::fromUtf8(gtk_filename);
         g_free (gtk_filename);
@@ -877,13 +902,16 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
                                  QString *selectedFilter, QFileDialog::Options options)
 {
     QStringList filenames;
+#ifdef Q_WS_HILDON
+    GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_OPEN);  
+#else
     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
                                                              NULL,
                                                              GTK_FILE_CHOOSER_ACTION_OPEN,
                                                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                                              GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                                              NULL);
-
+#endif
     setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options);
     g_object_set(gtkFileChooser, "select-multiple", gboolean(true), NULL);
 
@@ -892,7 +920,11 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
     modal_widget.setParent(parent, Qt::Window);
     QApplicationPrivate::enterModal(&modal_widget);
 
+#ifdef Q_WS_HILDON
+    if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_OK) {
+#else
     if (gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_ACCEPT) {
+#endif
         GSList *gtk_file_names = QGtk::gtk_file_chooser_get_filenames((GtkFileChooser*)gtkFileChooser);
         for (GSList *iterator  = gtk_file_names ; iterator; iterator = iterator->next)
             filenames << QString::fromUtf8((const char*)iterator->data);
@@ -907,12 +939,19 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
 QString QGtk::saveFilename(QWidget *parent, const QString &caption, const QString &dir, const QString &filter,
                            QString *selectedFilter, QFileDialog::Options options)
 {
+    qDebug() << "DIR" << dir
+             << "filter" << filter
+             << "selected filter" << selectedFilter;
+#ifdef Q_WS_HILDON
+    GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_SAVE);  
+#else
     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
                                                              NULL,
                                                              GTK_FILE_CHOOSER_ACTION_SAVE,
                                                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                                              GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
                                                              NULL);
+#endif
     setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options, true);
 
     QWidget modal_widget;
@@ -921,7 +960,11 @@ QString QGtk::saveFilename(QWidget *parent, const QString &caption, const QStrin
     QApplicationPrivate::enterModal(&modal_widget);
 
     QString filename;
+#ifdef Q_WS_HILDON
+    if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_OK) {
+#else
     if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_ACCEPT) {
+#endif
         char *gtk_filename = QGtk::gtk_file_chooser_get_filename ((GtkFileChooser*)gtkFileChooser);
         filename = QString::fromUtf8(gtk_filename);
         g_free (gtk_filename);

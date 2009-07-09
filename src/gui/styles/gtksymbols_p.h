@@ -159,6 +159,7 @@ typedef gint (*Ptr_pango_font_description_get_size) (const PangoFontDescription 
 typedef PangoWeight (*Ptr_pango_font_description_get_weight) (const PangoFontDescription *);
 typedef const char* (*Ptr_pango_font_description_get_family) (const PangoFontDescription *);
 typedef PangoStyle (*Ptr_pango_font_description_get_style) (const PangoFontDescription *desc);
+
 typedef gboolean (*Ptr_gtk_file_chooser_set_current_folder)(GtkFileChooser *, const gchar *);
 typedef GtkFileFilter* (*Ptr_gtk_file_filter_new)(void);
 typedef void (*Ptr_gtk_file_filter_set_name)(GtkFileFilter *, const gchar *);
@@ -176,6 +177,11 @@ typedef void (*Ptr_gtk_file_chooser_set_current_name) (GtkFileChooser *, const g
 typedef gboolean (*Ptr_gtk_file_chooser_set_filename) (GtkFileChooser *chooser, const gchar *name);
 typedef gint (*Ptr_gtk_dialog_run) (GtkDialog*);
 
+#ifdef Q_WS_HILDON
+typedef GtkWidget* (*Ptr_hildon_file_chooser_dialog_new)(GtkWindow *parent,
+                                                         GtkFileChooserAction action);
+
+#endif
 typedef guchar* (*Ptr_gdk_pixbuf_get_pixels) (const GdkPixbuf *pixbuf);
 typedef int (*Ptr_gdk_pixbuf_get_width) (const GdkPixbuf *pixbuf);
 typedef void (*Ptr_gdk_color_free) (const GdkColor *);
@@ -320,6 +326,9 @@ public:
     static Ptr_gtk_file_chooser_set_current_name gtk_file_chooser_set_current_name;
     static Ptr_gtk_dialog_run gtk_dialog_run;
     static Ptr_gtk_file_chooser_set_filename gtk_file_chooser_set_filename;
+#ifdef Q_WS_HILDON
+    static Ptr_hildon_file_chooser_dialog_new hildon_file_chooser_dialog_new;
+#endif
 
     static Ptr_gdk_pixbuf_get_pixels gdk_pixbuf_get_pixels;
     static Ptr_gdk_pixbuf_get_width gdk_pixbuf_get_width;
