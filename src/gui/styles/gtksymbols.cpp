@@ -166,6 +166,7 @@ Ptr_gtk_file_filter_set_name QGtk::gtk_file_filter_set_name = 0;
 Ptr_gtk_file_filter_add_pattern QGtk::gtk_file_filter_add_pattern = 0;
 Ptr_gtk_file_chooser_add_filter QGtk::gtk_file_chooser_add_filter = 0;
 Ptr_gtk_file_chooser_set_filter QGtk::gtk_file_chooser_set_filter = 0;
+Ptr_gtk_file_chooser_get_filter QGtk::gtk_file_chooser_get_filter = 0;
 Ptr_gtk_file_chooser_dialog_new QGtk::gtk_file_chooser_dialog_new = 0;
 Ptr_gtk_file_chooser_set_current_folder QGtk::gtk_file_chooser_set_current_folder = 0;
 Ptr_gtk_file_chooser_get_filename QGtk::gtk_file_chooser_get_filename = 0;
@@ -220,6 +221,7 @@ static void resolveGtk()
     QGtk::gtk_file_filter_add_pattern = (Ptr_gtk_file_filter_add_pattern)libgtk.resolve("gtk_file_filter_add_pattern");
     QGtk::gtk_file_chooser_add_filter = (Ptr_gtk_file_chooser_add_filter)libgtk.resolve("gtk_file_chooser_add_filter");
     QGtk::gtk_file_chooser_set_filter = (Ptr_gtk_file_chooser_set_filter)libgtk.resolve("gtk_file_chooser_set_filter");
+    QGtk::gtk_file_chooser_get_filter = (Ptr_gtk_file_chooser_get_filter)libgtk.resolve("gtk_file_chooser_get_filter");
     QGtk::gtk_file_chooser_dialog_new = (Ptr_gtk_file_chooser_dialog_new)libgtk.resolve("gtk_file_chooser_dialog_new");
     QGtk::gtk_file_chooser_set_current_folder = (Ptr_gtk_file_chooser_set_current_folder)libgtk.resolve("gtk_file_chooser_set_current_folder");
     QGtk::gtk_file_chooser_get_filename = (Ptr_gtk_file_chooser_get_filename)libgtk.resolve("gtk_file_chooser_get_filename");
@@ -720,7 +722,8 @@ extern QStringList qt_make_filter_list(const QString &filter);
 
 static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
                                 const QString &dir, const QString &filter, QString *selectedFilter,
-                                QFileDialog::Options options, bool isSaveDialog = false)
+                                QFileDialog::Options options, bool isSaveDialog = false,
+                                QMap<GtkFileFilter *, QString> *filterMap = 0)
 {
     g_object_set(gtkFileChooser, "do-overwrite-confirmation", gboolean(!(options & QFileDialog::DontConfirmOverwrite)), NULL);
     g_object_set(gtkFileChooser, "local_only", gboolean(true), NULL);
@@ -735,6 +738,8 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
             foreach (const QString &fileExtension, extensions) {
                 QGtk::gtk_file_filter_add_pattern (gtkFilter, qPrintable(fileExtension));
             }
+            if (filterMap)
+                filterMap->insert(gtkFilter, rawfilter);
             QGtk::gtk_file_chooser_add_filter((GtkFileChooser*)gtkFileChooser, gtkFilter);
             if (selectedFilter && (rawfilter == *selectedFilter))
                 QGtk::gtk_file_chooser_set_filter((GtkFileChooser*)gtkFileChooser, gtkFilter);
@@ -771,7 +776,7 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
 QString QGtk::openFilename(QWidget *parent, const QString &caption, const QString &dir, const QString &filter,
                             QString *selectedFilter, QFileDialog::Options options)
 {
-
+    QMap<GtkFileFilter *, QString> filterMap;
     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
                                                              NULL,
                                                              GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -779,7 +784,7 @@ QString QGtk::openFilename(QWidget *parent, const QString &caption, const QStrin
                                                              GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                                              NULL);
 
-    setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options);
+    setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options, false, &filterMap);
 
     QWidget modal_widget;
     modal_widget.setAttribute(Qt::WA_NoChildEventsForParent, true);
@@ -791,6 +796,10 @@ QString QGtk::openFilename(QWidget *parent, const QString &caption, const QStrin
         char *gtk_filename = QGtk::gtk_file_chooser_get_filename ((GtkFileChooser*)gtkFileChooser);
         filename = QString::fromUtf8(gtk_filename);
         g_free (gtk_filename);
+        if (selectedFilter) {
+            GtkFileFilter *gtkFilter = QGtk::gtk_file_chooser_get_filter ((GtkFileChooser*)gtkFileChooser);
+            *selectedFilter = filterMap.value(gtkFilter);
+        }
     }
 
     QApplicationPrivate::leaveModal(&modal_widget);
@@ -801,6 +810,7 @@ QString QGtk::openFilename(QWidget *parent, const QString &caption, const QStrin
 
 QString QGtk::openDirectory(QWidget *parent, const QString &caption, const QString &dir, QFileDialog::Options options)
 {
+    QMap<GtkFileFilter *, QString> filterMap;
     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
                                                              NULL,
                                                              GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
@@ -830,6 +840,7 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
                                  QString *selectedFilter, QFileDialog::Options options)
 {
     QStringList filenames;
+    QMap<GtkFileFilter *, QString> filterMap;
     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
                                                              NULL,
                                                              GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -837,7 +848,7 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
                                                              GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
                                                              NULL);
 
-    setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options);
+    setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options, false, &filterMap);
     g_object_set(gtkFileChooser, "select-multiple", gboolean(true), NULL);
 
     QWidget modal_widget;
@@ -850,6 +861,10 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
         for (GSList *iterator  = gtk_file_names ; iterator; iterator = iterator->next)
             filenames << QString::fromUtf8((const char*)iterator->data);
         g_slist_free(gtk_file_names);
+        if (selectedFilter) {
+            GtkFileFilter *gtkFilter = QGtk::gtk_file_chooser_get_filter ((GtkFileChooser*)gtkFileChooser);
+            *selectedFilter = filterMap.value(gtkFilter);
+        }
     }
 
     QApplicationPrivate::leaveModal(&modal_widget);
@@ -860,13 +875,14 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
 QString QGtk::saveFilename(QWidget *parent, const QString &caption, const QString &dir, const QString &filter,
                            QString *selectedFilter, QFileDialog::Options options)
 {
+    QMap<GtkFileFilter *, QString> filterMap;
     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
                                                              NULL,
                                                              GTK_FILE_CHOOSER_ACTION_SAVE,
                                                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                                              GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
                                                              NULL);
-    setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options, true);
+    setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options, true, &filterMap);
 
     QWidget modal_widget;
     modal_widget.setAttribute(Qt::WA_NoChildEventsForParent, true);
@@ -878,6 +894,10 @@ QString QGtk::saveFilename(QWidget *parent, const QString &caption, const QStrin
         char *gtk_filename = QGtk::gtk_file_chooser_get_filename ((GtkFileChooser*)gtkFileChooser);
         filename = QString::fromUtf8(gtk_filename);
         g_free (gtk_filename);
+        if (selectedFilter) {
+            GtkFileFilter *gtkFilter = QGtk::gtk_file_chooser_get_filter ((GtkFileChooser*)gtkFileChooser);
+            *selectedFilter = filterMap.value(gtkFilter);
+        }
     }
 
     QApplicationPrivate::leaveModal(&modal_widget);
