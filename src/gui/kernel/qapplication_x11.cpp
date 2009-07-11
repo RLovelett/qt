@@ -2000,10 +2000,18 @@ void qt_init(QApplicationPrivate *priv, int,
             // engine to work on a QImage with BGR layout.
             bool local = displayName.isEmpty() || displayName.lastIndexOf(QLatin1Char(':')) == 0;
             if (local && (qgetenv("QT_X11_NO_MITSHM").toInt() == 0)) {
+
+#ifdef Q_WS_HILDON
+				// The original code assumes 24bit color but NIT is 16 color,
+				// so X11->use_mitshm is set as false, and it causes a slowness issue
+				// for raster drawing.
+				X11->use_mitshm = mitshm_pixmaps;
+#else
                 Visual *defaultVisual = DefaultVisual(X11->display, DefaultScreen(X11->display));
                 X11->use_mitshm = mitshm_pixmaps && (defaultVisual->red_mask == 0xff0000
                                                      && defaultVisual->green_mask == 0xff00
                                                      && defaultVisual->blue_mask == 0xff);
+#endif // Q_WS_HILDON
             }
         }
 #endif // QT_NO_MITSHM
