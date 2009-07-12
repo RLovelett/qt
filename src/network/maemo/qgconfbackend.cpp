@@ -72,12 +72,12 @@ QVariant QGConfBackend::getValue(const QString &key)
 
         value = q_gconf_client_get(client, qPrintable(key), &err);
         if (err) {
-            qDebug() << "ERROR: Unable to get the Value";
+            //qDebug() << "ERROR: Unable to get the Value";
             g_error_free (err);
             return QVariant();
         }
         if (!value){
-            qDebug() << "VALUE is 0";
+            //qDebug() << "VALUE is 0";
             return QVariant();
         }
         switch(value->type){
@@ -101,7 +101,7 @@ QVariant QGConfBackend::getValue(const QString &key)
             }
         } break;
         default:
-            qDebug("QGConfBackend::getGConfValue: Sorry, the type %d has not been ported ", value->type);
+            //qDebug("QGConfBackend::getGConfValue: Sorry, the type %d has not been ported ", value->type);
             return QVariant();
         }
 
@@ -121,7 +121,7 @@ bool QGConfBackend::connect(const QString& dir, slot funcToCall){
     /*
     QMap<QString, slot>::const_iterator i = map.find(dir);
     if (i != map.end()){
-        qDebug() << "The key exists already in the Map.";
+        //qDebug() << "The key exists already in the Map.";
         return false;
     }*/
 
@@ -143,14 +143,14 @@ void QGConfBackend::watch(const QString& dir, callbackFunc cPtr){
     q_gconf_client_add_dir(client, qPrintable(dir), GCONF_CLIENT_PRELOAD_NONE, &err);
 
     if (err) {
-        qDebug() <<  "Failed to add a watch to GCClient:" << err->message;
+        //qDebug() <<  "Failed to add a watch to GCClient:" << err->message;
         g_error_free (err);
     }
 
     q_gconf_client_notify_add(client, qPrintable(dir), cPtr, 0, 0, &err);
 
     if (err) {
-        qDebug() << "Failed to add register the callback" << err->message;
+        //qDebug() << "Failed to add register the callback" << err->message;
         g_error_free (err);
     }
 }
@@ -159,7 +159,7 @@ void QGConfBackend::callback(GConfClient* a, guint b, GConfEntry* c, void* d){
     Q_UNUSED(a);
     Q_UNUSED(b);
     Q_UNUSED(d);
-    qDebug() << "KEY" << c->key << "VALUE TYPE" << c->value->type;
+    //qDebug() << "KEY" << c->key << "VALUE TYPE" << c->value->type;
 
     QVariant value;
     const QString fullKey = c->key;
