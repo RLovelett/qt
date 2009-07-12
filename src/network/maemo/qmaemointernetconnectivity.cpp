@@ -111,11 +111,11 @@ bool QMaemoICPrivate::isAutoConnect()
 {
 	QString auto_connect = QGConfBackend::self()->getValue(
 			"/system/osso/connectivity/network_type/auto_connect").toString();
-	qDebug() << "auto_connect:" << auto_connect;
+	//qDebug() << "auto_connect:" << auto_connect;
 
 	int search_interval = QGConfBackend::self()->getValue(
 			"/system/osso/connectivity/network_type/search_interval").toInt();
-	qDebug() << "search_interval:" << search_interval;
+	//qDebug() << "search_interval:" << search_interval;
 
 	// Connect automatically:
 	// Always ask -> empty
@@ -133,7 +133,7 @@ bool QMaemoICPrivate::isAutoConnect()
 
 bool QMaemoICPrivate::isConnected()
 {
-	qDebug() << "isConnected() :" << connected;
+	//qDebug() << "isConnected() :" << connected;
 	if (connected == UNKNOWN)
 		checkConnectionStatus();
 	return connected;
@@ -142,12 +142,12 @@ bool QMaemoICPrivate::isConnected()
 void QMaemoICPrivate::connectionRequest()
 {
 	if (isConnected()) {
-		qDebug() << "The device is already connected";
+		//qDebug() << "The device is already connected";
 		return;
 	}
 
 	if (!isAutoConnect()) {
-		qDebug() << "The device should not auto connect";
+		//qDebug() << "The device should not auto connect";
 		return;
 	}
 
@@ -156,14 +156,14 @@ void QMaemoICPrivate::connectionRequest()
 	//Check last used network
 	//NOTE: Chinook needs lastApName
 	const QString lastNetwork = lastAPid();
-	qDebug() << "Last used network is " << lastNetwork;
+	//qDebug() << "Last used network is " << lastNetwork;
 	
 	if (lastNetwork.isEmpty()) {
 		//Show the the Access point list to the user
 		reply = icdUiInterface->call(ICD_UI_SHOW_CONNDLG_REQ, false);
 	} else {
 		//Connect to the last Access Point used
-		qDebug() << "Connecting to" << lastNetwork;
+		//qDebug() << "Connecting to" << lastNetwork;
 		quint32 i = 0;
 		reply = icdInterface->call(ICD_CONNECT_REQ, lastNetwork, i);
 	}
@@ -212,13 +212,13 @@ QString QMaemoICPrivate::lastAPid()
 //Called by the QGConfBackend instance when the proxy parameters change.
 void QMaemoICPrivate::proxySettingsChanged(QString& key, QVariant value)
 {
-	qDebug() << "PROXY SETTINGS CHANGED" << key << value;
+	//qDebug() << "PROXY SETTINGS CHANGED" << key << value;
 	//emit qmic->proxySettingsChangedSig(key, value);
 }
 
 void QMaemoICPrivate::checkConnectionStatus()
 {
-	qDebug() << "echeckConnectionStatus()";
+	//qDebug() << "echeckConnectionStatus()";
 	QDBusMessage reply = icdInterface->call(ICD_GET_STATE_REQ);
 
 	if (reply.type() == QDBusMessage::ErrorMessage) {
@@ -229,7 +229,7 @@ void QMaemoICPrivate::checkConnectionStatus()
 
 	QList<QVariant> values;
 	values = reply.arguments();
-	qDebug() << "reply arg size:" << values.size();
+	//qDebug() << "reply arg size:" << values.size();
 #if 0
 	if (values.takeFirst().toInt()) {
 		connected = CONNECTED;
@@ -240,7 +240,7 @@ void QMaemoICPrivate::checkConnectionStatus()
 	connected = DISCONNECTED;
 	while (!values.isEmpty()) {
 		int n = values.takeFirst().toInt();
-		qDebug() << "status:" << n;
+		//qDebug() << "status:" << n;
 		if (n) {
 		//if (values.takeFirst().toInt()) {
 			connected = CONNECTED;
@@ -248,7 +248,7 @@ void QMaemoICPrivate::checkConnectionStatus()
 		}
 	}
 #endif
-	qDebug() << "echeckConnectionStatus() done";
+	//qDebug() << "echeckConnectionStatus() done";
 }
 
 void QMaemoICPrivate::readErrorDBusErrorMsg(const QDBusMessage& msg)
@@ -260,7 +260,7 @@ void QMaemoICPrivate::readErrorDBusErrorMsg(const QDBusMessage& msg)
 
 void QMaemoICPrivate::statusChangedSlot(QString IAPname, QString networkType, QString state, QString errorCode)
 {
-	qDebug() << "STATUS CHANGED" << IAPname << networkType << state << errorCode;
+	//qDebug() << "STATUS CHANGED" << IAPname << networkType << state << errorCode;
 
 	Q_UNUSED(networkType); //TODO
 
@@ -280,7 +280,7 @@ void QMaemoICPrivate::statusChangedSlot(QString IAPname, QString networkType, QS
 	} else if (state == "DISCONNECTING") {
 		connected = DISCONNECTING;
 	}
-	qDebug() << "CHECK connected=" << connected;
+	//qDebug() << "CHECK connected=" << connected;
 }
 
 QT_END_NAMESPACE
