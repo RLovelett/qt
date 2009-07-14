@@ -1,4 +1,12 @@
-qt4-x11 (4.6.0~git20090607-0maemo0) experimental; urgency=low
+qt4-x11 (4.5.2-git20090622-0maemo2) experimental; urgency=low
+
+  * Commenting out qDebugs in maemo connectivity
+  * Enabling mitshm support
+  * Fix libgles2 dependencie
+
+ -- Antonio Aloisio <antonio.aloisio@nokia.com>  Wed, 15 Jul 2009 00:34:31 +0300
+
+qt4-x11 (4.5.2-git20090622-0maemo1) experimental; urgency=low
 
   * Initial release.
 
