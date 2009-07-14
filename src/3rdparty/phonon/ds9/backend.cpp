@@ -69,7 +69,7 @@ namespace Phonon
             switch (c)
             {
             case MediaObjectClass:
-                return new MediaObject(parent);
+                return new MediaObject(&m_directShowMutex, parent);
             case AudioOutputClass:
                 return new AudioOutput(this, parent);
 #ifndef QT_NO_PHONON_EFFECT
@@ -140,6 +140,7 @@ namespace Phonon
 #ifdef Q_OS_WINCE
 					ret << 0; // only one audio device with index 0
 #else
+					QMutexLocker locker(&m_directShowMutex);
 					ComPointer<ICreateDevEnum> devEnum(CLSID_SystemDeviceEnum, IID_ICreateDevEnum);
 					if (!devEnum) {
 						return ret; //it is impossible to enumerate the devices
@@ -182,6 +183,7 @@ namespace Phonon
 #ifndef QT_NO_PHONON_EFFECT
             case Phonon::EffectType:
                 {
+                    QMutexLocker locker(&m_directShowMutex);
                     m_audioEffects.clear();
                     ComPointer<IEnumDMO> enumDMO;
                     HRESULT hr = ::DMOEnum(DMOCATEGORY_AUDIO_EFFECT, DMO_ENUMF_INCLUDE_KEYED, 0, 0, 0, 0, enumDMO.pparam());

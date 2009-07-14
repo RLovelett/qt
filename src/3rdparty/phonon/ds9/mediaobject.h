@@ -85,7 +85,7 @@ namespace Phonon
         {
             Q_OBJECT
         public:
-            WorkerThread();
+            WorkerThread(QMutex* directShowMutex);
             ~WorkerThread();
 
             virtual void run();
@@ -145,6 +145,7 @@ namespace Phonon
             quint16 m_currentWorkId;
             QWinWaitCondition m_waitCondition;
             QMutex m_mutex;
+            QMutex* m_directShowMutex;
 
             //this is for WaitForMultipleObjects
             struct
@@ -168,7 +169,7 @@ namespace Phonon
 #endif //QT_NO_PHONON_ABSTRACTMEDIASTREAM
                     )
         public:
-            MediaObject(QObject *parent);
+            MediaObject(QMutex* directShowMutex, QObject *parent);
             ~MediaObject();
             Phonon::State state() const;
             bool hasVideo() const;
@@ -303,6 +304,7 @@ namespace Phonon
 #endif //QT_NO_PHONON_MEDIACONTROLLER
             qint64 m_targetTick;
 
+            QMutex* m_directShowMutex;
             WorkerThread m_thread;
         };
     }

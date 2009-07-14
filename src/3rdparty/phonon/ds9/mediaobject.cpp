@@ -48,8 +48,9 @@ namespace Phonon
         typedef BOOL (WINAPI* LPAMGETERRORTEXT)(HRESULT, WCHAR *, DWORD);
 
         //first the definition of the WorkerThread class
-        WorkerThread::WorkerThread()
-          : QThread(), m_currentRenderId(0), m_finished(false), m_currentWorkId(1)
+        WorkerThread::WorkerThread(QMutex* directShowMutex)
+          : QThread(), m_currentRenderId(0), m_finished(false), m_currentWorkId(1),
+          m_directShowMutex(directShowMutex)
         {
         }
 
@@ -210,7 +211,7 @@ namespace Phonon
             {
                 QMutexLocker locker(&m_mutex);
                 m_currentRender = w.graph;
-			    m_currentRenderId = w.id;
+                m_currentRenderId = w.id;
             }
 
             if (w.task == ReplaceGraph) {
@@ -239,6 +240,7 @@ namespace Phonon
             } else if (w.task == Render) {
                 if (w.filter) {
                     //let's render pins
+                    QMutexLocker directShowLocker(m_directShowMutex);
                     w.graph->AddFilter(w.filter, 0);
                     const QList<OutputPin> outputs = BackendNode::pins(w.filter, PINDIR_OUTPUT);
                     for (int i = 0; i < outputs.count(); ++i) {
@@ -250,10 +252,11 @@ namespace Phonon
                     }
                 } else if (!w.url.isEmpty()) {
                     //let's render a url (blocking call)
+                    QMutexLocker directShowLocker(m_directShowMutex);
                     hr = w.graph->RenderFile(reinterpret_cast<const wchar_t *>(w.url.utf16()), 0);
                 }
                 if (hr != E_ABORT) {
-					emit asyncRenderFinished(w.id, hr, w.graph);
+                    emit asyncRenderFinished(w.id, hr, w.graph);
                 }
             } else if (w.task == Seek) {
                 //that's a seekrequest
@@ -271,8 +274,8 @@ namespace Phonon
                 emit asyncSeekingFinished(w.id, currentTime);
                 hr = E_ABORT; //to avoid emitting asyncRenderFinished 
             } else if (w.task == ChangeState) {
-
                 //remove useless decoders
+                QMutexLocker directShowLocker(m_directShowMutex);
                 QList<Filter> unused;
                 for (int i = 0; i < w.decoders.count(); ++i) {
                     const Filter &filter = w.decoders.at(i);
@@ -330,13 +333,13 @@ namespace Phonon
             {
                 QMutexLocker locker(&m_mutex);
                 m_currentRender = Graph();
-			    m_currentRenderId = 0;
+                m_currentRenderId = 0;
             }
 
         }
 
-		void WorkerThread::abortCurrentRender(qint16 renderId)
-		{
+        void WorkerThread::abortCurrentRender(qint16 renderId)
+        {
             QMutexLocker locker(&m_mutex);
             bool found = false;
             //we try to see if there is already an attempt to seek and we remove it
@@ -348,10 +351,10 @@ namespace Phonon
                 }
             }
 
-			if (m_currentRender && m_currentRenderId == renderId) {
-				m_currentRender->Abort();
-			}
-		}
+                if (m_currentRender && m_currentRenderId == renderId) {
+                        m_currentRender->Abort();
+                }
+        }
 
         //tells the thread to stop processing
         void WorkerThread::signalStop()
@@ -369,7 +372,7 @@ namespace Phonon
         }
 
 
-        MediaObject::MediaObject(QObject *parent) : BackendNode(parent),
+        MediaObject::MediaObject(QMutex* directShowMutex, QObject *parent) : BackendNode(parent),
             transactionState(Phonon::StoppedState),
             m_errorType(Phonon::NoError),
             m_state(Phonon::LoadingState),
@@ -385,7 +388,8 @@ namespace Phonon
             m_autoplayTitles(true),
             m_currentTitle(0),
 #endif //QT_NO_PHONON_MEDIACONTROLLER
-            m_targetTick(INFINITE)
+            m_targetTick(INFINITE),
+            m_thread(directShowMutex)
         {
 
             for(int i = 0; i < FILTER_COUNT; ++i) {

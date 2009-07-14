@@ -23,6 +23,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <phonon/phononnamespace.h>
 
 #include <QtCore/QList>
+#include <QtCore/QMutex>
 
 #include "compointer.h"
 #include "backendnode.h"
@@ -74,6 +75,7 @@ namespace Phonon
             };
             mutable QVector<AudioMoniker> m_audioOutputs;
             mutable QVector<CLSID> m_audioEffects;
+            mutable QMutex m_directShowMutex;
         };
     }
 }
