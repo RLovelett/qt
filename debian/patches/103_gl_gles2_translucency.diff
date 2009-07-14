@@ -1,0 +1,188 @@
+author: Abdiel Janulgue <abdiel.janulgue@nokia.com>
+
+--- a/src/opengl/gl2paintengineex/qpaintengineex_opengl2.cpp
++++ b/src/opengl/gl2paintengineex/qpaintengineex_opengl2.cpp
+@@ -1010,6 +1010,16 @@ bool QGL2PaintEngineEx::begin(QPaintDevice *pdev)
+ //     d->ctx->swapBuffers();
+ //     qDebug("You should see green now");
+ //     sleep(5);
++    
++    const QColor &c = widget->palette().brush(widget->backgroundRole()).color();
++    glClearColor(c.redF(), c.greenF(), c.blueF(), widget->format().alpha() ? c.alphaF() : 1.0);
++    if (d->ctx->d_func()->clear_on_painter_begin && widget->autoFillBackground()) {
++        GLbitfield clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
++#ifndef QT_OPENGL_ES
++        clearBits |= GL_ACCUM_BUFFER_BIT;
++#endif
++        glClear(clearBits);
++    }
+ 
+     d->brushTextureDirty = true;
+     d->brushUniformsDirty = true;
+--- a/src/opengl/qgl_egl.cpp
++++ b/src/opengl/qgl_egl.cpp
+@@ -57,12 +57,17 @@ void qt_egl_set_format(QEglProperties& props, int deviceType, const QGLFormat& f
+     // Set the pixel format to that contained in the QGLFormat
+     // if the system hasn't already chosen a fixed format to
+     // match the pixmap, widget, etc.
++    
++    // Update: SGX returns an invalid config if pixel values dont really match
++    // the available ones. Table 3.4 of the EGL 1.4 standard says that the 
++    // requested pixel value should be <= than the actual value. 
++    // This doesn't seem to be the case on SGX other than the alpha channel.
+     if (props.value(EGL_RED_SIZE) == EGL_DONT_CARE || f.redBufferSize() != -1)
+-        props.setValue(EGL_RED_SIZE, f.redBufferSize() == -1 ? 1 : f.redBufferSize());
++        props.setValue(EGL_RED_SIZE, f.redBufferSize() == -1 ? EGL_DONT_CARE : f.redBufferSize());
+     if (props.value(EGL_GREEN_SIZE) == EGL_DONT_CARE || f.greenBufferSize() != -1)
+-        props.setValue(EGL_GREEN_SIZE, f.greenBufferSize() == -1 ? 1 : f.greenBufferSize());
++        props.setValue(EGL_GREEN_SIZE, f.greenBufferSize() == -1 ? EGL_DONT_CARE : f.greenBufferSize());
+     if (props.value(EGL_BLUE_SIZE) == EGL_DONT_CARE || f.blueBufferSize() != -1)
+-        props.setValue(EGL_BLUE_SIZE, f.blueBufferSize() == -1 ? 1 : f.blueBufferSize());
++        props.setValue(EGL_BLUE_SIZE, f.blueBufferSize() == -1 ? EGL_DONT_CARE : f.blueBufferSize());
+     if (f.alpha()) {
+         if (props.value(EGL_ALPHA_SIZE) == EGL_DONT_CARE || f.alphaBufferSize() != -1)
+             props.setValue(EGL_ALPHA_SIZE, f.alphaBufferSize() == -1 ? 1 : f.alphaBufferSize());
+--- a/src/opengl/qgl_x11.cpp
++++ b/src/opengl/qgl_x11.cpp
+@@ -319,9 +319,66 @@ bool QGLContext::chooseContext(const QGLContext* shareContext)
+ {
+     Q_D(QGLContext);
+     const QX11Info *xinfo = qt_x11Info(d->paintDevice);
+-
++    
+     Display* disp = xinfo->display();
+-    d->vi = chooseVisual();
++    if(d->glFormat.alpha() && !deviceIsPixmap()) {
++        GLXFBConfig *fbconfigs, fbconfig;
++        XRenderPictFormat *pictFormat;
++        XVisualInfo *visinfo;
++        int nitems;
++        int attrib[] = {
++            GLX_DOUBLEBUFFER,  True,
++            GLX_RED_SIZE,      1,
++            GLX_GREEN_SIZE,    1,
++            GLX_BLUE_SIZE,     1,
++            GLX_ALPHA_SIZE,    1,
++            GLX_DEPTH_SIZE,    1,
++            GLX_RENDER_TYPE,   GLX_RGBA_BIT,
++            GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
++            0
++        };
++        fbconfigs = glXChooseFBConfig(disp,
++                                      DefaultScreen(disp),
++                                      attrib,
++                                      &nitems);
++        if (NULL == fbconfigs) {
++            fprintf(stderr,"Error: couldn't get fbconfig\n");
++            return false;
++        }
++        
++        /* Find an FBConfig with a visual that has a RENDER picture format that
++         * has alpha */
++        int i;
++        for (i = 0; i < nitems; i++) {
++            visinfo = glXGetVisualFromFBConfig(disp, fbconfigs[i]);
++            
++            if(!visinfo)
++                continue;
++            
++            pictFormat = XRenderFindVisualFormat(disp, visinfo->visual);
++            
++            if(!pictFormat) {
++                XFree(visinfo);
++                continue;
++            }
++            
++            if(pictFormat->direct.alphaMask > 0) {
++                fbconfig = fbconfigs[i];
++                break;
++            }
++            
++            XFree(visinfo);
++        }
++        
++        if (i == nitems) {
++            qWarning("Warning: Couldn't find a visual with a picture format that alpha\n");
++        }
++        
++        XFree(fbconfigs);
++        d->vi = visinfo;
++        
++    } else
++        d->vi = chooseVisual();
+     if (!d->vi)
+         return false;
+ 
+--- a/src/opengl/qgl_x11egl.cpp
++++ b/src/opengl/qgl_x11egl.cpp
+@@ -39,6 +39,7 @@
+ **
+ ****************************************************************************/
+ 
++#include <QtDebug>
+ #include "qgl.h"
+ #include <private/qt_x11_p.h>
+ #include <private/qgl_p.h>
+@@ -273,6 +274,31 @@ void QGLWidget::setContext(QGLContext *context, const QGLContext* shareContext,
+         qWarning("Error: Couldn't get a matching X visual for format");
+         return;
+     }
++    bool useArgb = context->format().alpha() && !context->deviceIsPixmap();
++#ifndef QT_NO_XRENDER
++    if(useArgb) {
++        int nvi;
++        XVisualInfo tmp;
++        tmp.screen  = x11Info().screen();
++        tmp.depth   = 32;
++        tmp.c_class = TrueColor;
++        XVisualInfo *xvi = XGetVisualInfo(X11->display, VisualScreenMask |
++                                          VisualDepthMask |
++                                          VisualClassMask, &tmp, &nvi);
++        int idx;
++        for (idx = 0; idx < nvi; ++idx) {
++            XRenderPictFormat *format = XRenderFindVisualFormat(X11->display,
++                                                        xvi[idx].visual);
++            // printf("ALPHA: %d", value);
++            if (format->type == PictTypeDirect && format->direct.alphaMask) {
++                printf("got render visual\n");
++                vi = xvi[idx];
++                break;
++            }
++        }
++        XFree(xvi);
++    }
++#endif
+ 
+     XSetWindowAttributes a;
+ 
+@@ -283,10 +309,16 @@ void QGLWidget::setContext(QGLContext *context, const QGLContext* shareContext,
+     QColormap colmap = QColormap::instance(vi.screen);
+     a.background_pixel = colmap.pixel(palette().color(backgroundRole()));
+     a.border_pixel = colmap.pixel(Qt::black);
+-
++    unsigned int ui32Mask = CWBackPixel|CWBorderPixel;
++#ifndef QT_NO_XRENDER
++    if(useArgb) {
++        a.colormap = XCreateColormap(X11->display, p, vi.visual, AllocNone );
++        ui32Mask |= CWColormap;
++    }
++#endif
+     Window w = XCreateWindow(X11->display, p, x(), y(), width(), height(),
+-                              0, vi.depth, InputOutput, vi.visual,
+-                              CWBackPixel|CWBorderPixel, &a);
++                             0, vi.depth, InputOutput, vi.visual,
++                             ui32Mask, &a);
+ 
+     if (deleteOldContext)
+         delete oldcx;
+--- a/src/opengl/qpaintengine_opengl.cpp
++++ b/src/opengl/qpaintengine_opengl.cpp
+@@ -1537,7 +1537,7 @@ bool QOpenGLPaintEngine::begin(QPaintDevice *pdev)
+     d->offscreen.begin();
+ 
+     const QColor &c = d->drawable.backgroundColor();
+-    glClearColor(c.redF(), c.greenF(), c.blueF(), 1.0);
++    glClearColor(c.redF(), c.greenF(), c.blueF(), d->drawable.format().alpha() ? c.alphaF() : 1.0);
+     if (d->drawable.context()->d_func()->clear_on_painter_begin && d->drawable.autoFillBackground()) {
+         GLbitfield clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT;
+ #ifndef QT_OPENGL_ES
