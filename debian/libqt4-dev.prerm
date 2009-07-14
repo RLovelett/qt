@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+    upgrade) ;;
+    remove|failed-upgrade|deconfigure)
+        update-alternatives --remove moc "/usr/bin/moc"
+        update-alternatives --remove uic "/usr/bin/uic"
+        update-alternatives --remove qmake "/usr/bin/qmake"
+        update-alternatives --remove lupdate "/usr/bin/lupdate"
+        update-alternatives --remove lrelease "/usr/bin/lrelease"
+        ;;
+esac
+
+#DEBHELPER#

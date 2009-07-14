@@ -1,0 +1,5 @@
+libqt4-phonon-dbg: sharedobject-in-library-directory-missing-soname usr/lib/libphonon.so.4.3.0.debug
+libqt4-phonon-dbg: binary-with-bad-dynamic-table ./usr/lib/libphonon.so.4.3.0.debug
+libqt4-phonon-dbg: binary-with-bad-dynamic-table ./usr/lib/qt4/plugins/phonon_backend/libphonon_gstreamer.so.debug
+libqt4-phonon-dbg: shared-lib-without-dependency-information ./usr/lib/libphonon.so.4.3.0.debug
+libqt4-phonon-dbg: shared-lib-without-dependency-information ./usr/lib/qt4/plugins/phonon_backend/libphonon_gstreamer.so.debug
