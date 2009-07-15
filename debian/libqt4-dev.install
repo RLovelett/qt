@@ -38,7 +38,6 @@ usr/include/qt4/Qt/qt_windows.h
 usr/include/qt4/Qt/qnetworkproxy.h
 usr/include/qt4/Qt/qnetworkreply.h
 usr/include/qt4/Qt/qgroupbox.h
-usr/include/qt4/Qt/abstractaudiooutput.h
 usr/include/qt4/Qt/qmovie.h
 usr/include/qt4/Qt/qwizard.h
 usr/include/qt4/Qt/qmacnativewidget_mac.h
@@ -48,7 +47,6 @@ usr/include/qt4/Qt/qcommonstyle.h
 usr/include/qt4/Qt/qbrush.h
 usr/include/qt4/Qt/qsharedpointer_impl.h
 usr/include/qt4/Qt/qtconcurrentreducekernel.h
-usr/include/qt4/Qt/addoninterface.h
 usr/include/qt4/Qt/q3datetimeedit.h
 usr/include/qt4/Qt/qtimer.h
 usr/include/qt4/Qt/qlayout.h
@@ -67,11 +65,9 @@ usr/include/qt4/Qt/qvfbhdr.h
 usr/include/qt4/Qt/q3sqleditorfactory.h
 usr/include/qt4/Qt/qsqldriver.h
 usr/include/qt4/Qt/qsocketnotifier.h
-usr/include/qt4/Qt/audiooutputinterface.h
 usr/include/qt4/Qt/qdbuspendingreply.h
 usr/include/qt4/Qt/qcache.h
 usr/include/qt4/Qt/qpair.h
-usr/include/qt4/Qt/medianode.h
 usr/include/qt4/Qt/qatomic_arch.h
 usr/include/qt4/Qt/qinputcontextfactory.h
 usr/include/qt4/Qt/qfontdialog.h
@@ -170,7 +166,6 @@ usr/include/qt4/Qt/q3ptrdict.h
 usr/include/qt4/Qt/qcoreapplication.h
 usr/include/qt4/Qt/qsystemtrayicon.h
 usr/include/qt4/Qt/qlayoutitem.h
-usr/include/qt4/Qt/objectdescriptionmodel.h
 usr/include/qt4/Qt/qiconengineplugin.h
 usr/include/qt4/Qt/qtestassert.h
 usr/include/qt4/Qt/qslider.h
@@ -181,7 +176,6 @@ usr/include/qt4/Qt/qmenubar.h
 usr/include/qt4/Qt/qendian.h
 usr/include/qt4/Qt/QtGui
 usr/include/qt4/Qt/qscrollarea.h
-usr/include/qt4/Qt/streaminterface.h
 usr/include/qt4/Qt/qcopchannel_qws.h
 usr/include/qt4/Qt/qtreewidget.h
 usr/include/qt4/Qt/qtestaccessible.h
@@ -219,13 +213,10 @@ usr/include/qt4/Qt/q3listview.h
 usr/include/qt4/Qt/qftp.h
 usr/include/qt4/Qt/q3intdict.h
 usr/include/qt4/Qt/q3process.h
-usr/include/qt4/Qt/abstractvideooutput.h
-usr/include/qt4/Qt/backendinterface.h
 usr/include/qt4/Qt/qfunctions_wince.h
 usr/include/qt4/Qt/qxmlserializer.h
 usr/include/qt4/Qt/qwsevent_qws.h
 usr/include/qt4/Qt/qsizepolicy.h
-usr/include/qt4/Qt/seekslider.h
 usr/include/qt4/Qt/qprogressdialog.h
 usr/include/qt4/Qt/qlistwidget.h
 usr/include/qt4/Qt/qtestsystem.h
@@ -241,7 +232,6 @@ usr/include/qt4/Qt/qdecorationdefault_qws.h
 usr/include/qt4/Qt/q3objectdict.h
 usr/include/qt4/Qt/qdecorationfactory_qws.h
 usr/include/qt4/Qt/qtconcurrentiteratekernel.h
-usr/include/qt4/Qt/phonon
 usr/include/qt4/Qt/qshareddata.h
 usr/include/qt4/Qt/qdesktopwidget.h
 usr/include/qt4/Qt/q3syntaxhighlighter.h
@@ -277,8 +267,6 @@ usr/include/qt4/Qt/qtabbar.h
 usr/include/qt4/Qt/q3socketdevice.h
 usr/include/qt4/Qt/qabstractmessagehandler.h
 usr/include/qt4/Qt/qstackedlayout.h
-usr/include/qt4/Qt/phonon_export.h
-usr/include/qt4/Qt/effectwidget.h
 usr/include/qt4/Qt/qtranslator.h
 usr/include/qt4/Qt/qmenudata.h
 usr/include/qt4/Qt/QtScriptTools
@@ -329,9 +317,7 @@ usr/include/qt4/Qt/qkbdtty_qws.h
 usr/include/qt4/Qt/qmath.h
 usr/include/qt4/Qt/qpixmap.h
 usr/include/qt4/Qt/qheaderview.h
-usr/include/qt4/Qt/effectinterface.h
 usr/include/qt4/Qt/qconfig-large.h
-usr/include/qt4/Qt/volumefaderinterface.h
 usr/include/qt4/Qt/q3serversocket.h
 usr/include/qt4/Qt/qsslerror.h
 usr/include/qt4/Qt/qdial.h
@@ -376,7 +362,6 @@ usr/include/qt4/Qt/QtXmlPatterns
 usr/include/qt4/Qt/qstringlistmodel.h
 usr/include/qt4/Qt/qabstractxmlnodemodel.h
 usr/include/qt4/Qt/qmousebus_qws.h
-usr/include/qt4/Qt/videowidget.h
 usr/include/qt4/Qt/q3network.h
 usr/include/qt4/Qt/qaccessible.h
 usr/include/qt4/Qt/q3ptrstack.h
@@ -406,7 +391,6 @@ usr/include/qt4/Qt/qinputcontextplugin.h
 usr/include/qt4/Qt/qmenu.h
 usr/include/qt4/Qt/qatomic_generic.h
 usr/include/qt4/Qt/qgraphicsview.h
-usr/include/qt4/Qt/mediaobject.h
 usr/include/qt4/Qt/qtextcodecplugin.h
 usr/include/qt4/Qt/q3dockarea.h
 usr/include/qt4/Qt/qsslsocket.h
@@ -419,7 +403,6 @@ usr/include/qt4/Qt/qfilesystemmodel.h
 usr/include/qt4/Qt/q3tabdialog.h
 usr/include/qt4/Qt/qnetworkinterface.h
 usr/include/qt4/Qt/qgraphicsproxywidget.h
-usr/include/qt4/Qt/mediaobjectinterface.h
 usr/include/qt4/Qt/q3buttongroup.h
 usr/include/qt4/Qt/q3widgetstack.h
 usr/include/qt4/Qt/qwebhistoryinterface.h
@@ -432,7 +415,6 @@ usr/include/qt4/Qt/q3polygonscanner.h
 usr/include/qt4/Qt/qsslkey.h
 usr/include/qt4/Qt/qwindowdefs.h
 usr/include/qt4/Qt/qsqlrecord.h
-usr/include/qt4/Qt/mediasource.h
 usr/include/qt4/Qt/q3glist.h
 usr/include/qt4/Qt/q3rangecontrol.h
 usr/include/qt4/Qt/qapplication.h
@@ -445,7 +427,6 @@ usr/include/qt4/Qt/qsql_sqlite2.h
 usr/include/qt4/Qt/qmouselinuxtp_qws.h
 usr/include/qt4/Qt/qscriptvalueiterator.h
 usr/include/qt4/Qt/q3multilineedit.h
-usr/include/qt4/Qt/effectparameter.h
 usr/include/qt4/Qt/qkbdum_qws.h
 usr/include/qt4/Qt/qgridlayout.h
 usr/include/qt4/Qt/qmatrix.h
@@ -470,7 +451,6 @@ usr/include/qt4/Qt/qdatastream.h
 usr/include/qt4/Qt/q3boxlayout.h
 usr/include/qt4/Qt/qfileiconprovider.h
 usr/include/qt4/Qt/qsqlindex.h
-usr/include/qt4/Qt/backendcapabilities.h
 usr/include/qt4/Qt/qxmlquery.h
 usr/include/qt4/Qt/qgraphicsscene.h
 usr/include/qt4/Qt/q3gvector.h
@@ -496,7 +476,6 @@ usr/include/qt4/Qt/q3filedialog.h
 usr/include/qt4/Qt/qmouse_qws.h
 usr/include/qt4/Qt/qthreadstorage.h
 usr/include/qt4/Qt/qtemporaryfile.h
-usr/include/qt4/Qt/abstractmediastream.h
 usr/include/qt4/Qt/qwindowsmobilestyle.h
 usr/include/qt4/Qt/qtestspontaneevent.h
 usr/include/qt4/Qt/qhelpsearchengine.h
@@ -514,7 +493,6 @@ usr/include/qt4/Qt/qstatusbar.h
 usr/include/qt4/Qt/qsqlrelationaldelegate.h
 usr/include/qt4/Qt/qprintdialog.h
 usr/include/qt4/Qt/qsqlresult.h
-usr/include/qt4/Qt/volumefadereffect.h
 usr/include/qt4/Qt/qdbusreply.h
 usr/include/qt4/Qt/qmousetslib_qws.h
 usr/include/qt4/Qt/qxmlname.h
@@ -566,9 +544,7 @@ usr/include/qt4/Qt/qscriptcontext.h
 usr/include/qt4/Qt/q3gridlayout.h
 usr/include/qt4/Qt/qprinterinfo.h
 usr/include/qt4/Qt/qsslcipher.h
-usr/include/qt4/Qt/videowidgetinterface.h
 usr/include/qt4/Qt/qdbusmacros.h
-usr/include/qt4/Qt/videoplayer.h
 usr/include/qt4/Qt/qscriptvalue.h
 usr/include/qt4/Qt/q3hgroupbox.h
 usr/include/qt4/Qt/q3asciicache.h
@@ -576,12 +552,10 @@ usr/include/qt4/Qt/qcolormap.h
 usr/include/qt4/Qt/qitemdelegate.h
 usr/include/qt4/Qt/qimagereader.h
 usr/include/qt4/Qt/qdbuspendingcall.h
-usr/include/qt4/Qt/platformplugin.h
 usr/include/qt4/Qt/qdbusargument.h
 usr/include/qt4/Qt/qspinbox.h
 usr/include/qt4/Qt/qkbdusb_qws.h
 usr/include/qt4/Qt/qkbdyopy_qws.h
-usr/include/qt4/Qt/path.h
 usr/include/qt4/Qt/qtextlayout.h
 usr/include/qt4/Qt/qmousepc_qws.h
 usr/include/qt4/Qt/qpagesetupdialog.h
@@ -603,7 +577,6 @@ usr/include/qt4/Qt/q3gridview.h
 usr/include/qt4/Qt/q3sqlcursor.h
 usr/include/qt4/Qt/qfontdatabase.h
 usr/include/qt4/Qt/qhelp_global.h
-usr/include/qt4/Qt/objectdescription.h
 usr/include/qt4/Qt/qsvggenerator.h
 usr/include/qt4/Qt/qpen.h
 usr/include/qt4/Qt/qpainter.h
@@ -629,7 +602,6 @@ usr/include/qt4/Qt/q3editorfactory.h
 usr/include/qt4/Qt/q3dns.h
 usr/include/qt4/Qt/q3sqlrecordinfo.h
 usr/include/qt4/Qt/q3cleanuphandler.h
-usr/include/qt4/Qt/mediacontroller.h
 usr/include/qt4/Qt/qauthenticator.h
 usr/include/qt4/Qt/q3header.h
 usr/include/qt4/Qt/q3dict.h
@@ -641,12 +613,10 @@ usr/include/qt4/Qt/qatomic_x86_64.h
 usr/include/qt4/Qt/qmacdefines_mac.h
 usr/include/qt4/Qt/qsqlquery.h
 usr/include/qt4/Qt/qpolygon.h
-usr/include/qt4/Qt/effect.h
 usr/include/qt4/Qt/qwebframe.h
 usr/include/qt4/Qt/qprinter.h
 usr/include/qt4/Qt/qsslconfiguration.h
 usr/include/qt4/Qt/qprocess.h
-usr/include/qt4/Qt/volumeslider.h
 usr/include/qt4/Qt/qtransform.h
 usr/include/qt4/Qt/qtextstream.h
 usr/include/qt4/Qt/qsslcertificate.h
@@ -674,7 +644,6 @@ usr/include/qt4/Qt/q3simplerichtext.h
 usr/include/qt4/Qt/qabstractsocket.h
 usr/include/qt4/Qt/q3networkprotocol.h
 usr/include/qt4/Qt/q3table.h
-usr/include/qt4/Qt/phonondefs.h
 usr/include/qt4/Qt/qtconcurrentfunctionwrappers.h
 usr/include/qt4/Qt/qcheckbox.h
 usr/include/qt4/Qt/qatomic_mips.h
@@ -699,7 +668,6 @@ usr/include/qt4/Qt/qsvgwidget.h
 usr/include/qt4/Qt/qtextcodec.h
 usr/include/qt4/Qt/qscriptengine.h
 usr/include/qt4/Qt/qregexp.h
-usr/include/qt4/Qt/phononnamespace.h
 usr/include/qt4/Qt/qtconcurrentmedian.h
 usr/include/qt4/Qt/qstylepainter.h
 usr/include/qt4/Qt/qformlayout.h
@@ -709,12 +677,15 @@ usr/include/qt4/Qt/qhostaddress.h
 usr/include/qt4/Qt/q3sqlselectcursor.h
 usr/include/qt4/Qt/qsqldatabase.h
 usr/include/qt4/Qt/Qt3Support
-usr/include/qt4/Qt/audiooutput.h
 usr/include/qt4/Qt/qkbd_qws.h
 usr/include/qt4/Qt/qdatawidgetmapper.h
 usr/include/qt4/QtCore/*
 usr/include/qt4/QtNetwork/*
 usr/include/qt4/Qt3Support/*
+usr/include/qt4/QtGui/QHildonStyle
+usr/include/qt4/QtGui/qhildonstyle.h
+usr/include/qt4/QtNetwork/QMaemoInternetConnectivity
+usr/include/qt4/QtNetwork/qmaemointernetconnectivity.h
 usr/lib/libphonon.prl
 usr/lib/libphonon.so
 usr/lib/libQt3Support.prl
