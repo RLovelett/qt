@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Antonio Aloisio <antonio.aloisio@nokia.com> 
 XSBC-Original-Maintainer: Debian Qt/KDE Maintainers <debian-qt-kde@lists.debian.org>
 Build-Depends: cdbs, debhelper (>= 5), flex,  doxygen, quilt, sharutils,
- libdbus-1-dev, libfreetype6-dev, libglib2.0-dev, libice-dev, libjpeg62-dev,
+ libdbus-1-dev, libfreetype6-dev, libglib2.0-dev, libice-dev, libhildonfm2-dev, libjpeg62-dev,
  libpng12-dev, libreadline5-dev | libreadline4-dev, libsm-dev, libtiff4-dev, libx11-dev,
  libxcursor-dev, libxext-dev, libxft-dev, libxi-dev, libxmu-dev,
  libxrandr-dev, libxrender-dev, libxslt1-dev, libxt-dev, x11proto-core-dev,
@@ -280,8 +280,7 @@ Description: Qt 4 OpenGL library development files
 Package: libqt4-dbg
 Priority: extra
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
- libqt4 (= ${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Qt 4 library debugging symbols
  Qt is a cross-platform C++ application framework. Qt's primary feature
  is its rich set of widgets that provide standard GUI functionality.
