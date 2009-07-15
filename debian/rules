@@ -206,6 +206,10 @@ clean::
 	rm -f debian/stamp-makefile-build-tools
 
 common-install-arch::
+	mkdir -p $(DEB_DESTDIR)/usr/share/qt4/translations/
+	cp $(CURDIR)/translations/*.ts $(DEB_DESTDIR)/usr/share/qt4/translations/.
+	find $(DEB_DESTDIR)/usr/share/qt4/translations/ -type f -name "*.ts" | xargs $(CURDIR)/bin/lrelease
+	rm -rf $(DEB_DESTDIR)/usr/share/qt4/translations/*.ts
 # Fix wrong path in pkgconfig files
 	find $(DEB_DESTDIR)/usr/lib/pkgconfig -type f -name '*.pc' \
 		-exec perl -pi -e "s, -L$(CURDIR)/?\S+,,g" {} \;
