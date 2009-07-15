@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the ActiveQt framework of the Qt Toolkit.
 **
@@ -351,6 +351,10 @@ HRESULT UpdateRegistry(BOOL bRegister)
             qAxFactory()->registerClass(*key, &settings);
         }
     } else {
+        if (qAxOutProcServer) {
+            settings.remove(QLatin1String("/AppID/") + appId + QLatin1String("/."));
+            settings.remove(QLatin1String("/AppID/") + module + QLatin1String(".EXE"));
+        }
         QStringList keys = qAxFactory()->featureList();
         for (QStringList::Iterator key = keys.begin(); key != keys.end(); ++key) {
             QString className = *key;

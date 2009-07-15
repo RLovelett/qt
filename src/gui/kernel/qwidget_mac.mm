@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtGui module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -1296,11 +1296,8 @@ OSStatus QWidgetPrivate::qt_widget_event(EventHandlerCallRef er, EventRef event,
                 if(part == kControlFocusNoPart){
                     if (widget->hasFocus())
                         QApplicationPrivate::setFocusWidget(0, Qt::OtherFocusReason);
-                } else if (widget->focusPolicy() != Qt::NoFocus) {
+                } else
                     widget->setFocus();
-                } else {
-                    handled_event = false;
-                }
             }
             if(!HIObjectIsOfClass((HIObjectRef)hiview, kObjectQWidget))
                 CallNextEventHandler(er, event);
@@ -1529,12 +1526,16 @@ void QWidgetPrivate::toggleDrawers(bool visible)
  *****************************************************************************/
 bool QWidgetPrivate::qt_mac_update_sizer(QWidget *w, int up)
 {
+    // I'm not sure what "up" is
     if(!w || !w->isWindow())
         return false;
 
     QTLWExtra *topData = w->d_func()->topData();
     QWExtra *extraData = w->d_func()->extraData();
-    topData->resizer += up;
+    // topData->resizer is only 4 bits, so subtracting -1 from zero causes bad stuff
+    // to happen, prevent that here (you really want the thing hidden).
+    if (up >= 0 || topData->resizer != 0)
+        topData->resizer += up;
     OSWindowRef windowRef = qt_mac_window_for(OSViewRef(w->winId()));
     {
 #ifndef QT_MAC_USE_COCOA
@@ -1547,7 +1548,6 @@ bool QWidgetPrivate::qt_mac_update_sizer(QWidget *w, int up)
     bool remove_grip = (topData->resizer || (w->windowFlags() & Qt::FramelessWindowHint)
                         || (extraData->maxw && extraData->maxh &&
                             extraData->maxw == extraData->minw && extraData->maxh == extraData->minh));
-
 #ifndef QT_MAC_USE_COCOA
     WindowAttributes attr;
     GetWindowAttributes(windowRef, &attr);
@@ -2176,11 +2176,10 @@ void QWidgetPrivate::finishCreateWindow_sys_Cocoa(void * /*NSWindow * */ voidWin
 
     if ((popup || type == Qt::Tool || type == Qt::ToolTip) && !q->isModal()) {
         [windowRef setHidesOnDeactivate:YES];
-        [windowRef setHasShadow:YES];
     } else {
         [windowRef setHidesOnDeactivate:NO];
     }
-
+    [windowRef setHasShadow:YES];
     Q_UNUSED(parentWidget);
     Q_UNUSED(dialog);
 
@@ -2734,10 +2733,15 @@ void QWidgetPrivate::setParent_sys(QWidget *parent, Qt::WindowFlags f)
         createWinId();
         if (q->isWindow()) {
 #ifndef QT_MAC_USE_COCOA
-            if (QMainWindowLayout *mwl = qobject_cast<QMainWindowLayout *>(q->layout())) {
-                mwl->updateHIToolBarStatus();
+            // We do this down below for wasCreated, so avoid doing this twice
+            // (only for performance, it gets called a lot anyway).
+            if (!wasCreated) {
+                if (QMainWindowLayout *mwl = qobject_cast<QMainWindowLayout *>(q->layout())) {
+                    mwl->updateHIToolBarStatus();
+                }
             }
 #else
+            // Simply transfer our toolbar over. Everything should stay put, unlike in Carbon.
             if (oldToolbar && !(f & Qt::FramelessWindowHint)) {
                 OSWindowRef newWindow = qt_mac_window_for(q);
                 [newWindow setToolbar:oldToolbar];
@@ -2752,6 +2756,16 @@ void QWidgetPrivate::setParent_sys(QWidget *parent, Qt::WindowFlags f)
 
     if (wasCreated) {
         transferChildren();
+#ifndef QT_MAC_USE_COCOA
+        // If we were a unified window, We just transfered our toolbars out of the unified toolbar.
+        // So redo the status one more time. It apparently is not an issue with Cocoa.
+        if (q->isWindow()) {
+            if (QMainWindowLayout *mwl = qobject_cast<QMainWindowLayout *>(q->layout())) {
+                mwl->updateHIToolBarStatus();
+            }
+        }
+#endif
+
         if (topData &&
                 (!topData->caption.isEmpty() || !topData->filePath.isEmpty()))
             setWindowTitle_helper(q->windowTitle());
@@ -3603,11 +3617,15 @@ void QWidgetPrivate::raise_sys()
         }
     } else {
         // Cocoa doesn't really have an idea of Z-ordering, but you can
-        // fake it by changing the order of it.
+        // fake it by changing the order of it. But beware, removing an
+        // NSView will also remove it as the first responder. So we re-set
+        // the first responder just in case:
         NSView *view = qt_mac_nativeview_for(q);
         NSView *parentView = [view superview];
+        NSResponder *firstResponder = [[view window] firstResponder];
         [view removeFromSuperview];
         [parentView addSubview:view];
+        [[view window] makeFirstResponder:firstResponder];
     }
 #else
     if(q->isWindow()) {
@@ -3645,6 +3663,7 @@ void QWidgetPrivate::lower_sys()
         NSArray *tmpViews = [parentView subviews];
         NSMutableArray *subviews = [[NSMutableArray alloc] initWithCapacity:[tmpViews count]];
         [subviews addObjectsFromArray:tmpViews];
+        NSResponder *firstResponder = [[myview window] firstResponder];
         // Implicit assumption that myViewIndex is included in subviews, that's why I'm not checking
         // myViewIndex.
         NSUInteger index = 0;
@@ -3664,6 +3683,7 @@ void QWidgetPrivate::lower_sys()
         for (NSView *subview in subviews)
             [parentView addSubview:subview];
         [subviews release];
+        [[myview window] makeFirstResponder:firstResponder];
     }
 #else
     if(q->isWindow()) {
@@ -3746,7 +3766,7 @@ static void qt_mac_update_widget_posisiton(QWidget *q, QRect oldRect, QRect newR
     // Perform a normal (complete repaint) update in some cases:
     if (
         // move-by-scroll requires QWidgetPrivate::isOpaque set
-        (isMove && qd->isOpaque == false) ||
+        (isMove && q->testAttribute(Qt::WA_OpaquePaintEvent) == false) ||
 
         // limited update on resize requires WA_StaticContents.
         (isResize && q->testAttribute(Qt::WA_StaticContents) == false) ||
@@ -4067,6 +4087,8 @@ void QWidgetPrivate::setGeometry_sys(int x, int y, int w, int h, bool isMove)
             setGeometry_sys_helper(x, y, w, h, isMove);
         }
 #else
+        QSize  olds = q->size();
+        const bool isResize = (olds != QSize(w, h));
         NSWindow *window = qt_mac_window_for(q);
         const QRect &fStrut = frameStrut();
         const QRect frameRect(QPoint(x - fStrut.left(), y - fStrut.top()),
@@ -4074,7 +4096,10 @@ void QWidgetPrivate::setGeometry_sys(int x, int y, int w, int h, bool isMove)
                                     fStrut.top() + fStrut.bottom() + h));
         NSRect cocoaFrameRect = NSMakeRect(frameRect.x(), flipYCoordinate(frameRect.bottom() + 1),
                                            frameRect.width(), frameRect.height());
-
+        // The setFrame call will trigger a 'windowDidResize' notification for the corresponding
+        // NSWindow. The pending flag is set, so that the resize event can be send as non-spontaneous.
+        if (isResize)
+            q->setAttribute(Qt::WA_PendingResizeEvent);
         QPoint currTopLeft = data.crect.topLeft();
         if (currTopLeft.x() == x && currTopLeft.y() == y
                 && cocoaFrameRect.size.width != 0
@@ -4270,7 +4295,7 @@ void QWidgetPrivate::scroll_sys(int dx, int dy, const QRect &r)
                         HIRect bounds = CGRectMake(w->data->crect.x(), w->data->crect.y(),
                                                    w->data->crect.width(), w->data->crect.height());
                         HIViewRef hiview = qt_mac_nativeview_for(w);
-                        const bool opaque = qt_widget_private(w)->isOpaque;
+                        const bool opaque = q->testAttribute(Qt::WA_OpaquePaintEvent);
 
                         if (opaque)
                             HIViewSetDrawingEnabled(hiview,  false);

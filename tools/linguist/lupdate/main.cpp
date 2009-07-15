@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Linguist of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -42,6 +42,7 @@
 #include "translator.h"
 #include "translatortools.h"
 #include "profileevaluator.h"
+#include "proreader.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
@@ -178,9 +179,10 @@ static void updateTsFiles(const Translator &fetchedTor, const QStringList &tsFil
         if (options & Verbose)
             printOut(QObject::tr("Updating '%1'...\n").arg(fn));
 
+        UpdateOptions theseOptions = options;
         if (tor.locationsType() == Translator::NoLocations) // Could be set from file
-            options |= NoLocations;
-        Translator out = merge(tor, fetchedTor, options, err);
+            theseOptions |= NoLocations;
+        Translator out = merge(tor, fetchedTor, theseOptions, err);
         if (!codecForTr.isEmpty())
             out.setCodecName(codecForTr);
 
@@ -450,7 +452,7 @@ int main(int argc, char **argv)
                 continue;
             }
 
-            evaluateProFile(visitor, &variables);
+            evaluateProFile(visitor, &variables, pfi.absolutePath());
 
             sourceFiles = variables.value("SOURCES");
 

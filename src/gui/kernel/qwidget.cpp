@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtGui module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -4590,6 +4590,11 @@ void QWidget::unsetLayoutDirection()
     By default, this property contains a cursor with the Qt::ArrowCursor
     shape.
 
+    Some underlying window implementations will reset the cursor if it
+    leaves a widget even if the mouse is grabbed. If you want to have
+    a cursor set for all widgets, even when outside the window, consider
+    QApplication::setOverrideCursor().
+
     \sa QApplication::setOverrideCursor()
 */
 
@@ -5687,8 +5692,8 @@ bool QWidget::hasFocus() const
     called from focusOutEvent() or focusInEvent(), you may get an
     infinite recursion.
 
-    \sa hasFocus(), clearFocus(), focusInEvent(), focusOutEvent(),
-    setFocusPolicy(), QApplication::focusWidget(), grabKeyboard(),
+    \sa focus(), hasFocus(), clearFocus(), focusInEvent(), focusOutEvent(),
+    setFocusPolicy(), focusWidget(), QApplication::focusWidget(), grabKeyboard(),
     grabMouse(), {Keyboard Focus}
 */
 
@@ -9874,11 +9879,8 @@ void QWidget::setAttribute(Qt::WidgetAttribute attribute, bool on)
             QInputContextPrivate::updateImeStatus(this, true);
 #endif
         QInputContext *ic = d->ic;
-        if (!ic) {
-            // implicitly create input context only if we have a focus
-            if (hasFocus())
-                ic = d->inputContext();
-        }
+        if (!ic && (!on || hasFocus()))
+            ic = d->inputContext();
         if (ic) {
             if (on && hasFocus() && ic->focusWidget() != this) {
                 ic->setFocusWidget(this);

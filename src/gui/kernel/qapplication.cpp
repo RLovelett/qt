@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtGui module of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -126,7 +126,7 @@ int QApplicationPrivate::app_compile_version = 0x040000; //we don't know exactly
 QApplication::Type qt_appType=QApplication::Tty;
 QApplicationPrivate *QApplicationPrivate::self = 0;
 
-QInputContext *QApplicationPrivate::inputContext;
+QInputContext *QApplicationPrivate::inputContext = 0;
 
 bool QApplicationPrivate::quitOnLastWindowClosed = true;
 
@@ -3566,10 +3566,12 @@ bool QApplication::notify(QObject *receiver, QEvent *e)
 #if !defined(QT_NO_WHEELEVENT) || !defined(QT_NO_TABLETEVENT)
         else if (
 #  ifndef QT_NO_WHEELEVENT
-                 e->type() == QEvent::Wheel ||
+                 e->type() == QEvent::Wheel
+#  else
+                 false
 #  endif
 #  ifndef QT_NO_TABLETEVENT
-                 e->type() == QEvent::TabletMove
+                 || e->type() == QEvent::TabletMove
                  || e->type() == QEvent::TabletPress
                  || e->type() == QEvent::TabletRelease
 #  endif
@@ -3722,6 +3724,13 @@ bool QApplication::notify(QObject *receiver, QEvent *e)
                     }
                 }
 
+                // ### Qt 5 These dynamic tool tips should be an OPT-IN feature. Some platforms
+                // like Mac OS X (probably others too), can optimize their views by not
+                // dispatching mouse move events. We have attributes to control hover,
+                // and mouse tracking, but as long as we are deciding to implement this
+                // feature without choice of opting-in or out, you ALWAYS have to have
+                // tracking enabled. Therefore, the other properties give a false sense of
+                // performance enhancement.
                 if (e->type() == QEvent::MouseMove && mouse->buttons() == 0) {
                     d->toolTipWidget = w;
                     d->toolTipPos = relpos;

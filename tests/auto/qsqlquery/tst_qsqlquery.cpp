@@ -1,7 +1,7 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
+** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the test suite of the Qt Toolkit.
 **
@@ -34,7 +34,7 @@
 ** met: http://www.gnu.org/copyleft/gpl.html.
 **
 ** If you are unsure which license is appropriate for your use, please
-** contact the sales department at qt-sales@nokia.com.
+** contact the sales department at http://www.qtsoftware.com/contact.
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -175,14 +175,21 @@ private slots:
     void emptyTableNavigate();
 
 #ifdef NOT_READY_YET
+    void task_229811();
+    void task_229811_data() { generic_data(); }
+    void task_234422_data() {  generic_data(); }
+    void task_234422();
+#endif
     void task_217003_data() { generic_data(); }
     void task_217003();
-#endif
+
     void task_250026_data() { generic_data("QODBC"); }
     void task_250026();
     void task_205701_data() { generic_data("QMYSQL"); }
     void task_205701();
 
+    void task_233829_data() { generic_data("QPSQL"); }
+    void task_233829();
 
 
 private:
@@ -288,6 +295,9 @@ void tst_QSqlQuery::dropTestTables( QSqlDatabase db )
                << qTableName( "blobstest" )
                << qTableName( "oraRowId" );
 
+    if ( db.driverName().startsWith("QPSQL") )
+        tablenames << qTableName("task_233829");
+
     if ( db.driverName().startsWith("QSQLITE") )
         tablenames << qTableName( "record_sqlite" );
 
@@ -296,9 +306,8 @@ void tst_QSqlQuery::dropTestTables( QSqlDatabase db )
 
     tablenames <<  qTableName( "qtest_lockedtable" );
 
-#ifdef NOT_READY_YET
     tablenames <<  qTableName( "Planet" );
-#endif
+
     tablenames << qTableName( "task_250026" );
 
     tst_Databases::safeDropTables( db, tablenames );
@@ -313,7 +322,10 @@ void tst_QSqlQuery::createTestTables( QSqlDatabase db )
         // in the MySQL server startup script
         q.exec( "set table_type=innodb" );
 
-    QVERIFY_SQL( q, exec( "create table " + qTableName( "qtest" ) + " (id int "+tst_Databases::autoFieldName(db) +" NOT NULL, t_varchar varchar(20), t_char char(20), primary key(id))" ) );
+    if(tst_Databases::isPostgreSQL(db))
+        QVERIFY_SQL( q, exec( "create table " + qTableName( "qtest" ) + " (id serial NOT NULL, t_varchar varchar(20), t_char char(20), primary key(id)) WITH OIDS" ) );
+    else
+        QVERIFY_SQL( q, exec( "create table " + qTableName( "qtest" ) + " (id int "+tst_Databases::autoFieldName(db) +" NOT NULL, t_varchar varchar(20), t_char char(20), primary key(id))" ) );
 
     if ( tst_Databases::isSqlServer( db ) || db.driverName().startsWith( "QTDS" ) )
         QVERIFY_SQL( q, exec( "create table " + qTableName( "qtest_null" ) + " (id int null, t_varchar varchar(20) null)" ) );
@@ -1865,7 +1877,7 @@ void tst_QSqlQuery::invalidQuery()
     QVERIFY( !q.next() );
     QVERIFY( !q.isActive() );
 
-    if ( !db.driverName().startsWith( "QOCI" ) && !db.driverName().startsWith( "QDB2" ) ) {
+    if ( !db.driverName().startsWith( "QOCI" ) && !db.driverName().startsWith( "QDB2" ) && !db.driverName().startsWith( "QODBC" ) ) {
         // oracle and db2 just prepares everything without complaining
         if ( db.driver()->hasFeature( QSqlDriver::PreparedQueries ) )
             QVERIFY( !q.prepare( "blahfasel" ) );
@@ -2025,7 +2037,7 @@ void tst_QSqlQuery::oraArrayBind()
 
     q.bindValue( 0, list, QSql::In );
 
-    QVERIFY_SQL( q, execBatch( QSqlQuery::ValuesAsRows ) );
+    QVERIFY_SQL( q, execBatch( QSqlQuery::ValuesAsColumns ) );
 
     QVERIFY_SQL( q, prepare( "BEGIN "
                                "ora_array_test.get_table(?); "
@@ -2037,7 +2049,7 @@ void tst_QSqlQuery::oraArrayBind()
 
     q.bindValue( 0, list, QSql::Out );
 
-    QVERIFY_SQL( q, execBatch( QSqlQuery::ValuesAsRows ) );
+    QVERIFY_SQL( q, execBatch( QSqlQuery::ValuesAsColumns ) );
 
     QVariantList out_list = q.boundValue( 0 ).toList();
 
@@ -2584,7 +2596,7 @@ void tst_QSqlQuery::blobsPreparedQuery()
 
     if ( db.driverName().startsWith( "QPSQL" ) )
         typeName = "BYTEA";
-    else if ( db.driverName().startsWith( "QODBC" ) )
+    else if ( db.driverName().startsWith( "QODBC" ) && tst_Databases::isSqlServer( db ))
         typeName = "IMAGE";
 
     QVERIFY_SQL( q, exec( QString( "CREATE TABLE %1(id INTEGER, data %2)" ).arg( tableName ).arg( typeName ) ) );
@@ -2655,7 +2667,6 @@ void tst_QSqlQuery::emptyTableNavigate()
     }
 }
 
-#ifdef NOT_READY_YET
 void tst_QSqlQuery::task_217003()
 {
     QFETCH( QString, dbName );
@@ -2682,7 +2693,6 @@ void tst_QSqlQuery::task_217003()
     QVERIFY_SQL( q, seek( 1 ) );
     QCOMPARE( q.value( 0 ).toString(), QString( "Venus" ) );
 }
-#endif
 
 void tst_QSqlQuery::task_250026()
 {
@@ -2715,12 +2725,12 @@ void tst_QSqlQuery::task_250026()
 
 void tst_QSqlQuery::task_205701()
 {
-    QSqlDatabase qsdb = QSqlDatabase::addDatabase("QMYSQL", "atest"); 
-    qsdb.setHostName("test"); 
-    qsdb.setDatabaseName("test"); 
-    qsdb.setUserName("test"); 
-    qsdb.setPassword("test"); 
-    qsdb.open(); 
+    QSqlDatabase qsdb = QSqlDatabase::addDatabase("QMYSQL", "atest");
+    qsdb.setHostName("test");
+    qsdb.setDatabaseName("test");
+    qsdb.setUserName("test");
+    qsdb.setPassword("test");
+    qsdb.open();
 
 //     {
         QSqlQuery query(qsdb);
@@ -2728,6 +2738,109 @@ void tst_QSqlQuery::task_205701()
     QSqlDatabase::removeDatabase("atest");
 }
 
+#ifdef NOT_READY_YET
+// For task: 229811
+void tst_QSqlQuery::task_229811()
+{
+    QFETCH( QString, dbName );
+    QSqlDatabase db = QSqlDatabase::database( dbName );
+    CHECK_DATABASE( db );
+
+    if (!db.driverName().startsWith( "QODBC" )) return;
+
+    QSqlQuery q( db );
+
+    QString tableName = qTableName( "task_229811" );
+
+    if ( !q.exec( "CREATE TABLE " + tableName + " (Word varchar(20))" ) ) {
+        qDebug() << "Warning" << q.lastError();
+    }
+
+    QVERIFY_SQL( q, exec( "INSERT INTO " + tableName + " values ('Albert')" ) );
+    QVERIFY_SQL( q, exec( "INSERT INTO " + tableName + " values ('Beehive')" ) );
+    QVERIFY_SQL( q, exec( "INSERT INTO " + tableName + " values ('Alimony')" ) );
+    QVERIFY_SQL( q, exec( "INSERT INTO " + tableName + " values ('Bohemian')" ) );
+    QVERIFY_SQL( q, exec( "INSERT INTO " + tableName + " values ('AllStars')" ) );
+
+
+    QString stmt = "SELECT * FROM " + tableName  +  " WHERE Word LIKE :name";
+    QVERIFY_SQL(q,prepare(stmt));
+    q.bindValue(":name", "A%");
+    QVERIFY_SQL(q,exec());
+
+    QVERIFY(q.isActive());
+    QVERIFY(q.isSelect());
+    QVERIFY(q.first());
+
+    QSqlRecord rec = q.record();
+    QCOMPARE(rec.field(0).value().toString(), QString("Albert"));
+    QVERIFY(q.next());
+    rec = q.record();
+    QCOMPARE(rec.field(0).value().toString(), QString("Alimony"));
+    QVERIFY(q.next());
+    rec = q.record();
+    QCOMPARE(rec.field(0).value().toString(),QString("AllStars"));
+
+    q.exec("DROP TABLE " + tableName );
+}
+
+void tst_QSqlQuery::task_234422()
+{
+    QFETCH( QString, dbName );
+    QSqlDatabase db = QSqlDatabase::database( dbName );
+    CHECK_DATABASE( db );
+
+    QSqlQuery query(db);
+    QStringList m_airlines;
+    QStringList m_countries;
+
+    m_airlines << "Lufthansa" << "SAS" << "United" << "KLM" << "Aeroflot";
+    m_countries << "DE" << "SE" << "US" << "NL" << "RU";
+
+    QString tableName = qTableName( "task_234422" );
+
+    query.exec("DROP TABLE " + tableName);
+    QVERIFY_SQL(query,exec("CREATE TABLE " + tableName + " (id int primary key, "
+                "name varchar(20), homecountry varchar(2))"));
+    for (int i = 0; i < m_airlines.count(); ++i) {
+        QVERIFY(query.exec(QString("INSERT INTO " + tableName + " values(%1, '%2', '%3')")
+                    .arg(i).arg(m_airlines[i], m_countries[i])));
+    }
+
+    QVERIFY_SQL(query, exec("SELECT name FROM " + tableName));
+    QVERIFY(query.isSelect());
+    QVERIFY(query.first());
+    QVERIFY(query.next());
+    QCOMPARE(query.at(), 1);
+
+    QSqlQuery query2(query);
+
+    QVERIFY_SQL(query2,exec());
+    QVERIFY(query2.first());
+    QCOMPARE(query2.at(), 0);
+    QCOMPARE(query.at(), 1);
+}
+
+#endif
+
+void tst_QSqlQuery::task_233829()
+{
+    QFETCH( QString, dbName );
+    QSqlDatabase db = QSqlDatabase::database( dbName );
+    CHECK_DATABASE( db );
+
+    QSqlQuery q( db );
+    QString tableName = qTableName("task_233829");
+    QVERIFY_SQL(q,exec("CREATE TABLE " + tableName  + "(dbl1 double precision,dbl2 double precision) without oids;"));
+
+    QString queryString("INSERT INTO " + tableName +"(dbl1, dbl2) VALUES(?,?)");
+
+    double k = 0.0;
+    QVERIFY_SQL(q,prepare(queryString));
+    q.bindValue(0,0.0 / k); // nan
+    q.bindValue(1,0.0 / k); // nan
+    QVERIFY_SQL(q,exec());
+}
 
 QTEST_MAIN( tst_QSqlQuery )
 #include "tst_qsqlquery.moc"

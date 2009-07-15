@@ -2,7 +2,7 @@
     This file is part of the KDE project
     Copyright (C) 2005-2007 Matthias Kretz <kretz@kde.org>
     Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-   Contact: Qt Software Information (qt-info@nokia.com)
+    Contact: Nokia Corporation (qt-info@nokia.com)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -1114,6 +1114,11 @@
     \note Sequential devices can also be used, but MediaObject::isSeekable() will
     return false as a result.
 
+    \warning On Windows, we only support \l{QIODevice}s containing the
+    \c avi, \c mp3, or \c mpg formats. Use the constructor that takes
+    a file name to open files (the Qt backend does not use a QFile
+    internally).
+
     \sa setAutoDelete()
 */
 
@@ -1863,7 +1868,7 @@
 
     \snippet doc/src/snippets/code/doc_src_phonon-api.qdoc 14
 
-    \sa currentSource()
+    \sa currentSource(), MediaSource
 */
 
 /*!
