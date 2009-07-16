@@ -84,6 +84,9 @@ public:
     virtual void interrupt() = 0;
     virtual void flush() = 0;
 
+    // ### Qt 5: make virtual
+    Qt::HANDLE handle() const;
+
     virtual void startingUp();
     virtual void closingDown();
 
@@ -98,6 +101,9 @@ Q_SIGNALS:
 protected:
     QAbstractEventDispatcher(QAbstractEventDispatcherPrivate &,
                              QObject *parent);
+
+    // ### Qt 5: remove
+    void setHandle(Qt::HANDLE handle);
 };
 
 QT_END_NAMESPACE

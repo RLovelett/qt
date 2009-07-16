@@ -63,9 +63,17 @@ class Q_CORE_EXPORT QAbstractEventDispatcherPrivate : public QObjectPrivate
     Q_DECLARE_PUBLIC(QAbstractEventDispatcher)
 public:
     inline QAbstractEventDispatcherPrivate()
-        : event_filter(0)
+        : internalHandle(0), event_filter(0)
     { }
     void init();
+
+    virtual Qt::HANDLE handle() const
+    { return internalHandle; }
+    void setHandle(Qt::HANDLE handle)
+    { internalHandle = handle; }
+
+    Qt::HANDLE internalHandle;
+
     QAbstractEventDispatcher::EventFilter event_filter;
 
     static int allocateTimerId();

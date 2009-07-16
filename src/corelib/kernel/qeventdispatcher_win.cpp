@@ -326,6 +326,7 @@ public:
 
     // internal window handle used for socketnotifiers/timers/etc
     HWND internalHwnd;
+    Qt::HANDLE handle() const;
 
     // timers
     WinTimerVec timerVec;
@@ -605,6 +606,15 @@ void QEventDispatcherWin32Private::doWsaAsyncSelect(int socket)
     // BoundsChecker may emit a warning for WSAAsyncSelect when sn_event == 0
     // This is a BoundsChecker bug and not a Qt bug
     WSAAsyncSelect(socket, internalHwnd, sn_event ? WM_USER : 0, sn_event);
+}
+
+Qt::HANDLE QEventDispatcherWin32Private::handle() const
+{
+    if (!internalHwnd) {
+        QEventDispatcherWin32Private *that = const_cast<QEventDispatcherWin32Private*>(this);
+        that->q_func()->createInternalHwnd();
+    }
+    return (Qt::HANDLE)internalHwnd;
 }
 
 void QEventDispatcherWin32::createInternalHwnd()

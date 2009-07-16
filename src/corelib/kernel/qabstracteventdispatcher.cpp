@@ -367,6 +367,39 @@ int QAbstractEventDispatcher::registerTimer(int interval, QObject *object)
     immediately. Does nothing on platforms other than X11.
 */
 
+/*!
+    \since 4.6
+
+    Returns the internal handle associated with the event loop.
+    This handle must be used with care;
+    its value and type are platform specific,
+    and using it will most likely lead to non-portable code.
+
+    \sa setHandle()
+*/
+Qt::HANDLE QAbstractEventDispatcher::handle() const
+{
+    Q_D(const QAbstractEventDispatcher);
+    return d->handle();
+}
+
+/*!
+    \since 4.6
+
+    Sets the internal handle associated with the event loop.
+
+    Subclasses must use this method to set handle as quickly as possible
+    after it was created if they can provide some helpfull handle
+    which can be used in application.
+
+    \sa handle()
+*/
+void QAbstractEventDispatcher::setHandle(Qt::HANDLE handle)
+{
+    Q_D(QAbstractEventDispatcher);
+    return d->setHandle(handle);
+}
+
 // ### DOC: Are these called when the _application_ starts/stops or just
 // when the current _event loop_ starts/stops?
 /*! \internal */
