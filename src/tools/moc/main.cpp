@@ -111,6 +111,10 @@ void error(const char *msg = "Invalid argument")
             "  -i                 do not generate an #include statement\n"
             "  -p<path>           path prefix for included file\n"
             "  -f[<file>]         force #include, optional file name\n"
+            "  -MD                generate dependency information\n"
+            "  -MF<file>          output for dependency information\n"
+            "  -MT<target>        target name in the generated dependency info\n"
+            "  -MP                generate dummy target for every dependency\n"
             "  -nw                do not display warnings\n"
             "  @<file>            read additional options from file\n"
             "  -v                 display version of moc\n");
@@ -338,6 +342,49 @@ int runMoc(int _argc, char **_argv)
 
             }
             break;
+        case 'M': // Automatic dependency info generation as a side
+                  // effect of preprocessing.
+                  // Usage: -MT targetname -MD -MP -MF output
+                  // -MD: enables this feature
+                  // -MP: needed if you want the dummy dependencies as discussed in
+                  //     http://www.gnu.org/software/hello/manual/automake/Recommendations-for-Tool-Writers.html
+                  // -MT <targetname>: optional, use targetname as the target in the generated rule
+                  // -MF <filename>: mandatory, put the generated rules into this file
+            {
+                if (opt.size() < 2)
+                    error("No option -M exists, try -MD, -MT, -MP or -MF!");
+                QByteArray mopt = opt.mid(1);
+                bool mmore = (mopt.size() > 1);
+                switch (mopt[0]) {
+                case 'D':
+                    pp.generateDeps = true;
+                    break;
+                case 'T':
+                    if (!mmore) {
+                        if (!(n < argc-1))
+                            error("Missing target name for the -MT option.");
+                        pp.generateDepsTarget = argv[++n];
+                    } else {
+                        pp.generateDepsTarget = mopt.mid(1);
+                    }
+                    break;
+                case 'P':
+                    pp.generateDepsPhony = true;
+                    break;
+                case 'F':
+                    if (!mmore) {
+                        if (!(n < argc-1))
+                            error("Missing path name for the -MF option.");
+                        pp.generateDepsOutput = argv[++n];
+                    } else {
+                        pp.generateDepsOutput = mopt.mid(1);
+                    }
+                    break;
+                default:
+                    error("Invalid option: " + opt);
+                }
+            }
+            break;
         case 'v':  // version number
             if (more && opt != "version")
                 error();
@@ -406,6 +453,21 @@ int runMoc(int _argc, char **_argv)
             return 1;
         }
         moc.filename = filename;
+    }
+
+    // do some sanity checks on the dependency options and set defaults
+    if (pp.generateDeps) {
+        // no output to write dependency info to
+        if (pp.generateDepsOutput.isEmpty())
+            error("-MD used without using -MF.");
+
+        // no target specified and it can't be guessed
+        if (pp.generateDepsTarget.isEmpty()) {
+            if (output.isEmpty())
+                error("Neither -MT nor -o used.");
+            else
+                pp.generateDepsTarget = output;
+        }
     }
 
     moc.currentFilenames.push(filename);

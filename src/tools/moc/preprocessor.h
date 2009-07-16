@@ -62,11 +62,15 @@ typedef SubArray MacroName;
 typedef QHash<MacroName, Macro> Macros;
 typedef QVector<MacroName> MacroSafeSet;
 
+class QFileInfo;
 
 class Preprocessor : public Parser
 {
 public:
-    Preprocessor(){}
+    Preprocessor()
+        : generateDeps(false), generateDepsPhony(false)
+        {}
+
     static bool preprocessOnly;
     struct IncludePath
     {
@@ -81,6 +85,14 @@ public:
     Macros macros;
     Symbols preprocessed(const QByteArray &filename, FILE *file);
 
+    bool generateDeps;
+    bool generateDepsPhony;
+    QByteArray generateDepsTarget;
+    QByteArray generateDepsOutput;
+    QSet<QString> triedIncludes; // used for dependency generation
+
+    bool existsRecordDep(const QFileInfo &fi);
+    static void depOutputLengthBound(FILE *depout, const QByteArray &str, int &curLength);
 
     void skipUntilEndif();
     bool skipBranch();

@@ -453,6 +453,7 @@ private slots:
     void slotWithException() throw(MyStruct);
     void dontStripNamespaces();
     void oldStyleCasts();
+    void dependencyGeneration();
     void warnOnExtraSignalSlotQualifiaction();
     void uLongLong();
     void inputFileNameWithDotsButNoExtension();
@@ -575,6 +576,51 @@ void tst_Moc::oldStyleCasts()
     QVERIFY(proc.waitForFinished());
     QCOMPARE(proc.exitCode(), 0);
     QCOMPARE(QString::fromLocal8Bit(proc.readAllStandardError()), QString());
+#else
+    QSKIP("Only tested on linux/gcc", SkipAll);
+#endif
+}
+
+void tst_Moc::dependencyGeneration()
+{
+#if defined(Q_OS_LINUX) && defined(Q_CC_GNU)
+    QProcess proc;
+    proc.start("moc", QStringList() <<
+               "-o" << "/dev/null" << "-I/testIncDir" << "-I/testIncDir2" <<
+               "-MD" << "-MF" << "/dev/stdout" << "-MT" << "output.moc" << "-MP" <<
+               "dep-gen.h");
+    QVERIFY(proc.waitForFinished());
+
+    QString("foobar");
+
+    // get rid of wrapping of long lines
+    QString depOutput = proc.readAllStandardOutput().replace("\\\n","");
+    QStringList depLines = depOutput.split("\n", QString::SkipEmptyParts);
+    QStringList firstLine = depLines[0].split(" ", QString::SkipEmptyParts);
+    depLines.pop_front();
+
+    // the target is the same as the argument passed for -MT
+    QCOMPARE(firstLine[0], QString("output.moc:"));
+    firstLine.pop_front();
+
+    // first we depend on the source
+    QCOMPARE(firstLine[0], QString("dep-gen.h"));
+    firstLine.pop_front();
+
+    QVERIFY(-1 != firstLine.indexOf("c-comments.h"));
+    QVERIFY(-1 != firstLine.indexOf("notfoundlocal.h"));
+    QVERIFY(-1 != firstLine.indexOf("/testIncDir/notfoundlocal.h"));
+    QVERIFY(-1 != firstLine.indexOf("/testIncDir2/notfoundlocal.h"));
+    QVERIFY(-1 == firstLine.indexOf("notfoundglobal.h"));
+    QVERIFY(-1 != firstLine.indexOf("/testIncDir/notfoundglobal.h"));
+    QVERIFY(-1 != firstLine.indexOf("/testIncDir2/notfoundglobal.h"));
+    QVERIFY(-1 == firstLine.indexOf("output.moc"));
+
+    // check if all of the dummy rules are generated: they are the
+    // same as the filenames in the first line, but all of them is
+    // suffixed with a semicolon
+    depLines.replaceInStrings(":","");
+    QCOMPARE(firstLine, depLines);
 #else
     QSKIP("Only tested on linux/gcc", SkipAll);
 #endif

@@ -208,6 +208,29 @@
     \o Undefine macro.
 
     \row
+    \o \c{-MD}
+    \o Generates dependency information in an output makefile as a
+       side effect of preprocessing.
+
+    \row
+    \o \c{-MF<file>}
+    \o Use \c{<file>} as the output file for dependency information,
+       this option is mandatory if you are using \c{-MD}.
+
+    \row
+    \o \c{-MP}
+    \o Add a phony target for each dependency other than the main
+       file, causing each to depend on nothing.  Please refer to gcc's
+       \c{-MP} option for more details.
+
+    \row
+    \o \c{-MT<target>}
+    \o Use \c{<target>} as the main target in the generated dependency
+       Makefile.  If not specified then the default is the filename
+       from \c{-o}.  This means that if you are using \c{-MD}, then
+       using either \c{-o} or \c{-MT} is mandatory.
+
+    \row
     \o \c{@<file>}
     \o Read additional command-line options from \c{<file>}.
     Each line of the file is treated as a single option. Empty lines

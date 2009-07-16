@@ -775,6 +775,21 @@ int Preprocessor::evaluateCondition()
     return expression.value();
 }
 
+// Same as QFileInfo::exists(), but records the filename in the
+// fileinfo object as a dependency if it is non-empty
+bool Preprocessor::existsRecordDep(const QFileInfo &fi)
+{
+    if (!fi.filePath().isEmpty()) {
+        QString filePath = fi.filePath();
+        QString curDir = QDir::toNativeSeparators(QString::fromLocal8Bit("./"));
+        if (filePath.startsWith(curDir))
+            filePath = filePath.mid(curDir.size());
+        triedIncludes << filePath;
+    }
+
+    return fi.exists();
+}
+
 void Preprocessor::preprocess(const QByteArray &filename, Symbols &preprocessed)
 {
     currentFilenames.push(filename);
@@ -799,7 +814,7 @@ void Preprocessor::preprocess(const QByteArray &filename, Symbols &preprocessed)
             QFileInfo fi;
             if (local)
                 fi.setFile(QFileInfo(QString::fromLocal8Bit(filename)).dir(), QString::fromLocal8Bit(include));
-            for (int j = 0; j < Preprocessor::includes.size() && !fi.exists(); ++j) {
+            for (int j = 0; j < Preprocessor::includes.size() && !existsRecordDep(fi); ++j) {
                 const IncludePath &p = Preprocessor::includes.at(j);
                 if (p.isFrameworkPath) {
                     const int slashPos = include.indexOf('/');
@@ -819,7 +834,7 @@ void Preprocessor::preprocess(const QByteArray &filename, Symbols &preprocessed)
                 }
             }
 
-            if (!fi.exists() || fi.isDir())
+            if (!existsRecordDep(fi) || fi.isDir())
                 continue;
             include = fi.canonicalFilePath().toLocal8Bit();
 
@@ -932,6 +947,20 @@ void Preprocessor::preprocess(const QByteArray &filename, Symbols &preprocessed)
     currentFilenames.pop();
 }
 
+void Preprocessor::depOutputLengthBound(FILE *depout, const QByteArray &str, int &curLength)
+{
+    // 2 = 1 + 1
+    //     ^ space after the str in output
+    //         ^ possible backslash if next item is too long
+    if (curLength + str.size() + 2 > 80) {
+        fprintf(depout, "\\\n  %s ", str.data());
+        curLength = 2 + str.size() + 1;
+    } else {
+        fprintf(depout, "%s ", str.data());
+        curLength += str.size() + 1;
+    }
+}
+
 Symbols Preprocessor::preprocessed(const QByteArray &filename, FILE *file)
 {
     QFile qfile;
@@ -965,6 +994,37 @@ Symbols Preprocessor::preprocessed(const QByteArray &filename, FILE *file)
                result[j].lexem().constData(),
                tokenTypeName(result[j].token));
 #endif
+
+    if (generateDeps) {
+        FILE *depout = 0;
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+        if (fopen_s(&depout, generateDepsOutput.data(), "w"))
+#else
+        depout = fopen(generateDepsOutput.data(), "w"); // create dependency output file
+        if (!depout)
+#endif
+        {
+            fprintf(stderr, "moc: Cannot create %s\n", (const char*)generateDepsOutput);
+            exit(1);
+        }
+
+        int lineLength = generateDepsTarget.size() + 2;
+        fprintf(depout, "%s: ", generateDepsTarget.data());
+        depOutputLengthBound(depout, filename, lineLength);
+
+        // Do not create a circular dependency
+        triedIncludes -= QString::fromLocal8Bit(generateDepsTarget);
+
+        foreach (QString triedInclude, triedIncludes)
+            depOutputLengthBound(depout, triedInclude.toLocal8Bit(), lineLength);
+        fprintf(depout, "\n\n");
+
+        if (generateDepsPhony)
+            foreach (QString triedInclude, triedIncludes)
+                fprintf(depout, "%s:\n\n", triedInclude.toLocal8Bit().data());
+
+        fclose(depout);
+    }
 
     return result;
 }
