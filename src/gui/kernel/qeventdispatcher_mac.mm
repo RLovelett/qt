@@ -265,8 +265,9 @@ void qt_mac_socket_callback(CFSocketRef s, CFSocketCallBackType callbackType, CF
     MacSocketInfo *socketInfo = eventDispatcher->macSockets.value(nativeSocket);
     QEvent notifierEvent(QEvent::SockAct);
     if (callbackType == kCFSocketReadCallBack) {
-        Q_ASSERT(socketInfo->readNotifier);
-        QApplication::sendEvent(socketInfo->readNotifier, &notifierEvent);
+        // ### see below
+        if (socketInfo->readNotifier)
+            QApplication::sendEvent(socketInfo->readNotifier, &notifierEvent);
     } else if (callbackType == kCFSocketWriteCallBack) {
         // ### Bug in Apple socket notifiers seems to send write even
         // ### after the notifier has been disabled, need to investigate further.
