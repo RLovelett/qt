@@ -197,7 +197,7 @@ index b3522ce..ed25dc3 100644
  #endif
  
 diff --git a/src/gui/inputmethod/inputmethod.pri b/src/gui/inputmethod/inputmethod.pri
-index d321cd4..fbbe723 100644
+index d321cd4..0d2e09e 100644
 --- a/src/gui/inputmethod/inputmethod.pri
 +++ b/src/gui/inputmethod/inputmethod.pri
 @@ -8,8 +8,11 @@ SOURCES +=inputmethod/qinputcontextfactory.cpp \
@@ -208,7 +208,7 @@ index d321cd4..fbbe723 100644
 -    SOURCES += inputmethod/qximinputcontext_x11.cpp
 +    HEADERS += inputmethod/qximinputcontext_p.h \
 +               inputmethod/qhildoninputcontext_p.h \
-+               inputmethod/qhildoninputmethodprotocol.h
++               inputmethod/qhildoninputmethodprotocol_p.h
 +    SOURCES += inputmethod/qximinputcontext_x11.cpp \
 +               inputmethod/qhildoninputcontext_x11.cpp
  }
@@ -216,7 +216,7 @@ index d321cd4..fbbe723 100644
      HEADERS += inputmethod/qwininputcontext_p.h
 diff --git a/src/gui/inputmethod/qhildoninputcontext_p.h b/src/gui/inputmethod/qhildoninputcontext_p.h
 new file mode 100644
-index 0000000..c07b7c3
+index 0000000..a16ba38
 --- /dev/null
 +++ b/src/gui/inputmethod/qhildoninputcontext_p.h
 @@ -0,0 +1,111 @@
@@ -263,7 +263,7 @@ index 0000000..c07b7c3
 +#define QHILDONINPUTCONTEXT_P_H
 +
 +#include "QtGui/qinputcontext.h"
-+#include "qhildoninputmethodprotocol.h"
++#include "qhildoninputmethodprotocol_p.h"
 +
 +#ifdef Q_WS_HILDON
 +
@@ -333,10 +333,10 @@ index 0000000..c07b7c3
 +#endif //QHILDONINPUTCONTEXT_P_H
 diff --git a/src/gui/inputmethod/qhildoninputcontext_x11.cpp b/src/gui/inputmethod/qhildoninputcontext_x11.cpp
 new file mode 100644
-index 0000000..75cd99a
+index 0000000..843bd41
 --- /dev/null
 +++ b/src/gui/inputmethod/qhildoninputcontext_x11.cpp
-@@ -0,0 +1,1672 @@
+@@ -0,0 +1,1674 @@
 +/****************************************************************************
 +**
 +** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -1227,7 +1227,9 @@ index 0000000..75cd99a
 +        KeySym upper = NoSymbol;
 +
 +        if (commitString.isEmpty()){
-+            currentChar = translateKeySym(keysym).at(0);
++            QString ks = translateKeySym(keysym);
++            if (!ks.isEmpty())
++                currentChar = ks.at(0);
 +        }else{
 +            currentChar = commitString.at(0);
 +        }
@@ -2009,11 +2011,11 @@ index 0000000..75cd99a
 +    sendEvent(e);
 +}
 +#endif
-diff --git a/src/gui/inputmethod/qhildoninputmethodprotocol.h b/src/gui/inputmethod/qhildoninputmethodprotocol.h
+diff --git a/src/gui/inputmethod/qhildoninputmethodprotocol_p.h b/src/gui/inputmethod/qhildoninputmethodprotocol_p.h
 new file mode 100644
 index 0000000..406a447
 --- /dev/null
-+++ b/src/gui/inputmethod/qhildoninputmethodprotocol.h
++++ b/src/gui/inputmethod/qhildoninputmethodprotocol_p.h
 @@ -0,0 +1,227 @@
 +/****************************************************************************
 +**
@@ -2329,6 +2331,439 @@ index f11c1b8..7af1d71 100644
  #if defined(QT_NO_LIBRARY) || defined(QT_NO_SETTINGS)
      Q_UNUSED(key);
  #else
+diff --git a/src/gui/itemviews/qtableview.cpp b/src/gui/itemviews/qtableview.cpp
+index 597ce04..c5a2729 100644
+--- a/src/gui/itemviews/qtableview.cpp
++++ b/src/gui/itemviews/qtableview.cpp
+@@ -2455,6 +2455,39 @@ void QTableViewPrivate::selectColumn(int column, bool anchor)
+     }
+ }
+ 
++#ifdef Q_WS_HILDON
++void QTableViewPrivate::drawOvershoot(int horizontal, int vertical)
++{
++	Q_Q(QTableView);
++	int overshoot_x = horizontal;
++	int overshoot_y = vertical;
++	int header_x = 0;
++	int header_y = 0;
++	if (overshoot_x >= 0) {
++		if (q->isRightToLeft())
++			overshoot_x += right;
++		else
++			overshoot_x += left;
++		header_x = horizontal;
++	} else {
++		if (q->isRightToLeft())
++			overshoot_x -= left;
++		else
++			overshoot_x -= right;
++	}
++	if (overshoot_y >= 0) {
++		overshoot_y += top;
++		header_y = vertical;
++	} else
++		overshoot_y -= bottom;
++
++	q->viewport()->move(overshoot_x, overshoot_y);
++	horizontalHeader->move(overshoot_x, header_y);
++	verticalHeader->move(header_x, overshoot_y);
++	cornerWidget->move(header_x, header_y);
++}
++#endif
++
+ /*!
+   \reimp
+  */
+diff --git a/src/gui/itemviews/qtableview_p.h b/src/gui/itemviews/qtableview_p.h
+index ef1ae7a..14a2bf7 100644
+--- a/src/gui/itemviews/qtableview_p.h
++++ b/src/gui/itemviews/qtableview_p.h
+@@ -201,6 +201,10 @@ public:
+ 
+     void selectRow(int row, bool anchor);
+     void selectColumn(int column, bool anchor);
++
++#ifdef Q_WS_HILDON
++	void drawOvershoot(int horizontal, int vertical);
++#endif
+ };
+ 
+ QT_END_NAMESPACE
+diff --git a/src/gui/itemviews/qtreeview.cpp b/src/gui/itemviews/qtreeview.cpp
+index cdcce83..a5549d5 100644
+--- a/src/gui/itemviews/qtreeview.cpp
++++ b/src/gui/itemviews/qtreeview.cpp
+@@ -6,11 +6,11 @@
+ ** This file is part of the QtGui module of the Qt Toolkit.
+ **
+ ** $QT_BEGIN_LICENSE:LGPL$
+-** No Commercial Usage
+-** This file contains pre-release code and may not be distributed.
+-** You may use this file in accordance with the terms and conditions
+-** contained in the either Technology Preview License Agreement or the
+-** Beta Release License Agreement.
++** Commercial Usage
++** Licensees holding valid Qt Commercial licenses may use this file in
++** accordance with the Qt Commercial License Agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Nokia.
+ **
+ ** GNU Lesser General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU Lesser
+@@ -596,13 +596,13 @@ void QTreeView::setRowHidden(int row, const QModelIndex &parent, bool hide)
+     Q_D(QTreeView);
+     if (!d->model)
+         return;
+-    QModelIndex index = d->model->index(row, 0, parent);
++    QPersistentModelIndex index = d->model->index(row, 0, parent);
+     if (!index.isValid())
+         return;
+ 
+     if (hide) {
+         d->hiddenIndexes.insert(index);
+-    } else if(d->isPersistent(index)) { //if the index is not persistent, it cannot be in the set
++    } else {
+         d->hiddenIndexes.remove(index);
+     }
+ 
+@@ -782,7 +782,7 @@ void QTreeView::collapse(const QModelIndex &index)
+ 
+     if (d->delayedPendingLayout) {
+         //A complete relayout is going to be performed, just un-store the expanded index, no need to layout.
+-        if (d->isPersistent(index) && d->expandedIndexes.remove(index))
++        if (d->expandedIndexes.remove(index))
+             emit collapsed(index);
+         return;
+     }
+@@ -794,7 +794,7 @@ void QTreeView::collapse(const QModelIndex &index)
+             viewport()->update();
+         }
+     } else {
+-        if (d->isPersistent(index) && d->expandedIndexes.remove(index))
++        if (d->expandedIndexes.remove(index))
+             emit collapsed(index);
+     }
+ }
+@@ -1241,23 +1241,16 @@ bool QTreeView::viewportEvent(QEvent *event)
+         int oldBranch = d->hoverBranch;
+         d->hoverBranch = d->itemDecorationAt(he->pos());
+         if (oldBranch != d->hoverBranch) {
+-            QModelIndex oldIndex = d->modelIndex(oldBranch),
+-                newIndex = d->modelIndex(d->hoverBranch);
+-            if (oldIndex != newIndex) {
+-                QRect oldRect = visualRect(oldIndex);
+-                QRect newRect = visualRect(newIndex);
+-                viewport()->update(oldRect.left() - d->indent, oldRect.top(), d->indent, oldRect.height());
+-                viewport()->update(newRect.left() - d->indent, newRect.top(), d->indent, newRect.height());
+-            }
++            QRect oldRect = visualRect(d->modelIndex(oldBranch));
++            QRect newRect = visualRect(d->modelIndex(d->hoverBranch));
++            viewport()->update(oldRect.left() - d->indent, oldRect.top(), d->indent, oldRect.height());
++            viewport()->update(newRect.left() - d->indent, newRect.top(), d->indent, newRect.height());
+         }
+         if (selectionBehavior() == QAbstractItemView::SelectRows) {
+-            QModelIndex newHoverIndex = indexAt(he->pos());
+-            if (d->hover != newHoverIndex) {
+-                QRect oldHoverRect = visualRect(d->hover);
+-                QRect newHoverRect = visualRect(newHoverIndex);
+-                viewport()->update(QRect(0, newHoverRect.y(), viewport()->width(), newHoverRect.height()));
+-                viewport()->update(QRect(0, oldHoverRect.y(), viewport()->width(), oldHoverRect.height()));
+-            }
++            QRect oldHoverRect = visualRect(d->hover);
++            QRect newHoverRect = visualRect(indexAt(he->pos()));
++            viewport()->update(QRect(0, newHoverRect.y(), viewport()->width(), newHoverRect.height()));
++            viewport()->update(QRect(0, oldHoverRect.y(), viewport()->width(), oldHoverRect.height()));
+         }
+         break; }
+     default:
+@@ -1386,7 +1379,7 @@ void QTreeView::drawTree(QPainter *painter, const QRegion &region) const
+         // start at the top of the viewport  and iterate down to the update area
+         for (; i < viewItems.count(); ++i) {
+             const int itemHeight = d->itemHeight(i);
+-            if (y + itemHeight > area.top())
++            if (y + itemHeight >= area.top())
+                 break;
+             y += itemHeight;
+         }
+@@ -2021,7 +2014,6 @@ int QTreeView::verticalOffset() const
+         // If we are scrolling per item and have non-uniform row heights,
+         // finding the vertical offset in pixels is going to be relatively slow.
+         // ### find a faster way to do this
+-        d->executePostedLayout();
+         int offset = 0;
+         for (int i = 0; i < d->viewItems.count(); ++i) {
+             if (i == verticalScrollBar()->value())
+@@ -2052,7 +2044,8 @@ QModelIndex QTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
+         while (c < d->header->count() && d->header->isSectionHidden(c))
+             ++c;
+         if (i < d->viewItems.count() && c < d->header->count()) {
+-            return d->modelIndex(i, c);
++            QModelIndex index = d->viewItems.value(i).index;
++            return (c == index.column() ? index : index.sibling(index.row(), c));
+         }
+         return QModelIndex();
+     }
+@@ -2093,16 +2086,16 @@ QModelIndex QTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
+     case MoveDown:
+ #ifdef QT_KEYPAD_NAVIGATION
+         if (vi == d->viewItems.count()-1 && QApplication::keypadNavigationEnabled())
+-            return d->model->index(0, current.column(), d->root);
++            return d->model->index(0, 0, d->root);
+ #endif
+-        return d->modelIndex(d->below(vi), current.column());
++        return d->modelIndex(d->below(vi));
+     case MovePrevious:
+     case MoveUp:
+ #ifdef QT_KEYPAD_NAVIGATION
+         if (vi == 0 && QApplication::keypadNavigationEnabled())
+-            return d->modelIndex(d->viewItems.count() - 1, current.column());
++            return d->modelIndex(d->viewItems.count() - 1);
+ #endif
+-        return d->modelIndex(d->above(vi), current.column());
++        return d->modelIndex(d->above(vi));
+     case MoveLeft: {
+         QScrollBar *sb = horizontalScrollBar();
+         if (vi < d->viewItems.count() && d->viewItems.at(vi).expanded && d->itemsExpandable && sb->value() == sb->minimum())
+@@ -2117,16 +2110,6 @@ QModelIndex QTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
+                     descend = false;
+             }
+             if (!descend) {
+-                if (d->selectionBehavior == SelectItems || d->selectionBehavior == SelectColumns) {
+-                    int visualColumn = d->header->visualIndex(current.column()) - 1;
+-                    while (visualColumn >= 0 && isColumnHidden(d->header->logicalIndex(visualColumn)))
+-                        visualColumn--;
+-                    int newColumn = d->header->logicalIndex(visualColumn);
+-                    QModelIndex next = current.sibling(current.row(), newColumn);
+-                    if (next.isValid())
+-                        return next;
+-                }
+-
+                 sb->setValue(sb->value() - sb->singleStep());
+             }
+ 
+@@ -2149,17 +2132,6 @@ QModelIndex QTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
+                     descend = false;
+             }
+             if (!descend) {
+-                if (d->selectionBehavior == SelectItems || d->selectionBehavior == SelectColumns) {
+-                    int visualColumn = d->header->visualIndex(current.column()) + 1;
+-                    while (visualColumn < d->model->columnCount(current.parent()) && isColumnHidden(d->header->logicalIndex(visualColumn)))
+-                        visualColumn++;
+-
+-                    QModelIndex next = current.sibling(current.row(), visualColumn);
+-                    if (next.isValid())
+-                        return next;
+-                }
+-
+-                //last restort: we change the scrollbar value
+                 QScrollBar *sb = horizontalScrollBar();
+                 sb->setValue(sb->value() + sb->singleStep());
+             }
+@@ -2168,13 +2140,13 @@ QModelIndex QTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
+         viewport()->update();
+         break;
+     case MovePageUp:
+-        return d->modelIndex(d->pageUp(vi), current.column());
++        return d->modelIndex(d->pageUp(vi));
+     case MovePageDown:
+-        return d->modelIndex(d->pageDown(vi), current.column());
++        return d->modelIndex(d->pageDown(vi));
+     case MoveHome:
+-        return d->model->index(0, current.column(), d->root);
++        return d->model->index(0, 0, d->root);
+     case MoveEnd:
+-        return d->modelIndex(d->viewItems.count() - 1, current.column());
++        return d->modelIndex(d->viewItems.count() - 1);
+     }
+     return current;
+ }
+@@ -2317,16 +2289,15 @@ void QTreeView::scrollContentsBy(int dx, int dy)
+         }
+     }
+ 
+-    const int itemHeight = d->defaultItemHeight <= 0 ? sizeHintForRow(0) : d->defaultItemHeight;
+-    if (d->viewItems.isEmpty() || itemHeight == 0)
++    if (d->viewItems.isEmpty() || d->defaultItemHeight == 0)
+         return;
+ 
+     // guestimate the number of items in the viewport
+-    int viewCount = d->viewport->height() / itemHeight;
++    int viewCount = d->viewport->height() / d->defaultItemHeight;
+     int maxDeltaY = qMin(d->viewItems.count(), viewCount);
+     // no need to do a lot of work if we are going to redraw the whole thing anyway
+     if (qAbs(dy) > qAbs(maxDeltaY) && d->editors.isEmpty()) {
+-        verticalScrollBar()->update();
++        verticalScrollBar()->repaint();
+         d->viewport->update();
+         return;
+     }
+@@ -2569,13 +2540,41 @@ void QTreeView::sortByColumn(int column, Qt::SortOrder order)
+ {
+     Q_D(QTreeView);
+ 
+-    //If sorting is enabled  will emit a signal connected to _q_sortIndicatorChanged, which then actually sorts
++    //will emit a signal connected to _q_sortIndicatorChanged, which then actually sorts
+     d->header->setSortIndicator(column, order);
+-    //If sorting is not enabled, force to sort now.
+-    if (!d->sortingEnabled)
+-        d->model->sort(column, order);
+ }
+ 
++#ifdef Q_WS_HILDON
++void QTreeViewPrivate::drawOvershoot(int horizontal, int vertical)
++{
++	Q_Q(QTreeView);
++	int overshoot_x = horizontal;
++	int overshoot_y = vertical;
++	int header_x = 0;
++	int header_y = 0;
++	if (overshoot_x >= 0) {
++		if (q->isRightToLeft())
++			overshoot_x += right;
++		else
++			overshoot_x += left;
++		header_x = horizontal;
++	} else {
++		if (q->isRightToLeft())
++			overshoot_x -= left;
++		else
++			overshoot_x -= right;
++	}
++	if (overshoot_y >= 0) {
++		overshoot_y += top;
++		header_y = vertical;
++	} else
++		overshoot_y -= bottom;
++
++	q->viewport()->move(overshoot_x, overshoot_y);
++	header->move(overshoot_x, header_y);
++}
++#endif
++
+ /*!
+   \reimp
+ */
+@@ -2597,7 +2596,7 @@ void QTreeView::selectAll()
+   Expands all expandable items.
+ 
+   Warning: if the model contains a large number of items,
+-  this function will take some time to execute.
++  this function will be take time to execute.
+ 
+   \sa collapseAll() expand()  collapse() setExpanded()
+ */
+@@ -2901,13 +2900,8 @@ void QTreeViewPrivate::collapse(int item, bool emitSignal)
+     if (item == -1 || expandedIndexes.isEmpty())
+         return;
+ 
+-    //if the current item is now invisible, the autoscroll will expand the tree to see it, so disable the autoscroll
+-    delayedAutoScroll.stop();
+-
+     int total = viewItems.at(item).total;
+     const QModelIndex &modelIndex = viewItems.at(item).index;
+-    if (!isPersistent(modelIndex))
+-        return; // if the index is not persistent, no chances it is expanded
+     QSet<QPersistentModelIndex>::iterator it = expandedIndexes.find(modelIndex);
+     if (it == expandedIndexes.end() || viewItems.at(item).expanded == false)
+         return; // nothing to do
+@@ -3374,15 +3368,10 @@ int QTreeViewPrivate::viewIndex(const QModelIndex &_index) const
+     return -1;
+ }
+ 
+-QModelIndex QTreeViewPrivate::modelIndex(int i, int column) const
++QModelIndex QTreeViewPrivate::modelIndex(int i) const
+ {
+-    if (i < 0 || i >= viewItems.count())
+-        return QModelIndex();
+-
+-    QModelIndex ret = viewItems.at(i).index;
+-    if (column)
+-        ret = ret.sibling(ret.row(), column);
+-    return ret;
++    return ((i < 0 || i >= viewItems.count())
++            ? QModelIndex() : viewItems.at(i).index);
+ }
+ 
+ int QTreeViewPrivate::firstVisibleItem(int *offset) const
+@@ -3510,7 +3499,6 @@ void QTreeViewPrivate::updateScrollBars()
+ 
+ int QTreeViewPrivate::itemDecorationAt(const QPoint &pos) const
+ {
+-    const_cast<QTreeView *>(q_func())->executeDelayedItemsLayout();
+     int x = pos.x();
+     int column = header->logicalIndexAt(x);
+     if (column != 0)
+diff --git a/src/gui/itemviews/qtreeview.h b/src/gui/itemviews/qtreeview.h
+index 35a205c..dbe443d 100644
+--- a/src/gui/itemviews/qtreeview.h
++++ b/src/gui/itemviews/qtreeview.h
+@@ -6,11 +6,11 @@
+ ** This file is part of the QtGui module of the Qt Toolkit.
+ **
+ ** $QT_BEGIN_LICENSE:LGPL$
+-** No Commercial Usage
+-** This file contains pre-release code and may not be distributed.
+-** You may use this file in accordance with the terms and conditions
+-** contained in the either Technology Preview License Agreement or the
+-** Beta Release License Agreement.
++** Commercial Usage
++** Licensees holding valid Qt Commercial licenses may use this file in
++** accordance with the Qt Commercial License Agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Nokia.
+ **
+ ** GNU Lesser General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU Lesser
+@@ -51,7 +51,6 @@ QT_BEGIN_NAMESPACE
+ QT_MODULE(Gui)
+ 
+ #ifndef QT_NO_TREEVIEW
+-
+ class QTreeViewPrivate;
+ class QHeaderView;
+ 
+diff --git a/src/gui/itemviews/qtreeview_p.h b/src/gui/itemviews/qtreeview_p.h
+index 6a1dfe5..d9be7f3 100644
+--- a/src/gui/itemviews/qtreeview_p.h
++++ b/src/gui/itemviews/qtreeview_p.h
+@@ -6,11 +6,11 @@
+ ** This file is part of the QtGui module of the Qt Toolkit.
+ **
+ ** $QT_BEGIN_LICENSE:LGPL$
+-** No Commercial Usage
+-** This file contains pre-release code and may not be distributed.
+-** You may use this file in accordance with the terms and conditions
+-** contained in the either Technology Preview License Agreement or the
+-** Beta Release License Agreement.
++** Commercial Usage
++** Licensees holding valid Qt Commercial licenses may use this file in
++** accordance with the Qt Commercial License Agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Nokia.
+ **
+ ** GNU Lesser General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU Lesser
+@@ -131,7 +131,7 @@ public:
+     int itemAtCoordinate(int coordinate) const;
+ 
+     int viewIndex(const QModelIndex &index) const;
+-    QModelIndex modelIndex(int i, int column = 0) const;
++    QModelIndex modelIndex(int i) const;
+ 
+     int firstVisibleItem(int *offset = 0) const;
+     int columnAt(int x) const;
+@@ -231,6 +231,10 @@ public:
+ 
+     // used for blocking recursion when calling setViewportMargins from updateGeometries
+     bool geometryRecursionBlock;
++ 
++#ifdef Q_WS_HILDON
++	void drawOvershoot(int horizontal, int vertical);
++#endif
+ };
+ 
+ QT_END_NAMESPACE
 diff --git a/src/gui/kernel/qapplication.cpp b/src/gui/kernel/qapplication.cpp
 index 40795d1..51a938f 100644
 --- a/src/gui/kernel/qapplication.cpp
@@ -2394,7 +2829,9 @@ index ddd5624..d4fc3ad 100644
      static QString styleSheet;
  #endif
 diff --git a/src/gui/kernel/qapplication_x11.cpp b/src/gui/kernel/qapplication_x11.cpp
-index 163ceb6..85efb4f 100644
+old mode 100644
+new mode 100755
+index 163ceb6..082507a
 --- a/src/gui/kernel/qapplication_x11.cpp
 +++ b/src/gui/kernel/qapplication_x11.cpp
 @@ -126,6 +126,10 @@ extern "C" {
@@ -2504,7 +2941,26 @@ index 163ceb6..85efb4f 100644
      priv->inputContext = 0;
  
      // colormap control
-@@ -2271,6 +2317,10 @@ void qt_init(QApplicationPrivate *priv, int,
+@@ -1954,10 +2000,18 @@ void qt_init(QApplicationPrivate *priv, int,
+             // engine to work on a QImage with BGR layout.
+             bool local = displayName.isEmpty() || displayName.lastIndexOf(QLatin1Char(':')) == 0;
+             if (local && (qgetenv("QT_X11_NO_MITSHM").toInt() == 0)) {
++
++#ifdef Q_WS_HILDON
++				// The original code assumes 24bit color but NIT is 16 color,
++				// so X11->use_mitshm is set as false, and it causes a slowness issue
++				// for raster drawing.
++				X11->use_mitshm = mitshm_pixmaps;
++#else
+                 Visual *defaultVisual = DefaultVisual(X11->display, DefaultScreen(X11->display));
+                 X11->use_mitshm = mitshm_pixmaps && (defaultVisual->red_mask == 0xff0000
+                                                      && defaultVisual->green_mask == 0xff00
+                                                      && defaultVisual->blue_mask == 0xff);
++#endif // Q_WS_HILDON
+             }
+         }
+ #endif // QT_NO_MITSHM
+@@ -2271,6 +2325,10 @@ void qt_init(QApplicationPrivate *priv, int,
                          X11->desktopEnvironment = DE_KDE;
                      if (wmName == QLatin1String("Metacity"))
                          X11->desktopEnvironment = DE_GNOME;
@@ -2515,7 +2971,7 @@ index 163ceb6..85efb4f 100644
                  }
              }
          }
-@@ -2340,7 +2390,9 @@ void qt_init(QApplicationPrivate *priv, int,
+@@ -2340,7 +2398,9 @@ void qt_init(QApplicationPrivate *priv, int,
                  i,
                  j;
              bool gotStylus,
@@ -2526,7 +2982,7 @@ index 163ceb6..85efb4f 100644
              XDeviceInfo *devices = 0, *devs;
              XInputClassInfo *ip;
              XAnyClassPtr any;
-@@ -2354,6 +2406,9 @@ void qt_init(QApplicationPrivate *priv, int,
+@@ -2354,6 +2414,9 @@ void qt_init(QApplicationPrivate *priv, int,
              const QString XFREENAMEPEN = QLatin1String("pen");
              const QString XFREENAMEERASER = QLatin1String("eraser");
  #endif
@@ -2536,7 +2992,7 @@ index 163ceb6..85efb4f 100644
  
              if (X11->ptrXListInputDevices) {
                  devices = X11->ptrXListInputDevices(X11->display, &ndev);
-@@ -2384,17 +2439,32 @@ void qt_init(QApplicationPrivate *priv, int,
+@@ -2384,17 +2447,32 @@ void qt_init(QApplicationPrivate *priv, int,
                      deviceType = QTabletEvent::XFreeEraser;
                      gotEraser = true;
                  }
@@ -2569,7 +3025,7 @@ index 163ceb6..85efb4f 100644
                      QTabletDeviceData device_data;
                      device_data.deviceType = deviceType;
                      device_data.eventCount = 0;
-@@ -2599,6 +2669,11 @@ void QApplicationPrivate::x11_initialize_style()
+@@ -2599,6 +2677,11 @@ void QApplicationPrivate::x11_initialize_style()
          case DE_CDE:
              QApplicationPrivate::app_style = QStyleFactory::create(QLatin1String("cde"));
              break;
@@ -2581,7 +3037,7 @@ index 163ceb6..85efb4f 100644
          default:
              // Don't do anything
              break;
-@@ -2757,6 +2832,12 @@ QString QApplicationPrivate::appName() const
+@@ -2757,6 +2840,12 @@ QString QApplicationPrivate::appName() const
      return QString::fromLocal8Bit(QT_PREPEND_NAMESPACE(appName));
  }
  
@@ -2594,7 +3050,7 @@ index 163ceb6..85efb4f 100644
  const char *QX11Info::appClass()                                // get application class
  {
      return QT_PREPEND_NAMESPACE(appClass);
-@@ -3031,6 +3112,50 @@ void QApplicationPrivate::_q_alertTimeOut()
+@@ -3031,6 +3120,50 @@ void QApplicationPrivate::_q_alertTimeOut()
      }
  }
  
@@ -2645,7 +3101,7 @@ index 163ceb6..85efb4f 100644
  /*****************************************************************************
    Special lookup functions for windows that have been reparented recently
   *****************************************************************************/
-@@ -3124,10 +3249,30 @@ int QApplication::x11ClientMessage(QWidget* w, XEvent* event, bool passive_only)
+@@ -3124,10 +3257,30 @@ int QApplication::x11ClientMessage(QWidget* w, XEvent* event, bool passive_only)
              X11->xdndHandleDrop(widget, event, passive_only);
          } else if (event->xclient.message_type == ATOM(XdndFinished)) {
              X11->xdndHandleFinished(widget, event, passive_only);
@@ -2676,7 +3132,7 @@ index 163ceb6..85efb4f 100644
      } else {
          X11->motifdndHandle(widget, event, passive_only);
      }
-@@ -4254,13 +4399,26 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
+@@ -4254,13 +4407,26 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
                  mouseButtonPressed == button &&
                  (long)event->xbutton.time -(long)mouseButtonPressTime
                  < QApplication::doubleClickInterval() &&
@@ -2703,7 +3159,7 @@ index 163ceb6..85efb4f 100644
              }
              mouseButtonPressed = button;        // save event params for
              mouseXPos = event->xbutton.x;                // future double click tests
-@@ -4286,6 +4444,11 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
+@@ -4286,6 +4452,11 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
              }
  #endif
              type = QEvent::MouseButtonRelease;
@@ -2919,7 +3375,7 @@ index c7b32f2..27c134e 100644
  {
      QX11InfoData* xd = xinfo->getX11Data(true);
 diff --git a/src/gui/styles/gtksymbols.cpp b/src/gui/styles/gtksymbols.cpp
-index be9b10a..90410d1 100644
+index be9b10a..daf9888 100644
 --- a/src/gui/styles/gtksymbols.cpp
 +++ b/src/gui/styles/gtksymbols.cpp
 @@ -103,6 +103,9 @@ Ptr_gtk_frame_new QGtk::gtk_frame_new = 0;
@@ -2932,7 +3388,17 @@ index be9b10a..90410d1 100644
  Ptr_gtk_hscale_new QGtk::gtk_hscale_new = 0;
  Ptr_gtk_vscale_new QGtk::gtk_vscale_new = 0;
  Ptr_gtk_hscrollbar_new QGtk::gtk_hscrollbar_new = 0;
-@@ -192,6 +195,11 @@ Ptr_gdk_x11_drawable_get_xdisplay QGtk::gdk_x11_drawable_get_xdisplay = 0;
+@@ -173,6 +176,9 @@ Ptr_gtk_file_chooser_get_filenames QGtk::gtk_file_chooser_get_filenames = 0;
+ Ptr_gtk_file_chooser_set_current_name QGtk::gtk_file_chooser_set_current_name = 0;
+ Ptr_gtk_dialog_run QGtk::gtk_dialog_run = 0;
+ Ptr_gtk_file_chooser_set_filename QGtk::gtk_file_chooser_set_filename = 0;
++#ifdef Q_WS_HILDON
++Ptr_hildon_file_chooser_dialog_new QGtk::hildon_file_chooser_dialog_new = 0;
++#endif
+ 
+ Ptr_gdk_pixbuf_get_pixels QGtk::gdk_pixbuf_get_pixels = 0;
+ Ptr_gdk_pixbuf_get_width QGtk::gdk_pixbuf_get_width = 0;
+@@ -192,6 +198,11 @@ Ptr_gdk_x11_drawable_get_xdisplay QGtk::gdk_x11_drawable_get_xdisplay = 0;
  Ptr_gconf_client_get_default QGtk::gconf_client_get_default = 0;
  Ptr_gconf_client_get_string QGtk::gconf_client_get_string = 0;
  
@@ -2944,18 +3410,29 @@ index be9b10a..90410d1 100644
  static QString classPath(GtkWidget *widget)
  {
      char* class_path;
-@@ -208,6 +216,10 @@ static QString classPath(GtkWidget *widget)
+@@ -208,6 +219,11 @@ static QString classPath(GtkWidget *widget)
  static void resolveGtk()
  {
      const QString GTK_PATH(QLS("gtk-x11-2.0"));
 +#ifdef Q_WS_HILDON
 +    const QString HILDON_PATH(QLS("hildon-1"));
++    const QString HILDONFM_PATH("hildonfm");
 +#endif
 +
      QGtk::gtk_init = (Ptr_gtk_init)QLibrary::resolve(GTK_PATH, 0, "gtk_init");
      QGtk::gtk_window_new = (Ptr_gtk_window_new)QLibrary::resolve(GTK_PATH, 0, "gtk_window_new");
      QGtk::gtk_style_attach = (Ptr_gtk_style_attach)QLibrary::resolve(GTK_PATH, 0, "gtk_style_attach");
-@@ -268,6 +280,9 @@ static void resolveGtk()
+@@ -227,6 +243,9 @@ static void resolveGtk()
+     QGtk::gtk_file_chooser_set_current_name = (Ptr_gtk_file_chooser_set_current_name)QLibrary::resolve(GTK_PATH, 0, "gtk_file_chooser_set_current_name");
+     QGtk::gtk_dialog_run = (Ptr_gtk_dialog_run)QLibrary::resolve(GTK_PATH, 0, "gtk_dialog_run");
+     QGtk::gtk_file_chooser_set_filename = (Ptr_gtk_file_chooser_set_filename)QLibrary::resolve(GTK_PATH, 0, "gtk_file_chooser_set_filename");
++#ifdef Q_WS_HILDON
++    QGtk::hildon_file_chooser_dialog_new = (Ptr_hildon_file_chooser_dialog_new)QLibrary::resolve(HILDONFM_PATH, 2, "hildon_file_chooser_dialog_new");
++#endif
+ 
+     QGtk::gdk_pixbuf_get_pixels = (Ptr_gdk_pixbuf_get_pixels)QLibrary::resolve(GTK_PATH, 0, "gdk_pixbuf_get_pixels");
+     QGtk::gdk_pixbuf_get_width = (Ptr_gdk_pixbuf_get_width)QLibrary::resolve(GTK_PATH, 0, "gdk_pixbuf_get_width");
+@@ -268,6 +287,9 @@ static void resolveGtk()
      QGtk::gtk_scrolled_window_new = (Ptr_gtk_scrolled_window_new)QLibrary::resolve(GTK_PATH, 0, "gtk_scrolled_window_new");
      QGtk::gtk_menu_shell_append = (Ptr_gtk_menu_shell_append)QLibrary::resolve(GTK_PATH, 0, "gtk_menu_shell_append");
      QGtk::gtk_entry_new = (Ptr_gtk_entry_new)QLibrary::resolve(GTK_PATH, 0, "gtk_entry_new");
@@ -2965,7 +3442,7 @@ index be9b10a..90410d1 100644
      QGtk::gtk_tree_view_new = (Ptr_gtk_tree_view_new)QLibrary::resolve(GTK_PATH, 0, "gtk_tree_view_new");
      QGtk::gtk_combo_box_new = (Ptr_gtk_combo_box_new)QLibrary::resolve(GTK_PATH, 0, "gtk_combo_box_new");
      QGtk::gtk_progress_set_adjustment = (Ptr_gtk_progress_set_adjustment)QLibrary::resolve(GTK_PATH, 0, "gtk_progress_set_adjustment");
-@@ -319,6 +334,10 @@ static void resolveGtk()
+@@ -319,6 +341,10 @@ static void resolveGtk()
      QGtk::pango_font_description_get_weight = (Ptr_pango_font_description_get_weight)QLibrary::resolve(GTK_PATH, 0, "pango_font_description_get_weight");
      QGtk::pango_font_description_get_family = (Ptr_pango_font_description_get_family)QLibrary::resolve(GTK_PATH, 0, "pango_font_description_get_family");
      QGtk::pango_font_description_get_style = (Ptr_pango_font_description_get_style)QLibrary::resolve(GTK_PATH, 0, "pango_font_description_get_style");
@@ -2976,7 +3453,7 @@ index be9b10a..90410d1 100644
  }
  
  void QGtk::cleanup_gtk_widgets()
-@@ -369,10 +388,17 @@ static QString getThemeName()
+@@ -369,10 +395,17 @@ static QString getThemeName()
          foreach (const QString &rcPath, paths) {
              if (!rcPath.isEmpty()) {
                  QFile rcFile(rcPath);
@@ -2994,7 +3471,7 @@ index be9b10a..90410d1 100644
                          if (line.contains(QLS("gtk-theme-name"))) {
                              line = line.right(line.length() - line.indexOf(QLS("=")) - 1);
                              line.remove(QLS("\""));
-@@ -380,6 +406,13 @@ static QString getThemeName()
+@@ -380,6 +413,13 @@ static QString getThemeName()
                              themeName = line;
                              break;
                          }
@@ -3008,7 +3485,7 @@ index be9b10a..90410d1 100644
                      }
                  }
              }
-@@ -470,6 +503,13 @@ static void init_gtk_menu()
+@@ -470,6 +510,13 @@ static void init_gtk_menu()
      GtkWidget *gtkMenu = QGtk::gtk_menu_new();
      QGtk::gtk_menu_item_set_submenu((GtkMenuItem*)(gtkMenuBarItem), gtkMenu);
      QGtk::gtk_widget_realize(gtkMenu);
@@ -3022,7 +3499,7 @@ index be9b10a..90410d1 100644
  
      GtkWidget *gtkMenuItem = QGtk::gtk_menu_item_new();
      QGtk::gtk_menu_shell_append((GtkMenuShell*)gtkMenu, gtkMenuItem);
-@@ -667,6 +707,9 @@ void QGtk::initGtkWidgets()
+@@ -667,6 +714,9 @@ void QGtk::initGtkWidgets()
              add_widget(QGtk::gtk_combo_box_new());
              add_widget(QGtk::gtk_combo_box_entry_new());
              add_widget(QGtk::gtk_entry_new());
@@ -3032,7 +3509,7 @@ index be9b10a..90410d1 100644
              add_widget(QGtk::gtk_frame_new(NULL));
              add_widget(QGtk::gtk_expander_new(""));
              add_widget(QGtk::gtk_statusbar_new());
-@@ -684,6 +727,10 @@ void QGtk::initGtkWidgets()
+@@ -684,6 +734,10 @@ void QGtk::initGtkWidgets()
              init_gtk_treeview();
              add_widget(QGtk::gtk_vscale_new((GtkAdjustment*)(QGtk::gtk_adjustment_new(1, 0, 1, 0, 0, 0))));
              add_widget(QGtk::gtk_vscrollbar_new(NULL));
@@ -3043,8 +3520,156 @@ index be9b10a..90410d1 100644
          }
          else // Rebuild map
          {
+@@ -756,7 +810,11 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
+ 
+     QFileInfo fileinfo(dir);
+     if (dir.isEmpty())
++#ifndef Q_WS_HILDON
++        return;
++#else
+         fileinfo.setFile(QDir::currentPath());
++#endif
+     fileinfo.makeAbsolute();
+     if (fileinfo.isDir()) {
+         QGtk::gtk_file_chooser_set_current_folder((GtkFileChooser*)gtkFileChooser, qPrintable(dir));
+@@ -767,18 +825,20 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
+         QGtk::gtk_file_chooser_set_filename((GtkFileChooser*)gtkFileChooser, qPrintable(dir));
+     }
+ }
+-
++#include <QDebug>
+ QString QGtk::openFilename(QWidget *parent, const QString &caption, const QString &dir, const QString &filter,
+                             QString *selectedFilter, QFileDialog::Options options)
+ {
+-
++#ifdef Q_WS_HILDON
++    GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_OPEN);  
++#else
+     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
+                                                              NULL,
+                                                              GTK_FILE_CHOOSER_ACTION_OPEN,
+                                                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                              GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                                              NULL);
+-
++#endif
+     setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options);
+ 
+     QWidget modal_widget;
+@@ -787,27 +847,35 @@ QString QGtk::openFilename(QWidget *parent, const QString &caption, const QStrin
+     QApplicationPrivate::enterModal(&modal_widget);
+ 
+     QString filename;
++#ifdef Q_WS_HILDON
++    if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_OK) {
++#else
+     if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_ACCEPT) {
++#endif
+         char *gtk_filename = QGtk::gtk_file_chooser_get_filename ((GtkFileChooser*)gtkFileChooser);
+         filename = QString::fromUtf8(gtk_filename);
+         g_free (gtk_filename);
+     }
+-
+     QApplicationPrivate::leaveModal(&modal_widget);
+     gtk_widget_destroy (gtkFileChooser);
+     return filename;
++
+ }
+ 
+ 
+ QString QGtk::openDirectory(QWidget *parent, const QString &caption, const QString &dir, QFileDialog::Options options)
+ {
++ qDebug() << "DIR" << dir;
++#ifdef Q_WS_HILDON
++    GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);  
++#else
+     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
+                                                              NULL,
+                                                              GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+                                                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                              GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                                              NULL);
+-
++#endif
+     setupGtkFileChooser(gtkFileChooser, parent, dir, QString(), 0, options);
+     QWidget modal_widget;
+     modal_widget.setAttribute(Qt::WA_NoChildEventsForParent, true);
+@@ -815,7 +883,11 @@ QString QGtk::openDirectory(QWidget *parent, const QString &caption, const QStri
+     QApplicationPrivate::enterModal(&modal_widget);
+ 
+     QString filename;
++#ifdef Q_WS_HILDON
++    if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_OK) {
++#else
+     if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_ACCEPT) {
++#endif
+         char *gtk_filename = QGtk::gtk_file_chooser_get_filename ((GtkFileChooser*)gtkFileChooser);
+         filename = QString::fromUtf8(gtk_filename);
+         g_free (gtk_filename);
+@@ -830,13 +902,16 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
+                                  QString *selectedFilter, QFileDialog::Options options)
+ {
+     QStringList filenames;
++#ifdef Q_WS_HILDON
++    GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_OPEN);  
++#else
+     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
+                                                              NULL,
+                                                              GTK_FILE_CHOOSER_ACTION_OPEN,
+                                                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                              GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                                              NULL);
+-
++#endif
+     setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options);
+     g_object_set(gtkFileChooser, "select-multiple", gboolean(true), NULL);
+ 
+@@ -845,7 +920,11 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
+     modal_widget.setParent(parent, Qt::Window);
+     QApplicationPrivate::enterModal(&modal_widget);
+ 
++#ifdef Q_WS_HILDON
++    if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_OK) {
++#else
+     if (gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_ACCEPT) {
++#endif
+         GSList *gtk_file_names = QGtk::gtk_file_chooser_get_filenames((GtkFileChooser*)gtkFileChooser);
+         for (GSList *iterator  = gtk_file_names ; iterator; iterator = iterator->next)
+             filenames << QString::fromUtf8((const char*)iterator->data);
+@@ -860,12 +939,19 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
+ QString QGtk::saveFilename(QWidget *parent, const QString &caption, const QString &dir, const QString &filter,
+                            QString *selectedFilter, QFileDialog::Options options)
+ {
++    qDebug() << "DIR" << dir
++             << "filter" << filter
++             << "selected filter" << selectedFilter;
++#ifdef Q_WS_HILDON
++    GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_SAVE);  
++#else
+     GtkWidget *gtkFileChooser = QGtk::gtk_file_chooser_dialog_new (qPrintable(caption),
+                                                              NULL,
+                                                              GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                                              GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+                                                              NULL);
++#endif
+     setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options, true);
+ 
+     QWidget modal_widget;
+@@ -874,7 +960,11 @@ QString QGtk::saveFilename(QWidget *parent, const QString &caption, const QStrin
+     QApplicationPrivate::enterModal(&modal_widget);
+ 
+     QString filename;
++#ifdef Q_WS_HILDON
++    if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_OK) {
++#else
+     if (QGtk::gtk_dialog_run ((GtkDialog*)gtkFileChooser) == GTK_RESPONSE_ACCEPT) {
++#endif
+         char *gtk_filename = QGtk::gtk_file_chooser_get_filename ((GtkFileChooser*)gtkFileChooser);
+         filename = QString::fromUtf8(gtk_filename);
+         g_free (gtk_filename);
 diff --git a/src/gui/styles/gtksymbols_p.h b/src/gui/styles/gtksymbols_p.h
-index b0195d2..99f4347 100644
+index b0195d2..4dd1c78 100644
 --- a/src/gui/styles/gtksymbols_p.h
 +++ b/src/gui/styles/gtksymbols_p.h
 @@ -108,6 +108,9 @@ typedef GtkWidget* (*Ptr_gtk_scrolled_window_new)(GtkAdjustment*, GtkAdjustment*
@@ -3057,7 +3682,27 @@ index b0195d2..99f4347 100644
  typedef GtkWidget* (*Ptr_gtk_tree_view_new)(void);
  typedef GtkTreeViewColumn* (*Ptr_gtk_tree_view_get_column)(GtkTreeView *, gint);
  typedef GtkWidget* (*Ptr_gtk_combo_box_new)(void);
-@@ -193,6 +196,11 @@ typedef void (*Ptr_gdk_x11_window_set_user_time) (GdkWindow *window, guint32);
+@@ -156,6 +159,7 @@ typedef gint (*Ptr_pango_font_description_get_size) (const PangoFontDescription
+ typedef PangoWeight (*Ptr_pango_font_description_get_weight) (const PangoFontDescription *);
+ typedef const char* (*Ptr_pango_font_description_get_family) (const PangoFontDescription *);
+ typedef PangoStyle (*Ptr_pango_font_description_get_style) (const PangoFontDescription *desc);
++
+ typedef gboolean (*Ptr_gtk_file_chooser_set_current_folder)(GtkFileChooser *, const gchar *);
+ typedef GtkFileFilter* (*Ptr_gtk_file_filter_new)(void);
+ typedef void (*Ptr_gtk_file_filter_set_name)(GtkFileFilter *, const gchar *);
+@@ -173,6 +177,11 @@ typedef void (*Ptr_gtk_file_chooser_set_current_name) (GtkFileChooser *, const g
+ typedef gboolean (*Ptr_gtk_file_chooser_set_filename) (GtkFileChooser *chooser, const gchar *name);
+ typedef gint (*Ptr_gtk_dialog_run) (GtkDialog*);
+ 
++#ifdef Q_WS_HILDON
++typedef GtkWidget* (*Ptr_hildon_file_chooser_dialog_new)(GtkWindow *parent,
++                                                         GtkFileChooserAction action);
++
++#endif
+ typedef guchar* (*Ptr_gdk_pixbuf_get_pixels) (const GdkPixbuf *pixbuf);
+ typedef int (*Ptr_gdk_pixbuf_get_width) (const GdkPixbuf *pixbuf);
+ typedef void (*Ptr_gdk_color_free) (const GdkColor *);
+@@ -193,6 +202,11 @@ typedef void (*Ptr_gdk_x11_window_set_user_time) (GdkWindow *window, guint32);
  typedef XID  (*Ptr_gdk_x11_drawable_get_xid) (GdkDrawable *);
  typedef Display* (*Ptr_gdk_x11_drawable_get_xdisplay) ( GdkDrawable *);
  
@@ -3069,7 +3714,7 @@ index b0195d2..99f4347 100644
  QT_BEGIN_NAMESPACE
  
  class QGtk
-@@ -241,6 +249,9 @@ public:
+@@ -241,6 +255,9 @@ public:
      static Ptr_gtk_frame_new gtk_frame_new;
      static Ptr_gtk_statusbar_new gtk_statusbar_new;
      static Ptr_gtk_entry_new gtk_entry_new;
@@ -3079,7 +3724,17 @@ index b0195d2..99f4347 100644
      static Ptr_gtk_hscale_new gtk_hscale_new;
      static Ptr_gtk_vscale_new gtk_vscale_new;
      static Ptr_gtk_hscrollbar_new gtk_hscrollbar_new;
-@@ -327,6 +338,12 @@ public:
+@@ -309,6 +326,9 @@ public:
+     static Ptr_gtk_file_chooser_set_current_name gtk_file_chooser_set_current_name;
+     static Ptr_gtk_dialog_run gtk_dialog_run;
+     static Ptr_gtk_file_chooser_set_filename gtk_file_chooser_set_filename;
++#ifdef Q_WS_HILDON
++    static Ptr_hildon_file_chooser_dialog_new hildon_file_chooser_dialog_new;
++#endif
+ 
+     static Ptr_gdk_pixbuf_get_pixels gdk_pixbuf_get_pixels;
+     static Ptr_gdk_pixbuf_get_width gdk_pixbuf_get_width;
+@@ -327,6 +347,12 @@ public:
  
      static Ptr_gconf_client_get_default gconf_client_get_default;
      static Ptr_gconf_client_get_string gconf_client_get_string;
@@ -3183,7 +3838,7 @@ index 218f651..6c05edb 100644
                  int horizontal_padding;
 diff --git a/src/gui/styles/qhildonstyle.cpp b/src/gui/styles/qhildonstyle.cpp
 new file mode 100644
-index 0000000..9abf6cc
+index 0000000..ce50316
 --- /dev/null
 +++ b/src/gui/styles/qhildonstyle.cpp
 @@ -0,0 +1,424 @@
@@ -3230,7 +3885,7 @@ index 0000000..9abf6cc
 +
 +#include "qgtkpainter_p.h"
 +
-+#if !defined(QT_NO_STYLE_HILDON)
++#if !defined(QT_NO_STYLE_HILDON) && defined(Q_WS_HILDON)
 +
 +QT_BEGIN_NAMESPACE
 +
@@ -3993,6 +4648,869 @@ index 1a97a41..a83c117 100644
          break;
  
      case ApplicationsLocation:
+diff --git a/src/gui/widgets/qabstractscrollarea.cpp b/src/gui/widgets/qabstractscrollarea.cpp
+index ead8285..cf7e955 100644
+--- a/src/gui/widgets/qabstractscrollarea.cpp
++++ b/src/gui/widgets/qabstractscrollarea.cpp
+@@ -60,6 +60,19 @@
+ #include <private/qt_cocoa_helpers_mac_p.h>
+ #endif
+ 
++#ifdef Q_WS_HILDON
++#include <QGraphicsView>
++#include <QPlainTextEdit>
++#include <QTextEdit>
++#include <QScrollArea>
++#include <QListView>
++#include "private/qlistview_p.h"
++#include <QTableView>
++#include <QTreeView>
++#include "private/qtreeview_p.h"
++#include <QHeaderView>
++#endif
++
+ QT_BEGIN_NAMESPACE
+ 
+ /*!
+@@ -288,6 +301,12 @@ void QAbstractScrollAreaPrivate::init()
+     q->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+     q->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+     layoutChildren();
++#ifdef Q_WS_HILDON
++//	qDebug() << "Setting fingerscroll property";
++	fingerScroller = 0;
++	q->setProperty("FingerScrollable", true); // sets fingerscroller
++	q->setProperty("FingerScrollBars", true); // sets fingerscrollbars
++#endif
+ }
+ 
+ void QAbstractScrollAreaPrivate::layoutChildren()
+@@ -462,6 +481,117 @@ void QAbstractScrollAreaPrivate::layoutChildren()
+ // ### Fix for 4.4, talk to Bjoern E or Girish.
+ void QAbstractScrollAreaPrivate::scrollBarPolicyChanged(Qt::Orientation, Qt::ScrollBarPolicy) {}
+ 
++#ifdef Q_WS_HILDON
++/*!
++    This enables or disables finger scrolling; it should only be
++    called from within the DynamicPropertyChangeEvent handler.
++
++    These methods are only available on platforms supporting
++    Fingerscrolling and can be detected by looking for the
++    "FingerScrollable" property.
++*/
++
++void QAbstractScrollAreaPrivate::setFingerScrollable(bool setFingerScroller)
++{
++    Q_Q(QAbstractScrollArea);
++
++	if (setFingerScroller) {
++		if (! fingerScroller) {
++			fingerScroller = new QAbstractScrollAreaPrivateScroller(viewport, q, this);
++		}
++	} else if (fingerScroller) {
++		delete fingerScroller;
++		fingerScroller = 0;
++	}
++}
++
++/*!
++    This enables or disables finger scroll bars (narrow bars that
++    mainly only show position); it should only be called from within
++    the DynamicPropertyChangeEvent handler.
++
++    These methods are only available on platforms supporting
++    Fingerscrolling and can be detected by looking for the
++    "FingerScrollBars" property.
++*/
++
++void QAbstractScrollAreaPrivate::setFingerScrollBars(bool setting)
++{
++	Q_Q(QAbstractScrollArea);
++	
++	if (setting) {
++		if (!fingerScrollBars)
++		{
++			scrollAreaStyle = q->styleSheet();
++		}
++		q->setStyleSheet(
++			"QScrollBar:horizontal { "
++			"background: palette(window); "
++			"height: 8px; "
++			"margin: 0px 0px 0px 0px; "
++			"padding: 0px 0px 0px 0px; "
++			"}" 
++			"QScrollBar::vertical { "
++			"background: palette(window); "
++			"width: 8px; "
++			"margin: 0px 0px 0px 0px; "
++			"padding: 0px 0px 0px 0px; "
++			"} "
++			"QScrollBar::handle:horizontal { "
++			"background: palette(window-text); "
++			"min-width: 40px; "
++			"} "
++			"QScrollBar::handle::vertical { "
++			"background: palette(window-text); "
++			"min-height: 40px; "
++			"} "
++			"QScrollBar::add-line::horizontal { "
++			"width: 0px; "
++			"} "
++			"QScrollBar::sub-line::horizontal { "
++			"width: 0px; "
++			"} "
++			"QScrollBar::add-line::vertical { "
++			"height: 0px; "
++			"} "
++			"QScrollBar::sub-line::vertical { "
++			"height: 0px; "
++			"} ");
++	} else {
++		q->setStyleSheet(scrollAreaStyle);
++	}
++	fingerScrollBars = setting;
++}
++
++void QAbstractScrollAreaPrivate::drawOvershoot(int horizontal, int vertical)
++{
++	Q_Q(QAbstractScrollArea);
++	int overshoot_x = horizontal;
++	int overshoot_y = vertical;
++	if (overshoot_x >= 0)
++	{
++		if (q->isRightToLeft())
++			overshoot_x += right;
++		else
++			overshoot_x += left;
++	}
++	else
++	{
++		if (q->isRightToLeft())
++			overshoot_x -= left;
++		else
++			overshoot_x -= right;
++	}
++	if (overshoot_y >= 0)
++		overshoot_y += top;
++	else
++		overshoot_y -= bottom;
++
++	q->viewport()->move(overshoot_x, overshoot_y);
++}
++
++#endif
++
+ /*!
+     \internal
+ 
+@@ -518,6 +648,13 @@ void QAbstractScrollArea::setViewport(QWidget *widget)
+         d->viewport->setParent(this);
+         d->viewport->setFocusProxy(this);
+         d->viewport->installEventFilter(d->viewportFilter);
++#ifdef Q_WS_HILDON
++		if (d->fingerScroller) {
++			delete d->fingerScroller;
++			d->fingerScroller = 0;
++			setProperty("FingerScrollable", true); // sets a fingerscroller on the new viewport
++		}
++#endif
+         d->layoutChildren();
+         if (isVisible())
+             d->viewport->show();
+@@ -909,6 +1046,16 @@ bool QAbstractScrollArea::event(QEvent *e)
+     case QEvent::DragLeave:
+ #endif
+         return false;
++#ifdef Q_WS_HILDON
++	case QEvent::DynamicPropertyChange: {
++		QString p = static_cast<QDynamicPropertyChangeEvent *>(e)->propertyName();
++		if (p == "FingerScrollBars") { // use some boolean short-circuit so !isValid == False
++			d->setFingerScrollBars(property("FingerScrollBars").isValid() and property("FingerScrollBars").toBool());
++		} else if (p == "FingerScrollable" and property("FingerScrollable").isValid()) {
++			d->setFingerScrollable(property("FingerScrollable").isValid() and property("FingerScrollable").toBool());
++		}
++	}
++#endif
+     case QEvent::StyleChange:
+     case QEvent::LayoutDirectionChange:
+     case QEvent::ApplicationLayoutDirectionChange:
+@@ -1295,6 +1442,495 @@ void QAbstractScrollArea::setupViewport(QWidget *viewport)
+     Q_UNUSED(viewport);
+ }
+ 
++#ifdef Q_WS_HILDON
++
++const int QAbstractScrollAreaPrivateScroller::START_WITHIN    = 300;  // must move within X ms to scroll
++const int QAbstractScrollAreaPrivateScroller::SENSITIVITY     = 20;   // pixels before we scroll
++const int QAbstractScrollAreaPrivateScroller::KINETIC_REFRESH = 50;   // ms
++const int QAbstractScrollAreaPrivateScroller::VSCALE          = 100;  // velocity scaling to ensure not lost in int rounding
++const int QAbstractScrollAreaPrivateScroller::DECEL_PC        = 93;   // velocity reduction factor/kinetic refresh (%)
++const int QAbstractScrollAreaPrivateScroller::DECEL_DURATION  = 1500; // ms
++const int QAbstractScrollAreaPrivateScroller::VMAX            = 500;  // Max velocity
++//const int QAbstractScrollAreaPrivateScroller::OVERSHOOT_DECEL_PC = 40;   // velocity reduction factor/kinetic refresh (%)
++#define OVERSHOOT_DECEL_PC 50
++#define REBOUND_ACCEL 10
++	
++QAbstractScrollAreaPrivateScroller::QAbstractScrollAreaPrivateScroller(QWidget *parent_viewport, QAbstractScrollArea *a, QAbstractScrollAreaPrivate *d) :
++	QObject(parent_viewport),
++	qabstractscrollarea(a),
++	qabstractscrollarea_d(d),
++	scrollState(NotScrolling),
++	xScrollState(NotScrolling),
++	yScrollState(NotScrolling),
++	scrollBase(0,0),
++	start(0,0),
++	curr(0,0),
++	scrollFactor(),
++	last(0,0),
++	vel(0,0),
++	vel1(0,0),
++	last_ev_time(0),
++	curr_time(0)
++{
++	registerChildrenForFingerScrolling(parent_viewport);
++
++	// If the property is not set then use the qapp default or hard default
++	if (! qabstractscrollarea->property("FingerScrollBars").isValid()) {
++		if (qApp->property("FingerScrollBars").isValid()) {
++			d->fingerScrollBars = qApp->property("FingerScrollBars").toBool();
++		}
++		qabstractscrollarea->setProperty("FingerScrollBars", d->fingerScrollBars);
++	} else {
++		d->fingerScrollBars = qabstractscrollarea->property("FingerScrollBars").toBool();
++	}
++
++}
++////////////////////////////////////////////////////////////////
++// Finger scroll - touches, moves and child events
++bool QAbstractScrollAreaPrivateScroller::eventFilter(QObject *obj, QEvent *event)
++{
++	if (scrollState == ReissuingEvents or ! obj->isWidgetType()) {
++		return false ; // ignore events during re-issue. Should this be QObject::eventFilter(obj, event); 
++	}
++	
++	QMouseEvent * mEv = dynamic_cast<QMouseEvent *>(event);
++
++	QScrollBar* vsb = qabstractscrollarea->verticalScrollBar(); 
++	QScrollBar* hsb = qabstractscrollarea->horizontalScrollBar();
++
++	if (scrollState == AutoScroll) {
++		// We're already doing a kinetic movement. A click resets.
++		if (event->type() == QEvent::MouseButtonPress and
++			mEv and mEv->button() == Qt::LeftButton){
++			scrollState = NotScrolling;
++			xScrollState = NotScrolling;
++			yScrollState = NotScrolling;
++			// Fall through to maybe start another scroll
++			// Would it be safer to kill the kinetic timer or just let it die?
++		}
++	}
++	
++	if (scrollState == NotScrolling) {
++		if (event->type() == QEvent::MouseButtonPress and
++			mEv and mEv->button() == Qt::LeftButton){
++			start = mEv->globalPos();
++			scrollBase.ry() = vsb->value(); // Record scrollbar at first touch - reduces jitter errors
++			scrollBase.rx() = hsb->value();
++
++			scrollFactor = QPointF();
++			xScrollState = NotScrolling;
++			yScrollState = NotScrolling;
++			// We need to know the how much scrollBar->value changes per pixel of movement
++			if ( vsb->minimum() < vsb->maximum()) {
++				scrollFactor.ry() = (qreal) vsb->pageStep() / qabstractscrollarea->viewport()->height();
++//				qDebug() << "scrollFactor.y =" << scrollFactor.ry();
++				yScrollState = Maybe;
++			}
++			if ( hsb->minimum() < hsb->maximum() ) {
++				scrollFactor.rx() = (qreal) hsb->pageStep() / qabstractscrollarea->viewport()->width();
++//				qDebug() << "scrollFactor.x =" << scrollFactor.rx();
++				xScrollState = Maybe;
++			}
++
++			if (xScrollState == NotScrolling and yScrollState == NotScrolling)
++				return false; // We have no ability to scroll so don't try.
++			
++			if (! (eventSourceWidget = dynamic_cast<QWidget *>(obj)))
++				return false; // just to be sure the object is a widget
++
++			// We're definitely going to try and scroll if we get a move in time
++			scrollState = Maybe;
++			storedEvents.enqueue(new QMouseEvent(*mEv)); // store the event for maybe replaying
++
++			QTimer::singleShot(START_WITHIN, this, SLOT(replayEvents())); // this *will* fire..
++
++			event_time.start();
++			last_ev_time=0;
++			mEv->accept(); // it's handled. The copy may be replayed.
++			return true;  
++		}
++	}
++
++	if (scrollState == Maybe ) {
++		if (event->type() == QEvent::MouseButtonRelease) {
++//			qDebug() << "    QAbstractScrollArea::Released";
++			if (mEv->button() != Qt::LeftButton) return false; // fall through, allow onward handling
++			storedEvents.enqueue(new QMouseEvent(*mEv));
++			QTimer::singleShot(0, this, SLOT(replayEvents())); // immediate replay...
++			mEv->accept(); // it's handled. The copy may be replayed.
++			return true;  
++		}
++		if (event->type() == QEvent::MouseMove) {
++			handleMoveEvent(mEv);
++			mEv->accept(); // it's handled. The copy may be replayed.
++			return true;
++		}
++	}
++	
++	if (scrollState == ManualScroll) {
++		if (event->type() == QEvent::MouseButtonRelease) {
++			scrollState = NotScrolling;
++			mEv->accept(); // it's handled.
++			if (last_ev_time) { // Only do velocity if we had a last_ev_time
++				vel1.rx() = qBound(-VMAX, vel1.rx(), VMAX);
++				vel1.ry() = qBound(-VMAX, vel1.ry(), VMAX);
++				vel = vel1; // make a copy of the initial velocity for direction
++				curr_time = event_time.elapsed();
++				// Note the current scroll values, possibly overshot
++				curr = mEv->globalPos();
++				scrollBase.ry() = scrollBase.ry() + ((start.ry() - curr.ry()) * scrollFactor.ry());
++				scrollBase.rx() = scrollBase.rx() + ((start.rx() - curr.rx()) * scrollFactor.rx());
++				curr = QPoint(); // rebase the pointer for the kinetic phase
++				startTimer(KINETIC_REFRESH);
++				scrollState = AutoScroll;
++				if (xScrollState != NotScrolling) xScrollState = AutoScroll;
++				if (yScrollState != NotScrolling) yScrollState = AutoScroll;
++			}
++			return true;
++		}
++		if (event->type() == QEvent::MouseMove) {
++			handleMoveEvent(mEv);
++			mEv->accept(); // it's handled. The copy may be replayed.
++			return true;
++		}
++	}
++
++	// Handle eventFilter to added/removed children
++	
++	if (event->type() ==  QEvent::ChildAdded or
++		event->type() ==  70) { // FIX is this a Qt bug? 70 is ChildInserted which is
++		// deprecated in 4.4 but it appears from time to time...
++		registerChildrenForFingerScrolling(static_cast<QChildEvent *>(event)->child());
++		return false;
++	}
++	
++	if (event->type() == QEvent::ChildRemoved) {
++		// deregisterChildrenForFingerScrolling
++		QObject *obj = static_cast<QChildEvent *>(event)->child();
++		if (obj->isWidgetType())
++			obj->removeEventFilter(this);
++		QList<QObject *> children = obj->findChildren<QObject *>();
++		foreach (obj, children){
++			if (obj->isWidgetType())
++				obj->removeEventFilter(this);
++		}
++		return false;
++	}
++	return false;
++}
++
++
++void QAbstractScrollAreaPrivateScroller::handleMoveEvent ( QMouseEvent * event )
++{
++//	qDebug() << "    QAbstractScrollArea::Released";
++	if (scrollState == Maybe) {
++		QPoint delta = start - event->globalPos();
++		storedEvents.enqueue(new QMouseEvent(*event)); // we may need to play this back...
++
++		if (delta.manhattanLength () > SENSITIVITY) { // ...unless there's been enough movement
++			scrollState = ManualScroll;
++			if (xScrollState == Maybe) xScrollState = ManualScroll;
++			if (yScrollState == Maybe) yScrollState = ManualScroll;
++			while (!(storedEvents.isEmpty()))  // all previous events are ours; clean up
++				delete storedEvents.dequeue() ;
++
++		}
++	}
++	
++	if (scrollState == ManualScroll) {
++		curr = event->globalPos();
++
++		int min_y = qabstractscrollarea->verticalScrollBar()->minimum();
++		int max_y = qabstractscrollarea->verticalScrollBar()->maximum();// - qabstractscrollarea_d->overshootBottom;
++		int min_x = qabstractscrollarea->horizontalScrollBar()->minimum();
++		int max_x = qabstractscrollarea->horizontalScrollBar()->maximum();// - qabstractscrollarea_d->overshootRight;
++		int val_y = 0;
++		int val_x = 0;
++		int overshoot_x = 0;
++		int overshoot_y = 0;
++
++		if (yScrollState == ManualScroll) {
++			val_y = scrollBase.ry() + ((start.ry() - curr.ry()) * scrollFactor.ry());
++			if (val_y < min_y) {
++				overshoot_y = min_y - val_y;
++			} else if (val_y > max_y) {
++				overshoot_y = max_y - val_y;
++			}
++			qabstractscrollarea->verticalScrollBar()->setValue(val_y);
++		}
++		if (xScrollState == ManualScroll) {
++			val_x = scrollBase.rx() + ((start.rx() - curr.rx()) * scrollFactor.rx());
++			if (val_x < min_x) {
++				overshoot_x = min_x - val_x;
++			} else if (val_x > max_x) {
++				overshoot_x = max_x - val_x;
++			}
++			qabstractscrollarea->horizontalScrollBar()->setValue(val_x);
++		}
++
++		qabstractscrollarea_d->drawOvershoot(overshoot_x, overshoot_y);
++
++		curr_time = event_time.elapsed();
++		
++		if (curr_time >	last_ev_time){
++			if (last_ev_time){  // first time round we set v to zero
++				vel1 = vel;
++				vel = QPoint((last - curr)*VSCALE / (curr_time - last_ev_time));
++			} else {
++				vel = QPoint(0,0);
++				vel1 = QPoint(0,0);
++			}
++			// Store the last values
++			last_ev_time = 	curr_time;
++			last = curr; 
++		}
++		event->accept();
++	}
++}
++////////////////////////////////////////////////////////////////
++// Kinetics, reissue pending events
++void QAbstractScrollAreaPrivateScroller::timerEvent(QTimerEvent *event)
++{
++	// Track the projected position using curr. This will allow bounce effects and smooths non-pixel scrolled areas
++	// In general work in pixels and conver to scrollbar values at the end
++
++	// frequently used
++	QScrollBar* vsb = qabstractscrollarea->verticalScrollBar(); 
++	QScrollBar* hsb = qabstractscrollarea->horizontalScrollBar();
++
++	int min_y = vsb->minimum();
++	int max_y = vsb->maximum();// - qabstractscrollarea_d->overshootBottom;
++	int min_x = hsb->minimum();
++	int max_x = hsb->maximum();// - qabstractscrollarea_d->overshootRight;
++	int val_y = 0;
++	int val_x = 0;
++	int overshoot_x = 0;
++	int overshoot_y = 0;
++// Y
++	
++	if (yScrollState == NotScrolling)
++		vel1.ry() = 0;
++		
++	if (yScrollState == AutoScroll) {
++		// decelerate normally
++		int y = curr.ry();
++		curr.ry() += (vel1.ry() * KINETIC_REFRESH)/VSCALE;
++		val_y = scrollBase.ry() + curr.ry() * scrollFactor.ry();
++		if (min_y < val_y and val_y < max_y) { // in range
++			vsb->setValue(val_y);
++			vel1.ry() = (vel1.ry()*DECEL_PC)/100;
++			if (-1.0 < vel1.ry() and vel1.ry() < 1.0) // ie: stopped
++				yScrollState = NotScrolling;
++		} else { // we would have passed the min/max so set the target
++			if (min_y <= val_y)
++				rest.ry() = max_y;
++			else
++				rest.ry() = min_y;				
++			curr.ry()  = y; // reset the current position
++			yScrollState = OverShootDecel;
++		}
++	}
++
++	if (yScrollState == OverShootDecel) {
++		// Overshoot needs to track the virtual finger position over time and pull
++		// it back to a position that represents the start/end of the area
++		//qDebug() << "OverShootDecel y="  << curr.ry() << " v.y = " << vel1.ry();
++		if (-1.0 < vel1.ry() and vel1.ry() < 1.0) {
++			// we stopped (or we may have been placed here)
++			val_y=scrollBase.ry() + curr.ry() * scrollFactor.ry();
++			if (val_y < min_y) {
++				overshoot_y = min_y - val_y;
++			} else if (val_y > max_y) {
++				overshoot_y = max_y - val_y;
++			}
++			vel1.ry() = 0;
++			yScrollState = OverShootPause; // this actually stops us for a frame.
++		} else {
++			// we're slowing down
++			curr.ry() += (vel1.ry() * KINETIC_REFRESH)/VSCALE;
++			vel1.ry() = (vel1.ry()*OVERSHOOT_DECEL_PC)/100;
++			val_y=scrollBase.ry() + curr.ry() * scrollFactor.ry();
++			vsb->setValue(val_y); // Is this worth doing if we overshot
++			if (val_y < min_y) {
++				overshoot_y = min_y - val_y;
++			} else if (val_y > max_y) {
++				overshoot_y = max_y - val_y;
++			}
++		}
++	}
++
++	// rest is target resting place in val, not pixels
++	// if y>rest then reduce vel
++	if (yScrollState == OverShootStabilise) {
++		val_y=scrollBase.ry() + curr.ry() * scrollFactor.ry();
++		if (min_y <= val_y and val_y <= max_y) { // in range
++			// run out of braking... force setting to min/max
++			vsb->setValue(rest.ry());
++			overshoot_y = 0;
++			yScrollState = NotScrolling;
++		} else {
++			// accelerate towards rest
++			if (val_y < min_y)
++				vel1.ry() += 5;
++			else
++				vel1.ry() -= 5;
++			curr.ry() += vel1.ry();
++			val_y = scrollBase.ry() + curr.ry() * scrollFactor.ry();
++			vsb->setValue(val_y); // in overshoot?
++			if (val_y < min_y) {
++				overshoot_y = min_y - val_y;
++			} else if (val_y > max_y) {
++				overshoot_y = max_y - val_y;
++			}
++		}
++	}
++
++	// Pause is deliberately after OverShootStabilise to force a timerEvent cycle
++	if (yScrollState == OverShootPause)
++	{
++		// there won't be any change, we just need to get the previous amount of overshoot
++		val_y=scrollBase.ry() + curr.ry() * scrollFactor.ry();
++		if (val_y < min_y) {
++			overshoot_y = min_y - val_y;
++		} else if (val_y > max_y)	{
++			overshoot_y = max_y - val_y;
++		}
++		yScrollState = OverShootStabilise;
++	}
++
++// X
++
++	if (xScrollState == NotScrolling)
++		vel1.rx() = 0;
++		
++	if (xScrollState == AutoScroll) {
++		// decelerate normally
++		int x = curr.rx();
++		curr.rx() += (vel1.rx() * KINETIC_REFRESH)/VSCALE;
++		val_x = scrollBase.rx() + curr.rx() * scrollFactor.rx();
++		if (min_x < val_x and val_x < max_x) { // in range
++			hsb->setValue(val_x);
++			vel1.rx() = (vel1.rx()*DECEL_PC)/100;
++			if (-1.0 < vel1.rx() and vel1.rx() < 1.0) // ie: stopped
++				xScrollState = NotScrolling;
++		} else { // we would have passed the min/max so set the target
++			if (min_x <= val_x)
++				rest.rx() = max_x;
++			else
++				rest.rx() = min_x;				
++			curr.rx()  = x; // reset the current position
++			xScrollState = OverShootDecel;
++		}
++	}
++
++	if (xScrollState == OverShootDecel) {
++		// Overshoot needs to track the virtual finger position over time and pull
++		// it back to a position that represents the start/end of the list
++		//qDebug() << "OverShootDecel x="  << curr.rx() << " v.x = " << vel1.rx();
++		if (-1.0 < vel1.rx() and vel1.rx() < 1.0) {
++			// we stopped (or we may have been placed here)
++			val_x=scrollBase.rx() + curr.rx() * scrollFactor.rx();
++			if (val_x < min_x) {
++				overshoot_x = min_x - val_x;
++			} else if (val_x > max_x) {
++				overshoot_x = max_x - val_x;
++			}
++			vel1.rx() = 0;
++			xScrollState = OverShootPause;
++
++		} else {
++			// we're slowing down
++			curr.rx() += (vel1.rx() * KINETIC_REFRESH)/VSCALE;
++			vel1.rx() = (vel1.rx()*OVERSHOOT_DECEL_PC)/100;
++			val_x=scrollBase.rx() + curr.rx() * scrollFactor.rx();
++			hsb->setValue(val_x);
++			if (val_x < min_x) {
++				overshoot_x = min_x - val_x;
++			} else if (val_x > max_x) {
++				overshoot_x = max_x - val_x;
++			}
++		}
++	}
++
++	if (xScrollState == OverShootStabilise) {
++		val_x=scrollBase.rx() + curr.rx() * scrollFactor.rx();
++		if (min_x <= val_x and val_x <= max_x) { // in range
++			// run out of braking... force setting to min/max
++			hsb->setValue(rest.rx());
++			overshoot_x = 0;
++			xScrollState = NotScrolling;
++		} else {
++			// accelerate towards rest
++			if (val_x < min_x)
++				vel1.rx() += 5;
++			else
++				vel1.rx() -= 5;
++			curr.rx() += vel1.rx();
++			val_x = scrollBase.rx() + curr.rx() * scrollFactor.rx();
++			hsb->setValue(val_x); // in overshoot?
++			if (val_x < min_x) {
++				overshoot_x = min_x - val_x;
++			} else if (val_x > max_x) {
++				overshoot_x = max_x - val_x;
++			}
++		}
++	}
++
++	// Pause is deliberately after OverShootStabilise to force a timerEvent cycle
++	if (xScrollState == OverShootPause)
++	{
++		// there won't be any change, we just need to get the previous amount of overshoot
++		val_x=scrollBase.rx() + curr.rx() * scrollFactor.rx();
++		if (val_x < min_x) {
++			overshoot_x = min_x - val_x;
++		} else if (val_x > max_x) {
++			overshoot_x = max_x - val_x;
++		}
++		xScrollState = OverShootStabilise;
++	}
++
++	qabstractscrollarea_d->drawOvershoot(overshoot_x, overshoot_y);
++
++	qabstractscrollarea->show();
++
++	if (xScrollState == NotScrolling and yScrollState == NotScrolling) {
++		//qDebug() << "Stopped timer";
++		killTimer(event->timerId());
++		scrollState = NotScrolling;
++	}
++}
++
++void QAbstractScrollAreaPrivateScroller::registerChildrenForFingerScrolling(QObject *obj)
++{
++
++	if (qobject_cast<QAbstractScrollArea *>(obj)) return; // Ignore any QAbstractScrollArea derived objects and hence their children
++
++	if (obj->isWidgetType())
++		obj->installEventFilter(this);
++	
++	foreach (QObject* child, obj->children()){
++		registerChildrenForFingerScrolling(child);
++	}
++}
++void QAbstractScrollAreaPrivateScroller::replayEvents()
++{
++	if (scrollState != Maybe) return;
++
++	QEvent *ev;
++	scrollState = ReissuingEvents;
++	while (!storedEvents.isEmpty()) {
++		ev = storedEvents.dequeue() ;
++		if (! eventSourceWidget.isNull()) {
++			qApp->notify(eventSourceWidget, ev);
++		}
++		delete ev;
++	}
++	scrollState = NotScrolling;
++}
++
++
++#endif // Q_WS_HILDON
++
+ QT_END_NAMESPACE
+ 
+ #include "moc_qabstractscrollarea.cpp"
+diff --git a/src/gui/widgets/qabstractscrollarea.h b/src/gui/widgets/qabstractscrollarea.h
+index 3ec41d1..d893e8d 100644
+--- a/src/gui/widgets/qabstractscrollarea.h
++++ b/src/gui/widgets/qabstractscrollarea.h
+@@ -51,7 +51,6 @@ QT_BEGIN_NAMESPACE
+ QT_MODULE(Gui)
+ 
+ #ifndef QT_NO_SCROLLAREA
+-
+ class QScrollBar;
+ class QAbstractScrollAreaPrivate;
+ 
+diff --git a/src/gui/widgets/qabstractscrollarea_p.h b/src/gui/widgets/qabstractscrollarea_p.h
+index 3c356e2..a14b6b9 100644
+--- a/src/gui/widgets/qabstractscrollarea_p.h
++++ b/src/gui/widgets/qabstractscrollarea_p.h
+@@ -6,11 +6,11 @@
+ ** This file is part of the QtGui module of the Qt Toolkit.
+ **
+ ** $QT_BEGIN_LICENSE:LGPL$
+-** No Commercial Usage
+-** This file contains pre-release code and may not be distributed.
+-** You may use this file in accordance with the terms and conditions
+-** contained in the either Technology Preview License Agreement or the
+-** Beta Release License Agreement.
++** Commercial Usage
++** Licensees holding valid Qt Commercial licenses may use this file in
++** accordance with the Qt Commercial License Agreement provided with the
++** Software or, alternatively, in accordance with the terms contained in
++** a written agreement between you and Nokia.
+ **
+ ** GNU Lesser General Public License Usage
+ ** Alternatively, this file may be used under the terms of the GNU Lesser
+@@ -60,6 +60,14 @@ QT_BEGIN_NAMESPACE
+ 
+ #ifndef QT_NO_SCROLLAREA
+ 
++#ifdef Q_WS_HILDON
++#include <QTime>
++#include <QQueue>
++class QTimerEvent;
++class QEvent;
++class QAbstractScrollAreaPrivateScroller;
++#endif
++
+ class QScrollBar;
+ class QAbstractScrollAreaScrollBarContainer;
+ class Q_GUI_EXPORT QAbstractScrollAreaPrivate: public QFramePrivate
+@@ -74,7 +82,17 @@ public:
+     QAbstractScrollAreaScrollBarContainer *scrollBarContainers[Qt::Vertical + 1];
+     QScrollBar *hbar, *vbar;
+     Qt::ScrollBarPolicy vbarpolicy, hbarpolicy;
+-
++	
++#ifdef Q_WS_HILDON
++	QAbstractScrollAreaPrivateScroller *fingerScroller;
++	bool fingerScrollBars;
++	bool fingerScrollable;
++	QString scrollAreaStyle;
++	void setFingerScrollable(bool);
++	void setFingerScrollBars(bool);
++	virtual void drawOvershoot(int horizontal, int vertical);
++#endif
++	
+     QWidget *viewport;
+     QWidget *cornerWidget;
+     QRect cornerPaintingRect;
+@@ -132,6 +150,61 @@ private:
+     Qt::Orientation orientation;
+ };
+ 
++#ifdef Q_WS_HILDON
++// This is the Kinetic fingerscroll implementation for Hildon
++
++class QAbstractScrollAreaPrivateScroller : public QObject
++{
++	Q_OBJECT
++public:
++	QAbstractScrollAreaPrivateScroller(QWidget *parent, QAbstractScrollArea *qabstractscrollarea, QAbstractScrollAreaPrivate *priv);
++	bool eventFilter(QObject *obj, QEvent *event);
++
++protected Q_SLOTS:
++	void replayEvents();
++
++protected:
++	void handleMoveEvent ( QMouseEvent * event );
++	void timerEvent(QTimerEvent *event);
++	void registerChildrenForFingerScrolling(QObject *top);
++
++	static const int SENSITIVITY, KINETIC_REFRESH, VSCALE,
++		DECEL_DURATION, DEBOUNCE, DECEL_PC, START_WITHIN,
++		VMAX;
++	
++	QAbstractScrollArea  *qabstractscrollarea;  // the area we're scrolling
++	QAbstractScrollAreaPrivate *qabstractscrollarea_d; // and its private data
++	
++	typedef enum { NotScrolling = 0, Maybe, ManualScroll, AutoScroll,
++				   OverShootDecel, OverShootPause, OverShootStabilise,
++				   ReissuingEvents } ScrollState;
++	ScrollState  scrollState, xScrollState, yScrollState;
++
++	QPointer<QWidget> eventSourceWidget; // who do we play events back to
++	QQueue<QEvent*>   storedEvents;      // events to play back
++
++	QPoint scrollBase;           // scrollbar value at fingerdown to establish base position
++	QPoint start;                // global event x,y at start
++	QPoint curr;                 // current x,y (kept to allow velocity calc)
++	QPoint rest;                 // rest x,y (resting place after overshoot
++
++	QPointF scrollFactor;        // scroll range factor - converts pixel delta to sb value delta
++
++	QTime event_time;
++	QPoint last;                 // global event x,y at start
++	QPoint vel;                  // Velocity
++	QPoint vel1;                 // Velocity before
++	int last_ev_time, curr_time; // timer for velocity
++		
++	int scrollingNotStartedTimer;
++	int x_braking_cycles;          // how long do we slow down for
++	int y_braking_cycles;          // how long do we slow down for
++};
++
++#endif // Q_WS_HILDON
++
++
++
+ #endif // QT_NO_SCROLLAREA
+ 
+ QT_END_NAMESPACE
+diff --git a/src/gui/widgets/qabstractslider.cpp b/src/gui/widgets/qabstractslider.cpp
+index 6865a56..23067f5 100644
+--- a/src/gui/widgets/qabstractslider.cpp
++++ b/src/gui/widgets/qabstractslider.cpp
+@@ -531,6 +531,33 @@ void QAbstractSlider::setValue(int value)
+     emit valueChanged(value);
+ }
+ 
++#ifdef Q_WS_HILDON
++/*!
++    Sets the value but allows out-of-bound values
++    This changes the slider position if the value is in bounds.
++*/
++void QAbstractSlider::setValueOvershoot(int value)
++{
++    Q_D(QAbstractSlider);
++    int v_bound = d->bound(value);
++	if (v_bound != value)
++		qDebug() << "setValue: bound() " << v_bound << " : " << value;
++    if (d->value == value && d->position == value)
++        return;
++    d->value = value;
++    if (d->position != v_bound) {
++        d->position = v_bound;
++        if (d->pressed)
++            emit sliderMoved((d->position = v_bound));
++    }
++#ifndef QT_NO_ACCESSIBILITY
++    QAccessible::updateAccessibility(this, 0, QAccessible::ValueChanged);
++#endif
++    sliderChange(SliderValueChange);
++    emit valueChanged(value);
++}
++#endif //Q_WS_HILDON
++
+ /*!
+     \property QAbstractSlider::invertedAppearance
+     \brief whether or not a slider shows its values inverted.
+diff --git a/src/gui/widgets/qabstractslider.h b/src/gui/widgets/qabstractslider.h
+index 7e03b6e..e05a2f0 100644
+--- a/src/gui/widgets/qabstractslider.h
++++ b/src/gui/widgets/qabstractslider.h
+@@ -119,6 +119,9 @@ public:
+     void triggerAction(SliderAction action);
+ 
+ public Q_SLOTS:
++#ifdef Q_WS_HILDON
++	void setValueOvershoot(int);
++#endif
+     void setValue(int);
+     void setOrientation(Qt::Orientation);
+ 
 diff --git a/src/gui/widgets/qabstractspinbox.cpp b/src/gui/widgets/qabstractspinbox.cpp
 index e079271..2393904 100644
 --- a/src/gui/widgets/qabstractspinbox.cpp
@@ -4646,7 +6164,7 @@ index 0000000..5fcbe85
 +PKGCONFIG += gconf-2.0
 diff --git a/src/network/maemo/qgconfbackend.cpp b/src/network/maemo/qgconfbackend.cpp
 new file mode 100755
-index 0000000..12eaccf
+index 0000000..7f850e5
 --- /dev/null
 +++ b/src/network/maemo/qgconfbackend.cpp
 @@ -0,0 +1,179 @@
@@ -4724,12 +6242,12 @@ index 0000000..12eaccf
 +
 +        value = q_gconf_client_get(client, qPrintable(key), &err);
 +        if (err) {
-+            qDebug() << "ERROR: Unable to get the Value";
++            //qDebug() << "ERROR: Unable to get the Value";
 +            g_error_free (err);
 +            return QVariant();
 +        }
 +        if (!value){
-+            qDebug() << "VALUE is 0";
++            //qDebug() << "VALUE is 0";
 +            return QVariant();
 +        }
 +        switch(value->type){
@@ -4753,7 +6271,7 @@ index 0000000..12eaccf
 +            }
 +        } break;
 +        default:
-+            qDebug("QGConfBackend::getGConfValue: Sorry, the type %d has not been ported ", value->type);
++            //qDebug("QGConfBackend::getGConfValue: Sorry, the type %d has not been ported ", value->type);
 +            return QVariant();
 +        }
 +
@@ -4773,7 +6291,7 @@ index 0000000..12eaccf
 +    /*
 +    QMap<QString, slot>::const_iterator i = map.find(dir);
 +    if (i != map.end()){
-+        qDebug() << "The key exists already in the Map.";
++        //qDebug() << "The key exists already in the Map.";
 +        return false;
 +    }*/
 +
@@ -4795,14 +6313,14 @@ index 0000000..12eaccf
 +    q_gconf_client_add_dir(client, qPrintable(dir), GCONF_CLIENT_PRELOAD_NONE, &err);
 +
 +    if (err) {
-+        qDebug() <<  "Failed to add a watch to GCClient:" << err->message;
++        //qDebug() <<  "Failed to add a watch to GCClient:" << err->message;
 +        g_error_free (err);
 +    }
 +
 +    q_gconf_client_notify_add(client, qPrintable(dir), cPtr, 0, 0, &err);
 +
 +    if (err) {
-+        qDebug() << "Failed to add register the callback" << err->message;
++        //qDebug() << "Failed to add register the callback" << err->message;
 +        g_error_free (err);
 +    }
 +}
@@ -4811,7 +6329,7 @@ index 0000000..12eaccf
 +    Q_UNUSED(a);
 +    Q_UNUSED(b);
 +    Q_UNUSED(d);
-+    qDebug() << "KEY" << c->key << "VALUE TYPE" << c->value->type;
++    //qDebug() << "KEY" << c->key << "VALUE TYPE" << c->value->type;
 +
 +    QVariant value;
 +    const QString fullKey = c->key;
@@ -4920,7 +6438,7 @@ index 0000000..406b969
 +#endif //QGCONFBACKEND_P_H
 diff --git a/src/network/maemo/qmaemointernetconnectivity.cpp b/src/network/maemo/qmaemointernetconnectivity.cpp
 new file mode 100755
-index 0000000..7213e79
+index 0000000..3f614d4
 --- /dev/null
 +++ b/src/network/maemo/qmaemointernetconnectivity.cpp
 @@ -0,0 +1,289 @@
@@ -5037,11 +6555,11 @@ index 0000000..7213e79
 +{
 +	QString auto_connect = QGConfBackend::self()->getValue(
 +			"/system/osso/connectivity/network_type/auto_connect").toString();
-+	qDebug() << "auto_connect:" << auto_connect;
++	//qDebug() << "auto_connect:" << auto_connect;
 +
 +	int search_interval = QGConfBackend::self()->getValue(
 +			"/system/osso/connectivity/network_type/search_interval").toInt();
-+	qDebug() << "search_interval:" << search_interval;
++	//qDebug() << "search_interval:" << search_interval;
 +
 +	// Connect automatically:
 +	// Always ask -> empty
@@ -5059,7 +6577,7 @@ index 0000000..7213e79
 +
 +bool QMaemoICPrivate::isConnected()
 +{
-+	qDebug() << "isConnected() :" << connected;
++	//qDebug() << "isConnected() :" << connected;
 +	if (connected == UNKNOWN)
 +		checkConnectionStatus();
 +	return connected;
@@ -5068,12 +6586,12 @@ index 0000000..7213e79
 +void QMaemoICPrivate::connectionRequest()
 +{
 +	if (isConnected()) {
-+		qDebug() << "The device is already connected";
++		//qDebug() << "The device is already connected";
 +		return;
 +	}
 +
 +	if (!isAutoConnect()) {
-+		qDebug() << "The device should not auto connect";
++		//qDebug() << "The device should not auto connect";
 +		return;
 +	}
 +
@@ -5082,14 +6600,14 @@ index 0000000..7213e79
 +	//Check last used network
 +	//NOTE: Chinook needs lastApName
 +	const QString lastNetwork = lastAPid();
-+	qDebug() << "Last used network is " << lastNetwork;
++	//qDebug() << "Last used network is " << lastNetwork;
 +	
 +	if (lastNetwork.isEmpty()) {
 +		//Show the the Access point list to the user
 +		reply = icdUiInterface->call(ICD_UI_SHOW_CONNDLG_REQ, false);
 +	} else {
 +		//Connect to the last Access Point used
-+		qDebug() << "Connecting to" << lastNetwork;
++		//qDebug() << "Connecting to" << lastNetwork;
 +		quint32 i = 0;
 +		reply = icdInterface->call(ICD_CONNECT_REQ, lastNetwork, i);
 +	}
@@ -5138,13 +6656,13 @@ index 0000000..7213e79
 +//Called by the QGConfBackend instance when the proxy parameters change.
 +void QMaemoICPrivate::proxySettingsChanged(QString& key, QVariant value)
 +{
-+	qDebug() << "PROXY SETTINGS CHANGED" << key << value;
++	//qDebug() << "PROXY SETTINGS CHANGED" << key << value;
 +	//emit qmic->proxySettingsChangedSig(key, value);
 +}
 +
 +void QMaemoICPrivate::checkConnectionStatus()
 +{
-+	qDebug() << "echeckConnectionStatus()";
++	//qDebug() << "echeckConnectionStatus()";
 +	QDBusMessage reply = icdInterface->call(ICD_GET_STATE_REQ);
 +
 +	if (reply.type() == QDBusMessage::ErrorMessage) {
@@ -5155,7 +6673,7 @@ index 0000000..7213e79
 +
 +	QList<QVariant> values;
 +	values = reply.arguments();
-+	qDebug() << "reply arg size:" << values.size();
++	//qDebug() << "reply arg size:" << values.size();
 +#if 0
 +	if (values.takeFirst().toInt()) {
 +		connected = CONNECTED;
@@ -5166,7 +6684,7 @@ index 0000000..7213e79
 +	connected = DISCONNECTED;
 +	while (!values.isEmpty()) {
 +		int n = values.takeFirst().toInt();
-+		qDebug() << "status:" << n;
++		//qDebug() << "status:" << n;
 +		if (n) {
 +		//if (values.takeFirst().toInt()) {
 +			connected = CONNECTED;
@@ -5174,7 +6692,7 @@ index 0000000..7213e79
 +		}
 +	}
 +#endif
-+	qDebug() << "echeckConnectionStatus() done";
++	//qDebug() << "echeckConnectionStatus() done";
 +}
 +
 +void QMaemoICPrivate::readErrorDBusErrorMsg(const QDBusMessage& msg)
@@ -5186,7 +6704,7 @@ index 0000000..7213e79
 +
 +void QMaemoICPrivate::statusChangedSlot(QString IAPname, QString networkType, QString state, QString errorCode)
 +{
-+	qDebug() << "STATUS CHANGED" << IAPname << networkType << state << errorCode;
++	//qDebug() << "STATUS CHANGED" << IAPname << networkType << state << errorCode;
 +
 +	Q_UNUSED(networkType); //TODO
 +
@@ -5206,7 +6724,7 @@ index 0000000..7213e79
 +	} else if (state == "DISCONNECTING") {
 +		connected = DISCONNECTING;
 +	}
-+	qDebug() << "CHECK connected=" << connected;
++	//qDebug() << "CHECK connected=" << connected;
 +}
 +
 +QT_END_NAMESPACE
