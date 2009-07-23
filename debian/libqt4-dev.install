@@ -719,6 +719,7 @@ usr/lib/libQtSvg.so
 usr/lib/libQtTest.prl
 usr/lib/libQtTest.so
 usr/lib/libQtUiTools.prl
+usr/lib/libQtUiTools.a
 usr/lib/libQtWebKit.prl
 usr/lib/libQtWebKit.so
 usr/lib/libQtXmlPatterns.prl
