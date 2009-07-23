@@ -1,3 +1,11 @@
+qt4-x11 (4.5.3~git20090723-0maemo1) unstable; urgency=low
+
+  * Fixes: NB#126518 - Fremantle Qt GUI package with "hildonization" is missing
+  * Pull from upstream.
+  * Add missing libQtUiTools.a file to dev package.
+
+ -- Shane Bradley <shane.bradley@nokia.com>  Thu, 23 Jul 2009 12:13:19 +1000
+
 qt4-x11 (4.5.2~git20090714-0maemo1) unstable; urgency=low
 
   * Fixes: NB#126518 - Fremantle Qt GUI package with "hildonization" is missing
