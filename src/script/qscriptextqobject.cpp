@@ -1836,16 +1836,17 @@ void QScript::QtPropertyFunction::execute(QScriptContextPrivate *context)
         }
     } else {
         // set
-        QScriptValueImpl arg = context->argument(0);
-        QVariant v;
-        if (prop.isEnumType() && arg.isString()
-            && !eng_p->demarshalFunction(prop.userType())) {
-            // give QMetaProperty::write() a chance to convert from
-            // string to enum value
-            v = arg.toString();
-        } else {
-            v = variantFromValue(eng_p, prop.userType(), arg);
-        }
+       QVariant v = variantFromValue(eng_p, prop.userType(), context->argument(0));
+//         QScriptValueImpl arg = context->argument(0);
+//         QVariant v;
+//         if (prop.isEnumType() && arg.isString()
+//             && !eng_p->demarshalFunction(prop.userType())) {
+//             // give QMetaProperty::write() a chance to convert from
+//             // string to enum value
+//             v = arg.toString();
+//         } else {
+//             v = variantFromValue(eng_p, prop.userType(), arg);
+//         }
 
         QScriptable *scriptable = scriptableFromQObject(qobject);
         QScriptEngine *oldEngine = 0;
