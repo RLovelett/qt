@@ -114,7 +114,7 @@ public:
                const QString & host,
                int port,
                const QString& connOpts);
-    void close();
+    bool close();
     QSqlResult *createResult() const;
     QStringList tables(QSql::TableType) const;
     QSqlIndex primaryIndex(const QString& tablename) const;

@@ -100,7 +100,7 @@ public:
                    const QString & host,
                    int port,
                    const QString & connOpts);
-    void close();
+    bool close();
     QSqlResult *createResult() const;
     bool beginTransaction();
     bool commitTransaction();

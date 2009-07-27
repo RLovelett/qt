@@ -1290,7 +1290,7 @@ bool QMYSQLDriver::open(const QString& db,
     return true;
 }
 
-void QMYSQLDriver::close()
+bool QMYSQLDriver::close()
 {
     if (isOpen()) {
 #ifndef QT_NO_THREAD
@@ -1301,6 +1301,7 @@ void QMYSQLDriver::close()
         setOpen(false);
         setOpenError(false);
     }
+    return true;
 }
 
 QSqlResult *QMYSQLDriver::createResult() const

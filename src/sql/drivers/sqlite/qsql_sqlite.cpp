@@ -171,6 +171,7 @@ void QSQLiteResultPrivate::initColumns(bool emptyResultset)
     }
 }
 
+#pragma warning(disable:4702)
 bool QSQLiteResultPrivate::fetchNext(QSqlCachedResult::ValueCache &values, int idx, bool initialFetch)
 {
     int res;
@@ -267,6 +268,7 @@ bool QSQLiteResultPrivate::fetchNext(QSqlCachedResult::ValueCache &values, int i
     }
     return false;
 }
+#pragma warning(default:4702)
 
 QSQLiteResult::QSQLiteResult(const QSQLiteDriver* db)
     : QSqlCachedResult(db)
@@ -527,16 +529,20 @@ bool QSQLiteDriver::open(const QString & db, const QString &, const QString &, c
     }
 }
 
-void QSQLiteDriver::close()
+bool QSQLiteDriver::close()
 {
     if (isOpen()) {
         if (sqlite3_close(d->access) != SQLITE_OK)
+        {
             setLastError(qMakeError(d->access, tr("Error closing database"),
                                     QSqlError::ConnectionError));
+           return false;
+        }
         d->access = 0;
         setOpen(false);
         setOpenError(false);
     }
+    return true;
 }
 
 QSqlResult *QSQLiteDriver::createResult() const
