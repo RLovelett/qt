@@ -1179,13 +1179,18 @@ QDataStream &operator>>(QDataStream &s, QPicture &r)
     // "init"; this code is similar to the beginning of QPicture::cmd()
     sr.setDevice(&r.d_func()->pictb);
     sr.setVersion(r.d_func()->formatMajor);
-    quint32 len;
-    s >> len;
+
+    //FIX TCW 4/30/2009 - proper reading of streams
     QByteArray data;
-    if (len > 0) {
-        data.resize(len);
-        s.readRawData(data.data(), len);
-    }
+    s >> data;   // this will read the length and everything else for us
+
+//     quint32 len;
+//     s >> len;
+//     QByteArray data;
+//     if (len > 0) {
+//         data.resize(len);
+//         s.readRawData(data.data(), len);
+//     }
 
     r.d_func()->pictb.setData(data);
     r.d_func()->resetFormat();

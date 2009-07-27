@@ -7284,20 +7284,35 @@ QDataStream &operator>>(QDataStream &in, QString &str)
             }
 
             const quint32 Step = 1024 * 1024;
-            quint32 len = bytes / 2;
             quint32 allocated = 0;
 
-            while (allocated < len) {
-                int blockSize = qMin(Step, len - allocated);
-                str.resize(allocated + blockSize);
-                if (in.readRawData(reinterpret_cast<char *>(str.data()) + allocated * 2,
-                                   blockSize * 2) != blockSize * 2) {
+         //FIX TCW 4/30/2009 - proper reading of streams
+         while (allocated < bytes /*len*/) 
+         {
+            if (in.status() != QDataStream::Ok)
+               break;
+            int blockSize = qMin(Step, bytes - allocated);
+            str.resize((allocated + blockSize+1)/2);  // QString wants chars, but we're operating in bytes. Note that this "knows" about the size of QString data items
+            int bytesRead = in.readRawData(reinterpret_cast<char *>(str.data()) + allocated, blockSize);
+            if (bytesRead<0)
+            {
                     str.clear();
                     in.setStatus(QDataStream::ReadPastEnd);
                     return in;
                 }
-                allocated += blockSize;
+            allocated += bytesRead;
+//            int blockSize = qMin(Step, len - allocated);
+//            str.resize(allocated + blockSize);
+//             if (in.readRawData(reinterpret_cast<char *>(str.data()) + allocated * 2,
+//                blockSize * 2) != blockSize * 2) {
+//                   str.clear();
+//                   in.setStatus(QDataStream::ReadPastEnd);
+//                   return in;
+//             }
+//             allocated += blockSize;
             }
+
+         quint32 len = bytes / 2;
 
             if ((in.byteOrder() == QDataStream::BigEndian)
                     != (QSysInfo::ByteOrder == QSysInfo::BigEndian)) {

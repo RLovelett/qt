@@ -681,11 +681,12 @@ QDataStream &operator<<(QDataStream &out, const QBitArray &ba)
 
 QDataStream &operator>>(QDataStream &in, QBitArray &ba)
 {
+   QDataStream::Status oldStatus = in.status();
     ba.clear();
     quint32 len;
     in >> len;
-    if (len == 0) {
-	ba.clear();
+   if (len == 0) 
+   {
 	return in;
     }
 
@@ -693,19 +694,42 @@ QDataStream &operator>>(QDataStream &in, QBitArray &ba)
     quint32 totalBytes = (len + 7) / 8;
     quint32 allocated = 0;
 
-    while (allocated < totalBytes) {
+   //FIX TCW 4/30/2009 - proper reading of streams
+   while (allocated < totalBytes)
+   {
+      if (in.status() != QDataStream::Ok)
+         break;
         int blockSize = qMin(Step, totalBytes - allocated);
         ba.d.resize(allocated + blockSize + 1);
-        if (in.readRawData(ba.d.data() + 1 + allocated, blockSize) != blockSize) {
+
+      int bytesRead = in.readRawData(ba.d.data() + allocated, blockSize);
+      if (bytesRead<0)
+      {
             ba.clear();
             in.setStatus(QDataStream::ReadPastEnd);
             return in;
         }
-        allocated += blockSize;
+      allocated += bytesRead;
+
+//       if (in.readRawData(ba.d.data() + 1 + allocated, blockSize) != blockSize) {
+//          ba.clear();
+//          in.setStatus(QDataStream::ReadPastEnd);
+//          return in;
+//       }
+//       allocated += blockSize;
+   }
+
+   if (in.status() != QDataStream::Ok)
+   {
+      ba.clear();
+      return in;
     }
+   if (oldStatus != QDataStream::Ok)
+      in.setStatus(oldStatus);
 
     int paddingMask = ~((0x1 << (len & 0x7)) - 1);
-    if (paddingMask != ~0x0 && (ba.d.constData()[ba.d.size() - 1] & paddingMask)) {
+   if (paddingMask != ~0x0 && (ba.d.constData()[ba.d.size() - 1] & paddingMask)) 
+   {
         ba.clear();
         in.setStatus(QDataStream::ReadCorruptData);
         return in;

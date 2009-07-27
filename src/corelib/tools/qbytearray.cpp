@@ -2635,6 +2635,7 @@ QDataStream &operator<<(QDataStream &out, const QByteArray &ba)
 
 QDataStream &operator>>(QDataStream &in, QByteArray &ba)
 {
+   QDataStream::Status oldStatus = in.status();
     ba.clear();
     quint32 len;
     in >> len;
@@ -2644,16 +2645,32 @@ QDataStream &operator>>(QDataStream &in, QByteArray &ba)
     const quint32 Step = 1024 * 1024;
     quint32 allocated = 0;
 
+   //FIX TCW 4/30/2009 - proper reading of streams
     do {
+      if (in.status() != QDataStream::Ok)
+         break;
         int blockSize = qMin(Step, len - allocated);
         ba.resize(allocated + blockSize);
-        if (in.readRawData(ba.data() + allocated, blockSize) != blockSize) {
+      int bytesRead = in.readRawData(ba.data() + allocated, blockSize);
+      if (bytesRead<0)
+      {
             ba.clear();
             in.setStatus(QDataStream::ReadPastEnd);
             return in;
         }
-        allocated += blockSize;
+      allocated += bytesRead;
+//         if (in.readRawData(ba.data() + allocated, blockSize) != blockSize) {
+//             ba.clear();
+//             in.setStatus(QDataStream::ReadPastEnd);
+//             return in;
+//         }
+//         allocated += blockSize;
     } while (allocated < len);
+
+   if (in.status() != QDataStream::Ok)
+      ba.clear();
+   if (oldStatus != QDataStream::Ok)
+      in.setStatus(oldStatus);
 
     return in;
 }
