@@ -114,7 +114,7 @@ public:
 
     virtual QVariant handle() const;
     virtual bool hasFeature(DriverFeature f) const = 0;
-    virtual void close() = 0;
+    virtual bool close() = 0;
     virtual QSqlResult *createResult() const = 0;
 
     virtual bool open(const QString& db,

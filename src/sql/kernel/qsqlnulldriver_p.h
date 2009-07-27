@@ -100,7 +100,7 @@ public:
     inline bool open(const QString &, const QString & , const QString & ,
               const QString &, int, const QString&)
     { return false; }
-    inline void close() {}
+    inline bool close() {return true;}
     inline QSqlResult *createResult() const { return new QSqlNullResult(this); }
 
 protected:
