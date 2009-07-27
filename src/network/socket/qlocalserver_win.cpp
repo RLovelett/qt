@@ -62,6 +62,18 @@ bool QLocalServerPrivate::addListener()
     listeners << Listener();
     Listener &listener = listeners.last();
 
+    //FIX TCW 4/29/09 - named pipes will need to have security access rights for non-trivial usage (for example, in a service).
+    // Since there is no other method of doing so, we have to do it here.
+    SECURITY_DESCRIPTOR m_sd={0};
+    SECURITY_ATTRIBUTES m_sa={0};
+    InitializeSecurityDescriptor(&m_sd, SECURITY_DESCRIPTOR_REVISION);
+    SetSecurityDescriptorDacl(&m_sd, TRUE, NULL, FALSE);
+
+    m_sa.nLength = sizeof(m_sa);
+    m_sa.lpSecurityDescriptor = &m_sd;
+    m_sa.bInheritHandle = FALSE /*bInheritHandles*/;
+
+
     listener.handle = CreateNamedPipe(
                  (const wchar_t *)fullServerName.utf16(), // pipe name
                  PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED,       // read/write access
@@ -72,7 +84,7 @@ bool QLocalServerPrivate::addListener()
                  BUFSIZE,                  // output buffer size
                  BUFSIZE,                  // input buffer size
                  3000,                     // client time-out
-                 NULL);
+                 &m_sa /*NULL*/);
 
     if (listener.handle == INVALID_HANDLE_VALUE) {
         setError(QLatin1String("QLocalServerPrivate::addListener"));
