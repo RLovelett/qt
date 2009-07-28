@@ -285,9 +285,11 @@ UnixMakefileGenerator::init()
         project->values("QMAKE_BUNDLE_LOCATION").clear();
     }
 
-    if(!project->isEmpty("QMAKE_INTERNAL_INCLUDED_FILES"))
-        project->values("DISTFILES") += project->values("QMAKE_INTERNAL_INCLUDED_FILES");
     project->values("DISTFILES") += project->projectFile();
+    if(!project->isEmpty("QMAKE_PROJECT_INCLUDED_FILES"))
+        project->values("DISTFILES") += project->values("QMAKE_PROJECT_INCLUDED_FILES");
+    project->values("DISTFILES") += project->values("HEADERS");
+    project->values("DISTFILES") += project->values("SOURCES");
 
     init2();
     project->values("QMAKE_INTERNAL_PRL_LIBS") << "QMAKE_LIBDIR_FLAGS" << "QMAKE_FRAMEWORKPATH_FLAGS" << "QMAKE_LIBS";

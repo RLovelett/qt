@@ -89,6 +89,7 @@ class QMakeProject
     FunctionBlock *function;
     QMap<QString, FunctionBlock*> testFunctions, replaceFunctions;
 
+    bool pro_file;
     bool own_prop;
     QString pfile, cfile;
     QMakeProperty *prop;

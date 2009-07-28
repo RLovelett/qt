@@ -758,6 +758,7 @@ QMakeProject::init(QMakeProperty *p, const QMap<QString, QStringList> *vars)
         prop = p;
         own_prop = false;
     }
+    pro_file = false;
     reset();
 }
 
@@ -1523,7 +1524,10 @@ QMakeProject::read(uchar cmd)
         debug_msg(1, "Project file: reading %s", pfile.toLatin1().constData());
         if(pfile != "-" && !QFile::exists(pfile) && !pfile.endsWith(".pro"))
             pfile += ".pro";
-        if(!read(pfile, vars))
+        pro_file = true;
+        bool res = read(pfile, vars);
+        pro_file = false;
+        if(!res)
             return false;
     }
 
@@ -1757,7 +1761,8 @@ QMakeProject::doProjectInclude(QString file, uchar flags, QMap<QString, QStringL
             place["QMAKE_INTERNAL_INCLUDED_FEATURES"].append(file);
         }
     }
-    if(QDir::isRelativePath(file)) {
+    bool relative = QDir::isRelativePath(file);
+    if(relative) {
         QStringList include_roots;
         if(Option::output_dir != qmake_getpwd())
             include_roots << qmake_getpwd();
@@ -1852,6 +1857,8 @@ QMakeProject::doProjectInclude(QString file, uchar flags, QMap<QString, QStringL
     if(parsed) {
         if(place["QMAKE_INTERNAL_INCLUDED_FILES"].indexOf(orig_file) == -1)
             place["QMAKE_INTERNAL_INCLUDED_FILES"].append(orig_file);
+        if(pro_file && relative && place["QMAKE_PROJECT_INCLUDED_FILES"].indexOf(orig_file) == -1)
+            place["QMAKE_PROJECT_INCLUDED_FILES"].append(orig_file);
     } else {
         warn_msg(WarnParser, "%s:%d: Failure to include file %s.",
                  pi.file.toLatin1().constData(), pi.line_no, orig_file.toLatin1().constData());

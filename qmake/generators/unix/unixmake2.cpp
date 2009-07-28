@@ -770,7 +770,7 @@ UnixMakefileGenerator::writeMakeParts(QTextStream &t)
                                                 project->first("OBJECTS_DIR")) + ddir));
     t << "dist: " << "\n\t"
       << mkdir_p_asstring(ddir_c) << "\n\t"
-      << "$(COPY_FILE) --parents $(SOURCES) $(DIST) " << ddir_c << Option::dir_sep << " && ";
+      << "$(COPY_FILE) --parents $(DIST) " << ddir_c << Option::dir_sep << " && ";
     if(!project->isEmpty("QMAKE_EXTRA_COMPILERS")) {
         const QStringList &quc = project->values("QMAKE_EXTRA_COMPILERS");
         for(QStringList::ConstIterator it = quc.begin(); it != quc.end(); ++it) {
