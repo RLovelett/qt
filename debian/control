@@ -25,6 +25,17 @@ Description: Qt 4 core module
  .
  The QtCore module contains core non-GUI functionality.
 
+Package: libqt4-core-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-core (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 Core libraries.
+
 Package: libqt4-core-translations
 Architecture: any
 Section: libs
@@ -45,6 +56,17 @@ Description: Qt 4 GUI module
  .
  The QtGui module extends QtCore with GUI functionality.
 
+Package: libqt4-gui-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-gui (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 GUI libraries.
+
 Package: libqt4-network
 Architecture: any
 Section: libs
@@ -56,6 +78,17 @@ Description: Qt 4 network module
  The QtNetwork module offers classes that allow you to write TCP/IP clients and
  servers. It provides classes to make network programming easier and portable.
 
+Package: libqt4-network-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-network (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 Network libraries.
+
 Package: libqt4-script
 Architecture: any
 Section: libs
@@ -65,6 +98,17 @@ Description: Qt 4 script module
  is its rich set of widgets that provide standard GUI functionality.
  .
  The QtScript module provides classes for making Qt applications scriptable.
+
+Package: libqt4-script-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-script (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 Script libraries.
 
 Package: libqt4-sql
 Architecture: any
@@ -82,6 +126,17 @@ Description: Qt 4 SQL module
  If you wish to to use the SQL module for development, you should install the
  libqt4-dev package.
 
+Package: libqt4-sql-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-sql (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 SQL libraries.
+
 Package: libqt4-sql-sqlite
 Architecture: any
 Section: libs
@@ -89,6 +144,17 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, libqt4-sql (= ${binary:Version})
 Description: Qt 4 SQLite plugin
  Qt is a cross-platform C++ application framework. Qt's primary feature
   is its rich set of widgets that provide standard GUI functionality.
+
+Package: libqt4-sql-sqlite-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-sql-sqlite (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 SQL SQLite plugin.
 
 Package: libqt4-svg
 Architecture: any
@@ -103,6 +169,17 @@ Description: Qt 4 SVG module
  Scalable Vector Graphics (SVG) is a language for describing two-dimensional
  graphics and graphical applications in XML.
 
+Package: libqt4-svg-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-svg (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 SVG libraries.
+
 Package: libqt4-webkit
 Architecture: any
 Section: libs
@@ -113,6 +190,17 @@ Description: Qt 4 WebKit module
  .
  QtWebKit provides a Web browser engine that makes it easy to embed content
  from the World Wide Web into your Qt application.
+
+Package: libqt4-webkit-dbg
+Priority: extra
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ libqt4-webkit (= ${binary:Version})
+Description: Qt 4 WebKit library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 WebKit library.
 
 Package: libqt4-xml
 Architecture: any
@@ -125,6 +213,16 @@ Description: Qt 4 XML module
  The QtXml module provides a stream reader and writer for XML documents,
  and C++ implementations of SAX and DOM.
 
+Package: libqt4-xml-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-xml (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 XML libraries.
 
 Package: libqt4-xmlpatterns
 Architecture: any
@@ -134,6 +232,18 @@ Description: Qt 4 XML Patterns module
  lorem ipsum
  .
  and all that 
+
+Package: libqt4-xmlpatterns-dbg
+Priority: extra
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ libqt4-xmlpatterns (= ${binary:Version})
+Description: Qt 4 XML patterns library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 XML patterns
+ library.
 
 Package: libqt4-dbus
 Architecture: any
@@ -150,6 +260,17 @@ Description: Qt 4 D-Bus module
  applications by exporting objects, as well as use services exported by those
  applications by placing calls and accessing properties.
 
+Package: libqt4-dbus-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-dbus (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 DBus libraries.
+
 Package: libqt4-designer
 Architecture: any
 Section: libs
@@ -162,6 +283,17 @@ Description: Qt 4 designer module
  custom widget plugins for Qt Designer, and classes that enable you to access
  Qt Designer's components.
 
+Package: libqt4-designer-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-designer (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 Designer libraries.
+
 Package: libqt4-help
 Architecture: any
 Section: libs
@@ -172,6 +304,17 @@ Description: Qt 4 help module
  .
  The QtHelp module provides classes for integrating online documentation in
  applications.
+
+Package: libqt4-help-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-help (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 Help libraries.
 
 Package: libqt4-assistant
 Architecture: any
@@ -184,6 +327,17 @@ Description: Qt 4 assistant module
  The QtAssistant module provides a means of launching Qt Assistant to provide
  online help.
 
+Package: libqt4-assistant-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-assistant (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 Assistant libraries.
+
 Package: libqt4-test
 Architecture: any
 Section: libs
@@ -194,6 +348,17 @@ Description: Qt 4 test module
  .
  The QtTest module provides classes for unit testing Qt applications and
  libraries.
+
+Package: libqt4-test-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-test (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 Test libraries.
 
 Package: libqt4-dev
 Architecture: any
@@ -245,6 +410,17 @@ Depends: libc6 (>= 2.5.0-1), libgcc1 (>= 1:4.2.1), libqt4-core (= ${binary:Versi
 Description: Qt 4 Phonon Libraries
  Qt 4 media playing libraries
 
+Package: libqt4-phonon-dbg
+Priority: extra
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ libqt4-phonon (= ${binary:Version})
+Description: Qt 4 phonon module
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbol for the Qt phonon library.
+
 Package: libqt4-opengl
 Architecture: any
 Section: libs
@@ -265,6 +441,17 @@ Description: Qt 4 OpenGL module
  This package contains the development files needed to build Qt 4 applications
  using QtOpenGL library.
 
+Package: libqt4-opengl-dbg
+Priority: extra
+Architecture: any
+Section: libdevel
+Depends: libqt4-opengl (= ${binary:Version})
+Description: Qt 4 library debugging symbols
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This packages contains the debugging symbols for the Qt 4 OpenGL libraries.
+
 Package: libqt4-opengl-dev
 Architecture: any
 Section: libdevel
@@ -275,50 +462,4 @@ Description: Qt 4 OpenGL library development files
  .
  This package contains the development files needed to build Qt 4 applications
  using QtOpenGL library.
-
-Package: libqt4-dbg
-Priority: extra
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
- libqt4-core (= ${binary:Version})
-Description: Qt 4 library debugging symbols
- Qt is a cross-platform C++ application framework. Qt's primary feature
- is its rich set of widgets that provide standard GUI functionality.
- .
- This packages contains the debugging symbols for the Qt 4 libraries.
-
-Package: libqt4-webkit-dbg
-Priority: extra
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
- libqt4-webkit (= ${binary:Version})
-Description: Qt 4 WebKit library debugging symbols
- Qt is a cross-platform C++ application framework. Qt's primary feature
- is its rich set of widgets that provide standard GUI functionality.
- .
- This packages contains the debugging symbols for the Qt 4 WebKit library.
-
-Package: libqt4-xmlpatterns-dbg
-Priority: extra
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
- libqt4-xmlpatterns (= ${binary:Version})
-Description: Qt 4 XML patterns library debugging symbols
- Qt is a cross-platform C++ application framework. Qt's primary feature
- is its rich set of widgets that provide standard GUI functionality.
- .
- This packages contains the debugging symbols for the Qt 4 XML patterns
- library.
-
-Package: libqt4-phonon-dbg
-Priority: extra
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends},
- libqt4-phonon (= ${binary:Version})
-Description: Qt 4 phonon module
- Qt is a cross-platform C++ application framework. Qt's primary feature
- is its rich set of widgets that provide standard GUI functionality.
- .
- This packages contains the debugging symbol for the Qt phonon library.
-
 
