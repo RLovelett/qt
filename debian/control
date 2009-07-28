@@ -280,7 +280,7 @@ Package: libqt4-dbg
 Priority: extra
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},
- libqt4 (= ${binary:Version})
+ libqt4-core (= ${binary:Version})
 Description: Qt 4 library debugging symbols
  Qt is a cross-platform C++ application framework. Qt's primary feature
  is its rich set of widgets that provide standard GUI functionality.
