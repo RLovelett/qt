@@ -280,7 +280,7 @@ void QMenuPrivate::calcActionRects(QMap<QAction*, QRect> &actionRects, QList<QAc
 
 
         if (!sz.isEmpty()) {
-            max_column_width = qMax(max_column_width, sz.width());
+            max_column_width = qMax(q->minimumWidth(), qMax(max_column_width, sz.width()));
             //wrapping
             if (!scroll &&
                y+sz.height()+vmargin > dh - (q->style()->pixelMetric(QStyle::PM_MenuDesktopFrameWidth, 0, q) * 2)) {
