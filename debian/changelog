@@ -1,3 +1,9 @@
+qt4-x11 (4.5.3~git20090723-0maemo2) unstable; urgency=low
+
+  * Fixes: NB#129664 - qt4-x11 compiled without any optimization
+
+ -- Shane Bradley <shane.bradley@nokia.com>  Fri, 31 Jul 2009 15:27:07 +1000
+
 qt4-x11 (4.5.3~git20090723-0maemo1) unstable; urgency=low
 
   * Fixes: NB#126518 - Fremantle Qt GUI package with "hildonization" is missing
