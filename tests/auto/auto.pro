@@ -136,6 +136,7 @@ SUBDIRS += _networkselftest \
            qfontdatabase \
            qfontdialog \
            qfontmetrics \
+           qframe \
            qftp \
            qgetputenv \
            qgl \
