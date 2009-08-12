@@ -1643,12 +1643,8 @@ bool QFSFileEngine::setPermissions(uint perms)
     if (mode == 0) // not supported
         return false;
 
-#if !defined(Q_OS_WINCE)
-    ret = ::_wchmod((wchar_t*)d->filePath.utf16(), mode) == 0;
-#else
-    ret = ::_wchmod((wchar_t*)d->longFileName(d->filePath).utf16(), mode);
-#endif
-   return ret;
+    ret = ::_wchmod((wchar_t*)d->longFileName(d->filePath).utf16(), mode) == 0;
+    return ret;
 }
 
 bool QFSFileEngine::setSize(qint64 size)
