@@ -234,7 +234,7 @@ static const char* qglslRadialGradientBrushVertexShader = "\
         gl_Position.xy = gl_Position.xy * invertedHTexCoordsZ; \
         gl_Position.w = invertedHTexCoordsZ; \
         A = hTexCoords.xy * invertedHTexCoordsZ; \
-        b = 2.0 * fmp * (A.x + A.y); \
+        b = 2.0 * dot(A, fmp);\
 \
     }";
 
@@ -274,10 +274,12 @@ static const char* qglslConicalGradientBrushFragmentShader = "\n\
     uniform         sampler2D   brushTexture; \
     uniform mediump float       angle; \
     varying highp   vec2        A; \
-    mediump vec4 brush() { \
+    lowp vec4 brush() { \
+        highp float t; \
         if (abs(A.y) == abs(A.x)) \
-            A.y += 0.002; \
-        highp float t = (atan2(-A.y, A.x) + angle) * INVERSE_2PI; \
+            t = (atan(-A.y + 0.002, A.x) + angle) * INVERSE_2PI; \
+        else \
+            t = (atan(-A.y, A.x) + angle) * INVERSE_2PI; \
         return texture2D(brushTexture, vec2(t - floor(t), 0.5)); \
     }\n";
 
