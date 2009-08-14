@@ -38,6 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <cmath>
+#include <limits>
+
 #include "qplatformdefs.h"
 #include <qdebug.h>
 #include "qpdf_p.h"
@@ -60,58 +63,78 @@ extern int qt_defaultDpi();
 
 extern QSizeF qt_paperSizeToQSizeF(QPrinter::PaperSize size);
 
-/* also adds a space at the end of the number */
-const char *qt_real_to_string(qreal val, char *buf) {
-    const char *ret = buf;
+/* Convert a floating-point number to string representation. Unfortunately the
+   PDF format does not support scientfic notation. To get a reasonable precision
+   one has to calculate the desired number of digits.
 
-    if (qIsNaN(val)) {
-        *(buf++) = '0';
-        *(buf++) = ' ';
-        *buf = 0;
-        return ret;
+   Especially small numbers should not be cut off towards zero. If there is a matrix
+   set that scales the values to the output page every possible value can be meaningful.
+*/
+static QByteArray qt_real_to_string(qreal val) {
+
+    QByteArray ba;
+
+    if (qIsNaN(val) || qIsInf(val) || (val == 0.)) {
+        ba = "0.";
+        return ba;
     }
 
-    if (val < 0) {
-        *(buf++) = '-';
-        val = -val;
+    //digits10 is the number of digits that can be represented by the floating-point variable
+    //The additional precision of 2 is enough to get on an intel i386 machine string
+    //representations of floating-point values that can be parsed back via std::stringstream and
+    //result in identical values.
+    //In case of a missing digits10 implementation at least a precision of 6 is used.
+    int precision = 6;
+    if (std::numeric_limits<qreal>::is_bounded) {
+        precision = std::max(precision, std::numeric_limits<qreal>::digits10 + 2);
     }
-    unsigned int ival = (unsigned int) val;
-    qreal frac = val - (qreal)ival;
 
-    int ifrac = (int)(frac * 1000000000);
-    if (ifrac == 1000000000) {
-        ++ival;
-        ifrac = 0;
+    int log = std::floor(std::log10(std::abs(val)));
+
+    int effective_precision = std::max(precision - log, 0);
+
+    {
+        //We rely on the fact that the default locale is C.
+        //We also rely on the fact that the encoding puts all numbers and the decimal
+        //separator into single bytes.
+        QTextStream ts(&ba);
+
+        ts.setRealNumberPrecision(effective_precision);
+        ts.setRealNumberNotation(QTextStream::FixedNotation);
+
+        ts << val;
     }
-    char output[256];
-    int i = 0;
-    while (ival) {
-        output[i] = '0' + (ival % 10);
-        ++i;
-        ival /= 10;
-    }
-    int fact = 100000000;
-    if (i == 0) {
-        *(buf++) = '0';
-    } else {
-        while (i) {
-            *(buf++) = output[--i];
-            fact /= 10;
-            ifrac /= 10;
+
+    //For very large numbers set the digits that do not carry additional information to
+    //0 such that the value can be better compressed in the PDF file.
+    if (log > precision) {
+        for (int pos = precision + 1 + ((ba[0] == '-') ? 1 : 0); pos < ba.size(); ++pos) {
+            ba[pos] = '0';
         }
     }
 
-    if (ifrac) {
-        *(buf++) =  '.';
-        while (fact) {
-            *(buf++) = '0' + ((ifrac/fact) % 10);
-            fact /= 10;
+    //Remove trailing zeros from the resulting string.
+    int last = ba.size();
+    while (last > 0 && ba[last - 1] == '0') {
+        --last;
+    }
+
+    int pos = last - 1;
+    for (; pos > 0; --pos) {
+        if (ba[pos] == '.') {
+            ba.resize(last);
+            break;
         }
     }
-    *(buf++) = ' ';
-    *buf = 0;
-    return ret;
+
+    //Ensure that there is at least one dot that makes the number a real in the PDF file.
+    if (pos < 1) {
+        ba.append('.');
+    }
+
+    return ba;
 }
+
 
 const char *qt_int_to_string(int val, char *buf) {
     const char *ret = buf;
@@ -201,9 +224,7 @@ namespace QPdf {
     }
 
     ByteStream &ByteStream::operator <<(qreal val) {
-        char buf[256];
-        qt_real_to_string(val, buf);
-        *this << buf;
+        *this << qt_real_to_string(val) << " ";
         return *this;
     }
 
@@ -215,11 +236,8 @@ namespace QPdf {
     }
 
     ByteStream &ByteStream::operator <<(const QPointF &p) {
-        char buf[256];
-        qt_real_to_string(p.x(), buf);
-        *this << buf;
-        qt_real_to_string(p.y(), buf);
-        *this << buf;
+        *this << qt_real_to_string(p.x()) << " ";
+        *this << qt_real_to_string(p.y()) << " ";
         return *this;
     }
 
