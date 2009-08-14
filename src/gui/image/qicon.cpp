@@ -685,6 +685,15 @@ int QIcon::serialNumber() const
 }
 
 /*!
+    Returns the icon engine used by this icon.
+    \since 4.6
+*/
+QIconEngine* QIcon::engine() const
+{
+    return d ? d->engine : 0;
+}
+
+/*!
     Returns a number that identifies the contents of this QIcon
     object. Distinct QIcon objects can have the same key if
     they refer to the same contents.
