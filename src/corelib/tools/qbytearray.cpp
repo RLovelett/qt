@@ -3764,10 +3764,112 @@ QByteArray QByteArray::fromRawData(const char *data, int size)
     return QByteArray(x, 0, 0);
 }
 
+static const quint32 _fromBase64_map[]=
+{
+    ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, // 0   - 15
+    ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, // 16  - 31
+    ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, 62, ~0, ~0, ~0, 63, // 32  - 47
+    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, ~0, ~0, ~0, ~0, ~0, ~0, // 48  - 63
+    ~0, 0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, // 64  - 79
+    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, ~0, ~0, ~0, ~0, ~0, // 80  - 95
+    ~0, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, // 96  - 111
+    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, ~0, ~0, ~0, ~0, ~0, // 112 - 143
+    ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, // 128 - 143
+    ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, // 144 - 159
+    ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, // 160 - 175
+    ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, // 176 - 191
+    ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, // 192 - 207
+    ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, // 208 - 223
+    ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, // 224 - 239
+    ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0, ~0  // 240 - 255
+};
+
+static unsigned char* fromBase64_aligned(const QByteArray &base64, unsigned char *result)
+{
+    quint32 *data32 = (quint32 *)base64.constData();
+	int quarter = (base64.size() - 1) / 4;
+    
+    int i;
+    quint32 d0, d1, d2, d3;
+    quint32 ch;
+    quint32 t;
+    
+    for(i = 0; i < quarter; ++i) {
+        ch = *data32++;
+        d0 = _fromBase64_map[ch & 0xFF];
+        d1 = _fromBase64_map[(ch >> 8) & 0xFF];
+        d2 = _fromBase64_map[(ch >> 16) & 0xFF];
+        d3 = _fromBase64_map[ch >> 24];
+        
+        t = (d0 << 18) | (d1 << 12) | (d2 << 6) | d3;
+        *result++ = t >> 16;
+        *result++ = (t >> 8);
+        *result++ = t;
+    }
+    
+    quint8 *data8 = (quint8 *)data32;
+    int nbits = 0;
+    for(i *= 4; i < base64.size(); ++i) {
+        quint32 d = _fromBase64_map[*data8++];
+        
+        if(d != quint32(~0)) {
+            t = (t << 6) | d;
+            nbits += 6;
+            if(nbits >= 8) {
+                nbits -= 8;
+                *result++ = t >> nbits;
+                t &= (1 << nbits)-1;
+            }
+        }
+    }
+    
+    return result;
+}
+
+static unsigned char* fromBase64_unaligned(const QByteArray &base64, unsigned char *result)
+{
+    qWarning("QByteArray::fromBase64: encoded data is not aligned on a 4-byte boundary, consider making it aligned.");
+    
+    quint8 *data = (quint8 *)base64.constData();
+	int quarter = (base64.size() - 1) / 4;
+    
+    int i;
+    quint32 d0, d1, d2, d3;
+    quint32 t;
+    
+    for(i = 0; i < quarter; ++i) {
+        d0 = _fromBase64_map[*data++];
+        d1 = _fromBase64_map[*data++];
+        d2 = _fromBase64_map[*data++];
+        d3 = _fromBase64_map[*data++];
+        
+        t = (d0 << 18) | (d1 << 12) | (d2 << 6) | d3;
+        *result++ = t >> 16;
+        *result++ = (t >> 8);
+        *result++ = t;
+    }
+    
+    int nbits = 0;
+    for(i *= 4; i < base64.size(); ++i) {
+        quint32 d = _fromBase64_map[*data++];
+        
+        if(d != quint32(~0)) {
+            t = (t << 6) | d;
+            nbits += 6;
+            if(nbits >= 8) {
+                nbits -= 8;
+                *result++ = t >> nbits;
+                t &= (1 << nbits)-1;
+            }
+        }
+    }
+    
+    return result;
+}
+
 /*!
     Returns a decoded copy of the Base64 array \a base64. Input is not checked
-    for validity; invalid characters in the input are skipped, enabling the
-    decoding process to continue with subsequent characters.
+    for validity and is expected to contain valid characters only.
 
     For example:
 
@@ -3779,73 +3881,18 @@ QByteArray QByteArray::fromRawData(const char *data, int size)
 */
 QByteArray QByteArray::fromBase64(const QByteArray &base64)
 {
-static const qint32 map[]=
-{
-	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	//	0	-	15
-	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	//	16	-	31
-	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	62,	~0,	~0,	~0,	63,	//	32	-	47
-	52,	53,	54,	55,	56,	57,	58,	59,	60,	61,	~0,	~0,	~0,	~0,	~0,	~0,	//	48	-	63
-	~0,	0,	1,	2,	3,	4,	5,	6,	7,	8,	9,	10,	11,	12,	13,	14,	//	64	-	79
-	15,	16,	17,	18,	19,	20,	21,	22,	23,	24,	25,	~0,	~0,	~0,	~0,	~0,	//	80	-	95
-	~0,	26,	27,	28,	29,	30,	31,	32,	33,	34,	35,	36,	37,	38,	39,	40,	//	96	-	111
-	41,	42,	43,	44,	45,	46,	47,	48,	49,	50,	51,	~0,	~0,	~0,	~0,	~0,	//	112	-	143
-	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	//	128	-	143
-	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	//	144	-	159
-	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	//	160	-	175
-	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	//	176	-	191
-	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	//	192	-	207
-	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	//	208	-	223
-	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	//	224	-	239
-	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0,	~0	//	240	-	255
-};
-
     if(base64.isEmpty())
         return QByteArray(0);
     
-    QByteArray _result((base64.size() * 3) / 4, Qt::Uninitialized);
-    unsigned char *origin = (unsigned char *)_result.d->data;
-    unsigned char *result = origin;
+    QByteArray result((base64.size() * 3) / 4, Qt::Uninitialized);
+    unsigned char *origin = (unsigned char *)result.d->data;
     
-    quint32 *data32 = (quint32 *)base64.constData();
-    int quarter = (base64.size()-1)/4;
+    unsigned char *end = (0 == (unsigned long)base64.constData() % 4)
+    	? fromBase64_aligned(base64, origin)
+    	: fromBase64_unaligned(base64, origin);
     
-    int i;
-    quint32 d0,d1,d2,d3;
-    quint32 ch;
-    quint32 t;
-    
-    for(i=0;i<quarter;++i) {
-        ch = *data32++;
-        d3 = map[(ch >> 24)];
-        d2 = map[(ch >> 16) & 0xFF];
-        d1 = map[(ch >> 8) & 0xFF];
-        d0 = map[ch & 0xFF];
-        
-        t = (d0 << 18) | (d1 << 12) | (d2 << 6) | d3;
-        *result++ = t >> 16;
-        *result++ = (t >> 8);
-        *result++ = t;
-    }
-    
-    quint8 *data8 = (quint8 *)data32;
-    int nbits = 0;
-    for(i*=4;i<base64.size();++i) {
-        ch = *data8++;
-        qint8 d = map[ch];
-        
-        if(d!=-1) {
-            t = (t << 6) | d;
-            nbits+=6;
-            if(nbits>=8) {
-                nbits-=8;
-                *result++ = t >> nbits;
-                t &= (1 << nbits)-1;
-            }
-        }
-    }
-    
-    _result.truncate(result-origin);
-    return _result;
+    result.truncate(end - origin);
+    return result;
 }
 
 /*!

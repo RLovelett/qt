@@ -52,6 +52,8 @@ class tst_qbytearray : public QObject
 private slots:
     void append();
     void append_data();
+    void fromBase64();
+    void fromBase64_data();
 };
 
 
@@ -81,6 +83,31 @@ void tst_qbytearray::append()
     }
 }
 
+void tst_qbytearray::fromBase64_data()
+{
+	QTest::addColumn<int>("size");
+    QTest::newRow("100")       << int(100);
+    QTest::newRow("1000")      << int(1000);
+    QTest::newRow("10000")     << int(10000);
+    QTest::newRow("100000")    << int(100000);
+    QTest::newRow("1000000")   << int(1000000);
+    QTest::newRow("10000000")  << int(10000000);
+    QTest::newRow("100000000") << int(100000000);
+}
+
+void tst_qbytearray::fromBase64()
+{
+    QFETCH(int, size);
+    
+    QByteArray ba(size, Qt::Uninitialized);
+    for(int i=0;i<size;++i)
+        ba[i] = (char)i;
+    ba = ba.toBase64();
+    
+    QBENCHMARK {
+        QByteArray arr = QByteArray::fromBase64(ba);
+    }
+}
 
 QTEST_MAIN(tst_qbytearray)
 
