@@ -398,6 +398,7 @@ QString MainWindow::urlifyFileName(const QString &fileName)
     return name;
 }
 
+#ifndef QT_NO_PRINTER
 class PrintThread : public QThread
 {
     QPrinter _printer;
@@ -433,6 +434,7 @@ protected:
         _document = 0;
     }
 };
+#endif
 
 void MainWindow::on_actionFilePrint_triggered()
 {
