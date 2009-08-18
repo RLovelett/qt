@@ -5083,7 +5083,7 @@ if [ "$PLATFORM_X11" = "yes" ]; then
             #QMakeVar set QT_LIBS_HILDON "$QT_LIBS_HILDON"
             #QMakeVar set styles "plastique gtk windows" #NO motif
             # Add Hildon to config.h
-            QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_XIM Q_WS_HILDON Q_OS_FREMANTLE QT_NO_SIZEGRIP"
+            QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_XIM Q_WS_HILDON Q_OS_FREMANTLE QT_NO_SIZEGRIP QT_NO_PRINTDIALOG"
         else
             echo "Hildon support cannot be enabled due to functionality test!"
             echo " Turn on verbose messaging (-v) to $0 to see the final report."
