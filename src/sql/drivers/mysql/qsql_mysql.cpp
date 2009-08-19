@@ -1289,6 +1289,11 @@ bool QMYSQLDriver::open(const QString& db,
     return true;
 }
 
+bool QMYSQLDriver::isOpen() const
+{
+    return d->mysql && !mysql_ping(d->mysql);
+}
+
 void QMYSQLDriver::close()
 {
     if (isOpen()) {

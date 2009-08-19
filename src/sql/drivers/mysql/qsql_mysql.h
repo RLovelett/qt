@@ -114,6 +114,7 @@ public:
                const QString & host,
                int port,
                const QString& connOpts);
+    bool isOpen() const;
     void close();
     QSqlResult *createResult() const;
     QStringList tables(QSql::TableType) const;
