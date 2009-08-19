@@ -46,6 +46,7 @@
 
 QT_BEGIN_NAMESPACE
 
+#ifndef QT_NO_PRINTER
 PrintOut::PrintOut(QPrinter *printer)
     : pr(printer), nextRule(NoRule), page(0)
 {
@@ -206,5 +207,7 @@ void PrintOut::drawRule(Rule rule)
         voffset += 4;
     }
 }
+
+#endif
 
 QT_END_NAMESPACE

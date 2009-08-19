@@ -876,6 +876,9 @@ void MainWindow::releaseAll()
 
 void MainWindow::print()
 {
+#ifdef QT_NO_PRINTDIALOG
+    statusBar()->showMessage(tr("Print support is disabled"));
+#else
     int pageNum = 0;
     QPrintDialog dlg(&m_printer, this);
     if (dlg.exec()) {
@@ -953,6 +956,7 @@ void MainWindow::print()
     } else {
         statusBar()->showMessage(tr("Printing aborted"), MessageMS);
     }
+#endif
 }
 
 bool MainWindow::searchItem(const QString &searchWhat)
@@ -1229,6 +1233,9 @@ void MainWindow::editPhraseBook(QAction *action)
 
 void MainWindow::printPhraseBook(QAction *action)
 {
+#ifdef QT_NO_PRINTDIALOG
+    statusBar()->showMessage(tr("Print support is disabled"));
+#else
     PhraseBook *phraseBook = m_phraseBookMenu[PhrasePrintMenu].value(action);
 
     int pageNum = 0;
@@ -1260,6 +1267,7 @@ void MainWindow::printPhraseBook(QAction *action)
     } else {
         statusBar()->showMessage(tr("Printing aborted"), MessageMS);
     }
+#endif
 }
 
 void MainWindow::addToPhraseBook()

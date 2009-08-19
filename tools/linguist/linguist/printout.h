@@ -54,6 +54,7 @@ QT_BEGIN_NAMESPACE
 class QPrinter;
 class QFontMetrics;
 
+#ifndef QT_NO_PRINTER
 class PrintOut
 {
 public:
@@ -114,6 +115,8 @@ private:
     int hsize;
     int vsize;
 };
+
+#endif
 
 QT_END_NAMESPACE
 
