@@ -922,21 +922,24 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
         KeySym lower = NoSymbol;
         KeySym upper = NoSymbol;
         QString tempStr = translateKeySym(keysym);
-        QChar currentChar = tempStr.at(0);
+        QChar currentChar;
+        if (!tempStr.isEmpty()){
+          currentChar = tempStr.at(0);
         
-        /* Simulate shift key being held down in sticky state for non-printables  */
-        if ( currentChar.isPrint() ){
-            /*  For printable characters sticky shift negates the case,
-             *  including any autocapitalization changes 
-             */
-            if ( currentChar.isUpper() ){
-                currentChar = currentChar.toLower();
-                lower = lower;
-            }else{
-                currentChar = currentChar.toUpper();
-                upper = upper;
+            /* Simulate shift key being held down in sticky state for non-printables  */
+            if ( currentChar.isPrint() ){
+                /*  For printable characters sticky shift negates the case,
+                 *  including any autocapitalization changes 
+                 */
+                if ( currentChar.isUpper() ){
+                    currentChar = currentChar.toLower();
+                    lower = lower;
+                }else{
+                    currentChar = currentChar.toUpper();
+                    upper = upper;
+                }
+                commitString = QString(currentChar); //sent to the widget  
             }
-            commitString = QString(currentChar); //sent to the widget  
         }
     }
     
