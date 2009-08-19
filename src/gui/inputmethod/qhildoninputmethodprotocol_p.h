@@ -42,7 +42,7 @@
 #include "qx11info_x11.h"
 #include "private/qt_x11_p.h"
 
-/******* these are copied from hildon-im-protocol **********/
+/******* from hildon-im-protocol **********/
 
 #define HILDON_IM_CLIENT_MESSAGE_BUFFER_SIZE (20 - sizeof(int))
 
@@ -102,6 +102,9 @@ enum
     HILDON_IM_KEY_EVENT_FORMAT = 8,
     HILDON_IM_SURROUNDING_CONTENT_FORMAT = 8,
     HILDON_IM_SURROUNDING_FORMAT = 8,
+    HILDON_IM_INPUT_MODE_FORMAT = 8,
+    HILDON_IM_PREEDIT_COMMITTED_FORMAT = 8,
+    HILDON_IM_PREEDIT_COMMITTED_CONTENT_FORMAT = 8,
     HILDON_IM_CLIPBOARD_SELECTION_REPLY_FORMAT = 32,
 //  HILDON_IM_CLIPBOARD_FORMAT = 32
     HILDON_IM_WINDOW_ID_FORMAT = 32,
@@ -122,6 +125,11 @@ enum HildonIMCommand
     HILDON_IM_SETNSHOW,   // Set the client and show the IM window 
     HILDON_IM_SELECT_ALL, // Select the text in the plugin
 
+    HILDON_IM_SHIFT_LOCKED,
+    HILDON_IM_SHIFT_UNLOCKED,
+    HILDON_IM_MOD_LOCKED,
+    HILDON_IM_MOD_UNLOCKED,
+
     /* always last */
     HILDON_IM_NUM_COMMANDS
 };
@@ -131,25 +139,27 @@ enum HildonIMTrigger
     HILDON_IM_TRIGGER_NONE = -1,
     HILDON_IM_TRIGGER_STYLUS,
     HILDON_IM_TRIGGER_FINGER,
-    HILDON_IM_TRIGGER_KEYBOARD
+    HILDON_IM_TRIGGER_KEYBOARD,
+    HILDON_IM_TRIGGER_UNKNOWN
 };
 
+// Command activation message, from context to IM (see HildonIMCommand)
 struct HildonIMActivateMessage
 {
     Window input_window;
     Window app_window;
     HildonIMCommand cmd;
-    int input_mode;
     HildonIMTrigger trigger;
 };
 
+// Text insertion message, from IM to context
 struct HildonIMInsertUtf8Message
 {
     int msg_flag;
     char utf8_str[HILDON_IM_CLIENT_MESSAGE_BUFFER_SIZE];
 };
 
-/* IM communications, from IM process to context */
+// IM communications, from IM process to context
 typedef enum
 {
   HILDON_IM_CONTEXT_HANDLE_ENTER,           /* Virtual enter activated */
@@ -158,44 +168,43 @@ typedef enum
   HILDON_IM_CONTEXT_HANDLE_SPACE,           /* Virtual space activated */
   HILDON_IM_CONTEXT_CONFIRM_SENTENCE_START, /* Query the autocap state at cursor */
   HILDON_IM_CONTEXT_FLUSH_PREEDIT,          /* Finalize the preedit to the client widget */
-#ifdef Q_OS_FREMANTLE
   HILDON_IM_CONTEXT_CANCEL_PREEDIT,          /* Clean the preedit buffer */
-#endif
 
   /* See HildonIMCommitMode for a description of the commit modes */
   HILDON_IM_CONTEXT_BUFFERED_MODE,
   HILDON_IM_CONTEXT_DIRECT_MODE,
   HILDON_IM_CONTEXT_REDIRECT_MODE,
   HILDON_IM_CONTEXT_SURROUNDING_MODE,
-#ifdef Q_OS_FREMANTLE
   HILDON_IM_CONTEXT_PREEDIT_MODE,
-#endif
 
   HILDON_IM_CONTEXT_CLIPBOARD_COPY,            /* Copy client selection to clipboard */
   HILDON_IM_CONTEXT_CLIPBOARD_CUT,             /* Cut client selection to clipboard */
   HILDON_IM_CONTEXT_CLIPBOARD_PASTE,           /* Paste clipboard selection to client */
   HILDON_IM_CONTEXT_CLIPBOARD_SELECTION_QUERY, /* Query if the client has an active selection */
   HILDON_IM_CONTEXT_REQUEST_SURROUNDING,       /* Request the content surrounding the cursor */
-#ifdef Q_OS_FREMANTLE
   HILDON_IM_CONTEXT_REQUEST_SURROUNDING_FULL,          /* Request the contents of the text widget */
-#endif
   HILDON_IM_CONTEXT_WIDGET_CHANGED,            /* IM detected that the client widget changed */
   HILDON_IM_CONTEXT_OPTION_CHANGED,            /* The OptionMask for the active context is updated */
   HILDON_IM_CONTEXT_CLEAR_STICKY,              /* Clear the sticky key state */
   HILDON_IM_CONTEXT_ENTER_ON_FOCUS,            /* Generate a virtual enter key event on focus in */
 
+  HILDON_IM_CONTEXT_SPACE_AFTER_COMMIT,
+  HILDON_IM_CONTEXT_NO_SPACE_AFTER_COMMIT,
+
   /* always last */
   HILDON_IM_CONTEXT_NUM_COM
 } HildonIMCommunication;
 
+// IM context toggle options.
 enum HildonIMOptionMask
 {
-  HILDON_IM_AUTOCASE          = 1 << 0,
-  HILDON_IM_AUTOCORRECT       = 1 << 1,
-  HILDON_IM_AUTOLEVEL_NUMERIC = 1 << 2,
-  HILDON_IM_LOCK_LEVEL        = 1 << 3
+  HILDON_IM_AUTOCASE          = 1 << 0, // Suggest case based on the cursor's position in sentence
+  HILDON_IM_AUTOCORRECT       = 1 << 1, // Limited automatic error correction of commits
+  HILDON_IM_AUTOLEVEL_NUMERIC = 1 << 2, // Default to appropriate key-level in numeric-only clients
+  HILDON_IM_LOCK_LEVEL        = 1 << 3  // Lock the effective key-level at pre-determined value
 };
 
+// Communication message from IM to context
 struct HildonIMComMessage
 {
     Window input_window;
@@ -203,7 +212,7 @@ struct HildonIMComMessage
     HildonIMOptionMask options;
 };
 
-/* Key event message, from context to IM */
+// Key event message, from context to IM
 typedef struct
 {
   Window input_window;

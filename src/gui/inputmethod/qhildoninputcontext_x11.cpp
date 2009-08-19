@@ -1433,7 +1433,7 @@ void QHildonInputContext::sendHildonCommand(HildonIMCommand cmd, QWidget *widget
     }
 
     msg->cmd = cmd;
-    msg->input_mode = inputMode;
+    //msg->input_mode = inputMode;
     msg->trigger = triggerMode;
 
     XSendEvent(X11->display, w, false, 0, &ev);
