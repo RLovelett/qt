@@ -301,6 +301,7 @@ static const char * x11_atomnames = {
     "_XKB_RULES_NAMES\0"
 
     //Hildon Input Method Protocol
+/* IM atom names */
 #ifdef Q_WS_HILDON
     // find the global im window
     "_HILDON_IM_WINDOW\0"
@@ -322,6 +323,13 @@ static const char * x11_atomnames = {
     "_HILDON_IM_CLIPBOARD_SELECTION_QUERY\0"
     // tell im whether we have a selection or not
     "_HILDON_IM_CLIPBOARD_SELECTION_REPLY\0"
+    /* Fremantle specific HIM Atoms */
+    //
+    "_HILDON_IM_INPUT_MODE\0"
+    //
+    "_HILDON_IM_PREEDIT_COMMITTED\0"
+    //
+    "_HILDON_IM_PREEDIT_COMMITTED_CONTENT\0"
 #endif
 
     // XEMBED
