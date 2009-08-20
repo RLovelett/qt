@@ -232,5 +232,10 @@ typedef enum {
   HILDON_IM_DEAD_KEY_MASK         = 1 << 5,
 } HildonIMInternalModifierMask;
 
+typedef struct
+{
+  HildonGtkInputMode input_mode;
+  HildonGtkInputMode default_input_mode;
+} HildonIMInputModeMessage;
 
 #endif
