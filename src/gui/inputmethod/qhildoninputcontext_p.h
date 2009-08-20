@@ -88,6 +88,7 @@ private:
     void sendSurrounding(bool sendAllContents = false);
     void sendSurroundingHeader(int offset);
     void inputModeChanged();
+    void sendInputMode();
     void setClientCursorLocation(int offsetIsRelative, int cursorOffset); //FIXME?? Move offsetIsRelative to Bool?
 
     //Vars

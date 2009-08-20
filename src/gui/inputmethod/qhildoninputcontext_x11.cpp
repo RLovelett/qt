@@ -48,10 +48,11 @@
 #include "qtextbrowser.h"
 #include "kernel/qevent_p.h"       //QKeyEventEx
 #include "kernel/qapplication_p.h" //QApplicationPrivate::areXInputEventsUsed()
+#include "qinputcontext.h"
 
 #ifdef Q_WS_HILDON 
 
-//#define HIM_DEBUG
+#define HIM_DEBUG
 
 #define GDK_ISO_ENTER  0xfe34
 #define COMPOSE_KEY    Qt::Key_Multi_key   // "Ch" key
@@ -1443,6 +1444,7 @@ void QHildonInputContext::sendHildonCommand(HildonIMCommand cmd, QWidget *widget
     XSync(X11->display, False);
 }
 
+
 /*!
  */
 void QHildonInputContext::sendX11Event(XEvent *event)
@@ -1652,6 +1654,35 @@ void QHildonInputContext::sendSurroundingHeader(int offset)
  */
 void QHildonInputContext::inputModeChanged(){
     sendHildonCommand(HILDON_IM_MODE, focusWidget());
+}
+
+void QHildonInputContext::sendInputMode(){
+#ifdef HIM_DEBUG
+    qDebug() <<  "QHildonInputContext::sendInputMode";
+#endif
+    Window w = findHildonIm();
+
+    if (!w){
+        return;
+    }
+
+    XEvent ev;
+    memset(&ev, 0, sizeof(XEvent));
+
+    ev.xclient.type = ClientMessage;
+    ev.xclient.window = w;
+    ev.xclient.message_type = ATOM(_HILDON_IM_INPUT_MODE);
+    ev.xclient.format = HILDON_IM_INPUT_MODE_FORMAT;
+
+    HildonIMInputModeMessage *msg = reinterpret_cast<HildonIMInputModeMessage *>(&ev.xclient.data);
+    HildonGtkInputMode input_mode = HILDON_GTK_INPUT_MODE_FULL;//inputMode;
+    HildonGtkInputMode default_input_mode =  HILDON_GTK_INPUT_MODE_FULL;
+
+    msg->input_mode = input_mode;
+    msg->default_input_mode = default_input_mode;
+
+    XSendEvent(X11->display, w, false, 0, &ev);
+    XSync(X11->display, False);
 }
 
 /*! In redirect mode we use a proxy widget (fullscreen vkb). When the cursor position
