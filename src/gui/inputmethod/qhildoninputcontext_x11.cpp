@@ -1436,6 +1436,10 @@ void QHildonInputContext::sendHildonCommand(HildonIMCommand cmd, QWidget *widget
         killTimer(timerId);
     }
 
+    if (cmd == HILDON_IM_SETCLIENT || cmd == HILDON_IM_SETNSHOW){
+        sendInputMode();
+    }
+
     msg->cmd = cmd;
     //msg->input_mode = inputMode;
     msg->trigger = triggerMode;
@@ -1653,7 +1657,28 @@ void QHildonInputContext::sendSurroundingHeader(int offset)
 /*! Notify IM of any input mode changes 
  */
 void QHildonInputContext::inputModeChanged(){
-    sendHildonCommand(HILDON_IM_MODE, focusWidget());
+#ifdef HIM_DEBUG
+    qDebug() << "QHildonInputContext::inputModeChanged";
+#endif
+
+#if 0
+  //TODO
+  if ((input_mode & HILDON_GTK_INPUT_MODE_ALPHA) == 0  &&
+      (input_mode & HILDON_GTK_INPUT_MODE_HEXA)  == 0  &&
+      ( (input_mode & HILDON_GTK_INPUT_MODE_NUMERIC) != 0 ||
+        (input_mode & HILDON_GTK_INPUT_MODE_TELE)    != 0))
+  {
+    self->mask = HILDON_IM_LEVEL_LOCK_MASK | HILDON_IM_LEVEL_STICKY_MASK;
+  }
+  else
+  {
+    self->mask &= ~HILDON_IM_LEVEL_LOCK_MASK;
+    self->mask &= ~HILDON_IM_LEVEL_STICKY_MASK;
+  }
+#endif  
+  /* Notify IM of any input mode changes in cases where the UI is
+     already visible. */
+  sendInputMode();
 }
 
 void QHildonInputContext::sendInputMode(){
