@@ -1240,7 +1240,7 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
     }else if (event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING_CONTENT) &&
               event->xclient.format == HILDON_IM_SURROUNDING_CONTENT_FORMAT) {
         #ifdef HIM_DEBUG
-                qDebug() << "HILDON_IM_SURROUNDING_CONTENT_FORMAT";
+                qDebug() << "HILDON_IM_SURROUNDING_CONTENT";
         #endif
         HildonIMSurroundingContentMessage *msg = reinterpret_cast<HildonIMSurroundingContentMessage*>(&event->xclient.data);
 
@@ -1258,7 +1258,7 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
     }else if (event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING) &&
                   event->xclient.format == HILDON_IM_SURROUNDING_FORMAT) {
         #ifdef HIM_DEBUG
-                qDebug() << "HILDON_IM_SURROUNDING_FORMAT";
+                qDebug() << "HILDON_IM_SURROUNDING";
         #endif
         HildonIMSurroundingMessage *msg = reinterpret_cast<HildonIMSurroundingMessage*>(&event->xclient.data);
         setClientCursorLocation(msg->offset_is_relative, msg->cursor_offset );
@@ -1700,7 +1700,7 @@ void QHildonInputContext::sendInputMode(){
     ev.xclient.format = HILDON_IM_INPUT_MODE_FORMAT;
 
     HildonIMInputModeMessage *msg = reinterpret_cast<HildonIMInputModeMessage *>(&ev.xclient.data);
-    HildonGtkInputMode input_mode = HILDON_GTK_INPUT_MODE_FULL;//inputMode;
+    HildonGtkInputMode input_mode = HILDON_GTK_INPUT_MODE_DICTIONARY;//inputMode;
     HildonGtkInputMode default_input_mode =  HILDON_GTK_INPUT_MODE_FULL;
 
     msg->input_mode = input_mode;
