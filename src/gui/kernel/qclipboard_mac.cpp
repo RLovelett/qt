@@ -543,13 +543,18 @@ QMacPasteboard::retrieveData(const QString &format, QVariant::Type) const
                 const int type_count = CFArrayGetCount(types);
                 for(int i = 0; i < type_count; ++i) {
                     CFStringRef flavor = static_cast<CFStringRef>(CFArrayGetValueAtIndex(types, i));
-                    if(c_flavor == QCFString::toQString(flavor)) {
+                    QString flavor_qs = QCFString::toQString(flavor);
+                    if (flavor_qs == QLatin1String("public.utf16-external-plain-text")) {
+                      // some applications (e.g. Eclipse) use this, handle as normal public.utf16-plain-text data
+                      flavor_qs = QLatin1String("public.utf16-plain-text");
+                    }
+                    if(c_flavor == flavor_qs) {
                         QCFType<CFDataRef> macBuffer;
                         if(PasteboardCopyItemFlavorData(paste, id, flavor, &macBuffer) == noErr) {
                             QByteArray buffer((const char *)CFDataGetBytePtr(macBuffer), CFDataGetLength(macBuffer));
                             if(!buffer.isEmpty()) {
 #ifdef DEBUG_PASTEBOARD
-                                qDebug("  - %s [%s] (%s)", qPrintable(format), qPrintable(QCFString::toQString(flavor)), qPrintable(c->convertorName()));
+                                qDebug("  - %s [%s] (%s)", qPrintable(format), qPrintable(flavor_qs), qPrintable(c->convertorName()));
 #endif
                                 buffer.detach(); //detach since we release the macBuffer
                                 retList.append(buffer);
@@ -558,7 +563,7 @@ QMacPasteboard::retrieveData(const QString &format, QVariant::Type) const
                         }
                     } else {
 #ifdef DEBUG_PASTEBOARD
-                        qDebug("  - NoMatch %s [%s] (%s)", qPrintable(c_flavor), qPrintable(QCFString::toQString(flavor)), qPrintable(c->convertorName()));
+                        qDebug("  - NoMatch %s [%s] (%s)", qPrintable(c_flavor), qPrintable(flavor_qs), qPrintable(c->convertorName()));
 #endif
                     }
                 }
