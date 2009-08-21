@@ -1052,7 +1052,7 @@ QString QFSFileEngine::homePath()
                 ret = QString::fromLocal8Bit(qgetenv("HOME").constData());
                 if(ret.isEmpty() || !QFile::exists(ret)) {
 #if defined(Q_OS_WINCE)
-                    ret = QString::fromLatin1("\\My Documents");
+                    ret = QLatin1String("\\My Documents");
                     if (!QFile::exists(ret))
 #endif
                     ret = rootPath();
@@ -1066,7 +1066,7 @@ QString QFSFileEngine::homePath()
 QString QFSFileEngine::rootPath()
 {
 #if defined(Q_OS_WINCE)
-    QString ret = QString::fromLatin1("/");
+    QString ret = QLatin1String("/");
 #elif defined(Q_FS_FAT)
     QString ret = QString::fromLatin1(qgetenv("SystemDrive").constData());
     if(ret.isEmpty())
@@ -1082,20 +1082,23 @@ QString QFSFileEngine::rootPath()
 
 QString QFSFileEngine::tempPath()
 {
-    wchar_t tempPath[MAX_PATH];
-    int success = GetTempPath(MAX_PATH, tempPath);
-    QString ret = QString::fromWCharArray(tempPath);
-
-    if (ret.isEmpty() || !success) {
+    QString ret;
+    {
+        wchar_t tempPath[MAX_PATH];
+        if (GetTempPath(MAX_PATH, tempPath))
+            ret = QString::fromWCharArray(tempPath);
+        if (!ret.isEmpty()) {
+            while (ret.endsWith(QLatin1Char('\\')))
+                ret.chop(1);
+            ret = QDir::fromNativeSeparators(ret);
+        }
+    }
+    if (ret.isEmpty()) {
 #if !defined(Q_OS_WINCE)
-        ret = QString::fromLatin1("c:/tmp");
+        ret = QLatin1String("c:/tmp");
 #else
-        ret = QString::fromLatin1("\\Temp");
+        ret = QLatin1String("/Temp");
 #endif
-    } else {
-        ret = QDir::fromNativeSeparators(ret);
-        while (ret.at(ret.length()-1) == QLatin1Char('/'))
-            ret = ret.left(ret.length()-1);
     }
     return ret;
 }
@@ -1116,13 +1119,13 @@ QFileInfoList QFSFileEngine::drives()
 
     while(driveBits) {
         if(driveBits & 1)
-            ret.append(QString::fromLatin1(driveName));
+            ret.append(QFileInfo(QLatin1String(driveName)));
         driveName[0]++;
         driveBits = driveBits >> 1;
     }
     return ret;
 #else
-    ret.append(QString::fromLatin1("/"));
+    ret.append(QFileInfo(QLatin1String("/")));
     return ret;
 #endif
 }
