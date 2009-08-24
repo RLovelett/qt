@@ -48,8 +48,12 @@
 
 // std stuff ------------------------------------
 #include <iostream>
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #include <conio.h>
+#else
+#include <stdlib.h>
+#endif
 #define NUMBER_OF_PARTS 7
 
 std::ostream &operator<<(std::ostream &s, const QString &val); // defined in configureapp.cpp
@@ -201,8 +205,13 @@ void Tools::checkLicense(QMap<QString,QString> &dictionary, QMap<QString,QString
     if (licenseFeatures == '5') //Floating
         dictionary["METERED LICENSE"] = "true";
 
+#ifdef Q_OS_WIN32
     if (!CopyFile((wchar_t*)QDir::toNativeSeparators(fromLicenseFile).utf16(),
         (wchar_t*)QDir::toNativeSeparators(toLicenseFile).utf16(), FALSE)) {
+#else
+    QFile src_file(QDir::toNativeSeparators(fromLicenseFile));
+    if (!src_file.copy(QDir::toNativeSeparators(toLicenseFile))) {
+#endif
         cout << "Failed to copy license file (" << fromLicenseFile << ")";
         dictionary["DONE"] = "error";
         return;

@@ -41,7 +41,12 @@
 
 #include "environment.h"
 
+#ifdef Q_OS_WIN32
 #include <process.h>
+#else
+#include <sys/wait.h>
+#include <errno.h>
+#endif
 #include <iostream>
 #include <qdebug.h>
 #include <QDir>
@@ -137,11 +142,9 @@ QString Environment::keyName(const QString &rKey)
     If the registry key does not exist, or cannot be accessed, a
     QString() is returned.
 */
+#ifdef Q_OS_WIN32
 QString Environment::readRegistryKey(HKEY parentHandle, const QString &rSubkey)
 {
-#ifndef Q_OS_WIN32
-    return QString();
-#else
     QString rSubkeyName = keyName(rSubkey);
     QString rSubkeyPath = keyPath(rSubkey);
 
@@ -213,8 +216,8 @@ QString Environment::readRegistryKey(HKEY parentHandle, const QString &rSubkey)
 
     RegCloseKey(handle);
     return result;
-#endif
 }
+#endif
 
 /*!
     Returns the qmakespec for the compiler detected on the system.
@@ -266,7 +269,7 @@ QString Environment::detectQMakeSpec()
 Compiler Environment::detectCompiler()
 {
 #ifndef Q_OS_WIN32
-    return MSVC6; // Always generate MSVC 6.0 versions on other platforms
+    return CC_MSVC6; // Always generate MSVC 6.0 versions on other platforms
 #else
     if(detectedCompiler != CC_UNKNOWN)
         return detectedCompiler;
@@ -317,6 +320,9 @@ Compiler Environment::detectCompiler()
 */
 bool Environment::detectExecutable(const QString &executable)
 {
+#ifndef Q_OS_WIN32
+    return true;
+#else
     PROCESS_INFORMATION procInfo;
     memset(&procInfo, 0, sizeof(procInfo));
 
@@ -335,6 +341,7 @@ bool Environment::detectExecutable(const QString &executable)
         CloseHandle(procInfo.hProcess);
     }
     return couldExecute;
+#endif
 }
 
 /*!
@@ -437,19 +444,30 @@ int Environment::execute(QStringList arguments, const QStringList &additionalEnv
     // the additionalEnv strings, then remove all variables defined
     // in removeEnv
     QMap<QString, QString> fullEnvMap;
+#ifdef Q_OS_WIN32
     LPWSTR envStrings = GetEnvironmentStrings();
+#else
+    char **envStrings = environ;
+#endif
     if (envStrings) {
+#ifdef Q_OS_WIN32
         int strLen = 0;
         for (LPWSTR envString = envStrings; *(envString); envString += strLen + 1) {
             strLen = wcslen(envString);
             QString str = QString((const QChar*)envString, strLen);
+#else
+        for (int i = 0; envStrings[i]; ++i) {
+            QString str = QString(envStrings[i]);
+#endif
             if (!str.startsWith("=")) { // These are added by the system
                 int sepIndex = str.indexOf('=');
                 fullEnvMap.insert(str.left(sepIndex).toUpper(), str.mid(sepIndex +1));
             }
         }
     }
+#ifdef Q_OS_WIN32
     FreeEnvironmentStrings(envStrings);
+#endif
 
     // Add additionalEnv variables
     for (int i = 0; i < additionalEnv.count(); ++i) {
@@ -470,6 +488,7 @@ int Environment::execute(QStringList arguments, const QStringList &additionalEnv
         fullEnv += QString(it.key() + "=" + it.value());
     }
 
+#ifdef Q_OS_WIN32
     // ----------------------------
     QString program = arguments.takeAt(0);
     QString args = qt_create_commandline(program, arguments);
@@ -520,6 +539,43 @@ int Environment::execute(QStringList arguments, const QStringList &additionalEnv
         }
     }
     return exitCode;
+#else
+    QList<QByteArray> ba_list;
+    int i;
+    char **argv = (char **)malloc((arguments.count() + 1) * sizeof(char **));
+    if (argv == NULL)
+        return -1;
+    for (i = 0; i < arguments.count(); ++i) {
+        ba_list += arguments.at(i).toLocal8Bit();
+        argv[i] = ba_list.last().data();
+    }
+    argv[i] = NULL;
+
+    int exitCode = -1;
+    pid_t pid = fork();
+    if (pid == 0) {
+        clearenv();
+        for (i = 0; i < fullEnv.count(); ++i) {
+            ba_list += fullEnv.at(i).toLocal8Bit();
+            putenv(ba_list.last().data());
+        }
+        exitCode = execvp(argv[0], argv);
+        cerr << "execute: execve: " << argv[0] << ": " << strerror(errno) << endl;
+    } else if (pid != -1) {
+        int status;
+        if (wait(&status) == pid) {
+            if (WIFEXITED(status)) {
+                exitCode = WEXITSTATUS(status);
+                if (exitCode)
+                    cerr << "execute: " << argv[0] << " exited with code " << exitCode << endl;
+            } else if (WIFSIGNALED(signal)) {
+                cerr << "execute: " << argv[0] << " was killed by signal " << WTERMSIG(status) << endl;
+            }
+        }
+    }
+    free(argv);
+    return exitCode;
+#endif
 }
 
 bool Environment::cpdir(const QString &srcDir, const QString &destDir)
@@ -550,7 +606,9 @@ bool Environment::cpdir(const QString &srcDir, const QString &destDir)
 #endif
 	    QFile::remove(destFile);
             intermediate = QFile::copy(entry.absoluteFilePath(), destFile);
+#ifdef Q_OS_WIN32
             SetFileAttributes((wchar_t*)destFile.utf16(), FILE_ATTRIBUTE_NORMAL);
+#endif
         }
 	if(!intermediate) {
 	    qDebug() << "cpdir: Failure for " << entry.fileName() << entry.isDir();

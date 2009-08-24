@@ -56,8 +56,15 @@
 #include <qhash.h>
 
 #include <iostream>
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #include <conio.h>
+#define EXE_EXT ".exe"
+#else
+#include <errno.h>
+#define _getch() getchar()
+#define EXE_EXT
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -97,6 +104,7 @@ Configure::Configure( int& argc, char** argv )
     descIndent   = 25;
     outputWidth  = 0;
     // Get console buffer output width
+#ifdef Q_OS_WIN32
     CONSOLE_SCREEN_BUFFER_INFO info;
     HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
     if (GetConsoleScreenBufferInfo(hStdout, &info))
@@ -104,6 +112,9 @@ Configure::Configure( int& argc, char** argv )
     outputWidth = qMin(outputWidth, 79); // Anything wider gets unreadable
     if (outputWidth < 35) // Insanely small, just use 79
         outputWidth = 79;
+#else
+    outputWidth = 79;
+#endif
     int i;
 
     /*
@@ -116,9 +127,13 @@ Configure::Configure( int& argc, char** argv )
 
 
     // Get the path to the executable
+#ifdef Q_OS_WIN32
     wchar_t module_name[MAX_PATH];
     GetModuleFileName(0, module_name, sizeof(module_name) / sizeof(wchar_t));
     QFileInfo sourcePathInfo = QString::fromWCharArray(module_name);
+#else
+    QFileInfo sourcePathInfo = QString::fromLocal8Bit(program_invocation_name);
+#endif
     sourcePath = sourcePathInfo.absolutePath();
     sourceDir = sourcePathInfo.dir();
     buildPath = QDir::currentPath();
@@ -1154,6 +1169,9 @@ void Configure::parseCmdLine()
             } else {
                 dictionary[ "QMAKEMAKEFILE" ] = "Makefile.win32-g++";
             }
+        } else if ( dictionary[ "QMAKESPEC" ] == QString( "linux-g++" ) ) {
+            if ( dictionary[ "MAKE" ].isEmpty() ) dictionary[ "MAKE" ] = "make";
+            dictionary[ "QMAKEMAKEFILE" ] = "Makefile.unix";
         } else {
             if ( dictionary[ "MAKE" ].isEmpty() ) dictionary[ "MAKE" ] = "make";
             dictionary[ "QMAKEMAKEFILE" ] = "Makefile.win32";
@@ -2648,11 +2666,11 @@ void Configure::generateCachefile()
             cacheStream << "DEFINES        *= QT_EDITION=QT_EDITION_DESKTOP" << endl;
 
         //so that we can build without an install first (which would be impossible)
-        cacheStream << "QMAKE_MOC       = $$QT_BUILD_TREE" << fixSeparators("/bin/moc.exe") << endl;
-        cacheStream << "QMAKE_UIC       = $$QT_BUILD_TREE" << fixSeparators("/bin/uic.exe") << endl;
-        cacheStream << "QMAKE_UIC3      = $$QT_BUILD_TREE" << fixSeparators("/bin/uic3.exe") << endl;
-        cacheStream << "QMAKE_RCC       = $$QT_BUILD_TREE" << fixSeparators("/bin/rcc.exe") << endl;
-        cacheStream << "QMAKE_DUMPCPP   = $$QT_BUILD_TREE" << fixSeparators("/bin/dumpcpp.exe") << endl;
+        cacheStream << "QMAKE_MOC       = $$QT_BUILD_TREE" << fixSeparators("/bin/moc" EXE_EXT) << endl;
+        cacheStream << "QMAKE_UIC       = $$QT_BUILD_TREE" << fixSeparators("/bin/uic" EXE_EXT) << endl;
+        cacheStream << "QMAKE_UIC3      = $$QT_BUILD_TREE" << fixSeparators("/bin/uic3" EXE_EXT) << endl;
+        cacheStream << "QMAKE_RCC       = $$QT_BUILD_TREE" << fixSeparators("/bin/rcc" EXE_EXT) << endl;
+        cacheStream << "QMAKE_DUMPCPP   = $$QT_BUILD_TREE" << fixSeparators("/bin/dumpcpp" EXE_EXT) << endl;
         cacheStream << "QMAKE_INCDIR_QT = $$QT_BUILD_TREE" << fixSeparators("/include") << endl;
         cacheStream << "QMAKE_LIBDIR_QT = $$QT_BUILD_TREE" << fixSeparators("/lib") << endl;
         if (dictionary["CETEST"] == "yes") {
@@ -2978,7 +2996,9 @@ void Configure::generateConfigfiles()
         tmpFile.flush();
 
         // Replace old qconfig.h with new one
+#ifdef Q_OS_WIN32
         ::SetFileAttributes((wchar_t*)outName.utf16(), FILE_ATTRIBUTE_NORMAL);
+#endif
         QFile::remove(outName);
         tmpFile.copy(outName);
         tmpFile.close();
@@ -3014,7 +3034,9 @@ void Configure::generateConfigfiles()
     }
 
     outName = defSpec + "/qmake.conf";
+#ifdef Q_OS_WIN32
     ::SetFileAttributes((wchar_t*)outName.utf16(), FILE_ATTRIBUTE_NORMAL );
+#endif
     QFile qmakeConfFile(outName);
     if (qmakeConfFile.open(QFile::Append | QFile::WriteOnly | QFile::Text)) {
         QTextStream qmakeConfStream;
@@ -3082,7 +3104,9 @@ void Configure::generateConfigfiles()
         tmpFile2.flush();
 
         // Replace old qconfig.cpp with new one
+#ifdef Q_OS_WIN32
         ::SetFileAttributes((wchar_t*)outName.utf16(), FILE_ATTRIBUTE_NORMAL );
+#endif
         QFile::remove( outName );
         tmpFile2.copy(outName);
         tmpFile2.close();
@@ -3268,6 +3292,7 @@ void Configure::displayConfig()
 #if !defined(EVAL)
 void Configure::generateHeaders()
 {
+#ifdef Q_OS_WIN32
     if (dictionary["SYNCQT"] == "yes"
         && findFile("perl.exe")) {
         cout << "Running syncqt..." << endl;
@@ -3278,6 +3303,18 @@ void Configure::generateHeaders()
         env += QString("PATH=" + buildPath + "/bin/;" + qgetenv("PATH"));
         Environment::execute(args, env, QStringList());
     }
+#else
+    if (dictionary["SYNCQT"] == "yes"
+        && findFile("perl")) {
+        cout << "Running syncqt..." << endl;
+        QStringList args;
+        args += "perl";
+        args += buildPath + "/bin/syncqt";
+        QStringList env;
+        env += QString("QTDIR=" + sourcePath);
+        Environment::execute(args, env, QStringList());
+    }
+#endif
 }
 
 void Configure::buildQmake()
@@ -3294,6 +3331,7 @@ void Configure::buildQmake()
             QFile out(makefile);
             if(out.open(QFile::WriteOnly | QFile::Text)) {
                 QTextStream stream(&out);
+#ifdef Q_OS_WIN32
                 stream << "#AutoGenerated by configure.exe" << endl
                     << "BUILD_PATH = " << QDir::convertSeparators(buildPath) << endl
                     << "SOURCE_PATH = " << QDir::convertSeparators(sourcePath) << endl;
@@ -3302,12 +3340,32 @@ void Configure::buildQmake()
                 if (dictionary["EDITION"] == "OpenSource" ||
                     dictionary["QT_EDITION"].contains("OPENSOURCE"))
                     stream << "QMAKE_OPENSOURCE_EDITION = yes" << endl;
+#else
+                stream << "#AutoGenerated by configure" << endl
+                    << "CC = gcc" << endl
+                    << "CXX = g++" << endl
+                    << "QMAKE_CFLAGS = -pipe" << endl
+                    << "QMAKE_CXXFLAGS = $(QMAKE_CFLAGS)" << endl
+                    << "QMAKE_LFLAGS =" << endl;
+#endif
                 stream << "\n\n";
 
                 QFile in(sourcePath + "/qmake/" + dictionary["QMAKEMAKEFILE"]);
                 if(in.open(QFile::ReadOnly | QFile::Text)) {
                     QString d = in.readAll();
-                    //### need replaces (like configure.sh)? --Sam
+#ifndef Q_OS_WIN32
+                    d.replace(QRegExp("@SOURCE_PATH@"), QDir::convertSeparators(sourcePath));
+                    d.replace(QRegExp("@BUILD_PATH@"), QDir::convertSeparators(buildPath));
+                    d.replace(QRegExp("@QMAKESPEC@"), fixSeparators(sourcePath + "/mkspecs/" + dictionary["QMAKESPEC"]));
+                    d.replace(QRegExp("@QMAKE_QTOBJS@"), "");
+                    d.replace(QRegExp("@QMAKE_QTSRCS@"), "");
+                    d.replace(QRegExp("@QMAKE_LFLAGS@"), "$(QMAKE_LFLAGS)");
+                    QString qmake_cxxflags("$(QMAKE_CXXFLAGS)");
+                    if (dictionary["EDITION"] == "OpenSource" ||
+                        dictionary["QT_EDITION"].contains("OPENSOURCE"))
+                        qmake_cxxflags += " -DQMAKE_OPENSOURCE_EDITION";
+                    d.replace(QRegExp("@QMAKE_CXXFLAGS@"), qmake_cxxflags);
+#endif
                     stream << d << endl;
                 }
                 stream.flush();
@@ -3687,12 +3745,14 @@ bool Configure::showLicense(QString orgLicenseFile)
             }
             // Get console line height, to fill the screen properly
             int i = 0, screenHeight = 25; // default
+#ifdef Q_OS_WIN32
             CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
             HANDLE stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
             if (GetConsoleScreenBufferInfo(stdOut, &consoleInfo))
                 screenHeight = consoleInfo.srWindow.Bottom
                              - consoleInfo.srWindow.Top
                              - 1; // Some overlap for context
+#endif
 
             // Prompt the license content to the user
             QFile file(licenseFile);

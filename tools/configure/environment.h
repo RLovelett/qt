@@ -40,7 +40,9 @@
 ****************************************************************************/
 
 #include <qstring.h>
+#ifdef Q_OS_WIN32
 #include <qt_windows.h>
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -77,7 +79,9 @@ private:
     static CompilerInfo *compilerInfo(Compiler compiler);
     static QString keyPath(const QString &rKey);
     static QString keyName(const QString &rKey);
+#ifdef Q_OS_WIN32
     static QString readRegistryKey(HKEY parentHandle, const QString &rSubkey);
+#endif
 };
 
 
