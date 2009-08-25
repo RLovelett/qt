@@ -7415,7 +7415,10 @@ bool QDomHandler::startElement(const QString& nsURI, const QString&, const QStri
     } else {
         n = doc->createElement(qName);
     }
-    n->setLocation(locator->lineNumber(), locator->columnNumber());
+
+    if (n) {
+        n->setLocation(locator->lineNumber(), locator->columnNumber());
+    }
 
     node->appendChild(n);
     node = n;
@@ -7435,6 +7438,8 @@ bool QDomHandler::startElement(const QString& nsURI, const QString&, const QStri
 
 bool QDomHandler::endElement(const QString&, const QString&, const QString&)
 {
+    if ( !node )
+        return false;
     if (node == doc)
         return false;
     node = node->parent();
