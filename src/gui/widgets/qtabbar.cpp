@@ -192,7 +192,7 @@ void QTabBar::initStyleOption(QStyleOptionTab *option, int tabIndex) const
     \brief The QTabBar class provides a tab bar, e.g. for use in tabbed dialogs.
 
     \ingroup basicwidgets
-
+    \mainclass
 
     QTabBar is straightforward to use; it draws the tabs using one of
     the predefined \link QTabBar::Shape shapes\endlink, and emits a
@@ -1836,7 +1836,8 @@ void QTabBarPrivate::moveTabFinished(int index)
     }
 #endif //QT_NO_ANIMATION
     if (allAnimationsFinished && cleanup) {
-        movingTab->setVisible(false); // We might not get a mouse release
+        if(movingTab)
+            movingTab->setVisible(false); // We might not get a mouse release
         for (int i = 0; i < tabList.count(); ++i) {
             tabList[i].dragOffset = 0;
         }
