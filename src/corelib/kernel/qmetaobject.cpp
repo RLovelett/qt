@@ -886,22 +886,24 @@ bool QMetaObject::checkConnectArgs(const char *signal, const char *method)
     return false;
 }
 
-static void qRemoveWhitespace(const char *s, char *d)
+static void qRemoveWhitespace(const char *s,  QVarLengthArray<char>& d)
 {
+    int idx = 0;
     char last = 0;
     while (*s && is_space(*s))
         s++;
     while (*s) {
-        while (*s && !is_space(*s))
-            last = *d++ = *s++;
+        while (*s && !is_space(*s)) {
+            last = d[idx++] = *s++;
+        }
         while (*s && is_space(*s))
             s++;
         if (*s && ((is_ident_char(*s) && is_ident_char(last))
                    || ((*s == ':') && (last == '<')))) {
-            last = *d++ = ' ';
+            last = d[idx++] = ' ';
         }
     }
-    *d = '\0';
+    d[idx] = '\0';
 }
 
 static char *qNormalizeType(char *d, int &templdepth, QByteArray &result)
@@ -944,7 +946,7 @@ QByteArray QMetaObject::normalizedType(const char *type)
         return result;
 
     QVarLengthArray<char> stackbuf((int)strlen(type));
-    qRemoveWhitespace(type, stackbuf.data());
+    qRemoveWhitespace(type, stackbuf);
     int templdepth = 0;
     qNormalizeType(stackbuf.data(), templdepth, result);
 
@@ -967,11 +969,10 @@ QByteArray QMetaObject::normalizedSignature(const char *method)
     QByteArray result;
     if (!method || !*method)
         return result;
-    int len = int(strlen(method));
-    char stackbuf[64];
-    char *buf = (len >= 64 ? new char[len+1] : stackbuf);
-    qRemoveWhitespace(method, buf);
-    char *d = buf;
+    int len = (int)strlen(method);
+    QVarLengthArray<char> stackbuf(len);
+    qRemoveWhitespace(method, stackbuf);
+    char *d = stackbuf.data();
 
     result.reserve(len);
 
@@ -987,8 +988,6 @@ QByteArray QMetaObject::normalizedSignature(const char *method)
         result += *d++;
     }
 
-    if (buf != stackbuf)
-        delete [] buf;
     return result;
 }
 
