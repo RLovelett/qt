@@ -945,7 +945,7 @@ QByteArray QMetaObject::normalizedType(const char *type)
     if (!type || !*type)
         return result;
 
-    QVarLengthArray<char> stackbuf((int)strlen(type));
+    QVarLengthArray<char> stackbuf((int)strlen(type) + 1);
     qRemoveWhitespace(type, stackbuf);
     int templdepth = 0;
     qNormalizeType(stackbuf.data(), templdepth, result);
@@ -969,7 +969,7 @@ QByteArray QMetaObject::normalizedSignature(const char *method)
     QByteArray result;
     if (!method || !*method)
         return result;
-    int len = (int)strlen(method);
+    int len = (int)strlen(method) + 1;
     QVarLengthArray<char> stackbuf(len);
     qRemoveWhitespace(method, stackbuf);
     char *d = stackbuf.data();
