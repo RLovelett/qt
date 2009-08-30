@@ -906,21 +906,23 @@ static void qRemoveWhitespace(const char *s,  QVarLengthArray<char>& d)
     d[idx] = '\0';
 }
 
-static char *qNormalizeType(char *d, int &templdepth, QByteArray &result)
+static int qNormalizeType(QVarLengthArray<char>& d, int idx, int &templdepth, QByteArray &result)
 {
-    const char *t = d;
-    while (*d && (templdepth
-                   || (*d != ',' && *d != ')'))) {
-        if (*d == '<')
+    const int size = d.size();
+    const int t = idx;
+    while (idx < size && d[idx] && (templdepth || (d[idx] != ',' && d[idx] != ')'))) {
+        if (d[idx] == '<')
             ++templdepth;
-        if (*d == '>')
+        if (d[idx] == '>')
             --templdepth;
-        ++d;
+        idx++;
     }
-    if (strncmp("void", t, d - t) != 0)
-        result += normalizeTypeInternal(t, d);
+    if (idx == size)
+        idx--;
+    if (strncmp("void", &d[t], &d[idx] - &d[t]) != 0)
+        result += normalizeTypeInternal(&d[t], &d[idx]);
 
-    return d;
+    return idx;
 }
 
 
@@ -948,7 +950,7 @@ QByteArray QMetaObject::normalizedType(const char *type)
     QVarLengthArray<char> stackbuf((int)strlen(type) + 1);
     qRemoveWhitespace(type, stackbuf);
     int templdepth = 0;
-    qNormalizeType(stackbuf.data(), templdepth, result);
+    qNormalizeType(stackbuf, 0, templdepth, result);
 
     return result;
 }
@@ -970,24 +972,27 @@ QByteArray QMetaObject::normalizedSignature(const char *method)
     if (!method || !*method)
         return result;
     int len = (int)strlen(method) + 1;
-    QVarLengthArray<char> stackbuf(len);
-    qRemoveWhitespace(method, stackbuf);
-    char *d = stackbuf.data();
+    QVarLengthArray<char> d(len);
+    qRemoveWhitespace(method, d);
 
     result.reserve(len);
 
     int argdepth = 0;
     int templdepth = 0;
-    while (*d) {
+    int idx = 0;
+    const int size = d.size();
+    while (idx < size && d[idx]) {
         if (argdepth == 1)
-            d = qNormalizeType(d, templdepth, result);
-        if (*d == '(')
+            idx = qNormalizeType(d, idx, templdepth, result);
+        if (idx >= size)
+            break;
+        if (d[idx] == '(')
             ++argdepth;
-        if (*d == ')')
+        if (d[idx] == ')')
             --argdepth;
-        result += *d++;
-    }
-
+        result += d[idx];
+        idx++;
+     }
     return result;
 }
 
