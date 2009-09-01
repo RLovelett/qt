@@ -90,6 +90,12 @@ private:
     void inputModeChanged();
     void sendInputMode();
     void setClientCursorLocation(int offsetIsRelative, int cursorOffset); //FIXME?? Move offsetIsRelative to Bool?
+    
+    //
+    void setMaskState(int *mask,
+                             HildonIMInternalModifierMask lock_mask,
+                             HildonIMInternalModifierMask sticky_mask,
+                             bool was_press_and_release);
 
     //Vars
     int timerId;

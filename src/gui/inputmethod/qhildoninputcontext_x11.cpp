@@ -417,37 +417,12 @@ static void sendKeyEvent(QWidget *widget, QEvent::Type type, uint state, uint ke
     XSync( X11->display, false );
 }
 
-static void setMaskState(int *mask,
-                         HildonIMInternalModifierMask lock_mask,
-                         HildonIMInternalModifierMask sticky_mask,
-                         bool was_press_and_release)
-{
-
-  /* Pressing the key while already locked clears the state */
-  if (*mask & lock_mask)
-    *mask &= ~(lock_mask | sticky_mask);
-  /* When the key is already sticky, a second press locks the key */
-  else if (*mask & sticky_mask)
-    *mask |= lock_mask;
-#if 0 
-  //TODO port needed for hildon_banner_show_information
-  if (lock_mask & HILDON_IM_SHIFT_LOCK_MASK)
-      hildon_banner_show_information (NULL, NULL, _("inpu_ib_mode_fn_locked"));
-    else if (lock_mask & HILDON_IM_LEVEL_LOCK_MASK)
-      hildon_banner_show_information (NULL, NULL, _("inpu_ib_mode_level_locked"));
-#endif 
-  /* Pressing the key for the first time stickies the key for one character,
-     but only if no characters were entered while holding the key down */
-  else if (was_press_and_release) {
-    *mask |= sticky_mask;
-  }
-}
-
-//TODO
 static quint32 dead_key_to_unicode_combining_character(int qtkeycode)
 {
   quint32 combining; //Unicode Hex value
 
+#if 0
+  //TODO Diablo - Not required in Fremantle
   switch (qtkeycode)
   {
     case Qt::Key_Dead_Grave:            combining = 0x0300; break;
@@ -471,6 +446,7 @@ static quint32 dead_key_to_unicode_combining_character(int qtkeycode)
     case Qt::Key_Dead_Horn:             combining = 0x031b; break;
     default: combining = 0; break; /* Unknown dead key */
   }
+#endif
 
   return combining;
 }
@@ -531,8 +507,6 @@ static void answerClipboardSelectionQuery(QWidget *widget)
 
     XSendEvent(X11->display, w, false, 0, &xev);
 }
-
-
 
 const char *getNextPacketStart(const char *str)
 {
@@ -639,7 +613,7 @@ bool QHildonInputContext::eventFilter(QObject *obj, QEvent *event)
         else
             triggerMode = HILDON_IM_TRIGGER_STYLUS;
 #else
-	triggerMode = HILDON_IM_TRIGGER_FINGER;
+        triggerMode = HILDON_IM_TRIGGER_FINGER;
 #endif
         inputMode = w->inputMethodQuery(Qt::ImMode).toInt();
         toggleHildonMainIMUi(); //showHIMMainUI();
@@ -834,6 +808,7 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
                          lastQtkeycode == LEVEL_KEY);
         }
     }
+
     //Update lastQtkeycode.
     lastQtkeycode=qtkeycode;
 
@@ -1239,11 +1214,10 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
         }
     }else if (event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING_CONTENT) &&
               event->xclient.format == HILDON_IM_SURROUNDING_CONTENT_FORMAT) {
-        #ifdef HIM_DEBUG
-                qDebug() << "HILDON_IM_SURROUNDING_CONTENT";
-        #endif
         HildonIMSurroundingContentMessage *msg = reinterpret_cast<HildonIMSurroundingContentMessage*>(&event->xclient.data);
-
+        #ifdef HIM_DEBUG
+            qDebug() << "HILDON_IM_SURROUNDING_CONTENT content=" << msg->surrounding ;
+        #endif
         if (!surrounding.isNull()) {
             if (msg->msg_flag == HILDON_IM_MSG_START) {
                 surrounding.clear();
@@ -1253,6 +1227,7 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
                 return true;
             }            
         }
+        
         surrounding += QString::fromUtf8(msg->surrounding);
         return true;
     }else if (event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING) &&
@@ -1322,6 +1297,7 @@ void QHildonInputContext::insertUtf8(int flag, const QString& text)
     if (options & HILDON_IM_AUTOCORRECT){
         qWarning() << "HILDON_IM_AUTOCORRECT Not Implemented Yet";
     }
+
     
     //Delete suroundings when we are using the preeditbuffer.
     // Eg: For the HandWriting plugin 
@@ -1329,27 +1305,29 @@ void QHildonInputContext::insertUtf8(int flag, const QString& text)
 #ifdef HIM_DEBUG
     qDebug() << "  preEditBuffer=" << preEditBuffer;
 #endif        
+
+
+#ifndef Q_OS_FREMANTLE
+        //Delete suroundings when we are using the preeditbuffer.
+        // Eg: For the HandWriting plugin 
         QInputMethodEvent e;
         int charCount = preEditBuffer.length(); 
         e.setCommitString(QString(), -charCount, charCount);
         sendEvent(e);
-    } 
-
-    //Updates preEditBuffer
-    if (!preEditBuffer.isNull()){
-        if (flag == HILDON_IM_MSG_START) {
-            preEditBuffer = text;
-        }else{
+#endif
+     
+        //Updates preEditBuffer
+        if (flag != HILDON_IM_MSG_START) {
             preEditBuffer.append(text);
+            cleanText = preEditBuffer;
         }
-        cleanText = preEditBuffer;
-    }
+     }
     
     //Adds the actual text
     switch (commitMode) {
-        case HILDON_IM_COMMIT_PREEDIT: { //Fremantle specific code
-            //Fill preEditBuffer
-            preEditBuffer = text;
+        case HILDON_IM_COMMIT_PREEDIT: { //Fremantle
+            if ( preEditBuffer.isNull() )
+                preEditBuffer = text;
 
             //Creating attribute list
             QList<QInputMethodEvent::Attribute> list;
@@ -1729,5 +1707,60 @@ void QHildonInputContext::setClientCursorLocation(int offsetIsRelative, int curs
     QInputMethodEvent e;
     e.setCommitString(QString(), cursorOffset,0);
     sendEvent(e);
+}
+
+void QHildonInputContext::setMaskState(int *mask,
+                                              HildonIMInternalModifierMask lock_mask,
+                                              HildonIMInternalModifierMask sticky_mask,
+                                              bool was_press_and_release)
+{
+#ifdef HIM_DEBUG
+    qDebug() << "QHildonInputContext::setMaskState";
+#endif
+   //TODO ENABLE THIS ASA INPUT MODE HAVE BEEN ENABLED
+#if 0
+   /* Locking Fn is disabled in TELE and NUMERIC */
+    if (!(input_mode & HILDON_GTK_INPUT_MODE_ALPHA) &&
+        !(input_mode & HILDON_GTK_INPUT_MODE_HEXA)  &&
+        ((input_mode & HILDON_GTK_INPUT_MODE_TELE) || 
+         (input_mode & HILDON_GTK_INPUT_MODE_NUMERIC)))
+   {
+#endif
+        if (*mask & lock_mask){
+            /* already locked, remove lock and set it to sticky */
+            *mask &= ~(lock_mask | sticky_mask);
+            *mask |= sticky_mask;
+        }else if (*mask & sticky_mask){
+            /* the key is already sticky, it's fine */
+        }else if (was_press_and_release){
+            /* Pressing the key for the first time stickies the key for one character,
+             * but only if no characters were entered while holding the key down */
+            *mask |= sticky_mask;
+        }
+        return;
+//  }
+    if (*mask & lock_mask)
+    {
+        /* Pressing the key while already locked clears the state */
+        if (lock_mask & HILDON_IM_SHIFT_LOCK_MASK)
+            sendHildonCommand(HILDON_IM_SHIFT_UNLOCKED, QApplication::focusWidget());
+        else if (lock_mask & HILDON_IM_LEVEL_LOCK_MASK)
+            sendHildonCommand(HILDON_IM_MOD_UNLOCKED, QApplication::focusWidget());    
+    
+        *mask &= ~(lock_mask | sticky_mask);
+    } else if (*mask & sticky_mask) {
+        /* When the key is already sticky, a second press locks the key */
+        *mask |= lock_mask;
+
+        if (lock_mask & HILDON_IM_SHIFT_LOCK_MASK)
+            sendHildonCommand(HILDON_IM_SHIFT_LOCKED, QApplication::focusWidget());
+        else if (lock_mask & HILDON_IM_LEVEL_LOCK_MASK)
+            sendHildonCommand(HILDON_IM_MOD_LOCKED, QApplication::focusWidget());
+    }else if (was_press_and_release){
+        /* Pressing the key for the first time stickies the key for one character,
+         * but only if no characters were entered while holding the key down */
+        *mask |= sticky_mask;
+    }
+
 }
 #endif
