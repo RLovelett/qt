@@ -52,8 +52,6 @@
 
 #ifdef Q_WS_HILDON 
 
-#define HIM_DEBUG
-
 #define GDK_ISO_ENTER  0xfe34
 #define COMPOSE_KEY    Qt::Key_Multi_key   // "Ch" key
 #define LEVEL_KEY      Qt::Key_AltGr       //"Fn" key
@@ -86,6 +84,27 @@
 */
 
 extern bool qt_sendSpontaneousEvent(QObject*, QEvent*); //qapplication_x11.cpp
+
+#define LOGMESSAGE1(x) \
+    LOGMESSAGE3(x, "", "")
+
+#define LOGMESSAGE2(x, y) \
+    LOGMESSAGE3(x, y, "")
+
+#define LOGMESSAGE3(x, y, z) \
+    QString logMessageString; \
+    QTextStream(&logMessageString) << x << "(" << y << " " << z << ")"; \
+    logMessage(logMessageString);
+    
+static void logMessage(const QString &message)
+{
+    static int debug = -1;
+    if (debug == -1)
+        debug = qgetenv("QT_HIM_DEBUG").isEmpty() ? 0 : 1;
+    
+    if (debug)
+        qDebug() << "HIM: " << message;    
+}
 
 /*!
  * keysym to QString functions
@@ -564,9 +583,8 @@ QString QHildonInputContext::language()
  */
 void QHildonInputContext::reset()
 {
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::reset()" << focusWidget() <<  QApplication::focusWidget();
-#endif
+    LOGMESSAGE3 ("reset", focusWidget(), QApplication::focusWidget());
+
     QPointer<QWidget> oldFocus= focusWidget();
     
     if (oldFocus && QApplication::focusWidget() != oldFocus){
@@ -645,7 +663,7 @@ bool QHildonInputContext::eventFilter(QObject *obj, QEvent *event)
             triggerMode = HILDON_IM_TRIGGER_STYLUS;    
         }
 #else
-	triggerMode = HILDON_IM_TRIGGER_FINGER;
+        triggerMode = HILDON_IM_TRIGGER_FINGER;
 #endif
         inputMode = w->inputMethodQuery(Qt::ImMode).toInt();
         toggleHildonMainIMUi(); showHIMMainUI();
@@ -667,9 +685,7 @@ bool QHildonInputContext::eventFilter(QObject *obj, QEvent *event)
 //TODO
 void QHildonInputContext::update()
 {
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::update()";
-#endif
+    LOGMESSAGE1("update");
 
     if (lastInternalChange) {
         //Autocase update
@@ -682,9 +698,8 @@ void QHildonInputContext::update()
  */
 void QHildonInputContext::toggleHildonMainIMUi()
 {
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::toggleHildonMainIMUi()";
-#endif
+    LOGMESSAGE1("toggleHildonMainIMUi");
+
     QPointer<QWidget> w = focusWidget();
     if (!w)
         return;
@@ -722,7 +737,7 @@ void QHildonInputContext::timerEvent(QTimerEvent *ev)
  *  as no spontaneous event.
  */
 bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
-
+    
     if (!canUseIM(keywidget))
         return false;
 
@@ -735,14 +750,13 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
     quint32 keysym= event->nativeVirtualKey();
     const int qtkeycode = event->key();
 
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::filterKeyPress"
-             << QString(" Mask:0x%1 state:0x%2 keycode:%3 keysym:0x%4 QtKey:0x%5 ").arg(mask,0,16)
-                                                                        .arg(state,0,16)
-                                                                        .arg(keycode)
-                                                                        .arg(keysym,0,16)
-                                                                        .arg(qtkeycode,0,16);
-#endif
+    QString debug;
+    debug = QString(" Mask:0x%1 state:0x%2 keycode:%3 keysym:0x%4 QtKey:0x%5 ").arg(mask,0,16)
+                                                                               .arg(state,0,16)
+                                                                               .arg(keycode)
+                                                                               .arg(keysym,0,16)
+                                                                               .arg(qtkeycode,0,16);
+    LOGMESSAGE2("filterKeyPress", debug);
 
     //Drop auto repeated keys for COMPOSE_KEY
     if (qtkeycode == COMPOSE_KEY && event->isAutoRepeat()){
@@ -967,9 +981,10 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
 
     if (event->type() == QEvent::KeyRelease || state & STATE_CONTROL_MASK)
     {
-#ifdef HIM_DEBUG
-        qDebug() << QString("Sending state=0x%1 keysym=0x%2 keycode=%3").arg(state,0,16).arg(keysym,0,16).arg(keycode);
-#endif
+        QString debug;
+        debug = QString("Sending state=0x%1 keysym=0x%2 keycode=%3").arg(state,0,16).arg(keysym,0,16).arg(keycode);
+        LOGMESSAGE2(" - ", debug);
+
         sendKeyEvent(keywidget, event->type(), state, keysym, keycode);
         return false;
     }
@@ -997,9 +1012,7 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
             return true;
         }else{
             if ( commitString.isEmpty() && qtkeycode != Qt::Key_Backspace){
-#ifdef HIM_DEBUG
-                qDebug() << "this string" << event->text() << "will be committed";
-#endif
+                LOGMESSAGE3(" - ", "text sent to IM", event->text())
                 commitString = QString(event->text());
             }
         }
@@ -1054,11 +1067,10 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
  */
 bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
 {
+    LOGMESSAGE3("x11FilterEvent", keywidget, event);
+
     if (event->xclient.message_type == ATOM(_HILDON_IM_INSERT_UTF8)
             && event->xclient.format == HILDON_IM_INSERT_UTF8_FORMAT) {
-#ifdef HIM_DEBUG
-        qDebug() << "HILDON_IM_INSERT_UTF8_FORMAT" << options;
-#endif
         HildonIMInsertUtf8Message *msg = (HildonIMInsertUtf8Message *)&event->xclient.data;
         insertUtf8(msg->msg_flag, QString::fromUtf8(msg->utf8_str));
         return true;
@@ -1066,9 +1078,8 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
     }else if (event->xclient.message_type == ATOM(_HILDON_IM_COM)) {
         HildonIMComMessage *msg = (HildonIMComMessage *)&event->xclient.data;
         options = msg->options;
-#ifdef HIM_DEBUG
-        qDebug() << "OPTIONS" << options;
-#endif
+   
+        LOGMESSAGE3 (" - ", "Options=", options)
 
         switch (msg->type) {
         //Handle Keys msgs
@@ -1110,55 +1121,41 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
 
         //Handle commit mode msgs
         case HILDON_IM_CONTEXT_DIRECT_MODE: { //default mode
-            #ifdef HIM_DEBUG
-                qDebug() << "commitMode =  HILDON_IM_CONTEXT_DIRECT_MODE";
-            #endif
+            LOGMESSAGE3 (" - ", "Commit Mode=", "Direct")
             preEditBuffer.clear();
             commitMode = HILDON_IM_COMMIT_DIRECT;
             return true; }
         case HILDON_IM_CONTEXT_BUFFERED_MODE: {
-            #ifdef HIM_DEBUG
-                qDebug() << "commitMode =  HILDON_IM_CONTEXT_BUFFERED_MODE";
-            #endif
+            LOGMESSAGE3 (" - ", "Commit Mode=", "Buffered")
             if (commitMode != HILDON_IM_COMMIT_BUFFERED){
                 preEditBuffer = QString("");
                 commitMode = HILDON_IM_COMMIT_BUFFERED;
             }
             return true; }
         case HILDON_IM_CONTEXT_REDIRECT_MODE: {
-            #ifdef HIM_DEBUG
-                qDebug() << "commitMode =  HILDON_IM_CONTEXT_REDIRECT_MODE";
-            #endif
+            LOGMESSAGE3 (" - ", "Commit Mode=", "Redirect")
             preEditBuffer.clear();
             commitMode = HILDON_IM_COMMIT_REDIRECT;
             checkCommitMode();
             clearSelection();
             return true; }
         case HILDON_IM_CONTEXT_SURROUNDING_MODE: {
-            #ifdef HIM_DEBUG
-                qDebug() << "commitMode =  HILDON_IM_CONTEXT_SURROUNDING_MODE";
-            #endif
+            LOGMESSAGE3 (" - ", "Commit Mode=", "Surrounding")
             preEditBuffer.clear();
             commitMode = HILDON_IM_COMMIT_SURROUNDING;
             return true; }
 
         //Handle context
         case HILDON_IM_CONTEXT_CONFIRM_SENTENCE_START: {
-            #ifdef HIM_DEBUG
-                qDebug() << "HILDON_IM_CONTEXT_CONFIRM_SENTENCE_START";
-            #endif
+            LOGMESSAGE2(" - ", "XMessage: Sentence start")
             checkSentenceStart();
             return true; }
         case HILDON_IM_CONTEXT_FLUSH_PREEDIT: {
-            #ifdef HIM_DEBUG
-                qDebug() << "commitMode = HILDON_IM_CONTEXT_FLUSH_PREEDIT";
-            #endif
+            LOGMESSAGE2(" - ", "XMessage: Flush preedit")
             commitPreeditData();
             return true; }
         case HILDON_IM_CONTEXT_REQUEST_SURROUNDING: {
-            #ifdef HIM_DEBUG
-                qDebug() << "HILDON_IM_CONTEXT_REQUEST_SURROUNDING";
-            #endif
+            LOGMESSAGE2(" - ", "XMessage: Request surrounding")
             checkCommitMode();
             sendSurrounding();
             //if (self->is_url_entry)
@@ -1185,24 +1182,18 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
         
 #ifdef Q_OS_FREMANTLE
         case HILDON_IM_CONTEXT_CANCEL_PREEDIT: {
-            #ifdef HIM_DEBUG
-                qDebug() << "HILDON_IM_CONTEXT_CANCEL_PREEDIT";
-            #endif
+            LOGMESSAGE2(" - ", "XMessage: Cancel preedit")
             preEditBuffer.clear();
             QInputMethodEvent e;            
             sendEvent(e);
             return true; }
         case HILDON_IM_CONTEXT_PREEDIT_MODE: {
-            #ifdef HIM_DEBUG
-                qDebug() << "commitMode = HILDON_IM_CONTEXT_PREEDIT_MODE";
-            #endif
+            LOGMESSAGE3 (" - ", "Commit Mode=", "Preedit")
             preEditBuffer.clear();
             commitMode = HILDON_IM_COMMIT_PREEDIT;
             return true; } 
         case HILDON_IM_CONTEXT_REQUEST_SURROUNDING_FULL: {
-            #ifdef HIM_DEBUG
-                qDebug() << "HILDON_IM_CONTEXT_REQUEST_SURROUNDING_FULL";
-            #endif
+            LOGMESSAGE2(" - ", "XMessage: request surrounding full")
             checkCommitMode();
             sendSurrounding(true);
             //if (self->is_url_entry)
@@ -1215,9 +1206,8 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
     }else if (event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING_CONTENT) &&
               event->xclient.format == HILDON_IM_SURROUNDING_CONTENT_FORMAT) {
         HildonIMSurroundingContentMessage *msg = reinterpret_cast<HildonIMSurroundingContentMessage*>(&event->xclient.data);
-        #ifdef HIM_DEBUG
-            qDebug() << "HILDON_IM_SURROUNDING_CONTENT content=" << msg->surrounding ;
-        #endif
+        LOGMESSAGE3(" - ", "SurroundingContentMessage=", "msg->surrounding")
+
         if (!surrounding.isNull()) {
             if (msg->msg_flag == HILDON_IM_MSG_START) {
                 surrounding.clear();
@@ -1232,9 +1222,7 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
         return true;
     }else if (event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING) &&
                   event->xclient.format == HILDON_IM_SURROUNDING_FORMAT) {
-        #ifdef HIM_DEBUG
-                qDebug() << "HILDON_IM_SURROUNDING";
-        #endif
+        LOGMESSAGE2(" - ", "XMessage: IM Surrounding")
         HildonIMSurroundingMessage *msg = reinterpret_cast<HildonIMSurroundingMessage*>(&event->xclient.data);
         setClientCursorLocation(msg->offset_is_relative, msg->cursor_offset );
         return true;
@@ -1250,10 +1238,6 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
  */
 bool QHildonInputContext::canUseIM(QWidget *w)
 {
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::canUseIM" << w;
-#endif
-
     bool enabled = false;
     
     if ( w && w->testAttribute(Qt::WA_InputMethodEnabled) ){
@@ -1286,9 +1270,8 @@ bool QHildonInputContext::canUseIM(QWidget *w)
  */
 void QHildonInputContext::insertUtf8(int flag, const QString& text)
 {
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::insertUtf8 flag=" << flag << "text=" << text;
-#endif
+    LOGMESSAGE3("insertUtf8", flag, text)
+
     QString cleanText= text;
     lastInternalChange = true;
 
@@ -1301,12 +1284,7 @@ void QHildonInputContext::insertUtf8(int flag, const QString& text)
     
     //Delete suroundings when we are using the preeditbuffer.
     // Eg: For the HandWriting plugin 
-    if (!preEditBuffer.isNull()) {
-#ifdef HIM_DEBUG
-    qDebug() << "  preEditBuffer=" << preEditBuffer;
-#endif        
-
-
+    if (!preEditBuffer.isNull()) {  
 #ifndef Q_OS_FREMANTLE
         //Delete suroundings when we are using the preeditbuffer.
         // Eg: For the HandWriting plugin 
@@ -1358,9 +1336,8 @@ void QHildonInputContext::insertUtf8(int flag, const QString& text)
 
 void QHildonInputContext::clearSelection()
 {
-#ifdef HIM_DEBUG
-    qDebug() <<  "QHildonInputContext::clearSelection()";
-#endif
+    LOGMESSAGE1("clearSelection");
+
     QWidget *w = focusWidget();
     int textCursorPos = w->inputMethodQuery(Qt::ImCursorPosition).toInt();
     QString selection = w->inputMethodQuery(Qt::ImCurrentSelection).toString();
@@ -1383,9 +1360,8 @@ void QHildonInputContext::clearSelection()
 
 void QHildonInputContext::sendHildonCommand(HildonIMCommand cmd, QWidget *widget)
 {
-#ifdef HIM_DEBUG
-    qDebug() <<  "QHildonInputContext::sendHildonCommand cmd="<< cmd << "widget=" << widget;
-#endif
+    LOGMESSAGE3("sendHildonCommand", cmd, widget);
+
     Window w = findHildonIm();
 
     if (!w){
@@ -1431,9 +1407,8 @@ void QHildonInputContext::sendHildonCommand(HildonIMCommand cmd, QWidget *widget
  */
 void QHildonInputContext::sendX11Event(XEvent *event)
 {
-#ifdef HIM_DEBUG
-    qDebug() <<  "QHildonInputContext::sendX11Event" << event;
-#endif
+    LOGMESSAGE2("sendX11Event", event);
+
     Window w = findHildonIm();
 
     if (!w){
@@ -1452,11 +1427,8 @@ void QHildonInputContext::sendX11Event(XEvent *event)
 void QHildonInputContext::showHIMMainUI() //### REMOVE
 {
     //Force QInputContext to use the fucused widget.
-#ifdef HIM_DEBUG
-    qDebug() <<  "QHildonInputContext::showHIMMainUI()"
-             <<  "QApplication::focusWidget=" << QApplication::focusWidget()
-             <<  "focusWidget=" << focusWidget();
-#endif
+    LOGMESSAGE1("QHildonInputContext::showHIMMainUI")
+
     //QInputContext::setFocusWidget(QApplication::focusWidget());
     toggleHildonMainIMUi();
 }
@@ -1466,9 +1438,7 @@ void QHildonInputContext::showHIMMainUI() //### REMOVE
  */
 void QHildonInputContext::checkSentenceStart()
 {
-#ifdef HIM_DEBUG
-    qDebug() <<  "QHildonInputContext::contextCheckSentenceStart()";
-#endif
+    LOGMESSAGE1("checkSentenceStart");
 
     QWidget *w = focusWidget();
     if (!w){
@@ -1514,9 +1484,7 @@ void QHildonInputContext::checkSentenceStart()
 
 void QHildonInputContext::commitPreeditData()
 {
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::commitPreeditData()";
-#endif
+    LOGMESSAGE1("commitPreeditData")
 
     if (!preEditBuffer.isNull())
         preEditBuffer = QString("");
@@ -1524,12 +1492,10 @@ void QHildonInputContext::commitPreeditData()
 
 void QHildonInputContext::checkCommitMode() //### REMOVE?
 {
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::checkCommitMode()" << commitMode;
-#endif
+    LOGMESSAGE1("checkCommitMode")
+
     //if (m_commitMode == HILDON_IM_COMMIT_REDIRECT)
     //    m_commitMode = HILDON_IM_COMMIT_SURROUNDING;
-        
 }
 
 /*! Send the text of the client widget surrounding the active cursor position,
@@ -1537,10 +1503,8 @@ void QHildonInputContext::checkCommitMode() //### REMOVE?
  */
 void QHildonInputContext::sendSurrounding(bool sendAllContents)
 {
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::sendSurrounding sendAllContents=" << sendAllContents 
-             << "focusWidget=" << focusWidget();
-#endif
+    LOGMESSAGE2("sendSurrounding", sendAllContents )
+
     QWidget *w = focusWidget();
 
     if (!w)
@@ -1616,9 +1580,8 @@ void QHildonInputContext::sendSurrounding(bool sendAllContents)
 
 void QHildonInputContext::sendSurroundingHeader(int offset)
 {
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::sendSurroundingHeader offset=" << offset;
-#endif
+    LOGMESSAGE2("sendSurroundingHeader",offset);
+
     XEvent xev;
     /* Send the cursor offset in the surrounding */
     memset(&xev, 0, sizeof(XEvent));
@@ -1635,9 +1598,7 @@ void QHildonInputContext::sendSurroundingHeader(int offset)
 /*! Notify IM of any input mode changes 
  */
 void QHildonInputContext::inputModeChanged(){
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::inputModeChanged";
-#endif
+    LOGMESSAGE1("inputModeChanged");
 
 #if 0
   //TODO
@@ -1660,9 +1621,8 @@ void QHildonInputContext::inputModeChanged(){
 }
 
 void QHildonInputContext::sendInputMode(){
-#ifdef HIM_DEBUG
-    qDebug() <<  "QHildonInputContext::sendInputMode";
-#endif
+    LOGMESSAGE1("sendInputMode")
+
     Window w = findHildonIm();
 
     if (!w){
@@ -1693,10 +1653,8 @@ void QHildonInputContext::sendInputMode(){
  */
 void QHildonInputContext::setClientCursorLocation(int offsetIsRelative, int cursorOffset)
 {   
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::setClientCursorLocation offsetIsRelative=" << offsetIsRelative 
-             << "cursorOffset" << cursorOffset;
-#endif
+    LOGMESSAGE3("setClientCursorLocation", offsetIsRelative, cursorOffset)
+
     if (!offsetIsRelative){
         qWarning("setClientCursorLocation can't manage absolute cursor Offsets");
         return;
@@ -1714,9 +1672,8 @@ void QHildonInputContext::setMaskState(int *mask,
                                               HildonIMInternalModifierMask sticky_mask,
                                               bool was_press_and_release)
 {
-#ifdef HIM_DEBUG
-    qDebug() << "QHildonInputContext::setMaskState";
-#endif
+    LOGMESSAGE1("setMaskState")
+
    //TODO ENABLE THIS ASA INPUT MODE HAVE BEEN ENABLED
 #if 0
    /* Locking Fn is disabled in TELE and NUMERIC */
@@ -1763,4 +1720,5 @@ void QHildonInputContext::setMaskState(int *mask,
     }
 
 }
+
 #endif
