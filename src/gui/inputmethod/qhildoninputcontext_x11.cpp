@@ -1205,10 +1205,12 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
         
 #ifdef Q_OS_FREMANTLE
         case HILDON_IM_CONTEXT_CANCEL_PREEDIT: {
-            LOGMESSAGE2(" - ", "XMessage: Cancel preedit")
-            preEditBuffer.clear();
-            QInputMethodEvent e;            
-            sendEvent(e);
+            LOGMESSAGE3(" - ", "XMessage: Cancel preedit=", preEditBuffer)
+            if (!preEditBuffer.isEmpty()) {
+                preEditBuffer.clear();
+                QInputMethodEvent e;            
+                sendEvent(e);
+            }
             return true; }
         case HILDON_IM_CONTEXT_PREEDIT_MODE: {
             LOGMESSAGE3 (" - ", "Commit Mode=", "Preedit")
