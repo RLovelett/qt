@@ -712,7 +712,7 @@ void QHildonInputContext::toggleHildonMainIMUi()
     if (!w)
         return;
      
-    if (!canUseIM(w)){
+    if (!canUseIM(w) || !w->inputMethodQuery(Qt::ImCurrentSelection).toString().isEmpty() ){
         sendHildonCommand(HILDON_IM_HIDE);
         return;
     }
