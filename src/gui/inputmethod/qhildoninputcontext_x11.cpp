@@ -1284,7 +1284,10 @@ void QHildonInputContext::insertUtf8(int flag, const QString& text)
 {
     LOGMESSAGE3("insertUtf8", flag, text)
 
-    QString cleanText= text;
+    QString cleanText = text;
+    if (mask & HILDON_IM_SHIFT_LOCK_MASK)
+            cleanText = cleanText.toUpper();
+
     lastInternalChange = true;
 
     //TODO HILDON_IM_AUTOCORRECT is used by the hadwriting plugin
@@ -1305,10 +1308,10 @@ void QHildonInputContext::insertUtf8(int flag, const QString& text)
         e.setCommitString(QString(), -charCount, charCount);
         sendEvent(e);
 #endif
-     
+
         //Updates preEditBuffer
         if (flag != HILDON_IM_MSG_START) {
-            preEditBuffer.append(text);
+            preEditBuffer.append(cleanText);
             cleanText = preEditBuffer;
         }
      }
@@ -1317,7 +1320,7 @@ void QHildonInputContext::insertUtf8(int flag, const QString& text)
     switch (commitMode) {
         case HILDON_IM_COMMIT_PREEDIT: { //Fremantle
             if ( preEditBuffer.isNull() )
-                preEditBuffer = text;
+                preEditBuffer = cleanText;
 
             //Creating attribute list
             QList<QInputMethodEvent::Attribute> list;
