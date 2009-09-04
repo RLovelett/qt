@@ -102,7 +102,7 @@ private:
     int mask;
     int options;
     HildonIMTrigger triggerMode;
-    HildonIMCommitMode commitMode;
+    HildonIMCommitMode commitMode, previousCommitMode;
     int inputMode;
     QString preEditBuffer;
     QString surrounding;

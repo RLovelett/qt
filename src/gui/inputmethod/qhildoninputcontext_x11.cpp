@@ -951,7 +951,7 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
     
     //F. word completion manipulation (for fremantle)
     if (event->type() == QEvent::KeyPress &&
-        commitMode == HILDON_IM_COMMIT_PREEDIT &&
+        previousCommitMode == HILDON_IM_COMMIT_PREEDIT &&
         !preEditBuffer.isNull())
     {
         switch (qtkeycode){
@@ -1207,7 +1207,7 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
         case HILDON_IM_CONTEXT_CANCEL_PREEDIT: {
             LOGMESSAGE3(" - ", "XMessage: Cancel preedit=", preEditBuffer)
             if (!preEditBuffer.isEmpty()) {
-                preEditBuffer.clear();
+                preEditBuffer = QString();
                 QInputMethodEvent e;            
                 sendEvent(e);
             }
@@ -1215,6 +1215,7 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
         case HILDON_IM_CONTEXT_PREEDIT_MODE: {
             LOGMESSAGE3 (" - ", "Commit Mode=", "Preedit")
             preEditBuffer.clear();
+            previousCommitMode = commitMode;
             commitMode = HILDON_IM_COMMIT_PREEDIT;
             return true; } 
         case HILDON_IM_CONTEXT_REQUEST_SURROUNDING_FULL: {
@@ -1357,6 +1358,13 @@ void QHildonInputContext::insertUtf8(int flag, const QString& text)
 
             QInputMethodEvent e(cleanText, list);            
             sendEvent(e);
+
+            //Reset commit mode
+            if (flag == HILDON_IM_MSG_END){
+                commitMode = previousCommitMode;
+                previousCommitMode = HILDON_IM_COMMIT_PREEDIT;
+            }
+
         }break;
         case HILDON_IM_COMMIT_BUFFERED: //Diablo Handwriting
         case HILDON_IM_COMMIT_DIRECT:
