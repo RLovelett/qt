@@ -837,7 +837,7 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
     if (qtkeycode == Qt::Key_Return || qtkeycode == Qt::Key_Enter || keysym == GDK_ISO_ENTER) {
         //Remove autocompletation text
         if (event->type() == QEvent::KeyPress &&
-            commitMode == HILDON_IM_COMMIT_PREEDIT &&
+            previousCommitMode == HILDON_IM_COMMIT_PREEDIT &&
             !preEditBuffer.isNull()) {
                 preEditBuffer.clear();
                 QInputMethodEvent e;
@@ -1207,7 +1207,7 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
         case HILDON_IM_CONTEXT_CANCEL_PREEDIT: {
             LOGMESSAGE3(" - ", "XMessage: Cancel preedit=", preEditBuffer)
             if (!preEditBuffer.isEmpty()) {
-                preEditBuffer = QString();
+                preEditBuffer.clear();
                 QInputMethodEvent e;            
                 sendEvent(e);
             }
