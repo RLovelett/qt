@@ -92,9 +92,11 @@ extern bool qt_sendSpontaneousEvent(QObject*, QEvent*); //qapplication_x11.cpp
     LOGMESSAGE3(x, y, "")
 
 #define LOGMESSAGE3(x, y, z) \
-    QString logMessageString; \
-    QTextStream(&logMessageString) << x << "(" << y << " " << z << ")"; \
-    logMessage(logMessageString);
+    { \
+        QString logMessageString; \
+        QTextStream(&logMessageString) << x << "(" << y << " " << z << ")"; \
+        logMessage(logMessageString); \
+    } \
     
 static void logMessage(const QString &message)
 {
@@ -1682,17 +1684,17 @@ void QHildonInputContext::setMaskState(int *mask,
                                               HildonIMInternalModifierMask sticky_mask,
                                               bool was_press_and_release)
 {
-    LOGMESSAGE1("setMaskState")
+    LOGMESSAGE3("setMaskState", lock_mask, sticky_mask)
+    LOGMESSAGE3(" - ", "mask=", *mask)
+    //### TODO remove me    
+    int input_mode = 0;
 
-   //TODO ENABLE THIS ASA INPUT MODE HAVE BEEN ENABLED
-#if 0
    /* Locking Fn is disabled in TELE and NUMERIC */
     if (!(input_mode & HILDON_GTK_INPUT_MODE_ALPHA) &&
         !(input_mode & HILDON_GTK_INPUT_MODE_HEXA)  &&
         ((input_mode & HILDON_GTK_INPUT_MODE_TELE) || 
-         (input_mode & HILDON_GTK_INPUT_MODE_NUMERIC)))
-   {
-#endif
+         (input_mode & HILDON_GTK_INPUT_MODE_NUMERIC))
+       ) {
         if (*mask & lock_mask){
             /* already locked, remove lock and set it to sticky */
             *mask &= ~(lock_mask | sticky_mask);
@@ -1705,7 +1707,8 @@ void QHildonInputContext::setMaskState(int *mask,
             *mask |= sticky_mask;
         }
         return;
-//  }
+    }
+
     if (*mask & lock_mask)
     {
         /* Pressing the key while already locked clears the state */
