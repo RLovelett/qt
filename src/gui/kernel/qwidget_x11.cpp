@@ -2635,6 +2635,7 @@ void QWidgetPrivate::createTLSysExtra()
     extra->topextra->userTimeWindow = 0;
 #ifdef Q_WS_HILDON
     extra->topextra->customContextSet = 0;
+    extra->topextra->hildonStackableWindow = -1;
 #endif
 }
 
@@ -2905,6 +2906,29 @@ bool QWidgetPrivate::setCustomContext()
     x->customContextSet = 1;
     return true;
 }
+
+bool QWidgetPrivate::setHildonStackableWindows(int item)
+{
+    Q_Q(QWidget);
+
+    QWidget *window = q->window();
+    QTLWExtra *x = window->d_func()->topData();
+    Q_ASSERT(x);
+
+    if (x->hildonStackableWindow >= 0)
+        return false;
+
+    x->hildonStackableWindow = item;
+
+    WId windowHandle = window->winId();
+    
+    //TODO Move in the Qt Atom list
+    Atom hildonStackableWindows = XInternAtom (QX11Info::display(), "_HILDON_STACKABLE_WINDOW", false);
+    XChangeProperty(X11->display, q->winId(), hildonStackableWindows, XA_INTEGER, 32, PropModeAppend, (uchar *)&item, 1);
+
+    return true;
+}
+
 #endif
 
 void qt_x11_getX11InfoForWindow(QX11Info * xinfo, const QX11WindowAttributes &att)
