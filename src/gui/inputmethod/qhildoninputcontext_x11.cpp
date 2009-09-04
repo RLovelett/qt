@@ -827,6 +827,14 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
     lastQtkeycode=qtkeycode;
 
     if (qtkeycode == Qt::Key_Return || qtkeycode == Qt::Key_Enter || keysym == GDK_ISO_ENTER) {
+        //Remove autocompletation text
+        if (event->type() == QEvent::KeyPress &&
+            commitMode == HILDON_IM_COMMIT_PREEDIT &&
+            !preEditBuffer.isNull()) {
+                preEditBuffer.clear();
+                QInputMethodEvent e;
+                sendEvent(e);
+        }
         sendKeyEvent(keywidget, event->type(), state, keysym, keycode);
         lastInternalChange = true;
         return false;
@@ -948,6 +956,8 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
                 return true;
             }
             case Qt::Key_Backspace:
+            case Qt::Key_Up:
+            case Qt::Key_Down:
             case Qt::Key_Left:{
                 //TODO Move this code
                 preEditBuffer.clear();
