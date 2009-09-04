@@ -559,9 +559,14 @@ KeySym getKeySymForLevel(int keycode, int level ){
 }
 
 QHildonInputContext::QHildonInputContext(QObject* parent)
-    : QInputContext(parent), timerId(-1), mask(0), 
-      triggerMode(HILDON_IM_TRIGGER_NONE), commitMode(HILDON_IM_COMMIT_REDIRECT),
-      inputMode(HILDON_GTK_INPUT_MODE_FULL), lastInternalChange(false)
+    : QInputContext(parent),
+      timerId(-1),
+      mask(0), 
+      triggerMode(HILDON_IM_TRIGGER_NONE),
+      commitMode(HILDON_IM_COMMIT_REDIRECT),
+      inputMode(HILDON_GTK_INPUT_MODE_FULL),
+      lastInternalChange(false),
+      spaceAfterCommit(false)
 {
 }
 
@@ -668,7 +673,8 @@ bool QHildonInputContext::eventFilter(QObject *obj, QEvent *event)
         triggerMode = HILDON_IM_TRIGGER_FINGER;
 #endif
         inputMode = w->inputMethodQuery(Qt::ImMode).toInt();
-        toggleHildonMainIMUi(); showHIMMainUI();
+        toggleHildonMainIMUi();
+        showHIMMainUI();
         break;
     }
     case QEvent::KeyPress:
@@ -952,7 +958,12 @@ bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
             case Qt::Key_Right:{
                 //TODO Move this code in commitPreeditData();
                 QInputMethodEvent e;
-                e.setCommitString(preEditBuffer + ' ');
+
+                if (spaceAfterCommit)
+                    e.setCommitString(preEditBuffer + ' ');
+                else
+                    e.setCommitString(preEditBuffer);
+
                 sendEvent(e);
                 preEditBuffer.clear();
                 return true;
@@ -1211,9 +1222,17 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
             //if (self->is_url_entry)
             //  hildon_im_context_send_command(self, HILDON_IM_SELECT_ALL);
             return true; }
+        case HILDON_IM_CONTEXT_SPACE_AFTER_COMMIT: {
+            LOGMESSAGE2(" - ", "XMessage: put a space after commit")
+            spaceAfterCommit = true;
+            return true; }
+        case HILDON_IM_CONTEXT_NO_SPACE_AFTER_COMMIT: {
+            LOGMESSAGE2(" - ", "XMessage: no space after commit")
+            spaceAfterCommit = false;
+            return true; }
 #endif  
         default:
-            qWarning() << "Hildon Input Method Message not handled" << msg->type;
+            qWarning() << "HIM: (warning) Message not handled:" << msg->type;
         }
     }else if (event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING_CONTENT) &&
               event->xclient.format == HILDON_IM_SURROUNDING_CONTENT_FORMAT) {

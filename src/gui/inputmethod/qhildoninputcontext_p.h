@@ -109,6 +109,7 @@ private:
     int textCursorPosOnPress; //position of the cursor in the surrounding text at the last TabletPress event
     bool autoUpper;
     bool lastInternalChange;
+    bool spaceAfterCommit;
 };
 
 QT_END_HEADER
