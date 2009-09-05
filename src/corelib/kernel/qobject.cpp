@@ -2740,6 +2740,70 @@ bool QObject::connect(const QObject *sender, const char *signal,
     \sa disconnect()
 */
 
+static void qPrependChar(char c, const char* s, QVarLengthArray<char>& d)
+{
+    int idx = 0;
+    d[idx] = c;
+    idx++;
+    const int size = d.size();
+    while (idx < size && *s) {
+        d[idx] = *s++;
+        idx++;
+    }
+    d[idx] = '\0';
+}
+
+
+/*!
+    \overload connect()
+    \threadsafe
+
+    Connects the both QMetaMethods if \a signal is a signal and \a method is
+    is a signal or a slot.
+
+    \sa connect()
+*/
+bool QObject::connect(const QObject *sender, const QMetaMethod &signal,
+                        const QObject *receiver, const QMetaMethod &method, Qt::ConnectionType type)
+{
+    if (signal.methodType() != QMetaMethod::Signal || signal.signature() == 0) {
+        qWarning("QObject::connect: Cannot connect from meta method '%s' not beeing a signal", signal.signature());
+        return false;
+    }
+    if (method.methodType() == QMetaMethod::Constructor) {
+        qWarning("QObject::connect: Cannot connect to a constructor");
+        return false;
+    }
+    if (method.signature() == 0) {
+        qWarning("QObject::connect: no valid method signature given");
+        return false;
+    }
+    // Rest of error handling is done in QObject::connect
+
+    // create internal signature string
+    char prepend = *SIGNAL("");
+
+    QVarLengthArray<char> codedSignalSignature(strlen(signal.signature()) + 2);
+    qPrependChar(prepend, signal.signature(), codedSignalSignature);
+    
+    // create internal method string
+    switch (method.methodType()) {
+        case QMetaMethod::Method:
+            prepend = *METHOD("");
+            break;
+        case QMetaMethod::Signal:
+            // prepend is already = *SIGNAL("")
+            break;
+        case QMetaMethod::Slot:
+            prepend = *SLOT("");
+            break;
+    }
+    QVarLengthArray<char> codedSlotSignature(strlen(method.signature()) + 2);
+    qPrependChar(prepend, method.signature(), codedSlotSignature);
+
+    return QObject::connect(sender, codedSignalSignature.data(), receiver, codedSlotSignature.data(), type);
+}
+
 /*!
     \threadsafe
 
