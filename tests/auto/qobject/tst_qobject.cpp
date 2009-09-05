@@ -94,6 +94,7 @@ private slots:
     void customTypes();
     void streamCustomTypes();
     void metamethod();
+    void metamethodFromString();
     void namespaces();
     void threadSignalEmissionCrash();
     void thread();
@@ -116,6 +117,7 @@ private slots:
     void disconnectSelfInSlotAndDeleteAfterEmit();
     void dumpObjectInfo();
     void connectToSender();
+    void metaconnect();
     void qobjectConstCast();
     void uniqConnection();
     void interfaceIid();
@@ -156,6 +158,7 @@ class SenderObject : public QObject
 
 public:
     SenderObject() : recursionCount(0) {}
+    Q_SCRIPTABLE SenderObject(int) : recursionCount(0) {}
 
     void emitSignal1AfterRecursion()
     {
@@ -1703,6 +1706,29 @@ void tst_QObject::metamethod()
 
 }
 
+void tst_QObject::metamethodFromString()
+{
+    SenderObject obj;
+    const QMetaObject *mobj = obj.metaObject();
+    QMetaMethod m;
+
+     m = mobj->method("invoke1()");
+    QVERIFY(m.methodType() == QMetaMethod::Method);
+
+    m = mobj->method("sinvoke1()");
+    QVERIFY(m.methodType() == QMetaMethod::Method);
+
+    m = mobj->method("signal5()");
+    QVERIFY(m.methodType() == QMetaMethod::Signal);
+
+    m = mobj->method(mobj->indexOfMethod("aPublicSlot()"));
+    QVERIFY(m.methodType() == QMetaMethod::Slot);
+
+    m = mobj->method("SenderObject(int)");
+    QVERIFY(m.methodType() == QMetaMethod::Constructor);
+
+}
+
 namespace QObjectTest
 {
     class TestObject: public QObject
@@ -2825,6 +2851,20 @@ void tst_QObject::connectToSender()
     QCOMPARE(r.count, 1);
     s.emitSignal4();
     QCOMPARE(r.count, 2);
+}
+
+void tst_QObject::metaconnect()
+{
+    SenderObject s;
+    const QMetaObject* sm = s.metaObject();
+    ConnectToSender r;
+    const QMetaObject* rm = r.metaObject();
+
+    QVERIFY(QObject::connect(&s, sm->method("signal1()"), &r, rm->method("harmfullSlot()")));
+    QVERIFY(QObject::connect(&s, sm->method("signal1()"), &s, sm->method("signal2()")));
+    QVERIFY(!QObject::connect(&s, sm->method("aPublicSlot()"), &r, rm->method("harmfullSlot()")));
+    QVERIFY(!QObject::connect(&s, sm->method("signal1()"), &r, rm->method("noSlot()")));
+
 }
 
 void tst_QObject::qobjectConstCast()
