@@ -82,6 +82,12 @@ do {\
         return;\
 } while (0)
 
+#define QFUZZ_COMPARE(actual, expected, fuzz) \
+do {\
+    if (!QTest::qCompare(actual, expected, fuzz, #actual, #expected, #fuzz, __FILE__, __LINE__))\
+        return;\
+} while (0)
+
 #define QSKIP(statement, mode) \
 do {\
     QTest::qSkip(statement, QTest::mode, __FILE__, __LINE__);\
@@ -159,6 +165,9 @@ namespace QTest
     Q_TESTLIB_EXPORT bool compare_helper(bool success, const char *msg, char *val1, char *val2,
                                          const char *expected, const char *actual,
                                          const char *file, int line);
+    Q_TESTLIB_EXPORT bool compare_helper(bool success, const char *msg, char *val1, char *val2,
+                                         char *val3, const char *expected, const char *actual,
+					 const char *fuzz, const char *file, int line);
     Q_TESTLIB_EXPORT void qSleep(int ms);
     Q_TESTLIB_EXPORT void addColumnInternal(int id, const char *name);
 
@@ -187,6 +196,20 @@ namespace QTest
     template <>
     Q_TESTLIB_EXPORT bool qCompare<double>(double const &t1, double const &t2,
                     const char *actual, const char *expected, const char *file, int line);
+
+    Q_TESTLIB_EXPORT bool qCompare(int const &t1, int const &t2, int const &t3,
+				   const char *actual, const char *expected,
+				   const char *fuzz,
+				   const char *file, int line);
+
+    Q_TESTLIB_EXPORT bool qCompare(float const &t1, float const &t2, float const &t3,
+				   const char *actual, const char *expected, const char *fuzz,
+				   const char *file, int line);
+
+    Q_TESTLIB_EXPORT bool qCompare(double const &t1, double const &t2, double const &t3,
+				   const char *actual, const char *expected,
+				   const char *fuzz,
+				   const char *file, int line);
 
     inline bool compare_ptr_helper(const void *t1, const void *t2, const char *actual,
                                    const char *expected, const char *file, int line)

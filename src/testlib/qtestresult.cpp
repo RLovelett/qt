@@ -254,6 +254,27 @@ bool QTestResult::compare(bool success, const char *msg, const char *file, int l
     return checkStatement(success, msg, file, line);
 }
 
+bool QTestResult::compare(bool success, const char *msg, char *val1, char *val2, char *val3,
+                          const char *actual, const char *expected,
+			  const char *fuzz, const char *file, int line)
+{
+    QTEST_ASSERT(expected);
+    QTEST_ASSERT(actual);
+
+    if (!val1 && !val2)
+        return compare(success, msg, file, line);
+
+    char buf[1024];
+    QTest::qt_snprintf(buf, 1024, "%s\n   Actual (%s): %s\n   Expected (%s): %s\n   Fuzz (%s): %s",
+		       msg,
+                       actual, val1 ? val1 : "<null>",
+                       expected, val2 ? val2 : "<null>",
+                       fuzz, val3 ? val3 : "<null>");
+    delete [] val1;
+    delete [] val2;
+    return compare(success, buf, file, line);
+}
+
 bool QTestResult::compare(bool success, const char *msg, char *val1, char *val2,
                           const char *actual, const char *expected, const char *file, int line)
 {

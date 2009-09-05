@@ -56,6 +56,7 @@ private slots:
     void testFunc5();
     void testFunc6();
     void testFunc7();
+    void testFunc8();
 };
 
 tst_Xunit::tst_Xunit()
@@ -108,6 +109,53 @@ void tst_Xunit::testFunc7()
 {
     QEXPECT_FAIL("", "this pass is unexpected", Abort);
     QVERIFY(true);
+}
+
+void tst_Xunit::testFunc8()
+{
+  const int integerTwo = 2;
+  const int compareIntegerTwo = 1+1;
+  const int compareIntegerThree = 3;
+  const int compareIntegerFour = 4;
+  
+  const float floatTwo = 2.0f;
+  const float compareFloatTwo = 1.0f + 1.0f;
+  const float compareFloatThree = 3.0f;
+  const float compareFloatFour = 4.0f;
+ 
+  const double doubleTwo = 2.0;
+  const double compareDoubleTwo = 1.0 + 1.0f;
+  const double compareDoubleThree = 3.0;
+  const double compareDoubleFour = 4.0;
+
+  QCOMPARE( integerTwo, compareIntegerTwo );
+  QCOMPARE( floatTwo, compareFloatTwo );
+  QCOMPARE( doubleTwo, compareDoubleTwo );
+
+  QEXPECT_FAIL( "", "Testing correct failure condition of QCOMPARE...",
+		     Continue );
+  QCOMPARE( integerTwo, compareIntegerThree );
+  QEXPECT_FAIL( "", "Testing correct failure condition of QCOMPARE...",
+		    Continue );
+  QCOMPARE( floatTwo, compareFloatThree );
+  QEXPECT_FAIL( "", "Testing correct failure condition of QCOMPARE...",
+		    Continue );
+  QCOMPARE( doubleTwo, compareDoubleThree );
+  
+  QFUZZ_COMPARE( integerTwo, compareIntegerTwo, 0 );
+  QFUZZ_COMPARE( floatTwo, compareFloatTwo, 0.0f );
+  QFUZZ_COMPARE( doubleTwo, compareDoubleTwo, 0.0 );
+  
+  QFUZZ_COMPARE( integerTwo, compareIntegerThree, 1 );
+  QFUZZ_COMPARE( floatTwo, compareFloatThree, 1.0f );
+  QFUZZ_COMPARE( doubleTwo, compareDoubleThree, 1.0 );
+  
+  QEXPECT_FAIL( "", "Testing correct failure condition of QFUZZ_COMPARE...", Continue );
+  QFUZZ_COMPARE( integerTwo, compareIntegerFour, 1 );
+  QEXPECT_FAIL( "", "Testing correct failure condition of QFUZZ_COMPARE...", Continue );
+  QFUZZ_COMPARE( floatTwo, compareFloatFour, 1.0f );
+  QEXPECT_FAIL( "", "Testing correct failure condition of QFUZZ_COMPARE...", Continue );
+  QFUZZ_COMPARE( doubleTwo, compareDoubleFour, 1.0 );
 }
 
 
