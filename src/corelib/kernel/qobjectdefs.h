@@ -312,6 +312,7 @@ struct Q_CORE_EXPORT QMetaObject
 
     QMetaMethod constructor(int index) const;
     QMetaMethod method(int index) const;
+    QMetaMethod method(const char *name) const;
     QMetaEnum enumerator(int index) const;
     QMetaProperty property(int index) const;
     QMetaClassInfo classInfo(int index) const;

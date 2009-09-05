@@ -756,6 +756,29 @@ QMetaMethod QMetaObject::method(int index) const
 }
 
 /*!
+    Returns the QMetaMethod for the method with the given signature.
+    Could be a signal, a slot, a constructor, a method, ot invalid.
+
+    \sa methyType(), signature()
+*/
+QMetaMethod QMetaObject::method(const char *signature) const
+{
+    int index = indexOfSignal(signature);
+    if (index != -1)
+        return method(index);
+    index = indexOfSlot(signature);
+    if (index != -1)
+        return method(index);
+    index = indexOfConstructor(signature);
+    if (index != -1)
+        return constructor(index);
+    index = indexOfMethod(signature);
+    if (index != -1)
+        return method(index);
+    return QMetaMethod();
+}
+
+/*!
     Returns the meta-data for the enumerator with the given \a index.
 
     \sa enumeratorCount(), enumeratorOffset(), indexOfEnumerator()
