@@ -29,7 +29,8 @@ class QHildonAppMenuPrivate : public QWidgetPrivate
     Q_DECLARE_PUBLIC(QHildonAppMenu)
 public:
 
-    inline QHildonAppMenuPrivate(){}
+    inline QHildonAppMenuPrivate(){};
+    void init();
     void createButtons(QList<QAction*> actions);
     void addButton(QAction* action);
 

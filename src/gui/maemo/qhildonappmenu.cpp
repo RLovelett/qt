@@ -19,16 +19,21 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qaction.h>
-
+#include <qdebug.h>
+#include <qlayout.h>
 
 QT_BEGIN_NAMESPACE
 
+void QHildonAppMenuPrivate::init(){
+    Q_Q(QHildonAppMenu);
+    gridLayout = new QGridLayout(q);
+}
 void QHildonAppMenuPrivate::createButtons(QList<QAction*> actions){
-    Q_Q(QHildonAppMenu); //###
-
-    //qDebug() << "Available actions" << actions;
+    qDebug() << "Available actions" << actions;
     QAction *action;
     foreach(action, actions){
+        qDebug() << "ACTION" << action;
+        qDebug() << "ACTION TEXT" << action->text();
         addButton(action);
     }
 }
@@ -44,7 +49,7 @@ void QHildonAppMenuPrivate::addButton(QAction* action){
 
     row = buttonList.count() / 2;
     culumn = ((buttonList.count() % 2) == 0) ? 0 : 1;
-    //qDebug() << "addButton" << row << culumn;
+    qDebug() << "addButton" << row << culumn;
     gridLayout->addWidget(pushButton, row, culumn);
 
     QObject::connect(pushButton, SIGNAL(clicked()), q, SLOT(_q_activateAction()));
@@ -78,9 +83,10 @@ void QHildonAppMenuPrivate::_q_activateAction()
 QHildonAppMenu::QHildonAppMenu(QList<QAction*> actions, QWidget *parent)
     : QWidget(*new QHildonAppMenuPrivate, parent, QFlag(Qt::Dialog))
 {
+    qDebug() << "Constructor";
     Q_D(QHildonAppMenu);
+    d->init();
     d->createButtons(actions);
-    show();
 }
 
 QHildonAppMenu::~QHildonAppMenu()

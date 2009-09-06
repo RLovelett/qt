@@ -2000,7 +2000,12 @@ void QWidgetPrivate::setNetWmWindowTypes()
         // splash netwm type
         windowTypes.append(ATOM(_NET_WM_WINDOW_TYPE_SPLASH));
         break;
-
+#ifdef Q_OS_FREMANTLE
+    case Qt::HildonAppMenu:
+        //Hildon application menu
+        windowTypes.append(ATOM(_HILDON_WM_WINDOW_TYPE_APP_MENU));
+        break;
+#endif
     default:
         break;
     }
