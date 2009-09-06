@@ -31,7 +31,7 @@ class Q_GUI_EXPORT QHildonAppMenu : public QWidget
     Q_OBJECT
 
 public:
-    explicit QHildonAppMenu(QWidget *parent = 0);
+    explicit QHildonAppMenu(QList<QAction*> actions, QWidget *parent = 0);
     virtual ~QHildonAppMenu();
 
 private:

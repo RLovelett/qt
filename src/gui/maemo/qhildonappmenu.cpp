@@ -75,9 +75,12 @@ void QHildonAppMenuPrivate::_q_activateAction()
     Add a description here.
 */
 
-QHildonAppMenu::QHildonAppMenu(QWidget *parent)
+QHildonAppMenu::QHildonAppMenu(QList<QAction*> actions, QWidget *parent)
     : QWidget(*new QHildonAppMenuPrivate, parent, QFlag(Qt::Dialog))
 {
+    Q_D(QHildonAppMenu);
+    d->createButtons(actions);
+    show();
 }
 
 QHildonAppMenu::~QHildonAppMenu()

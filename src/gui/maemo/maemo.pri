@@ -1,8 +1,8 @@
 # Qt Maemo module
 
 HEADERS += \
-           maemo/qhildonappmenu_p.h \
-           maemo/qhildonappmenu.h
+           maemo/qhildonappmenu.h \
+           maemo/qhildonappmenu_p.h
 SOURCES += \
            maemo/qhildonappmenu.cpp
 
