@@ -48,9 +48,11 @@ void QHildonAppMenuPrivate::addButton(QAction* action){
     pushButton->setMinimumSize(QSize(0, 63));
     pushButton->setText(action->text());
     buttonList.insert(pushButton, action);
-
-    row = buttonList.count() / 2;
+    
     culumn = ((buttonList.count() % 2) == 0) ? 1 : 0;
+    row = (buttonList.count() - culumn)/ 2;
+    
+    
     qDebug() << "addButton" << row << culumn;
     gridLayout->addWidget(pushButton, row, culumn);
 
@@ -85,7 +87,6 @@ void QHildonAppMenuPrivate::_q_activateAction()
 QHildonAppMenu::QHildonAppMenu(QList<QAction*> actions, QWidget *parent)
     : QDialog(*new QHildonAppMenuPrivate, parent, QFlag(Qt::HildonAppMenu))
 {
-    qDebug() << "Constructor";
     Q_D(QHildonAppMenu);
     d->init();
     d->createButtons(actions);
