@@ -16,7 +16,7 @@
 #ifndef QHILDONAPPMENU_H
 #define QHILDONAPPMENU_H
 
-#include <QtGui/qwidget.h>
+#include <QtGui/qdialog.h>
 
 QT_BEGIN_HEADER
 
@@ -26,7 +26,7 @@ QT_MODULE(Gui)
 
 class QHildonAppMenuPrivate;
 
-class Q_GUI_EXPORT QHildonAppMenu : public QWidget
+class Q_GUI_EXPORT QHildonAppMenu : public QDialog
 {
     Q_OBJECT
 

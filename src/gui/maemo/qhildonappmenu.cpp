@@ -26,8 +26,10 @@ QT_BEGIN_NAMESPACE
 
 void QHildonAppMenuPrivate::init(){
     Q_Q(QHildonAppMenu);
+    q->resize(600, 300);
     gridLayout = new QGridLayout(q);
 }
+
 void QHildonAppMenuPrivate::createButtons(QList<QAction*> actions){
     qDebug() << "Available actions" << actions;
     QAction *action;
@@ -48,7 +50,7 @@ void QHildonAppMenuPrivate::addButton(QAction* action){
     buttonList.insert(pushButton, action);
 
     row = buttonList.count() / 2;
-    culumn = ((buttonList.count() % 2) == 0) ? 0 : 1;
+    culumn = ((buttonList.count() % 2) == 0) ? 1 : 0;
     qDebug() << "addButton" << row << culumn;
     gridLayout->addWidget(pushButton, row, culumn);
 
@@ -81,7 +83,7 @@ void QHildonAppMenuPrivate::_q_activateAction()
 */
 
 QHildonAppMenu::QHildonAppMenu(QList<QAction*> actions, QWidget *parent)
-    : QWidget(*new QHildonAppMenuPrivate, parent, QFlag(Qt::Dialog))
+    : QDialog(*new QHildonAppMenuPrivate, parent, QFlag(Qt::HildonAppMenu))
 {
     qDebug() << "Constructor";
     Q_D(QHildonAppMenu);

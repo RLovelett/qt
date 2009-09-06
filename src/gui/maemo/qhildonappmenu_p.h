@@ -16,7 +16,7 @@
 #ifndef QHILDONAPPMENU_P_H
 #define QHILDONAPPMENU_P_H
 
-#include "private/qwidget_p.h"
+#include "private/qdialog_p.h"
 #include "QtGui/qhildonappmenu.h" 
 
 QT_BEGIN_NAMESPACE
@@ -24,7 +24,7 @@ QT_BEGIN_NAMESPACE
 class QGridLayout;
 class QAction;
 
-class QHildonAppMenuPrivate : public QWidgetPrivate
+class QHildonAppMenuPrivate : public QDialogPrivate
 {
     Q_DECLARE_PUBLIC(QHildonAppMenu)
 public:
