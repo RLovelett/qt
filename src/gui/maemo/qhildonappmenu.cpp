@@ -16,15 +16,36 @@
 #include "qhildonappmenu.h"
 #include "qhildonappmenu_p.h"//TODO Add private and copy it in include directory
 
+#include "qlayout.h"
+#include "qpushbutton.h"
+#include "qaction.h"
+
 QT_BEGIN_NAMESPACE
 
 
 void QHildonAppMenuPrivate::createButtons(QList<QAction*> actions){
-    
+    //qDebug() << "Available actions" << actions;
+    QAction *action;
+    foreach(action, actions){
+        addButton(action);
+    }
 }
 
 void QHildonAppMenuPrivate::addButton(QAction* action){
-    
+    Q_Q(QHildonAppMenu);
+
+    int row, culumn;
+    QPushButton *pushButton = new QPushButton(q);
+    pushButton->setMinimumSize(QSize(0, 63));
+    pushButton->setText(action->text());
+    buttonList.insert(pushButton, action);
+
+    row = buttonList.count() / 2;
+    culumn = ((buttonList.count() % 2) == 0) ? 0 : 1;
+    //qDebug() << "addButton" << row << culumn;
+    gridLayout->addWidget(pushButton, row, culumn);
+
+    QObject::connect(pushButton, SIGNAL(clicked()), q, SLOT(activateQAction()));
 }
 
 /*!
@@ -40,10 +61,12 @@ void QHildonAppMenuPrivate::addButton(QAction* action){
 QHildonAppMenu::QHildonAppMenu(QWidget *parent)
     : QWidget(*new QHildonAppMenuPrivate, parent, QFlag(Qt::Dialog))
 {
-    
 }
 
 QHildonAppMenu::~QHildonAppMenu()
 {
-    
+}
+
+void QHildonAppMenu::activateQAction()
+{
 }

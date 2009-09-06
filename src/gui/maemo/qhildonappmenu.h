@@ -31,6 +31,9 @@ class Q_GUI_EXPORT QHildonAppMenu : public QWidget
 public:
     explicit QHildonAppMenu(QWidget *parent = 0);
     ~QHildonAppMenu();
+
+private Q_SLOTS:
+    void activateQAction();
 };
 
 QT_END_NAMESPACE
