@@ -24,16 +24,24 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Gui)
 
+class QHildonAppMenuPrivate;
+
 class Q_GUI_EXPORT QHildonAppMenu : public QWidget
 {
     Q_OBJECT
 
 public:
     explicit QHildonAppMenu(QWidget *parent = 0);
-    ~QHildonAppMenu();
+    virtual ~QHildonAppMenu();
 
+private:
+    Q_DECLARE_PRIVATE(QHildonAppMenu)
+    Q_DISABLE_COPY(QHildonAppMenu)
+
+    //FIXME Doesn't compile :( 
+    //Q_PRIVATE_SLOT(d_func(), void _q_activateAction())
 private Q_SLOTS:
-    void activateQAction();
+    void _q_activateAction();
 };
 
 QT_END_NAMESPACE

@@ -17,7 +17,7 @@
 #define QHILDONAPPMENU_P_H
 
 #include "private/qwidget_p.h"
-#include "qhildonappmenu.h" //TODO Add QtGui/ and copy it in include/QtGui directory
+#include "QtGui/qhildonappmenu.h" 
 
 QT_BEGIN_NAMESPACE
 
@@ -29,14 +29,16 @@ class QHildonAppMenuPrivate : public QWidgetPrivate
     Q_DECLARE_PUBLIC(QHildonAppMenu)
 public:
 
-    QHildonAppMenuPrivate(){}
+    inline QHildonAppMenuPrivate(){}
     void createButtons(QList<QAction*> actions);
     void addButton(QAction* action);
 
-private:
     QGridLayout *gridLayout;
     QHash<QObject*, QAction*> buttonList;
+
+    //void _q_activateAction();
 };
 
 QT_END_NAMESPACE    
+
 #endif

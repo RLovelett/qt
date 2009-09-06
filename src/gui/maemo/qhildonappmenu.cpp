@@ -14,16 +14,18 @@
 **
 ****************************************************************************/
 #include "qhildonappmenu.h"
-#include "qhildonappmenu_p.h"//TODO Add private and copy it in include directory
+#include "private/qhildonappmenu_p.h"//TODO Add private and copy it in include directory
 
-#include "qlayout.h"
-#include "qpushbutton.h"
-#include "qaction.h"
+#include <qlayout.h>
+#include <qpushbutton.h>
+#include <qaction.h>
+
 
 QT_BEGIN_NAMESPACE
 
-
 void QHildonAppMenuPrivate::createButtons(QList<QAction*> actions){
+    Q_Q(QHildonAppMenu); //###
+
     //qDebug() << "Available actions" << actions;
     QAction *action;
     foreach(action, actions){
@@ -45,8 +47,23 @@ void QHildonAppMenuPrivate::addButton(QAction* action){
     //qDebug() << "addButton" << row << culumn;
     gridLayout->addWidget(pushButton, row, culumn);
 
-    QObject::connect(pushButton, SIGNAL(clicked()), q, SLOT(activateQAction()));
+    QObject::connect(pushButton, SIGNAL(clicked()), q, SLOT(_q_activateAction()));
 }
+
+#if 0
+void QHildonAppMenuPrivate::_q_activateAction()
+{
+    Q_Q(QHildonAppMenu);
+
+    QAction *action = buttonList[sender()];
+    //qDebug() << "activate QAction sender=" << sender();
+    if (action)
+        action->activate(QAction::Trigger);
+    else
+        qWarning("Impossible to activate the action");
+
+}
+#endif 
 
 /*!
     \class QHildonAppMenu
@@ -67,6 +84,15 @@ QHildonAppMenu::~QHildonAppMenu()
 {
 }
 
-void QHildonAppMenu::activateQAction()
+void QHildonAppMenu::_q_activateAction()
 {
+    Q_D(QHildonAppMenu);
+
+    QAction *action = d->buttonList[sender()];
+    //qDebug() << "activate QAction sender=" << sender();
+    if (action)
+        action->activate(QAction::Trigger);
+    else
+        qWarning("Impossible to activate the action");
+
 }
