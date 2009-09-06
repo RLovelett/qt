@@ -181,6 +181,9 @@ static void SetMWMHints(Display *display, Window window, const QtMWMHints &mwmhi
 static inline bool isTransient(const QWidget *w)
 {
     return ((w->windowType() == Qt::Dialog
+#ifdef Q_OS_FREMANTLE
+             || w->windowType() == Qt::HildonAppMenu
+#endif
              || w->windowType() == Qt::Sheet
              || w->windowType() == Qt::Tool
              || w->windowType() == Qt::SplashScreen
@@ -456,6 +459,9 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
     bool topLevel = (flags & Qt::Window);
     bool popup = (type == Qt::Popup);
     bool dialog = (type == Qt::Dialog
+#ifdef Q_OS_FREMANTLE
+                   || type == Qt::HildonAppMenu
+#endif
                    || type == Qt::Sheet);
     bool desktop = (type == Qt::Desktop);
     bool tool = (type == Qt::Tool || type == Qt::SplashScreen
