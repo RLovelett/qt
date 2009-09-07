@@ -81,7 +81,11 @@ void QHildonAppMenuPrivate::_q_activateAction()
     \ingroup menu
 
     \mainclass
-    Add a description here.
+    QHildoinAppMenu shows QActions in a widget like the HildonAppMenu.
+    This class should not be used by developer. It should be just for internal use.
+    
+    QHildonAppMenu shows only action that are enabled, visible and that are not 
+    separator or menu.
 */
 
 QHildonAppMenu::QHildonAppMenu(QList<QAction*> actions, QWidget *parent)
