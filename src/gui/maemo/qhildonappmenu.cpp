@@ -34,6 +34,10 @@ void QHildonAppMenuPrivate::init(){
 void QHildonAppMenuPrivate::createButtons(QList<QAction*> actions){
     QAction *action;
     foreach(action, actions){
+        if (action->isVisible() && 
+            action->isEnabled() &&
+            !action->isSeparator() &&
+            !action->menu())
         addButton(action);
     }
 }
@@ -98,7 +102,6 @@ void QHildonAppMenu::_q_activateAction()
     Q_D(QHildonAppMenu);
 
     QAction *action = d->buttonList[sender()];
-    //qDebug() << "activate QAction sender=" << sender();
     if (action){
         action->activate(QAction::Trigger);
         close();
