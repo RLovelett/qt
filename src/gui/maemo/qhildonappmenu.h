@@ -42,6 +42,7 @@ private:
     //Q_PRIVATE_SLOT(d_func(), void _q_activateAction())
 private Q_SLOTS:
     void _q_activateAction();
+    void _q_screenResized();
 };
 
 QT_END_NAMESPACE

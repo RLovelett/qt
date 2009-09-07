@@ -21,13 +21,19 @@
 #include <qaction.h>
 #include <qdebug.h>
 #include <qlayout.h>
+#include <qdesktopwidget.h>
+#include <qapplication.h>
 
 QT_BEGIN_NAMESPACE
 
 void QHildonAppMenuPrivate::init(){
     Q_Q(QHildonAppMenu);
     q->setAttribute(Qt::WA_DeleteOnClose);
-    q->resize(700, 100);
+
+    desktop = QApplication::desktop();
+    QObject::connect(desktop, SIGNAL(resized(int)), q, SLOT(_q_screenResized(int)));
+    updateSize();
+
     gridLayout = new QGridLayout(q);
     gridLayout->setSpacing(0);
 }
@@ -52,14 +58,27 @@ void QHildonAppMenuPrivate::addButton(QAction* action){
     pushButton->setText(action->text());
     buttonList.insert(pushButton, action);
     
-    culumn = ((buttonList.count() % 2) == 0) ? 1 : 0;
-    row = (buttonList.count() - culumn)/ 2;
-    
+    switch(menuMode){
+    case Landscape:
+        culumn = ((buttonList.count() % 2) == 0) ? 1 : 0;
+        row = (buttonList.count() - culumn)/ 2;
+        break;
+    case Portrait:
+        culumn = 0;
+        row = gridLayout->rowCount();
+    }
+
     gridLayout->addWidget(pushButton, row, culumn);
 
     QObject::connect(pushButton, SIGNAL(clicked()), q, SLOT(_q_activateAction()));
 }
 
+void QHildonAppMenuPrivate::updateSize(){
+    Q_Q(QHildonAppMenu);
+    int menuWidth = desktop->screenGeometry(q).width() -100;
+    q->resize(menuWidth, 100);
+    menuMode = (menuWidth > 480) ? Landscape : Portrait; 
+}
 #if 0
 void QHildonAppMenuPrivate::_q_activateAction()
 {
@@ -115,4 +134,10 @@ void QHildonAppMenu::_q_activateAction()
     }else{
         qWarning("Impossible to activate the action");
     }
+}
+void QHildonAppMenu::_q_screenResized()
+{
+    //Close the menu so that we don't care about
+    //sorting the buttons again.
+    done(1);    
 }

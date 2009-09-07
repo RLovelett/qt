@@ -23,20 +23,23 @@ QT_BEGIN_NAMESPACE
 
 class QGridLayout;
 class QAction;
+class QDesktopWidget;
 
 class QHildonAppMenuPrivate : public QDialogPrivate
 {
     Q_DECLARE_PUBLIC(QHildonAppMenu)
 public:
-
+    enum orientation { Landscape, Portrait };
     inline QHildonAppMenuPrivate(){};
     void init();
     void createButtons(QList<QAction*> actions);
     void addButton(QAction* action);
+    void updateSize();
 
     QGridLayout *gridLayout;
     QHash<QObject*, QAction*> buttonList;
-
+    QDesktopWidget * desktop; 
+    orientation menuMode; 
     //void _q_activateAction();
 };
 
