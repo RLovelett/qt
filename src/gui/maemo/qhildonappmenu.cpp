@@ -26,6 +26,7 @@ QT_BEGIN_NAMESPACE
 
 void QHildonAppMenuPrivate::init(){
     Q_Q(QHildonAppMenu);
+    q->setAttribute(Qt::WA_DeleteOnClose);
     q->resize(700, 100);
     gridLayout = new QGridLayout(q);
     gridLayout->setSpacing(0);
@@ -84,8 +85,11 @@ void QHildonAppMenuPrivate::_q_activateAction()
     QHildoinAppMenu shows QActions in a widget like the HildonAppMenu.
     This class should not be used by developer. It should be just for internal use.
     
-    QHildonAppMenu shows only action that are enabled, visible and that are not 
-    separator or menu.
+    QHildonAppMenu shows actions that are enabled and visible. 
+    Separator or menu QActions won't be shown.
+
+    The widget is destroyed as soon as a button is clicked or if the user click outside the 
+    menu.
 */
 
 QHildonAppMenu::QHildonAppMenu(QList<QAction*> actions, QWidget *parent)
@@ -98,7 +102,6 @@ QHildonAppMenu::QHildonAppMenu(QList<QAction*> actions, QWidget *parent)
 
 QHildonAppMenu::~QHildonAppMenu()
 {
-    qDebug() << "Destroyed";
 }
 
 void QHildonAppMenu::_q_activateAction()
@@ -108,7 +111,7 @@ void QHildonAppMenu::_q_activateAction()
     QAction *action = d->buttonList[sender()];
     if (action){
         action->activate(QAction::Trigger);
-        close();
+        done(0);
     }else{
         qWarning("Impossible to activate the action");
     }
