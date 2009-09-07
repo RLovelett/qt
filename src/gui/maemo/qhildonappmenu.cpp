@@ -26,16 +26,14 @@ QT_BEGIN_NAMESPACE
 
 void QHildonAppMenuPrivate::init(){
     Q_Q(QHildonAppMenu);
-    q->resize(600, 300);
+    q->resize(700, 100);
     gridLayout = new QGridLayout(q);
+    gridLayout->setSpacing(0);
 }
 
 void QHildonAppMenuPrivate::createButtons(QList<QAction*> actions){
-    qDebug() << "Available actions" << actions;
     QAction *action;
     foreach(action, actions){
-        qDebug() << "ACTION" << action;
-        qDebug() << "ACTION TEXT" << action->text();
         addButton(action);
     }
 }
@@ -45,15 +43,13 @@ void QHildonAppMenuPrivate::addButton(QAction* action){
 
     int row, culumn;
     QPushButton *pushButton = new QPushButton(q);
-    pushButton->setMinimumSize(QSize(0, 63));
+    pushButton->setMinimumSize(QSize(0, 65));
     pushButton->setText(action->text());
     buttonList.insert(pushButton, action);
     
     culumn = ((buttonList.count() % 2) == 0) ? 1 : 0;
     row = (buttonList.count() - culumn)/ 2;
     
-    
-    qDebug() << "addButton" << row << culumn;
     gridLayout->addWidget(pushButton, row, culumn);
 
     QObject::connect(pushButton, SIGNAL(clicked()), q, SLOT(_q_activateAction()));
@@ -94,6 +90,7 @@ QHildonAppMenu::QHildonAppMenu(QList<QAction*> actions, QWidget *parent)
 
 QHildonAppMenu::~QHildonAppMenu()
 {
+    qDebug() << "Destroyed";
 }
 
 void QHildonAppMenu::_q_activateAction()
@@ -102,9 +99,10 @@ void QHildonAppMenu::_q_activateAction()
 
     QAction *action = d->buttonList[sender()];
     //qDebug() << "activate QAction sender=" << sender();
-    if (action)
+    if (action){
         action->activate(QAction::Trigger);
-    else
+        close();
+    }else{
         qWarning("Impossible to activate the action");
-
+    }
 }
