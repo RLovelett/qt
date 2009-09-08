@@ -54,6 +54,7 @@
 #include <qstyle.h>
 #include <qdebug.h>
 #include <qpainter.h>
+#include <qhildonappmenu.h>
 
 #include <private/qwidget_p.h>
 #include "qtoolbar_p.h"
@@ -907,6 +908,15 @@ void QMainWindow::setDockNestingEnabled(bool enabled)
 void QMainWindow::showApplicationContextMenu(){
     Q_D(QMainWindow);
 
+#ifdef Q_OS_FREMANTLE
+    QHildonAppMenu *appMenu;
+    QList<QAction*> actionList = menuBar()->actions();
+
+    if (!actionList.isEmpty()){
+        appMenu = new QHildonAppMenu(actionList, this);
+        appMenu->show();
+    }
+#else
     static QPoint menuPos;
     static QAction *quitAction = 0;
 
@@ -971,6 +981,7 @@ void QMainWindow::showApplicationContextMenu(){
 
      d->globalMenu->exec(menuPos);
      delete static_cast<QMenu *>(d->globalMenu);
+#endif
 }
 
 void QMainWindow::toggleWindowState() {

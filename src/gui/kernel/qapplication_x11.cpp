@@ -245,7 +245,9 @@ static const char * x11_atomnames = {
     "_NET_WM_WINDOW_TYPE_DND\0"
     "_NET_WM_WINDOW_TYPE_NORMAL\0"
     "_KDE_NET_WM_WINDOW_TYPE_OVERRIDE\0"
-
+#ifdef Q_OS_FREMANTLE
+    "_HILDON_WM_WINDOW_TYPE_APP_MENU\0"
+#endif
     "_KDE_NET_WM_FRAME_STRUT\0"
 
     "_NET_STARTUP_INFO\0"
