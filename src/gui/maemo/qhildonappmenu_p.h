@@ -36,6 +36,7 @@ public:
     void addButton(QAction* action);
     void updateSize();
 
+    QAction *action;
     QGridLayout *gridLayout;
     QHash<QObject*, QAction*> buttonList;
     QDesktopWidget * desktop; 

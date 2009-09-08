@@ -123,20 +123,32 @@ QHildonAppMenu::~QHildonAppMenu()
 {
 }
 
+void QHildonAppMenu::hideEvent(QHideEvent * event)
+{
+    Q_D(QHildonAppMenu);
+    Q_UNUSED(event);
+    QAction *action = d->action;
+    if (action)
+        action->activate(QAction::Trigger);
+    done(0);
+}
+
 void QHildonAppMenu::_q_activateAction()
 {
     Q_D(QHildonAppMenu);
 
     QAction *action = d->buttonList[sender()];
     if (action){
-        action->activate(QAction::Trigger);
-        done(0);
+        d->action = action;
+        hide();
     }else{
         qWarning("Impossible to activate the action");
     }
 }
-void QHildonAppMenu::_q_screenResized()
+
+void QHildonAppMenu::_q_screenResized(int screen)
 {
+    Q_UNUSED(screen);
     //Close the menu so that we don't care about
     //sorting the buttons again.
     done(1);    

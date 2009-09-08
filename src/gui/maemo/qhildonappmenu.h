@@ -33,6 +33,7 @@ class Q_GUI_EXPORT QHildonAppMenu : public QDialog
 public:
     explicit QHildonAppMenu(QList<QAction*> actions, QWidget *parent = 0);
     virtual ~QHildonAppMenu();
+    void hideEvent(QHideEvent * event);
 
 private:
     Q_DECLARE_PRIVATE(QHildonAppMenu)
@@ -42,7 +43,7 @@ private:
     //Q_PRIVATE_SLOT(d_func(), void _q_activateAction())
 private Q_SLOTS:
     void _q_activateAction();
-    void _q_screenResized();
+    void _q_screenResized(int screen);
 };
 
 QT_END_NAMESPACE
