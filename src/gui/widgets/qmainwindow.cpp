@@ -114,6 +114,15 @@ void QMainWindowPrivate::init()
 
     q->setAttribute(Qt::WA_Hover);
 
+#ifdef Q_OS_FREMANTLE
+    int item = -1;
+    QWidget *hswParent = qobject_cast<QWidget*>(q->parent());
+    if (hswParent)
+        item = hswParent->hildonStackableWindow();
+
+    setHildonStackableWindows(item +1);
+#endif
+
 #ifdef Q_WS_HILDON
     //Binding F4 button
     QAction *showAppContextMenuAct = new QAction(q);

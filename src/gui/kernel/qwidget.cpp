@@ -10380,6 +10380,21 @@ Qt::HANDLE QWidget::handle() const
 }
 #endif
 
+#if defined (Q_WS_HILDON)
+/*!
+    Returnsint QWidget::hildonStackableWindow() const the number of the item in the Hildon Windows Stack
+ */
+int QWidget::hildonStackableWindow() const
+{
+    Q_D(const QWidget);
+
+    QWidget *mWindow = window();
+    QTLWExtra *x = mWindow->d_func()->topData();
+    Q_ASSERT(x);
+
+    return x->hildonStackableWindow;
+}
+#endif
 
 /*!
     Raises this widget to the top of the parent widget's stack.
