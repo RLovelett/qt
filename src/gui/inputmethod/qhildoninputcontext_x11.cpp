@@ -599,6 +599,8 @@ void QHildonInputContext::reset()
         sendHildonCommand(HILDON_IM_CLEAR, oldFocus);
     }
 
+    cancelPreedit();
+
     //Reset internals
     mask = 0;
     lastInternalChange = false;
@@ -1206,11 +1208,7 @@ bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
 #ifdef Q_OS_FREMANTLE
         case HILDON_IM_CONTEXT_CANCEL_PREEDIT: {
             LOGMESSAGE3(" - ", "XMessage: Cancel preedit=", preEditBuffer)
-            if (!preEditBuffer.isEmpty()) {
-                preEditBuffer.clear();
-                QInputMethodEvent e;            
-                sendEvent(e);
-            }
+            cancelPreedit();
             return true; }
         case HILDON_IM_CONTEXT_PREEDIT_MODE: {
             LOGMESSAGE3 (" - ", "Commit Mode=", "Preedit")
@@ -1400,6 +1398,18 @@ void QHildonInputContext::clearSelection()
         e.setCommitString(QString(), -selection.length(),0);
         sendEvent(e);
     }
+}
+
+void QHildonInputContext::cancelPreedit(){
+    LOGMESSAGE1("cancelPreedit");
+
+    if (preEditBuffer.isEmpty())
+        return;
+
+    preEditBuffer.clear();
+
+    QInputMethodEvent e;   
+    sendEvent(e);
 }
 
 void QHildonInputContext::sendHildonCommand(HildonIMCommand cmd, QWidget *widget)

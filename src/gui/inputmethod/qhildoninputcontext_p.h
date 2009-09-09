@@ -76,6 +76,7 @@ private:
     bool canUseIM(QWidget *w);
     void insertUtf8(int flag, const QString& text);
     void clearSelection();
+    void cancelPreedit();
 
     void sendHildonCommand(HildonIMCommand cmd, QWidget *widget=0);
     void sendX11Event(XEvent *event);
