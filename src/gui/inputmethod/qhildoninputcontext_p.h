@@ -76,6 +76,7 @@ private:
     bool canUseIM(QWidget *w);
     void insertUtf8(int flag, const QString& text);
     void clearSelection();
+    void cancelPreedit();
 
     void sendHildonCommand(HildonIMCommand cmd, QWidget *widget=0);
     void sendX11Event(XEvent *event);
@@ -88,20 +89,28 @@ private:
     void sendSurrounding(bool sendAllContents = false);
     void sendSurroundingHeader(int offset);
     void inputModeChanged();
+    void sendInputMode();
     void setClientCursorLocation(int offsetIsRelative, int cursorOffset); //FIXME?? Move offsetIsRelative to Bool?
+    
+    //
+    void setMaskState(int *mask,
+                             HildonIMInternalModifierMask lock_mask,
+                             HildonIMInternalModifierMask sticky_mask,
+                             bool was_press_and_release);
 
     //Vars
     int timerId;
     int mask;
     int options;
     HildonIMTrigger triggerMode;
-    HildonIMCommitMode commitMode;
+    HildonIMCommitMode commitMode, previousCommitMode;
     int inputMode;
     QString preEditBuffer;
     QString surrounding;
     int textCursorPosOnPress; //position of the cursor in the surrounding text at the last TabletPress event
     bool autoUpper;
     bool lastInternalChange;
+    bool spaceAfterCommit;
 };
 
 QT_END_HEADER
