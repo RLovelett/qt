@@ -646,6 +646,8 @@ bool QHildonInputContext::eventFilter(QObject *obj, QEvent *event)
         toggleHildonMainIMUi(); //showHIMMainUI();
         break;
     }
+
+#ifndef Q_OS_FREMANTLE
     case QEvent::TabletPress:{
         textCursorPosOnPress = -1;
         break;
@@ -665,20 +667,22 @@ bool QHildonInputContext::eventFilter(QObject *obj, QEvent *event)
             break;
         }
 
-#ifndef Q_OS_FREMANTLE
+
         if (te->pressure() >= PRESSURE_THRESHOLD){
             triggerMode = HILDON_IM_TRIGGER_FINGER;
         }else{
             triggerMode = HILDON_IM_TRIGGER_STYLUS;    
         }
-#else
+
         triggerMode = HILDON_IM_TRIGGER_FINGER;
-#endif
+
         inputMode = w->inputMethodQuery(Qt::ImMode).toInt();
         toggleHildonMainIMUi();
         showHIMMainUI();
         break;
     }
+#endif
+
     case QEvent::KeyPress:
     case QEvent::KeyRelease:{
         triggerMode = HILDON_IM_TRIGGER_KEYBOARD;

@@ -2480,7 +2480,11 @@ void qt_init(QApplicationPrivate *priv, int,
                         continue;
 
 #ifdef Q_WS_HILDON
+#ifdef Q_OS_FREMANTLE
+                    are_xinput_events_used = false;
+#else
                     are_xinput_events_used = true;
+#endif
 #endif
 
                     QTabletDeviceData device_data;
