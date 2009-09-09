@@ -66,7 +66,38 @@ bool qt_resolve_framebufferobject_extensions(QGLContext *ctx)
     glRenderbufferStorageMultisampleEXT =
         (_glRenderbufferStorageMultisampleEXT) ctx->getProcAddress(QLatin1String("glRenderbufferStorageMultisampleEXT"));
 
-#if !defined(QT_OPENGL_ES_2)
+
+#if defined(QT_OPENGL_ES_1) || defined(QT_OPENGL_ES_1_CL)
+    //FBO's are supported in GLES1 via an OES extension:
+    glIsRenderbuffer = (_glIsRenderbuffer) ctx->getProcAddress(QLatin1String("glIsRenderbufferOES"));
+    glBindRenderbuffer = (_glBindRenderbuffer) ctx->getProcAddress(QLatin1String("glBindRenderbufferOES"));
+    glDeleteRenderbuffers = (_glDeleteRenderbuffers) ctx->getProcAddress(QLatin1String("glDeleteRenderbuffersOES"));
+    glGenRenderbuffers = (_glGenRenderbuffers) ctx->getProcAddress(QLatin1String("glGenRenderbuffersOES"));
+    glRenderbufferStorage = (_glRenderbufferStorage) ctx->getProcAddress(QLatin1String("glRenderbufferStorageOES"));
+    glGetRenderbufferParameteriv =
+        (_glGetRenderbufferParameteriv) ctx->getProcAddress(QLatin1String("glGetRenderbufferParameterivOES"));
+    glIsFramebuffer = (_glIsFramebuffer) ctx->getProcAddress(QLatin1String("glIsFramebufferOES"));
+    glBindFramebuffer = (_glBindFramebuffer) ctx->getProcAddress(QLatin1String("glBindFramebufferOES"));
+    glDeleteFramebuffers = (_glDeleteFramebuffers) ctx->getProcAddress(QLatin1String("glDeleteFramebuffersOES"));
+    glGenFramebuffers = (_glGenFramebuffers) ctx->getProcAddress(QLatin1String("glGenFramebuffersOES"));
+    glCheckFramebufferStatus = (_glCheckFramebufferStatus) ctx->getProcAddress(QLatin1String("glCheckFramebufferStatusOES"));
+   glFramebufferTexture2D = (_glFramebufferTexture2D) ctx->getProcAddress(QLatin1String("glFramebufferTexture2DOES"));
+   glFramebufferRenderbuffer = (_glFramebufferRenderbuffer) ctx->getProcAddress(QLatin1String("glFramebufferRenderbufferOES"));
+   glGetFramebufferAttachmentParameteriv =
+        (_glGetFramebufferAttachmentParameteriv) ctx->getProcAddress(QLatin1String("glGetFramebufferAttachmentParameterivOES"));
+    glGenerateMipmap = (_glGenerateMipmap) ctx->getProcAddress(QLatin1String("glGenerateMipmapOES"));
+
+    return glIsRenderbuffer
+
+#elif !defined(QT_OPENGL_ES_2) 
+
+    //TODO: add support for GL3.x and ARB_framebuffer_object.
+    //ARB_framebuffer_object is a backport of the framebuffer object
+    //functions of GL 3.x that are core to an extension; in
+    //both 3.x and ARB_framebuffer_object, functions names do not
+    //have the suffix EXT, infact they have no suffix. Additionally
+    //MSAA, blit and packed_depth_stencil are available without
+    //checking any additional extensions.
     glIsRenderbuffer = (_glIsRenderbuffer) ctx->getProcAddress(QLatin1String("glIsRenderbufferEXT"));
     glBindRenderbuffer = (_glBindRenderbuffer) ctx->getProcAddress(QLatin1String("glBindRenderbufferEXT"));
     glDeleteRenderbuffers = (_glDeleteRenderbuffers) ctx->getProcAddress(QLatin1String("glDeleteRenderbuffersEXT"));

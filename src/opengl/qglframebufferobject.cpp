@@ -51,6 +51,33 @@
 #include <private/qpaintengine_opengl_p.h>
 #endif
 
+#ifdef QT_OPENGL_ES 
+
+//needed tokens for GL_OES_packed_depth_stencil:
+# ifndef GL_DEPTH_STENCIL_OES
+#  define GL_DEPTH_STENCIL_OES                                    0x84F9
+# endif
+# ifndef GL_UNSIGNED_INT_24_8_OES
+#  define GL_UNSIGNED_INT_24_8_OES                                0x84FA
+# endif
+# ifndef GL_DEPTH24_STENCIL8_OES
+#  define GL_DEPTH24_STENCIL8_OES                                 0x88F0
+# endif
+# ifndef GL_DEPTH_COMPONENT16
+#  define GL_DEPTH_COMPONENT16 0x81A5
+# endif
+# ifndef GL_STENCIL_INDEX8
+#  define GL_STENCIL_INDEX8 0x8D48
+# endif
+# ifndef GL_STENCIL_ATTACHMENT
+#  define GL_STENCIL_ATTACHMENT 0x8D20
+# endif
+# ifndef GL_DEPTH_ATTACHMENT
+#  define GL_DEPTH_ATTACHMENT 0x8D00
+# endif
+
+#endif
+
 #include <qglframebufferobject.h>
 #include <qlibrary.h>
 #include <qimage.h>
@@ -273,14 +300,29 @@ void QGLFramebufferObjectFormat::setInternalTextureFormat(QMacCompatGLenum inter
 class QGLFramebufferObjectPrivate
 {
 public:
-    QGLFramebufferObjectPrivate() : depth_stencil_buffer(0), valid(false), ctx(0), previous_fbo(0), engine(0) {}
-    ~QGLFramebufferObjectPrivate() {}
+    QGLFramebufferObjectPrivate() : 
+#if  defined(QT_OPENGL_ES)
+      stencil_only_buffer(0), 
+      depth_only_buffer(0),
+#endif
+      depth_stencil_buffer(0), 
+      valid(false), 
+      ctx(0), 
+      previous_fbo(0), 
+      engine(0) {}
+   
+  ~QGLFramebufferObjectPrivate() {}
 
     void init(const QSize& sz, QGLFramebufferObject::Attachment attachment,
               GLenum internal_format, GLenum texture_target, GLint samples = 0);
     bool checkFramebufferStatus() const;
     GLuint texture;
     GLuint fbo;
+
+#if  defined(QT_OPENGL_ES)
+    GLuint stencil_only_buffer, depth_only_buffer;
+#endif
+
     GLuint depth_stencil_buffer;
     GLuint color_buffer;
     GLenum target;
@@ -295,6 +337,33 @@ public:
 
 bool QGLFramebufferObjectPrivate::checkFramebufferStatus() const
 {
+#ifdef QT_OPENGL_ES    
+    GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    switch(status) {
+    case GL_NO_ERROR:
+    case GL_FRAMEBUFFER_COMPLETE:
+        return true;
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+        printf("QGLFramebufferObject: Framebuffer incomplete attachment.");
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+        printf("QGLFramebufferObject: Framebuffer incomplete, missing attachment.");
+        break;
+    case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
+        printf("QGLFramebufferObject: Framebuffer incomplete, attached images must have same dimensions.");        
+        break;
+    case GL_FRAMEBUFFER_UNSUPPORTED:
+        printf("QGLFramebufferObject: Unsupported framebuffer format.");
+        break;
+        
+    default:
+        qDebug() <<"QGLFramebufferObject: An undefined error has occurred: "<< status;
+        break;
+
+        
+    }
+#else    
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER_EXT);
     switch(status) {
     case GL_NO_ERROR:
@@ -334,6 +403,8 @@ bool QGLFramebufferObjectPrivate::checkFramebufferStatus() const
         qDebug() <<"QGLFramebufferObject: An undefined error has occurred: "<< status;
         break;
     }
+#endif
+
     return false;
 }
 
@@ -350,6 +421,132 @@ void QGLFramebufferObjectPrivate::init(const QSize &sz, QGLFramebufferObject::At
     // texture dimensions
 
     while (glGetError() != GL_NO_ERROR) {} // reset error state
+
+#ifdef QT_OPENGL_ES
+    
+    //for now ignore samples, and just pretend it is zero, i.e.
+    //no multisampling as FBO MSAA support is not in GLES2 spec.
+    samples=0;
+    
+    //generate the FBO:
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    QT_CHECK_GLERROR();
+    
+    texture=0;
+    
+    //generate color texture:
+    glGenTextures(1, &texture);
+    glBindTexture(target, texture);
+    glTexImage2D(target, 0, internal_format, size.width(), size.height(), 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    
+    //no filtering:             
+    glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);             
+
+    //attatch the new texture to the FBO as the 0th color image:
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,target, texture, 0);
+    
+    QT_CHECK_GLERROR();
+    
+    //now attatch depth and stencil buffers (optional).
+    stencil_only_buffer=0;
+    depth_stencil_buffer=0;
+    depth_only_buffer=0;
+    
+    if (attachment == QGLFramebufferObject::CombinedDepthStencil) {
+         
+        if(QGLExtensions::glExtensions & QGLExtensions::PackedDepthStencil) {
+            //use GL_OES_packed_depth_stencil for packed depth and stencil buffers
+            glGenTextures(1, &depth_stencil_buffer);
+            glBindTexture(GL_TEXTURE_2D, depth_stencil_buffer);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glTexImage2D(GL_TEXTURE_2D, 0, 
+                         GL_DEPTH_STENCIL_OES, 
+                         size.width(), size.height(),
+                         0,
+                         GL_DEPTH_STENCIL_OES,
+                         GL_UNSIGNED_INT_24_8_OES, NULL);
+                         
+            glFramebufferTexture2D(GL_FRAMEBUFFER,
+                                   GL_DEPTH_ATTACHMENT,
+                                   GL_TEXTURE_2D, depth_stencil_buffer, 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER,
+                                   GL_STENCIL_ATTACHMENT,
+                                   GL_TEXTURE_2D, depth_stencil_buffer, 0);
+
+            
+            
+            fbo_attachment = QGLFramebufferObject::CombinedDepthStencil;
+        }
+        else
+        {
+            //attatch a seperate render buffer for depth and stencil:
+            
+            //depth:
+            glGenRenderbuffers(1, &depth_only_buffer);
+            glBindRenderbuffer(GL_RENDERBUFFER, depth_only_buffer);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size.width(), size.height());
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                      GL_RENDERBUFFER, depth_only_buffer);
+                
+            //stencil:                          
+            glGenRenderbuffers(1, &stencil_only_buffer);
+            glBindRenderbuffer(GL_RENDERBUFFER, stencil_only_buffer);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, size.width(), size.height());
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                      GL_RENDERBUFFER, stencil_only_buffer);
+                                      
+            fbo_attachment = QGLFramebufferObject::CombinedDepthStencil;
+            
+        }
+
+    }
+    else if (attachment == QGLFramebufferObject::Depth) {
+        glGenRenderbuffers(1, &depth_only_buffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, depth_only_buffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, size.width(), size.height());
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, depth_only_buffer);
+        fbo_attachment = QGLFramebufferObject::Depth;
+    }
+    else {
+        fbo_attachment = QGLFramebufferObject::NoAttachment;
+    }
+    
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    
+    valid = checkFramebufferStatus();
+    glBindFramebuffer(GL_FRAMEBUFFER, ctx->d_ptr->current_fbo);
+    if (!valid) {
+        if(depth_stencil_buffer) 
+            glDeleteTextures(1, &depth_stencil_buffer);
+        
+        if(stencil_only_buffer) 
+            glDeleteRenderbuffers(1, &stencil_only_buffer); 
+        
+        if(depth_only_buffer) 
+            glDeleteRenderbuffers(1, &depth_only_buffer);  
+            
+        if(texture) 
+            glDeleteTextures(1, &texture); 
+            
+        glDeleteFramebuffers(1, &fbo);
+        
+        depth_stencil_buffer=stencil_only_buffer=texture=0;
+    }
+    
+    
+#else    
+    
+
+
     glGenFramebuffers(1, &fbo);
     glBindFramebuffer(GL_FRAMEBUFFER_EXT, fbo);
 
@@ -360,17 +557,12 @@ void QGLFramebufferObjectPrivate::init(const QSize &sz, QGLFramebufferObject::At
         glBindTexture(target, texture);
         glTexImage2D(target, 0, internal_format, size.width(), size.height(), 0,
                 GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-#ifndef QT_OPENGL_ES
+
         glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#else
-        glTexParameterf(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameterf(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameterf(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameterf(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#endif
+
         glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
                 target, texture, 0);
 
@@ -438,21 +630,11 @@ void QGLFramebufferObjectPrivate::init(const QSize &sz, QGLFramebufferObject::At
         glBindRenderbuffer(GL_RENDERBUFFER_EXT, depth_stencil_buffer);
         Q_ASSERT(glIsRenderbuffer(depth_stencil_buffer));
         if (samples != 0 && glRenderbufferStorageMultisampleEXT) {
-#ifdef QT_OPENGL_ES
-#define GL_DEPTH_COMPONENT16 0x81A5
-            glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples,
-                GL_DEPTH_COMPONENT16, size.width(), size.height());
-#else
+
             glRenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samples,
                 GL_DEPTH_COMPONENT, size.width(), size.height());
-#endif
         } else {
-#ifdef QT_OPENGL_ES
-#define GL_DEPTH_COMPONENT16 0x81A5
-            glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT16, size.width(), size.height());
-#else
             glRenderbufferStorage(GL_RENDERBUFFER_EXT, GL_DEPTH_COMPONENT, size.width(), size.height());
-#endif
         }
         GLint i = 0;
         glGetRenderbufferParameteriv(GL_RENDERBUFFER_EXT, GL_RENDERBUFFER_DEPTH_SIZE_EXT, &i);
@@ -474,6 +656,8 @@ void QGLFramebufferObjectPrivate::init(const QSize &sz, QGLFramebufferObject::At
             glDeleteTextures(1, &texture);
         glDeleteFramebuffers(1, &fbo);
     }
+#endif
+
     QT_CHECK_GLERROR();
 
     format.setTextureTarget(target);

@@ -4585,15 +4585,12 @@ void QGLExtensions::init_extensions()
     if (extensions.contains(QLatin1String("ARB_fragment_program")))
         glExtensions |= FragmentProgram;
     if (extensions.contains(QLatin1String("mirrored_repeat")))
-        glExtensions |= MirroredRepeat;
-    if (extensions.contains(QLatin1String("EXT_framebuffer_object")))
-        glExtensions |= FramebufferObject;
+        glExtensions |= MirroredRepeat;   
     if (extensions.contains(QLatin1String("EXT_stencil_two_side")))
         glExtensions |= StencilTwoSide;
     if (extensions.contains(QLatin1String("EXT_stencil_wrap")))
         glExtensions |= StencilWrap;
-    if (extensions.contains(QLatin1String("EXT_packed_depth_stencil")))
-        glExtensions |= PackedDepthStencil;
+   
     if (extensions.contains(QLatin1String("GL_NV_float_buffer")))
         glExtensions |= NVFloatBuffer;
     if (extensions.contains(QLatin1String("ARB_pixel_buffer_object")))
@@ -4602,8 +4599,31 @@ void QGLExtensions::init_extensions()
     glExtensions |= FramebufferObject;
     glExtensions |= GenerateMipmap;
 #endif
+
+#if defined(QT_OPENGL_ES_1) || defined(QT_OPENGL_ES_1_CL)
+    if (extensions.contains(QLatin1String("OES_framebuffer_object")))
+        glExtensions |= FramebufferObject;
+#endif
+
+#if defined(QT_OPENGL_ES)
+    if (extensions.contains(QLatin1String("OES_packed_depth_stencil")))
+        glExtensions |= PackedDepthStencil;
+#endif  
+
+    //TODO: add support for GL3.x and ARB_framebuffer_object.
+    //ARB_framebuffer_object is a backport of the framebuffer object
+    //functions of GL 3.x that are core to an extension; in
+    //both 3.x and ARB_framebuffer_object, functions names do not
+    //have the suffix EXT, infact they have no suffix. Additionally
+    //MSAA, blit and packed_depth_stencil are available without
+    //checking any additional extensions.
+    if (extensions.contains(QLatin1String("EXT_framebuffer_object")))
+        glExtensions |= FramebufferObject;
     if (extensions.contains(QLatin1String("EXT_framebuffer_blit")))
         glExtensions |= FramebufferBlit;
+    if (extensions.contains(QLatin1String("EXT_packed_depth_stencil")))
+        glExtensions |= PackedDepthStencil;
+
 
     if (extensions.contains(QLatin1String("GL_ARB_texture_non_power_of_two")))
         glExtensions |= NPOTTextures;
