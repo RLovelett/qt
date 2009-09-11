@@ -1577,7 +1577,7 @@ void QHildonInputContext::sendSurrounding(bool sendAllContents)
         QPlainTextEdit *pte = qobject_cast<QPlainTextEdit*>(w);
 
         if (te){
-            surrounding = te->text();
+            surrounding = te->toPlainText();
             cpos = te->textCursor().position();      
         }else if (pte){
             surrounding = pte->toPlainText();
