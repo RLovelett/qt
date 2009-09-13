@@ -92,11 +92,6 @@ bool qt_priv_ptr_valid = false;
 #endif
 
 
-// Don't remove the lines below!
-//
-// resolving the W methods manually is needed, because Windows 95 doesn't include
-// these methods in Shell32.lib (not even stubs!), so you'd get an unresolved symbol
-// when Qt calls getExistingDirectory(), etc.
 typedef LPITEMIDLIST (WINAPI *PtrSHBrowseForFolder)(BROWSEINFO*);
 static PtrSHBrowseForFolder ptrSHBrowseForFolder = 0;
 typedef BOOL (WINAPI *PtrSHGetPathFromIDList)(LPITEMIDLIST,LPWSTR);
@@ -132,7 +127,7 @@ static void qt_win_resolve_libs()
         ptrSHGetMalloc = (PtrSHGetMalloc) lib.resolve("SHGetMalloc");
 #else
         // CE stores them in a different lib and does not use unicode version
-        HINSTANCE handle = LoadLibraryW(L"Ceshell");
+        HINSTANCE handle = LoadLibrary(L"Ceshell");
         ptrSHBrowseForFolder = (PtrSHBrowseForFolder)GetProcAddress(handle, L"SHBrowseForFolder");
         ptrSHGetPathFromIDList = (PtrSHGetPathFromIDList)GetProcAddress(handle, L"SHGetPathFromIDList");
         ptrSHGetMalloc = (PtrSHGetMalloc)GetProcAddress(handle, L"SHGetMalloc");
