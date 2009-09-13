@@ -58,6 +58,9 @@
 
 #undef signals // Collides with GTK stymbols
 #include <gtk/gtk.h>
+#ifdef Q_WS_HILDON
+#  include <hildon/hildon-file-chooser-dialog.h>
+#endif
 #include <QtCore/QLibrary>
 #include <QtGui/QFont>
 #include <QtGui/QFileDialog>
@@ -180,7 +183,12 @@ typedef gint (*Ptr_gtk_dialog_run) (GtkDialog*);
 #ifdef Q_WS_HILDON
 typedef GtkWidget* (*Ptr_hildon_file_chooser_dialog_new)(GtkWindow *parent,
                                                          GtkFileChooserAction action);
-
+typedef void (*Ptr_hildon_file_chooser_dialog_set_extension)(HildonFileChooserDialog *self,
+                                                             const gchar *extension);
+typedef GtkWidget* (*Ptr_hildon_file_chooser_dialog_add_extensions_combo)
+                                                        (HildonFileChooserDialog *self,
+                                                         char **extensions,
+                                                         char **ext_names);
 #endif
 typedef guchar* (*Ptr_gdk_pixbuf_get_pixels) (const GdkPixbuf *pixbuf);
 typedef int (*Ptr_gdk_pixbuf_get_width) (const GdkPixbuf *pixbuf);
@@ -328,6 +336,8 @@ public:
     static Ptr_gtk_file_chooser_set_filename gtk_file_chooser_set_filename;
 #ifdef Q_WS_HILDON
     static Ptr_hildon_file_chooser_dialog_new hildon_file_chooser_dialog_new;
+    static Ptr_hildon_file_chooser_dialog_set_extension hildon_file_chooser_dialog_set_extension;
+    static Ptr_hildon_file_chooser_dialog_add_extensions_combo hildon_file_chooser_dialog_add_extensions_combo;
 #endif
 
     static Ptr_gdk_pixbuf_get_pixels gdk_pixbuf_get_pixels;

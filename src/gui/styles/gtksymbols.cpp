@@ -178,6 +178,8 @@ Ptr_gtk_dialog_run QGtk::gtk_dialog_run = 0;
 Ptr_gtk_file_chooser_set_filename QGtk::gtk_file_chooser_set_filename = 0;
 #ifdef Q_WS_HILDON
 Ptr_hildon_file_chooser_dialog_new QGtk::hildon_file_chooser_dialog_new = 0;
+Ptr_hildon_file_chooser_dialog_set_extension QGtk::hildon_file_chooser_dialog_set_extension = 0;
+Ptr_hildon_file_chooser_dialog_add_extensions_combo QGtk::hildon_file_chooser_dialog_add_extensions_combo = 0;
 #endif
 
 Ptr_gdk_pixbuf_get_pixels QGtk::gdk_pixbuf_get_pixels = 0;
@@ -245,6 +247,8 @@ static void resolveGtk()
     QGtk::gtk_file_chooser_set_filename = (Ptr_gtk_file_chooser_set_filename)QLibrary::resolve(GTK_PATH, 0, "gtk_file_chooser_set_filename");
 #ifdef Q_WS_HILDON
     QGtk::hildon_file_chooser_dialog_new = (Ptr_hildon_file_chooser_dialog_new)QLibrary::resolve(HILDONFM_PATH, 2, "hildon_file_chooser_dialog_new");
+    QGtk::hildon_file_chooser_dialog_set_extension = (Ptr_hildon_file_chooser_dialog_set_extension)QLibrary::resolve(HILDONFM_PATH, 2, "hildon_file_chooser_dialog_set_extension");
+    QGtk::hildon_file_chooser_dialog_add_extensions_combo = (Ptr_hildon_file_chooser_dialog_add_extensions_combo)QLibrary::resolve(HILDONFM_PATH, 2, "hildon_file_chooser_dialog_add_extensions_combo");
 #endif
 
     QGtk::gdk_pixbuf_get_pixels = (Ptr_gdk_pixbuf_get_pixels)QLibrary::resolve(GTK_PATH, 0, "gdk_pixbuf_get_pixels");
@@ -780,6 +784,48 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
     g_object_set(gtkFileChooser, "local_only", gboolean(true), NULL);
     if (!filter.isEmpty()) {
         QStringList filters = qt_make_filter_list(filter);
+        
+#ifdef Q_WS_HILDON
+        if (isSaveDialog) {
+            const int Nfilters = filters.count();
+            char *ext_names[Nfilters];
+            char *extensions[Nfilters];
+
+            for (int i = 0; i < Nfilters; i++) {
+                const QString &rawfilter = filters[i];
+                QString name = rawfilter.left(rawfilter.indexOf(QLatin1Char('(')));
+                QString extension = extract_filter(rawfilter)[0].remove("*.");
+                //Doesn't make sense adding '*' extension in a save dialog;
+                if (extension.compare("*") == 0)
+                    qWarning("'*' is not a valid extension for a save dialog");
+                ext_names[i]= (char*) malloc(name.count()+1);
+                memcpy(ext_names[i], qPrintable(name), name.count());
+                extensions[i]= (char*) malloc(extension.count()+1);
+                memcpy(extensions[i], qPrintable(extension), extension.count());
+            }
+            ext_names[Nfilters] = NULL;
+            extensions[Nfilters] = NULL;
+
+            GtkWidget* gtkExtensionCombo;
+            gtkExtensionCombo = QGtk::hildon_file_chooser_dialog_add_extensions_combo((HildonFileChooserDialog*)(gtkFileChooser),
+                                                                                 extensions,ext_names);
+            //gtk_signal_connect (GTK_OBJECT(gtkExtensionCombo), "changed",
+            //                    GTK_SIGNAL_FUNC (qt_update_file_filter), NULL);
+        }else{
+            //Set "*.ext" filters in the open file dialogs. There we don't have a combobox to select a filter. :( 
+            //TODO the combobox in the HildonFileChooserDialog doesn't change the filter automatically. We have to se it
+            //in Qt..
+            GtkFileFilter *gtkFilter = QGtk::gtk_file_filter_new ();
+            foreach (const QString &rawfilter, filters) {
+                QStringList extensions = extract_filter(rawfilter);
+                foreach (const QString &fileExtension, extensions) {
+                    QGtk::gtk_file_filter_add_pattern (gtkFilter, qPrintable(fileExtension));
+                }
+            }
+            g_object_set(gtkFileChooser, "filter", gtkFilter, NULL);
+        }
+   
+#else
         foreach (const QString &rawfilter, filters) {
             GtkFileFilter *gtkFilter = QGtk::gtk_file_filter_new ();
             QString name = rawfilter.left(rawfilter.indexOf(QLatin1Char('(')));
@@ -793,6 +839,7 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
             if (selectedFilter && (rawfilter == *selectedFilter))
                 QGtk::gtk_file_chooser_set_filter((GtkFileChooser*)gtkFileChooser, gtkFilter);
         }
+#endif
     }
 
     // Using the currently active window is not entirely correct, however
@@ -825,7 +872,7 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
         QGtk::gtk_file_chooser_set_filename((GtkFileChooser*)gtkFileChooser, qPrintable(dir));
     }
 }
-#include <QDebug>
+
 QString QGtk::openFilename(QWidget *parent, const QString &caption, const QString &dir, const QString &filter,
                             QString *selectedFilter, QFileDialog::Options options)
 {
@@ -862,10 +909,8 @@ QString QGtk::openFilename(QWidget *parent, const QString &caption, const QStrin
 
 }
 
-
 QString QGtk::openDirectory(QWidget *parent, const QString &caption, const QString &dir, QFileDialog::Options options)
 {
- qDebug() << "DIR" << dir;
 #ifdef Q_WS_HILDON
     GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);  
 #else
@@ -939,9 +984,6 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
 QString QGtk::saveFilename(QWidget *parent, const QString &caption, const QString &dir, const QString &filter,
                            QString *selectedFilter, QFileDialog::Options options)
 {
-    qDebug() << "DIR" << dir
-             << "filter" << filter
-             << "selected filter" << selectedFilter;
 #ifdef Q_WS_HILDON
     GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_SAVE);  
 #else
