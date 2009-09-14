@@ -1471,9 +1471,10 @@ void QColorDialogPrivate::init(const QColor &initial)
     ok = buttons->addButton(QDialogButtonBox::Ok);
     QObject::connect(ok, SIGNAL(clicked()), q, SLOT(accept()));
     ok->setDefault(true);
+#ifndef Q_OS_FREMANTLE
     cancel = buttons->addButton(QDialogButtonBox::Cancel);
     QObject::connect(cancel, SIGNAL(clicked()), q, SLOT(reject()));
-
+#endif
     retranslateStrings();
 
 #ifdef Q_WS_MAC
