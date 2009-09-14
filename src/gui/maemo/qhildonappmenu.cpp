@@ -19,7 +19,6 @@
 #include <qlayout.h>
 #include <qpushbutton.h>
 #include <qaction.h>
-#include <qdebug.h>
 #include <qlayout.h>
 #include <qdesktopwidget.h>
 #include <qapplication.h>
@@ -29,6 +28,7 @@ QT_BEGIN_NAMESPACE
 void QHildonAppMenuPrivate::init(){
     Q_Q(QHildonAppMenu);
     q->setAttribute(Qt::WA_DeleteOnClose);
+    action = 0;
 
     desktop = QApplication::desktop();
     QObject::connect(desktop, SIGNAL(resized(int)), q, SLOT(_q_screenResized(int)));
