@@ -122,6 +122,10 @@ int QHildonStyle::pixelMetric(PixelMetric metric,
    
    switch (metric) {
     //coordinate of the Application Context Menu upper left corner.
+    case PM_DialogButtonsButtonHeight:
+        return 65;
+    case PM_DialogButtonsButtonWidth:
+        return 180;
     case PM_MenuOffsetHorizontal:
     {
         GtkWidget *gtkMenu = QGtk::gtkWidget("menu_force_with_corners");

@@ -47,6 +47,8 @@
 #include <QtGui/qapplication.h>
 #include <QtGui/private/qwidget_p.h>
 
+#include <QtGui/qstyleoption.h>
+
 #include "qdialogbuttonbox.h"
 
 QT_BEGIN_NAMESPACE
@@ -514,11 +516,13 @@ QPushButton *QDialogButtonBoxPrivate::createButton(QDialogButtonBox::StandardBut
     }
     buttonText = standardButtonText(sbutton);
     QPushButton *button = new QPushButton(QDialogButtonBox::tr(buttonText), q);
-#ifdef Q_OS_FREMANTLE
-    //Hardcoding minimum button size for dialogs:(
-    button->setMinimumSize(180, 65);
-#endif
+
     QStyle *style = q->style();
+#ifdef Q_OS_FREMANTLE
+    QStyleOption opt;
+    button->setMinimumSize(style->pixelMetric(QStyle::PM_DialogButtonsButtonWidth, &opt, q),
+                           style->pixelMetric(QStyle::PM_DialogButtonsButtonHeight, &opt, q));
+#endif
     if (style->styleHint(QStyle::SH_DialogButtonBox_ButtonsHaveIcons, 0, q) && icon != 0)
         button->setIcon(style->standardIcon(QStyle::StandardPixmap(icon), 0, q));
     if (style != QApplication::style()) // Propagate style
@@ -943,9 +947,11 @@ QPushButton *QDialogButtonBox::addButton(const QString &text, ButtonRole role)
         return 0;
     }
     QPushButton *button = new QPushButton(text, this);
+
 #ifdef Q_OS_FREMANTLE
-    //Hardcoding minimum button size for dialogs:(
-    button->setMinimumSize(180, 65);
+    QStyleOption opt;
+    button->setMinimumSize(style()->pixelMetric(QStyle::PM_DialogButtonsButtonWidth, &opt, this),
+                           style()->pixelMetric(QStyle::PM_DialogButtonsButtonHeight, &opt, this));
 #endif
     d->addButton(button, role);
     return button;
