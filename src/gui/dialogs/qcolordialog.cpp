@@ -63,6 +63,9 @@
 #include "qspinbox.h"
 #include "qdialogbuttonbox.h"
 
+#ifdef Q_OS_FREMANTLE
+#define QT_NO_DRAGANDDROP
+#endif
 QT_BEGIN_NAMESPACE
 
 //////////// QWellArray BEGIN
@@ -1151,6 +1154,22 @@ QColorShower::QColorShower(QColorDialog *parent)
     connect(alphaEd, SIGNAL(valueChanged(int)), this, SLOT(rgbEd()));
 
     retranslateStrings();
+#ifdef Q_WS_HILDON
+    //Hugly but less invasive than flagging too much stuff.
+    hEd->hide();
+    sEd->hide();
+    vEd->hide();
+    lblHue->hide();
+    lblSat->hide();
+    lblVal->hide();
+
+    rEd->hide();
+    gEd->hide();
+    bEd->hide();
+    lblRed->hide();
+    lblGreen->hide();
+    lblBlue->hide();
+#endif
 }
 
 inline QRgb QColorDialogPrivate::currentColor() const { return cs->currentColor(); }
@@ -1360,7 +1379,12 @@ void QColorDialogPrivate::init(const QColor &initial)
     q->setWindowTitle(QColorDialog::tr("Select Color"));
 
     nextCust = 0;
+
+#ifdef Q_OS_FREMANTLE
+    QHBoxLayout *mainLay = new QHBoxLayout(q);
+#else
     QVBoxLayout *mainLay = new QVBoxLayout(q);
+#endif
     // there's nothing in this dialog that benefits from sizing up
     mainLay->setSizeConstraint(QLayout::SetFixedSize);
 
@@ -1466,7 +1490,16 @@ void QColorDialogPrivate::init(const QColor &initial)
     rightLay->addWidget(cs);
 
     buttons = new QDialogButtonBox(q);
+#ifdef Q_OS_FREMANTLE
+    QVBoxLayout *buttonsLay = new QVBoxLayout;
+    buttonsLay->addStretch();
+    buttonsLay->addWidget(buttons);
+    mainLay->addLayout(buttonsLay);
+    
+#else
     mainLay->addWidget(buttons);
+#endif
+    
 
     ok = buttons->addButton(QDialogButtonBox::Ok);
     QObject::connect(ok, SIGNAL(clicked()), q, SLOT(accept()));
