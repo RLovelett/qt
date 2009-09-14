@@ -513,8 +513,11 @@ QPushButton *QDialogButtonBoxPrivate::createButton(QDialogButtonBox::StandardBut
         ;
     }
     buttonText = standardButtonText(sbutton);
-
     QPushButton *button = new QPushButton(QDialogButtonBox::tr(buttonText), q);
+#ifdef Q_OS_FREMANTLE
+    //Hardcoding minimum button size for dialogs:(
+    button->setMinimumSize(180, 65);
+#endif
     QStyle *style = q->style();
     if (style->styleHint(QStyle::SH_DialogButtonBox_ButtonsHaveIcons, 0, q) && icon != 0)
         button->setIcon(style->standardIcon(QStyle::StandardPixmap(icon), 0, q));
@@ -940,6 +943,10 @@ QPushButton *QDialogButtonBox::addButton(const QString &text, ButtonRole role)
         return 0;
     }
     QPushButton *button = new QPushButton(text, this);
+#ifdef Q_OS_FREMANTLE
+    //Hardcoding minimum button size for dialogs:(
+    button->setMinimumSize(180, 65);
+#endif
     d->addButton(button, role);
     return button;
 }
