@@ -194,7 +194,11 @@ public:
     mutable QComboBox *comboBox;
     mutable QListView *listView;
     mutable QWidget *inputWidget;
+#ifndef Q_OS_FREMANTLE
     mutable QVBoxLayout *mainLayout;
+#else
+    mutable QGridLayout *mainLayout;
+#endif
     QInputDialog::InputDialogOptions opts;
     QString textValue;
     QPointer<QObject> receiverToDisconnectOnClose;
@@ -226,6 +230,7 @@ void QInputDialogPrivate::ensureLayout()
 #endif
     label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
+#ifndef Q_OS_FREMANTLE
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, q);
     QObject::connect(buttonBox, SIGNAL(accepted()), q, SLOT(accept()));
     QObject::connect(buttonBox, SIGNAL(rejected()), q, SLOT(reject()));
@@ -235,6 +240,15 @@ void QInputDialogPrivate::ensureLayout()
     mainLayout->addWidget(label);
     mainLayout->addWidget(inputWidget);
     mainLayout->addWidget(buttonBox);
+#else
+    buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Vertical, q);
+    QObject::connect(buttonBox, SIGNAL(accepted()), q, SLOT(accept()));
+
+    mainLayout = new QGridLayout(q);
+    mainLayout->addWidget(label,0,0);
+    mainLayout->addWidget(inputWidget,1,0);
+    mainLayout->addWidget(buttonBox,2,1);
+#endif    
     ensureEnabledConnection(qobject_cast<QAbstractSpinBox *>(inputWidget));
     inputWidget->show();
 }
@@ -322,7 +336,11 @@ void QInputDialogPrivate::setInputWidget(QWidget *widget)
         Q_ASSERT(inputWidget);
         mainLayout->removeWidget(inputWidget);
         inputWidget->hide();
+#ifndef Q_OS_FREMANTLE
         mainLayout->insertWidget(1, widget);
+#else
+        mainLayout->addWidget(widget, 1, 0);
+#endif
         widget->show();
 
         // disconnect old input widget
