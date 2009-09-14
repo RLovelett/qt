@@ -245,9 +245,10 @@ void QInputDialogPrivate::ensureLayout()
     QObject::connect(buttonBox, SIGNAL(accepted()), q, SLOT(accept()));
 
     mainLayout = new QGridLayout(q);
+    mainLayout->setHorizontalSpacing(20);
     mainLayout->addWidget(label,0,0);
     mainLayout->addWidget(inputWidget,1,0);
-    mainLayout->addWidget(buttonBox,2,1);
+    mainLayout->addWidget(buttonBox,1,1);
 #endif    
     ensureEnabledConnection(qobject_cast<QAbstractSpinBox *>(inputWidget));
     inputWidget->show();
