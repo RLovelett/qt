@@ -59,7 +59,7 @@
 #undef signals // Collides with GTK stymbols
 #include <gtk/gtk.h>
 #ifdef Q_WS_HILDON
-#  include <hildon/hildon-file-chooser-dialog.h>
+#  include <hildon-fm-2/hildon/hildon-file-chooser-dialog.h>
 #endif
 #include <QtCore/QLibrary>
 #include <QtGui/QFont>
