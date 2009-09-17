@@ -57,6 +57,28 @@ sub Usage() {
     exit();
 }
 
+sub GetUids($) {
+    my ($binaryPath) = @_;
+    open ELFTRANPIPE, "elftran -dump h $binaryPath |";
+    my ($sid, $uid3);
+    while (<ELFTRANPIPE>) {
+        $sid = $1 if $_ =~ /^Secure ID:\s+([0-9a-f]+)/;
+        $uid3 = $1 if $_ =~ /^Uids:\s+[0-9a-f]+\s+[0-9a-f]+\s+([0-9a-f]+)/;
+    }
+    close ELFTRANPIPE;
+    $sid =~ tr/ \n\r//d;
+    $uid3 =~ tr/ \n\r//d;
+
+    return ($sid, $uid3);
+}
+
+my $devNull = "";
+if ($^O eq "MSWin32") {
+    $devNull = " > NUL";
+} elsif ($^O eq "linux") {
+    $devNull = " > /dev/null";
+}
+
 my @capabilitiesToSet = ("LocalServices", "NetworkServices", "ReadUserData", "UserEnvironment", "WriteUserData");
 
 # If arguments were given to the script,
@@ -163,10 +185,17 @@ if (@ARGV)
         {
             # Create the command line for setting the capabilities.
             my $commandToExecute = $baseCommandToExecute;
+
+            # Also patch SID/UID3 to match the "Development" range
+            my ($sid, $uid3) = GetUids($binaryPath);
+            $sid =~ s/^./0xe/;
+            $uid3 =~ s/^./0xe/;
+            $commandToExecute .= "-sid $sid -uid3 $uid3 ";
+
             $commandToExecute .= $binaryPath;
 
             # Actually execute the elftran command to set the capabilities.
-            system ($commandToExecute." > NUL");
+            system ($commandToExecute . $devNull);
             print ("Executed ".$commandToExecute."\n");
 
             ## Create another command line to check that the set capabilities are correct.
