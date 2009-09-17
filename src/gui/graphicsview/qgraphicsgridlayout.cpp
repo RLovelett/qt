@@ -155,7 +155,7 @@ void QGraphicsGridLayout::addItem(QGraphicsLayoutItem *item, int row, int column
 	return;
     }
 
-    d->addChildLayoutItem(item);
+    QGraphicsLayout::addLayoutItem(item);
 
     new QGridLayoutItem(&d->engine, item, row, column, rowSpan, columnSpan, alignment);
     invalidate();

@@ -1079,12 +1079,12 @@ QGraphicsAnchor *QGraphicsAnchorLayoutPrivate::anchor(QGraphicsLayoutItem *first
     if (firstItem != q && !items.contains(firstItem)) {
         restoreSimplifiedGraph(edgeOrientation(firstEdge) == Horizontal ? Vertical : Horizontal);
         createItemEdges(firstItem);
-        addChildLayoutItem(firstItem);
+        q->addLayoutItem(firstItem);
     }
     if (secondItem != q && !items.contains(secondItem)) {
         restoreSimplifiedGraph(edgeOrientation(firstEdge) == Horizontal ? Vertical : Horizontal);
         createItemEdges(secondItem);
-        addChildLayoutItem(secondItem);
+        q->addLayoutItem(secondItem);
     }
 
     // Create center edges if needed

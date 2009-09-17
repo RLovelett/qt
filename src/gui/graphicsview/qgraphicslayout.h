@@ -75,6 +75,7 @@ public:
     virtual int count() const = 0;
     virtual QGraphicsLayoutItem *itemAt(int i) const = 0;
     virtual void removeAt(int index) = 0;
+    virtual void addLayoutItem(QGraphicsLayoutItem *layoutItem);
 
 protected:
     QGraphicsLayout(QGraphicsLayoutPrivate &, QGraphicsLayoutItem *);

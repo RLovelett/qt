@@ -416,8 +416,29 @@ void QGraphicsLayout::widgetEvent(QEvent *e)
 
     The subclass is free to decide how to store the items.
 
-    \sa itemAt(), count()
+    \sa itemAt(), count(), addLayoutItem()
 */
+
+/*!
+    This function is called from subclasses to add a layout item \a layoutItem
+    to a layout. It takes care of automatically reparenting graphics items, if
+    needed.
+
+    If \a layoutItem is a is already in a layout, it will remove it from that layout.
+
+    \sa removeAt()
+*/
+void QGraphicsLayout::addLayoutItem(QGraphicsLayoutItem *layoutItem)
+{
+    Q_D(QGraphicsLayout);
+
+    if (!layoutItem) {
+        qWarning("QGraphicsLayout::addLayoutItem: cannot insert null item");
+        return;
+    }
+
+    d->addChildLayoutItem(layoutItem);
+}
 
 QT_END_NAMESPACE
 
