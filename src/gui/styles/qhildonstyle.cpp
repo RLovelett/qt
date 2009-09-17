@@ -122,6 +122,8 @@ int QHildonStyle::pixelMetric(PixelMetric metric,
    
    switch (metric) {
     //coordinate of the Application Context Menu upper left corner.
+    case PM_ToolBarIconSize:
+        return 48;
     case PM_MenuOffsetHorizontal:
     {
         GtkWidget *gtkMenu = QGtk::gtkWidget("menu_force_with_corners");
