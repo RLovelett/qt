@@ -719,6 +719,16 @@ void QGtk::initGtkWidgets()
             add_widget(QGtk::gtk_combo_box_entry_new());
             add_widget(QGtk::gtk_entry_new());
 #ifdef Q_OS_FREMANTLE
+            //gtkButton should be used for QPushButton with height < 50px (?)
+            //HildonButtonFinger for QPushButtons with height about 65px;
+            GtkWidget *hildonButtonFinger = QGtk::gtk_button_new();
+            QGtk::gtk_widget_set_name(hildonButtonFinger, "HildonButton-finger");
+            add_widget(hildonButtonFinger);
+
+            GtkWidget * hildonEntry = QGtk::gtk_entry_new();
+            QGtk::gtk_widget_set_name(hildonEntry, "HildonEntry");
+            add_widget(hildonEntry);
+
             add_widget(QGtk::gtk_text_view_new());
 #endif
             add_widget(QGtk::gtk_frame_new(NULL));

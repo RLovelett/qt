@@ -124,6 +124,18 @@ int QHildonStyle::pixelMetric(PixelMetric metric,
     //coordinate of the Application Context Menu upper left corner.
     case PM_ToolBarIconSize:
         return 48;
+    case PM_ButtonShiftHorizontal: {
+        GtkWidget *gtkButton = QGtk::gtkWidget(QLS("HildonButton-finger"));
+        guint horizontal_shift;
+        QGtk::gtk_widget_style_get(gtkButton, "child-displacement-x", &horizontal_shift, NULL);
+        return horizontal_shift;
+    }
+    case PM_ButtonShiftVertical: {
+        GtkWidget *gtkButton = QGtk::gtkWidget(QLS("HildonButton-finger"));
+        guint vertical_shift;
+        QGtk::gtk_widget_style_get(gtkButton, "child-displacement-y", &vertical_shift, NULL);
+        return vertical_shift;
+    }
     case PM_MenuOffsetHorizontal:
     {
         GtkWidget *gtkMenu = QGtk::gtkWidget("menu_force_with_corners");
@@ -213,7 +225,55 @@ void QHildonStyle::drawPrimitive(PrimitiveElement element,
         QCleanlooksStyle::drawPrimitive(element, option, painter, widget);
     }
     break;
+    case PE_PanelButtonCommand: {
+        bool isDefault = false;
+        if (const QStyleOptionButton *btn = qstyleoption_cast<const QStyleOptionButton*>(option))
+            isDefault = btn->features & QStyleOptionButton::DefaultButton;
 
+        GtkStateType state = gtkPainter.gtkState(option);
+        if (option->state & State_On || option->state & State_Sunken)
+            state = GTK_STATE_ACTIVE;
+        GtkWidget *gtkButton = QGtk::gtkWidget(QLS("HildonButton-finger"));
+        gint focusWidth, focusPad;
+        gboolean interiorFocus = false;
+        QGtk::gtk_widget_style_get (gtkButton,
+                                "focus-line-width", &focusWidth,
+                                "focus-padding", &focusPad,
+                                "interior-focus", &interiorFocus, NULL);
+
+        style = gtkButton->style;
+
+        QRect buttonRect = option->rect;
+
+        QString key;
+        if (isDefault) {
+            key += QLS("def");
+            GTK_WIDGET_SET_FLAGS(gtkButton, GTK_HAS_DEFAULT);
+            gtkPainter.paintBox(gtkButton, "buttondefault", buttonRect, state, GTK_SHADOW_IN,
+                                style, isDefault ? QLS("d") : QString());
+        }
+
+        bool hasFocus = option->state & State_HasFocus;
+
+        if (hasFocus) {
+            key += QLS("def");
+            GTK_WIDGET_SET_FLAGS(gtkButton, GTK_HAS_FOCUS);
+        }
+
+        if (!interiorFocus)
+            buttonRect = buttonRect.adjusted(focusWidth, focusWidth, -focusWidth, -focusWidth);
+
+        GtkShadowType shadow = (option->state & State_Sunken || option->state & State_On ) ?
+                               GTK_SHADOW_IN : GTK_SHADOW_OUT;
+
+        gtkPainter.paintBox(gtkButton, "button", buttonRect, state, shadow,
+                            style, key);
+        if (isDefault)
+            GTK_WIDGET_UNSET_FLAGS(gtkButton, GTK_HAS_DEFAULT);
+        if (hasFocus)
+            GTK_WIDGET_UNSET_FLAGS(gtkButton, GTK_HAS_FOCUS);
+    }
+    break;
     default:
         QGtkStyle::drawPrimitive(element, option, painter, widget);
     }
@@ -324,7 +384,20 @@ void QHildonStyle::drawControl(ControlElement element,
                             QPainter *painter,
                             const QWidget *widget) const
 {
-    QGtkStyle::drawControl(element, option, painter, widget);
+    if (!QGtk::isThemeAvailable()) {
+        QCleanlooksStyle::drawControl(element, option, painter, widget);
+        return;
+    }
+
+    GtkStyle* style = QGtk::gtkStyle();
+    QGtkPainter gtkPainter(painter);
+
+    switch (element) {
+
+    default:
+        QGtkStyle::drawControl(element, option, painter, widget);
+    }
+    
 }
 
 QRect QHildonStyle::subControlRect(ComplexControl control, const QStyleOptionComplex *option,
