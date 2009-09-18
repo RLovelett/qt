@@ -69,7 +69,6 @@
 #include <QtGui/QMenuBar>
 #include <QtGui/QToolBar>
 #include <QtGui/QX11Info>
-
 #include <X11/Xlib.h>
 
 QT_BEGIN_NAMESPACE
@@ -104,6 +103,7 @@ Ptr_gtk_expander_new QGtk::gtk_expander_new = 0;
 Ptr_gtk_statusbar_new QGtk::gtk_statusbar_new = 0;
 Ptr_gtk_entry_new QGtk::gtk_entry_new = 0;
 #ifdef Q_OS_FREMANTLE
+Ptr_hildon_entry_new QGtk::hildon_entry_new = 0;
 Ptr_gtk_text_view_new QGtk::gtk_text_view_new = 0;
 #endif
 Ptr_gtk_hscale_new QGtk::gtk_hscale_new = 0;
@@ -292,6 +292,7 @@ static void resolveGtk()
     QGtk::gtk_menu_shell_append = (Ptr_gtk_menu_shell_append)QLibrary::resolve(GTK_PATH, 0, "gtk_menu_shell_append");
     QGtk::gtk_entry_new = (Ptr_gtk_entry_new)QLibrary::resolve(GTK_PATH, 0, "gtk_entry_new");
 #ifdef Q_OS_FREMANTLE
+    QGtk::hildon_entry_new = (Ptr_hildon_entry_new)QLibrary::resolve(HILDON_PATH, 0, "hildon_entry_new");
     QGtk::gtk_text_view_new  = (Ptr_gtk_text_view_new)QLibrary::resolve(GTK_PATH, 0, "gtk_text_view_new");
 #endif
     QGtk::gtk_tree_view_new = (Ptr_gtk_tree_view_new)QLibrary::resolve(GTK_PATH, 0, "gtk_tree_view_new");
@@ -478,7 +479,6 @@ static void setup_gtk_widget(GtkWidget* widget)
             QGtk::gtk_container_add((GtkContainer*)(gtkWidgetMap()->value(QLS("GtkWindow"))), protoLayout);
         }
         Q_ASSERT(protoLayout);
-
         QGtk::gtk_container_add((GtkContainer*)(protoLayout), widget);
         QGtk::gtk_widget_realize(widget);
     }
@@ -725,10 +725,7 @@ void QGtk::initGtkWidgets()
             QGtk::gtk_widget_set_name(hildonButtonFinger, "HildonButton-finger");
             add_widget(hildonButtonFinger);
 
-            GtkWidget * hildonEntry = QGtk::gtk_entry_new();
-            QGtk::gtk_widget_set_name(hildonEntry, "HildonEntry");
-            add_widget(hildonEntry);
-
+            add_widget(QGtk::hildon_entry_new(HILDON_SIZE_FINGER_HEIGHT));
             add_widget(QGtk::gtk_text_view_new());
 #endif
             add_widget(QGtk::gtk_frame_new(NULL));

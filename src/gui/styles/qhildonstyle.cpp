@@ -186,92 +186,70 @@ void QHildonStyle::drawPrimitive(PrimitiveElement element,
     QGtkPainter gtkPainter(painter);
 
     switch (element) {
+    case PE_PanelLineEdit:
+        if (const QStyleOptionFrame *panel = qstyleoption_cast<const QStyleOptionFrame *>(option)) {
+            GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("HildonEntry-finger"));
+            
+            uint resolve_mask = option->palette.resolve();
+            QRect textRect = option->rect.adjusted(gtkEntry->style->xthickness, gtkEntry->style->ythickness,
+                                                   -gtkEntry->style->xthickness, -gtkEntry->style->ythickness);
+
+            gtkPainter.paintFlatBox(gtkEntry, "entry_bg", option->rect,
+                                    option->state & State_Enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE, GTK_SHADOW_NONE, gtkEntry->style);
+
+            
+            drawPrimitive(PE_FrameLineEdit, option, painter, widget);
+
+        }
+        break;
     case PE_FrameLineEdit: {
-        GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("GtkEntry"));
+        const QStyleOptionFrame *panel = qstyleoption_cast<const QStyleOptionFrame *>(option);
+        if (!panel)
+            break;
 
-        if (option->state & State_HasFocus)
-            GTK_WIDGET_SET_FLAGS(gtkEntry, GTK_HAS_FOCUS);
-        else
-            GTK_WIDGET_UNSET_FLAGS(gtkEntry, GTK_HAS_FOCUS);
+        if (1){//panel->lineWidth > 0){
+            //Draws a big frame
+            GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("HildonEntry-finger"));
 
-        gboolean interior_focus;
-        gint focus_line_width;
-        QRect rect = option->rect;
-        QGtk::gtk_widget_style_get(gtkEntry,
-                               "interior-focus", &interior_focus,
-                               "focus-line-width", &focus_line_width, NULL);
-        
-        //Paint the LineEdits borders.
-        gtkPainter.paintFlatBox(gtkEntry, "entry_bg", rect,
-                                  option->state & State_Enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE, GTK_SHADOW_NONE, gtkEntry->style);
+            gboolean interior_focus;
+            gint focus_line_width;
+            QRect rect = option->rect;
+            QGtk::gtk_widget_style_get(gtkEntry,
+                                   "interior-focus", &interior_focus,
+                                   "focus-line-width", &focus_line_width, NULL);
 
-        if (!interior_focus && option->state & State_HasFocus)
-            rect.adjust(focus_line_width, focus_line_width, -focus_line_width, -focus_line_width);
+            //See https://bugzilla.mozilla.org/show_bug.cgi?id=405421 for info about this hack
+            g_object_set_data(G_OBJECT(gtkEntry), "transparent-bg-hint", GINT_TO_POINTER(TRUE));
 
-        gtkPainter.paintShadow(gtkEntry, "entry", rect, option->state & State_Enabled ? 
-                               GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE, 
-                               GTK_SHADOW_IN, gtkEntry->style,
-                               option->state & State_HasFocus ? QLS("focus") : QString());
+            if (!interior_focus && option->state & State_HasFocus)
+                rect.adjust(focus_line_width, focus_line_width, -focus_line_width, -focus_line_width);
 
-        if (!interior_focus && option->state & State_HasFocus)
-            gtkPainter.paintShadow(gtkEntry, "entry", option->rect, option->state & State_Enabled ? 
-                                   GTK_STATE_ACTIVE : GTK_STATE_INSENSITIVE,
-                                   GTK_SHADOW_IN, gtkEntry->style, QLS("GtkEntryShadowIn"));
+       
+            gtkPainter.paintShadow(gtkEntry, "entry", rect, option->state & State_Enabled ? 
+                                   (option->state & State_HasFocus ? GTK_STATE_ACTIVE : GTK_STATE_NORMAL) : GTK_STATE_INSENSITIVE,
+                                   GTK_SHADOW_IN, gtkEntry->style,
+                                   option->state & State_HasFocus ? QLS("focus") : QString());
+        } else {
+            GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("GtkEntry"));
+            gboolean interior_focus;
+            gint focus_line_width;
+            QRect rect = option->rect;
+            QGtk::gtk_widget_style_get(gtkEntry,
+                                   "interior-focus", &interior_focus,
+                                   "focus-line-width", &focus_line_width, NULL);
 
-    }
-    break;
+            //See https://bugzilla.mozilla.org/show_bug.cgi?id=405421 for info about this hack
+            g_object_set_data(G_OBJECT(gtkEntry), "transparent-bg-hint", GINT_TO_POINTER(TRUE));
 
-    case PE_PanelLineEdit: {
-        QCleanlooksStyle::drawPrimitive(element, option, painter, widget);
-    }
-    break;
-    case PE_PanelButtonCommand: {
-        bool isDefault = false;
-        if (const QStyleOptionButton *btn = qstyleoption_cast<const QStyleOptionButton*>(option))
-            isDefault = btn->features & QStyleOptionButton::DefaultButton;
+            if (!interior_focus && option->state & State_HasFocus)
+                rect.adjust(focus_line_width, focus_line_width, -focus_line_width, -focus_line_width);
 
-        GtkStateType state = gtkPainter.gtkState(option);
-        if (option->state & State_On || option->state & State_Sunken)
-            state = GTK_STATE_ACTIVE;
-        GtkWidget *gtkButton = QGtk::gtkWidget(QLS("HildonButton-finger"));
-        gint focusWidth, focusPad;
-        gboolean interiorFocus = false;
-        QGtk::gtk_widget_style_get (gtkButton,
-                                "focus-line-width", &focusWidth,
-                                "focus-padding", &focusPad,
-                                "interior-focus", &interiorFocus, NULL);
-
-        style = gtkButton->style;
-
-        QRect buttonRect = option->rect;
-
-        QString key;
-        if (isDefault) {
-            key += QLS("def");
-            GTK_WIDGET_SET_FLAGS(gtkButton, GTK_HAS_DEFAULT);
-            gtkPainter.paintBox(gtkButton, "buttondefault", buttonRect, state, GTK_SHADOW_IN,
-                                style, isDefault ? QLS("d") : QString());
+       
+            gtkPainter.paintShadow(gtkEntry, "entry", rect, option->state & State_Enabled ? 
+                                   (option->state & State_HasFocus ? GTK_STATE_ACTIVE : GTK_STATE_NORMAL) : GTK_STATE_INSENSITIVE,
+                                   GTK_SHADOW_IN, gtkEntry->style,
+                                   option->state & State_HasFocus ? QLS("focus") : QString());
         }
-
-        bool hasFocus = option->state & State_HasFocus;
-
-        if (hasFocus) {
-            key += QLS("def");
-            GTK_WIDGET_SET_FLAGS(gtkButton, GTK_HAS_FOCUS);
-        }
-
-        if (!interiorFocus)
-            buttonRect = buttonRect.adjusted(focusWidth, focusWidth, -focusWidth, -focusWidth);
-
-        GtkShadowType shadow = (option->state & State_Sunken || option->state & State_On ) ?
-                               GTK_SHADOW_IN : GTK_SHADOW_OUT;
-
-        gtkPainter.paintBox(gtkButton, "button", buttonRect, state, shadow,
-                            style, key);
-        if (isDefault)
-            GTK_WIDGET_UNSET_FLAGS(gtkButton, GTK_HAS_DEFAULT);
-        if (hasFocus)
-            GTK_WIDGET_UNSET_FLAGS(gtkButton, GTK_HAS_FOCUS);
     }
     break;
     default:
@@ -450,7 +428,21 @@ QRect QHildonStyle::subControlRect(ComplexControl control, const QStyleOptionCom
 QSize QHildonStyle::sizeFromContents(ContentsType type, const QStyleOption *option,
                                   const QSize &size, const QWidget *widget) const
 {
-   return  QGtkStyle::sizeFromContents(type, option, size, widget);
+    QSize newSize = QCleanlooksStyle::sizeFromContents(type, option, size, widget);
+    if (!QGtk::isThemeAvailable())
+        return newSize;
+
+    switch (type) {
+    case CT_LineEdit: {
+        GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("HildonEntry-finger"));
+        newSize = size + QSize(2*gtkEntry->style->xthickness,
+                               2*qMax(gtkEntry->style->ythickness, gtkEntry->style->xthickness));
+    }
+    break;
+    default:
+        return  QGtkStyle::sizeFromContents(type, option, size, widget);
+    }
+    return newSize;
 }
 
 QPixmap QHildonStyle::standardPixmap(StandardPixmap sp, const QStyleOption *option,
