@@ -1,5 +1,5 @@
 diff --git a/configure b/configure
-index e58180a..b5f9c28 100755
+index e58180a..3a38d8a 100755
 --- a/configure
 +++ b/configure
 @@ -1932,6 +1932,9 @@ while [ "$#" -gt 0 ]; do
@@ -12,17 +12,6 @@ index e58180a..b5f9c28 100755
      *)
          UNKNOWN_OPT=yes
          ;;
-@@ -2784,8 +2787,8 @@ fi
- 
- # auto-detect support for separate debug info in objcopy
- if [ "$CFG_SEPARATE_DEBUG_INFO" != "no" ] && [ "$CFG_SHARED" = "yes" ]; then
--    TEST_COMPILER_CFLAGS=`getQMakeConf "$XQMAKESPEC" | sed -n -e 's%QMAKE_CFLAGS[^_].*=%%p' | tr '\n' ' '`
--    TEST_COMPILER_CXXFLAGS=`getQMakeConf "$XQMAKESPEC" | sed -n -e 's%QMAKE_CXXFLAGS[^_].*=%%p' | tr '\n' ' '`
-+    TEST_COMPILER_CFLAGS=`getQMakeConf "$XQMAKESPEC" | sed -n -e 's%QMAKE_CFLAGS[^_][^=]*=%%p' | tr '\n' ' '`
-+    TEST_COMPILER_CXXFLAGS=`getQMakeConf "$XQMAKESPEC" | sed -n -e 's%QMAKE_CXXFLAGS[^_][^=]*=%%p' | tr '\n' ' '`
-     TEST_OBJCOPY=`getQMakeConf "$XQMAKESPEC" | grep "^QMAKE_OBJCOPY" | sed "s%.* *= *\(.*\)$%\1%" | tail -1`
-     COMPILER_WITH_FLAGS="$TEST_COMPILER $TEST_COMPILER_CXXFLAGS"
-     COMPILER_WITH_FLAGS=`echo "$COMPILER_WITH_FLAGS" | sed -e "s%\\$\\$QMAKE_CFLAGS%$TEST_COMPILER_CFLAGS%g"`
 @@ -3073,8 +3076,8 @@ Usage:  $relconf [-h] [-prefix <dir>] [-prefix-install] [-bindir <dir>] [-libdir
          [-no-separate-debug-info] [-no-mmx] [-no-3dnow] [-no-sse] [-no-sse2]
          [-qtnamespace <namespace>] [-qtlibinfix <infix>] [-separate-debug-info] [-armfpa]
@@ -47,7 +36,7 @@ index e58180a..b5f9c28 100755
 +            #QMakeVar set QT_LIBS_HILDON "$QT_LIBS_HILDON"
 +            #QMakeVar set styles "plastique gtk windows" #NO motif
 +            # Add Hildon to config.h
-+            QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_XIM Q_WS_HILDON Q_OS_FREMANTLE QT_NO_SIZEGRIP"
++            QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_XIM Q_WS_HILDON Q_OS_FREMANTLE QT_NO_SIZEGRIP QT_NO_PRINTDIALOG QT_NO_PRINTER QT_NO_SYSTEMTRAYICON"
 +        else
 +            echo "Hildon support cannot be enabled due to functionality test!"
 +            echo " Turn on verbose messaging (-v) to $0 to see the final report."
@@ -80,6 +69,28 @@ index e58180a..b5f9c28 100755
  fi
  [ "$CFG_SQL_mysql" != "no" ] && echo "MySQL support ....... $CFG_SQL_mysql"
  [ "$CFG_SQL_psql" != "no" ] && echo "PostgreSQL support .. $CFG_SQL_psql"
+diff --git a/src/3rdparty/phonon/gstreamer/devicemanager.cpp b/src/3rdparty/phonon/gstreamer/devicemanager.cpp
+index 2240396..35c0f54 100644
+--- a/src/3rdparty/phonon/gstreamer/devicemanager.cpp
++++ b/src/3rdparty/phonon/gstreamer/devicemanager.cpp
+@@ -163,6 +163,17 @@ GstElement *DeviceManager::createAudioSink(Category category)
+     {
+         if (m_audioSink == "auto") //this is the default value
+         {
++#ifdef Q_OS_FREMANTLE
++            if (!sink) {
++                sink = gst_element_factory_make ("pulsesink", NULL);
++                if (canOpenDevice(sink))
++                    m_backend->logMessage("AudioOutput using pulse audio sink");
++                else if (sink) {
++                    gst_object_unref(sink);
++                    sink = 0;
++                }
++            }
++#endif
+             //### TODO : get equivalent KDE settings here
+ 
+             if (!qgetenv("GNOME_DESKTOP_SESSION_ID").isEmpty()) {
 diff --git a/src/3rdparty/webkit/WebCore/html/HTMLInputElement.cpp b/src/3rdparty/webkit/WebCore/html/HTMLInputElement.cpp
 index dae0be5..0f69d51 100644
 --- a/src/3rdparty/webkit/WebCore/html/HTMLInputElement.cpp
@@ -154,10 +165,23 @@ index 01b68eb..107e32e 100644
          return QVariant();
      }
 diff --git a/src/corelib/global/qnamespace.h b/src/corelib/global/qnamespace.h
-index 6a9df3a..33a2f39 100644
+index 6a9df3a..c4907f5 100644
 --- a/src/corelib/global/qnamespace.h
 +++ b/src/corelib/global/qnamespace.h
-@@ -1390,6 +1390,9 @@ public:
+@@ -264,8 +264,10 @@ public:
+         SplashScreen = 0x0000000e | Window,
+         Desktop = 0x00000010 | Window,
+         SubWindow =  0x00000012,
+-
+-        WindowType_Mask = 0x000000ff,
++#ifdef Q_OS_FREMANTLE
++        HildonAppMenu = 0x0000014 | Window,
++#endif		
++	WindowType_Mask = 0x000000ff,
+         MSWindowsFixedSizeDialogHint = 0x00000100,
+         MSWindowsOwnDC = 0x00000200,
+         X11BypassWindowManagerHint = 0x00000400,
+@@ -1390,6 +1392,9 @@ public:
          ImFont,
          ImCursorPosition,
          ImSurroundingText,
@@ -196,6 +220,18 @@ index b3522ce..ed25dc3 100644
  #endif //Q_OS_WINCE
  #endif
  
+diff --git a/src/gui/gui.pro b/src/gui/gui.pro
+index f224e67..6089afc 100644
+--- a/src/gui/gui.pro
++++ b/src/gui/gui.pro
+@@ -31,6 +31,7 @@ include(itemviews/itemviews.pri)
+ include(inputmethod/inputmethod.pri)
+ include(graphicsview/graphicsview.pri)
+ include(util/util.pri)
++include(maemo/maemo.pri)
+ 
+ embedded: QT += network
+ 
 diff --git a/src/gui/inputmethod/inputmethod.pri b/src/gui/inputmethod/inputmethod.pri
 index d321cd4..0d2e09e 100644
 --- a/src/gui/inputmethod/inputmethod.pri
@@ -216,10 +252,10 @@ index d321cd4..0d2e09e 100644
      HEADERS += inputmethod/qwininputcontext_p.h
 diff --git a/src/gui/inputmethod/qhildoninputcontext_p.h b/src/gui/inputmethod/qhildoninputcontext_p.h
 new file mode 100644
-index 0000000..a16ba38
+index 0000000..d240c3e
 --- /dev/null
 +++ b/src/gui/inputmethod/qhildoninputcontext_p.h
-@@ -0,0 +1,111 @@
+@@ -0,0 +1,120 @@
 +/****************************************************************************
 +**
 +** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -298,6 +334,7 @@ index 0000000..a16ba38
 +    bool canUseIM(QWidget *w);
 +    void insertUtf8(int flag, const QString& text);
 +    void clearSelection();
++    void cancelPreedit();
 +
 +    void sendHildonCommand(HildonIMCommand cmd, QWidget *widget=0);
 +    void sendX11Event(XEvent *event);
@@ -310,20 +347,28 @@ index 0000000..a16ba38
 +    void sendSurrounding(bool sendAllContents = false);
 +    void sendSurroundingHeader(int offset);
 +    void inputModeChanged();
++    void sendInputMode();
 +    void setClientCursorLocation(int offsetIsRelative, int cursorOffset); //FIXME?? Move offsetIsRelative to Bool?
++    
++    //
++    void setMaskState(int *mask,
++                             HildonIMInternalModifierMask lock_mask,
++                             HildonIMInternalModifierMask sticky_mask,
++                             bool was_press_and_release);
 +
 +    //Vars
 +    int timerId;
 +    int mask;
 +    int options;
 +    HildonIMTrigger triggerMode;
-+    HildonIMCommitMode commitMode;
++    HildonIMCommitMode commitMode, previousCommitMode;
 +    int inputMode;
 +    QString preEditBuffer;
 +    QString surrounding;
 +    int textCursorPosOnPress; //position of the cursor in the surrounding text at the last TabletPress event
 +    bool autoUpper;
 +    bool lastInternalChange;
++    bool spaceAfterCommit;
 +};
 +
 +QT_END_HEADER
@@ -333,10 +378,10 @@ index 0000000..a16ba38
 +#endif //QHILDONINPUTCONTEXT_P_H
 diff --git a/src/gui/inputmethod/qhildoninputcontext_x11.cpp b/src/gui/inputmethod/qhildoninputcontext_x11.cpp
 new file mode 100644
-index 0000000..843bd41
+index 0000000..c560aa7
 --- /dev/null
 +++ b/src/gui/inputmethod/qhildoninputcontext_x11.cpp
-@@ -0,0 +1,1674 @@
+@@ -0,0 +1,1783 @@
 +/****************************************************************************
 +**
 +** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -387,10 +432,9 @@ index 0000000..843bd41
 +#include "qtextbrowser.h"
 +#include "kernel/qevent_p.h"       //QKeyEventEx
 +#include "kernel/qapplication_p.h" //QApplicationPrivate::areXInputEventsUsed()
++#include "qinputcontext.h"
 +
 +#ifdef Q_WS_HILDON 
-+
-+//#define HIM_DEBUG
 +
 +#define GDK_ISO_ENTER  0xfe34
 +#define COMPOSE_KEY    Qt::Key_Multi_key   // "Ch" key
@@ -424,6 +468,29 @@ index 0000000..843bd41
 +*/
 +
 +extern bool qt_sendSpontaneousEvent(QObject*, QEvent*); //qapplication_x11.cpp
++
++#define LOGMESSAGE1(x) \
++    LOGMESSAGE3(x, "", "")
++
++#define LOGMESSAGE2(x, y) \
++    LOGMESSAGE3(x, y, "")
++
++#define LOGMESSAGE3(x, y, z) \
++    { \
++        QString logMessageString; \
++        QTextStream(&logMessageString) << x << "(" << y << " " << z << ")"; \
++        logMessage(logMessageString); \
++    } \
++    
++static void logMessage(const QString &message)
++{
++    static int debug = -1;
++    if (debug == -1)
++        debug = qgetenv("QT_HIM_DEBUG").isEmpty() ? 0 : 1;
++    
++    if (debug)
++        qDebug() << "HIM: " << message;    
++}
 +
 +/*!
 + * keysym to QString functions
@@ -755,37 +822,12 @@ index 0000000..843bd41
 +    XSync( X11->display, false );
 +}
 +
-+static void setMaskState(int *mask,
-+                         HildonIMInternalModifierMask lock_mask,
-+                         HildonIMInternalModifierMask sticky_mask,
-+                         bool was_press_and_release)
-+{
-+
-+  /* Pressing the key while already locked clears the state */
-+  if (*mask & lock_mask)
-+    *mask &= ~(lock_mask | sticky_mask);
-+  /* When the key is already sticky, a second press locks the key */
-+  else if (*mask & sticky_mask)
-+    *mask |= lock_mask;
-+#if 0 
-+  //TODO port needed for hildon_banner_show_information
-+  if (lock_mask & HILDON_IM_SHIFT_LOCK_MASK)
-+      hildon_banner_show_information (NULL, NULL, _("inpu_ib_mode_fn_locked"));
-+    else if (lock_mask & HILDON_IM_LEVEL_LOCK_MASK)
-+      hildon_banner_show_information (NULL, NULL, _("inpu_ib_mode_level_locked"));
-+#endif 
-+  /* Pressing the key for the first time stickies the key for one character,
-+     but only if no characters were entered while holding the key down */
-+  else if (was_press_and_release) {
-+    *mask |= sticky_mask;
-+  }
-+}
-+
-+//TODO
 +static quint32 dead_key_to_unicode_combining_character(int qtkeycode)
 +{
 +  quint32 combining; //Unicode Hex value
 +
++#if 0
++  //TODO Diablo - Not required in Fremantle
 +  switch (qtkeycode)
 +  {
 +    case Qt::Key_Dead_Grave:            combining = 0x0300; break;
@@ -809,6 +851,7 @@ index 0000000..843bd41
 +    case Qt::Key_Dead_Horn:             combining = 0x031b; break;
 +    default: combining = 0; break; /* Unknown dead key */
 +  }
++#endif
 +
 +  return combining;
 +}
@@ -870,8 +913,6 @@ index 0000000..843bd41
 +    XSendEvent(X11->display, w, false, 0, &xev);
 +}
 +
-+
-+
 +const char *getNextPacketStart(const char *str)
 +{
 +    const char *candidate, *good;
@@ -902,9 +943,14 @@ index 0000000..843bd41
 +}
 +
 +QHildonInputContext::QHildonInputContext(QObject* parent)
-+    : QInputContext(parent), timerId(-1), mask(0), 
-+      triggerMode(HILDON_IM_TRIGGER_NONE), commitMode(HILDON_IM_COMMIT_REDIRECT),
-+      inputMode(HILDON_GTK_INPUT_MODE_FULL), lastInternalChange(false)
++    : QInputContext(parent),
++      timerId(-1),
++      mask(0), 
++      triggerMode(HILDON_IM_TRIGGER_NONE),
++      commitMode(HILDON_IM_COMMIT_REDIRECT),
++      inputMode(HILDON_GTK_INPUT_MODE_FULL),
++      lastInternalChange(false),
++      spaceAfterCommit(false)
 +{
 +}
 +
@@ -928,15 +974,16 @@ index 0000000..843bd41
 + */
 +void QHildonInputContext::reset()
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() << "QHildonInputContext::reset()" << focusWidget() <<  QApplication::focusWidget();
-+#endif
++    LOGMESSAGE3 ("reset", focusWidget(), QApplication::focusWidget());
++
 +    QPointer<QWidget> oldFocus= focusWidget();
 +    
 +    if (oldFocus && QApplication::focusWidget() != oldFocus){
 +        oldFocus->removeEventFilter(oldFocus->inputContext());
 +        sendHildonCommand(HILDON_IM_CLEAR, oldFocus);
 +    }
++
++    cancelPreedit();
 +
 +    //Reset internals
 +    mask = 0;
@@ -977,12 +1024,14 @@ index 0000000..843bd41
 +        else
 +            triggerMode = HILDON_IM_TRIGGER_STYLUS;
 +#else
-+	triggerMode = HILDON_IM_TRIGGER_FINGER;
++        triggerMode = HILDON_IM_TRIGGER_FINGER;
 +#endif
 +        inputMode = w->inputMethodQuery(Qt::ImMode).toInt();
 +        toggleHildonMainIMUi(); //showHIMMainUI();
 +        break;
 +    }
++
++#ifndef Q_OS_FREMANTLE
 +    case QEvent::TabletPress:{
 +        textCursorPosOnPress = -1;
 +        break;
@@ -1002,19 +1051,22 @@ index 0000000..843bd41
 +            break;
 +        }
 +
-+#ifndef Q_OS_FREMANTLE
++
 +        if (te->pressure() >= PRESSURE_THRESHOLD){
 +            triggerMode = HILDON_IM_TRIGGER_FINGER;
 +        }else{
 +            triggerMode = HILDON_IM_TRIGGER_STYLUS;    
 +        }
-+#else
-+	triggerMode = HILDON_IM_TRIGGER_FINGER;
-+#endif
++
++        triggerMode = HILDON_IM_TRIGGER_FINGER;
++
 +        inputMode = w->inputMethodQuery(Qt::ImMode).toInt();
-+        toggleHildonMainIMUi(); showHIMMainUI();
++        toggleHildonMainIMUi();
++        showHIMMainUI();
 +        break;
 +    }
++#endif
++
 +    case QEvent::KeyPress:
 +    case QEvent::KeyRelease:{
 +        triggerMode = HILDON_IM_TRIGGER_KEYBOARD;
@@ -1031,9 +1083,7 @@ index 0000000..843bd41
 +//TODO
 +void QHildonInputContext::update()
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() << "QHildonInputContext::update()";
-+#endif
++    LOGMESSAGE1("update");
 +
 +    if (lastInternalChange) {
 +        //Autocase update
@@ -1046,14 +1096,13 @@ index 0000000..843bd41
 + */
 +void QHildonInputContext::toggleHildonMainIMUi()
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() << "QHildonInputContext::toggleHildonMainIMUi()";
-+#endif
++    LOGMESSAGE1("toggleHildonMainIMUi");
++
 +    QPointer<QWidget> w = focusWidget();
 +    if (!w)
 +        return;
 +     
-+    if (!canUseIM(w)){
++    if (!canUseIM(w) || !w->inputMethodQuery(Qt::ImCurrentSelection).toString().isEmpty() ){
 +        sendHildonCommand(HILDON_IM_HIDE);
 +        return;
 +    }
@@ -1086,7 +1135,7 @@ index 0000000..843bd41
 + *  as no spontaneous event.
 + */
 +bool QHildonInputContext::filterKeyPress(QWidget *keywidget,QKeyEvent *event){
-+
++    
 +    if (!canUseIM(keywidget))
 +        return false;
 +
@@ -1099,14 +1148,13 @@ index 0000000..843bd41
 +    quint32 keysym= event->nativeVirtualKey();
 +    const int qtkeycode = event->key();
 +
-+#ifdef HIM_DEBUG
-+    qDebug() << "QHildonInputContext::filterKeyPress"
-+             << QString(" Mask:0x%1 state:0x%2 keycode:%3 keysym:0x%4 QtKey:0x%5 ").arg(mask,0,16)
-+                                                                        .arg(state,0,16)
-+                                                                        .arg(keycode)
-+                                                                        .arg(keysym,0,16)
-+                                                                        .arg(qtkeycode,0,16);
-+#endif
++    QString debug;
++    debug = QString(" Mask:0x%1 state:0x%2 keycode:%3 keysym:0x%4 QtKey:0x%5 ").arg(mask,0,16)
++                                                                               .arg(state,0,16)
++                                                                               .arg(keycode)
++                                                                               .arg(keysym,0,16)
++                                                                               .arg(qtkeycode,0,16);
++    LOGMESSAGE2("filterKeyPress", debug);
 +
 +    //Drop auto repeated keys for COMPOSE_KEY
 +    if (qtkeycode == COMPOSE_KEY && event->isAutoRepeat()){
@@ -1172,10 +1220,19 @@ index 0000000..843bd41
 +                         lastQtkeycode == LEVEL_KEY);
 +        }
 +    }
++
 +    //Update lastQtkeycode.
 +    lastQtkeycode=qtkeycode;
 +
 +    if (qtkeycode == Qt::Key_Return || qtkeycode == Qt::Key_Enter || keysym == GDK_ISO_ENTER) {
++        //Remove autocompletation text
++        if (event->type() == QEvent::KeyPress &&
++            previousCommitMode == HILDON_IM_COMMIT_PREEDIT &&
++            !preEditBuffer.isNull()) {
++                preEditBuffer.clear();
++                QInputMethodEvent e;
++                sendEvent(e);
++        }
 +        sendKeyEvent(keywidget, event->type(), state, keysym, keycode);
 +        lastInternalChange = true;
 +        return false;
@@ -1261,39 +1318,49 @@ index 0000000..843bd41
 +        KeySym lower = NoSymbol;
 +        KeySym upper = NoSymbol;
 +        QString tempStr = translateKeySym(keysym);
-+        QChar currentChar = tempStr.at(0);
++        QChar currentChar;
++        if (!tempStr.isEmpty()){
++          currentChar = tempStr.at(0);
 +        
-+        /* Simulate shift key being held down in sticky state for non-printables  */
-+        if ( currentChar.isPrint() ){
-+            /*  For printable characters sticky shift negates the case,
-+             *  including any autocapitalization changes 
-+             */
-+            if ( currentChar.isUpper() ){
-+                currentChar = currentChar.toLower();
-+                lower = lower;
-+            }else{
-+                currentChar = currentChar.toUpper();
-+                upper = upper;
++            /* Simulate shift key being held down in sticky state for non-printables  */
++            if ( currentChar.isPrint() ){
++                /*  For printable characters sticky shift negates the case,
++                 *  including any autocapitalization changes 
++                 */
++                if ( currentChar.isUpper() ){
++                    currentChar = currentChar.toLower();
++                    lower = lower;
++                }else{
++                    currentChar = currentChar.toUpper();
++                    upper = upper;
++                }
++                commitString = QString(currentChar); //sent to the widget  
 +            }
-+            commitString = QString(currentChar); //sent to the widget  
 +        }
 +    }
 +    
 +    //F. word completion manipulation (for fremantle)
 +    if (event->type() == QEvent::KeyPress &&
-+        commitMode == HILDON_IM_COMMIT_PREEDIT &&
++        previousCommitMode == HILDON_IM_COMMIT_PREEDIT &&
 +        !preEditBuffer.isNull())
 +    {
 +        switch (qtkeycode){
 +            case Qt::Key_Right:{
 +                //TODO Move this code in commitPreeditData();
 +                QInputMethodEvent e;
-+                e.setCommitString(preEditBuffer + ' ');
++
++                if (spaceAfterCommit)
++                    e.setCommitString(preEditBuffer + ' ');
++                else
++                    e.setCommitString(preEditBuffer);
++
 +                sendEvent(e);
 +                preEditBuffer.clear();
 +                return true;
 +            }
 +            case Qt::Key_Backspace:
++            case Qt::Key_Up:
++            case Qt::Key_Down:
 +            case Qt::Key_Left:{
 +                //TODO Move this code
 +                preEditBuffer.clear();
@@ -1327,9 +1394,10 @@ index 0000000..843bd41
 +
 +    if (event->type() == QEvent::KeyRelease || state & STATE_CONTROL_MASK)
 +    {
-+#ifdef HIM_DEBUG
-+        qDebug() << QString("Sending state=0x%1 keysym=0x%2 keycode=%3").arg(state,0,16).arg(keysym,0,16).arg(keycode);
-+#endif
++        QString debug;
++        debug = QString("Sending state=0x%1 keysym=0x%2 keycode=%3").arg(state,0,16).arg(keysym,0,16).arg(keycode);
++        LOGMESSAGE2(" - ", debug);
++
 +        sendKeyEvent(keywidget, event->type(), state, keysym, keycode);
 +        return false;
 +    }
@@ -1357,9 +1425,7 @@ index 0000000..843bd41
 +            return true;
 +        }else{
 +            if ( commitString.isEmpty() && qtkeycode != Qt::Key_Backspace){
-+#ifdef HIM_DEBUG
-+                qDebug() << "this string" << event->text() << "will be committed";
-+#endif
++                LOGMESSAGE3(" - ", "text sent to IM", event->text())
 +                commitString = QString(event->text());
 +            }
 +        }
@@ -1414,11 +1480,10 @@ index 0000000..843bd41
 + */
 +bool QHildonInputContext::x11FilterEvent(QWidget *keywidget, XEvent *event)
 +{
++    LOGMESSAGE3("x11FilterEvent", keywidget, event);
++
 +    if (event->xclient.message_type == ATOM(_HILDON_IM_INSERT_UTF8)
 +            && event->xclient.format == HILDON_IM_INSERT_UTF8_FORMAT) {
-+#ifdef HIM_DEBUG
-+        qDebug() << "HILDON_IM_INSERT_UTF8_FORMAT" << options;
-+#endif
 +        HildonIMInsertUtf8Message *msg = (HildonIMInsertUtf8Message *)&event->xclient.data;
 +        insertUtf8(msg->msg_flag, QString::fromUtf8(msg->utf8_str));
 +        return true;
@@ -1426,9 +1491,8 @@ index 0000000..843bd41
 +    }else if (event->xclient.message_type == ATOM(_HILDON_IM_COM)) {
 +        HildonIMComMessage *msg = (HildonIMComMessage *)&event->xclient.data;
 +        options = msg->options;
-+#ifdef HIM_DEBUG
-+        qDebug() << "OPTIONS" << options;
-+#endif
++   
++        LOGMESSAGE3 (" - ", "Options=", options)
 +
 +        switch (msg->type) {
 +        //Handle Keys msgs
@@ -1470,55 +1534,41 @@ index 0000000..843bd41
 +
 +        //Handle commit mode msgs
 +        case HILDON_IM_CONTEXT_DIRECT_MODE: { //default mode
-+            #ifdef HIM_DEBUG
-+                qDebug() << "commitMode =  HILDON_IM_CONTEXT_DIRECT_MODE";
-+            #endif
++            LOGMESSAGE3 (" - ", "Commit Mode=", "Direct")
 +            preEditBuffer.clear();
 +            commitMode = HILDON_IM_COMMIT_DIRECT;
 +            return true; }
 +        case HILDON_IM_CONTEXT_BUFFERED_MODE: {
-+            #ifdef HIM_DEBUG
-+                qDebug() << "commitMode =  HILDON_IM_CONTEXT_BUFFERED_MODE";
-+            #endif
++            LOGMESSAGE3 (" - ", "Commit Mode=", "Buffered")
 +            if (commitMode != HILDON_IM_COMMIT_BUFFERED){
 +                preEditBuffer = QString("");
 +                commitMode = HILDON_IM_COMMIT_BUFFERED;
 +            }
 +            return true; }
 +        case HILDON_IM_CONTEXT_REDIRECT_MODE: {
-+            #ifdef HIM_DEBUG
-+                qDebug() << "commitMode =  HILDON_IM_CONTEXT_REDIRECT_MODE";
-+            #endif
++            LOGMESSAGE3 (" - ", "Commit Mode=", "Redirect")
 +            preEditBuffer.clear();
 +            commitMode = HILDON_IM_COMMIT_REDIRECT;
 +            checkCommitMode();
 +            clearSelection();
 +            return true; }
 +        case HILDON_IM_CONTEXT_SURROUNDING_MODE: {
-+            #ifdef HIM_DEBUG
-+                qDebug() << "commitMode =  HILDON_IM_CONTEXT_SURROUNDING_MODE";
-+            #endif
++            LOGMESSAGE3 (" - ", "Commit Mode=", "Surrounding")
 +            preEditBuffer.clear();
 +            commitMode = HILDON_IM_COMMIT_SURROUNDING;
 +            return true; }
 +
 +        //Handle context
 +        case HILDON_IM_CONTEXT_CONFIRM_SENTENCE_START: {
-+            #ifdef HIM_DEBUG
-+                qDebug() << "HILDON_IM_CONTEXT_CONFIRM_SENTENCE_START";
-+            #endif
++            LOGMESSAGE2(" - ", "XMessage: Sentence start")
 +            checkSentenceStart();
 +            return true; }
 +        case HILDON_IM_CONTEXT_FLUSH_PREEDIT: {
-+            #ifdef HIM_DEBUG
-+                qDebug() << "commitMode = HILDON_IM_CONTEXT_FLUSH_PREEDIT";
-+            #endif
++            LOGMESSAGE2(" - ", "XMessage: Flush preedit")
 +            commitPreeditData();
 +            return true; }
 +        case HILDON_IM_CONTEXT_REQUEST_SURROUNDING: {
-+            #ifdef HIM_DEBUG
-+                qDebug() << "HILDON_IM_CONTEXT_REQUEST_SURROUNDING";
-+            #endif
++            LOGMESSAGE2(" - ", "XMessage: Request surrounding")
 +            checkCommitMode();
 +            sendSurrounding();
 +            //if (self->is_url_entry)
@@ -1545,39 +1595,38 @@ index 0000000..843bd41
 +        
 +#ifdef Q_OS_FREMANTLE
 +        case HILDON_IM_CONTEXT_CANCEL_PREEDIT: {
-+            #ifdef HIM_DEBUG
-+                qDebug() << "HILDON_IM_CONTEXT_CANCEL_PREEDIT";
-+            #endif
-+            preEditBuffer.clear();
-+            QInputMethodEvent e;            
-+            sendEvent(e);
++            LOGMESSAGE3(" - ", "XMessage: Cancel preedit=", preEditBuffer)
++            cancelPreedit();
 +            return true; }
 +        case HILDON_IM_CONTEXT_PREEDIT_MODE: {
-+            #ifdef HIM_DEBUG
-+                qDebug() << "commitMode = HILDON_IM_CONTEXT_PREEDIT_MODE";
-+            #endif
++            LOGMESSAGE3 (" - ", "Commit Mode=", "Preedit")
 +            preEditBuffer.clear();
++            previousCommitMode = commitMode;
 +            commitMode = HILDON_IM_COMMIT_PREEDIT;
 +            return true; } 
 +        case HILDON_IM_CONTEXT_REQUEST_SURROUNDING_FULL: {
-+            #ifdef HIM_DEBUG
-+                qDebug() << "HILDON_IM_CONTEXT_REQUEST_SURROUNDING_FULL";
-+            #endif
++            LOGMESSAGE2(" - ", "XMessage: request surrounding full")
 +            checkCommitMode();
 +            sendSurrounding(true);
 +            //if (self->is_url_entry)
 +            //  hildon_im_context_send_command(self, HILDON_IM_SELECT_ALL);
 +            return true; }
++        case HILDON_IM_CONTEXT_SPACE_AFTER_COMMIT: {
++            LOGMESSAGE2(" - ", "XMessage: put a space after commit")
++            spaceAfterCommit = true;
++            return true; }
++        case HILDON_IM_CONTEXT_NO_SPACE_AFTER_COMMIT: {
++            LOGMESSAGE2(" - ", "XMessage: no space after commit")
++            spaceAfterCommit = false;
++            return true; }
 +#endif  
 +        default:
-+            qWarning() << "Hildon Input Method Message not handled" << msg->type;
++            qWarning() << "HIM: (warning) Message not handled:" << msg->type;
 +        }
 +    }else if (event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING_CONTENT) &&
 +              event->xclient.format == HILDON_IM_SURROUNDING_CONTENT_FORMAT) {
-+        #ifdef HIM_DEBUG
-+                qDebug() << "HILDON_IM_SURROUNDING_CONTENT_FORMAT";
-+        #endif
 +        HildonIMSurroundingContentMessage *msg = reinterpret_cast<HildonIMSurroundingContentMessage*>(&event->xclient.data);
++        LOGMESSAGE3(" - ", "SurroundingContentMessage=", "msg->surrounding")
 +
 +        if (!surrounding.isNull()) {
 +            if (msg->msg_flag == HILDON_IM_MSG_START) {
@@ -1588,13 +1637,12 @@ index 0000000..843bd41
 +                return true;
 +            }            
 +        }
++        
 +        surrounding += QString::fromUtf8(msg->surrounding);
 +        return true;
 +    }else if (event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING) &&
 +                  event->xclient.format == HILDON_IM_SURROUNDING_FORMAT) {
-+        #ifdef HIM_DEBUG
-+                qDebug() << "HILDON_IM_SURROUNDING_FORMAT";
-+        #endif
++        LOGMESSAGE2(" - ", "XMessage: IM Surrounding")
 +        HildonIMSurroundingMessage *msg = reinterpret_cast<HildonIMSurroundingMessage*>(&event->xclient.data);
 +        setClientCursorLocation(msg->offset_is_relative, msg->cursor_offset );
 +        return true;
@@ -1610,10 +1658,6 @@ index 0000000..843bd41
 + */
 +bool QHildonInputContext::canUseIM(QWidget *w)
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() << "QHildonInputContext::canUseIM" << w;
-+#endif
-+
 +    bool enabled = false;
 +    
 +    if ( w && w->testAttribute(Qt::WA_InputMethodEnabled) ){
@@ -1646,10 +1690,12 @@ index 0000000..843bd41
 + */
 +void QHildonInputContext::insertUtf8(int flag, const QString& text)
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() << "QHildonInputContext::insertUtf8 flag=" << flag << "text=" << text;
-+#endif
-+    QString cleanText= text;
++    LOGMESSAGE3("insertUtf8", flag, text)
++
++    QString cleanText = text;
++    if (mask & HILDON_IM_SHIFT_LOCK_MASK)
++            cleanText = cleanText.toUpper();
++
 +    lastInternalChange = true;
 +
 +    //TODO HILDON_IM_AUTOCORRECT is used by the hadwriting plugin
@@ -1657,34 +1703,32 @@ index 0000000..843bd41
 +    if (options & HILDON_IM_AUTOCORRECT){
 +        qWarning() << "HILDON_IM_AUTOCORRECT Not Implemented Yet";
 +    }
++
 +    
 +    //Delete suroundings when we are using the preeditbuffer.
 +    // Eg: For the HandWriting plugin 
-+    if (!preEditBuffer.isNull()) {
-+#ifdef HIM_DEBUG
-+    qDebug() << "  preEditBuffer=" << preEditBuffer;
-+#endif        
++    if (!preEditBuffer.isNull()) {  
++#ifndef Q_OS_FREMANTLE
++        //Delete suroundings when we are using the preeditbuffer.
++        // Eg: For the HandWriting plugin 
 +        QInputMethodEvent e;
 +        int charCount = preEditBuffer.length(); 
 +        e.setCommitString(QString(), -charCount, charCount);
 +        sendEvent(e);
-+    } 
++#endif
 +
-+    //Updates preEditBuffer
-+    if (!preEditBuffer.isNull()){
-+        if (flag == HILDON_IM_MSG_START) {
-+            preEditBuffer = text;
-+        }else{
-+            preEditBuffer.append(text);
++        //Updates preEditBuffer
++        if (flag != HILDON_IM_MSG_START) {
++            preEditBuffer.append(cleanText);
++            cleanText = preEditBuffer;
 +        }
-+        cleanText = preEditBuffer;
-+    }
++     }
 +    
 +    //Adds the actual text
 +    switch (commitMode) {
-+        case HILDON_IM_COMMIT_PREEDIT: { //Fremantle specific code
-+            //Fill preEditBuffer
-+            preEditBuffer = text;
++        case HILDON_IM_COMMIT_PREEDIT: { //Fremantle
++            if ( preEditBuffer.isNull() )
++                preEditBuffer = cleanText;
 +
 +            //Creating attribute list
 +            QList<QInputMethodEvent::Attribute> list;
@@ -1700,6 +1744,13 @@ index 0000000..843bd41
 +
 +            QInputMethodEvent e(cleanText, list);            
 +            sendEvent(e);
++
++            //Reset commit mode
++            if (flag == HILDON_IM_MSG_END){
++                commitMode = previousCommitMode;
++                previousCommitMode = HILDON_IM_COMMIT_PREEDIT;
++            }
++
 +        }break;
 +        case HILDON_IM_COMMIT_BUFFERED: //Diablo Handwriting
 +        case HILDON_IM_COMMIT_DIRECT:
@@ -1715,9 +1766,8 @@ index 0000000..843bd41
 +
 +void QHildonInputContext::clearSelection()
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() <<  "QHildonInputContext::clearSelection()";
-+#endif
++    LOGMESSAGE1("clearSelection");
++
 +    QWidget *w = focusWidget();
 +    int textCursorPos = w->inputMethodQuery(Qt::ImCursorPosition).toInt();
 +    QString selection = w->inputMethodQuery(Qt::ImCurrentSelection).toString();
@@ -1738,11 +1788,22 @@ index 0000000..843bd41
 +    }
 +}
 +
++void QHildonInputContext::cancelPreedit(){
++    LOGMESSAGE1("cancelPreedit");
++
++    if (preEditBuffer.isEmpty())
++        return;
++
++    preEditBuffer.clear();
++
++    QInputMethodEvent e;   
++    sendEvent(e);
++}
++
 +void QHildonInputContext::sendHildonCommand(HildonIMCommand cmd, QWidget *widget)
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() <<  "QHildonInputContext::sendHildonCommand cmd="<< cmd << "widget=" << widget;
-+#endif
++    LOGMESSAGE3("sendHildonCommand", cmd, widget);
++
 +    Window w = findHildonIm();
 +
 +    if (!w){
@@ -1771,21 +1832,25 @@ index 0000000..843bd41
 +        killTimer(timerId);
 +    }
 +
++    if (cmd == HILDON_IM_SETCLIENT || cmd == HILDON_IM_SETNSHOW){
++        sendInputMode();
++    }
++
 +    msg->cmd = cmd;
-+    msg->input_mode = inputMode;
++    //msg->input_mode = inputMode;
 +    msg->trigger = triggerMode;
 +
 +    XSendEvent(X11->display, w, false, 0, &ev);
 +    XSync(X11->display, False);
 +}
 +
++
 +/*!
 + */
 +void QHildonInputContext::sendX11Event(XEvent *event)
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() <<  "QHildonInputContext::sendX11Event" << event;
-+#endif
++    LOGMESSAGE2("sendX11Event", event);
++
 +    Window w = findHildonIm();
 +
 +    if (!w){
@@ -1804,11 +1869,8 @@ index 0000000..843bd41
 +void QHildonInputContext::showHIMMainUI() //### REMOVE
 +{
 +    //Force QInputContext to use the fucused widget.
-+#ifdef HIM_DEBUG
-+    qDebug() <<  "QHildonInputContext::showHIMMainUI()"
-+             <<  "QApplication::focusWidget=" << QApplication::focusWidget()
-+             <<  "focusWidget=" << focusWidget();
-+#endif
++    LOGMESSAGE1("QHildonInputContext::showHIMMainUI")
++
 +    //QInputContext::setFocusWidget(QApplication::focusWidget());
 +    toggleHildonMainIMUi();
 +}
@@ -1818,9 +1880,7 @@ index 0000000..843bd41
 + */
 +void QHildonInputContext::checkSentenceStart()
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() <<  "QHildonInputContext::contextCheckSentenceStart()";
-+#endif
++    LOGMESSAGE1("checkSentenceStart");
 +
 +    QWidget *w = focusWidget();
 +    if (!w){
@@ -1866,9 +1926,7 @@ index 0000000..843bd41
 +
 +void QHildonInputContext::commitPreeditData()
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() << "QHildonInputContext::commitPreeditData()";
-+#endif
++    LOGMESSAGE1("commitPreeditData")
 +
 +    if (!preEditBuffer.isNull())
 +        preEditBuffer = QString("");
@@ -1876,12 +1934,10 @@ index 0000000..843bd41
 +
 +void QHildonInputContext::checkCommitMode() //### REMOVE?
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() << "QHildonInputContext::checkCommitMode()" << commitMode;
-+#endif
++    LOGMESSAGE1("checkCommitMode")
++
 +    //if (m_commitMode == HILDON_IM_COMMIT_REDIRECT)
 +    //    m_commitMode = HILDON_IM_COMMIT_SURROUNDING;
-+        
 +}
 +
 +/*! Send the text of the client widget surrounding the active cursor position,
@@ -1889,10 +1945,8 @@ index 0000000..843bd41
 + */
 +void QHildonInputContext::sendSurrounding(bool sendAllContents)
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() << "QHildonInputContext::sendSurrounding sendAllContents=" << sendAllContents 
-+             << "focusWidget=" << focusWidget();
-+#endif
++    LOGMESSAGE2("sendSurrounding", sendAllContents )
++
 +    QWidget *w = focusWidget();
 +
 +    if (!w)
@@ -1907,7 +1961,7 @@ index 0000000..843bd41
 +        QPlainTextEdit *pte = qobject_cast<QPlainTextEdit*>(w);
 +
 +        if (te){
-+            surrounding = te->text();
++            surrounding = te->toPlainText();
 +            cpos = te->textCursor().position();      
 +        }else if (pte){
 +            surrounding = pte->toPlainText();
@@ -1968,9 +2022,8 @@ index 0000000..843bd41
 +
 +void QHildonInputContext::sendSurroundingHeader(int offset)
 +{
-+#ifdef HIM_DEBUG
-+    qDebug() << "QHildonInputContext::sendSurroundingHeader offset=" << offset;
-+#endif
++    LOGMESSAGE2("sendSurroundingHeader",offset);
++
 +    XEvent xev;
 +    /* Send the cursor offset in the surrounding */
 +    memset(&xev, 0, sizeof(XEvent));
@@ -1987,7 +2040,54 @@ index 0000000..843bd41
 +/*! Notify IM of any input mode changes 
 + */
 +void QHildonInputContext::inputModeChanged(){
-+    sendHildonCommand(HILDON_IM_MODE, focusWidget());
++    LOGMESSAGE1("inputModeChanged");
++
++#if 0
++  //TODO
++  if ((input_mode & HILDON_GTK_INPUT_MODE_ALPHA) == 0  &&
++      (input_mode & HILDON_GTK_INPUT_MODE_HEXA)  == 0  &&
++      ( (input_mode & HILDON_GTK_INPUT_MODE_NUMERIC) != 0 ||
++        (input_mode & HILDON_GTK_INPUT_MODE_TELE)    != 0))
++  {
++    self->mask = HILDON_IM_LEVEL_LOCK_MASK | HILDON_IM_LEVEL_STICKY_MASK;
++  }
++  else
++  {
++    self->mask &= ~HILDON_IM_LEVEL_LOCK_MASK;
++    self->mask &= ~HILDON_IM_LEVEL_STICKY_MASK;
++  }
++#endif  
++  /* Notify IM of any input mode changes in cases where the UI is
++     already visible. */
++  sendInputMode();
++}
++
++void QHildonInputContext::sendInputMode(){
++    LOGMESSAGE1("sendInputMode")
++
++    Window w = findHildonIm();
++
++    if (!w){
++        return;
++    }
++
++    XEvent ev;
++    memset(&ev, 0, sizeof(XEvent));
++
++    ev.xclient.type = ClientMessage;
++    ev.xclient.window = w;
++    ev.xclient.message_type = ATOM(_HILDON_IM_INPUT_MODE);
++    ev.xclient.format = HILDON_IM_INPUT_MODE_FORMAT;
++
++    HildonIMInputModeMessage *msg = reinterpret_cast<HildonIMInputModeMessage *>(&ev.xclient.data);
++    HildonGtkInputMode input_mode = HILDON_GTK_INPUT_MODE_DICTIONARY;//inputMode;
++    HildonGtkInputMode default_input_mode =  HILDON_GTK_INPUT_MODE_FULL;
++
++    msg->input_mode = input_mode;
++    msg->default_input_mode = default_input_mode;
++
++    XSendEvent(X11->display, w, false, 0, &ev);
++    XSync(X11->display, False);
 +}
 +
 +/*! In redirect mode we use a proxy widget (fullscreen vkb). When the cursor position
@@ -1995,10 +2095,8 @@ index 0000000..843bd41
 + */
 +void QHildonInputContext::setClientCursorLocation(int offsetIsRelative, int cursorOffset)
 +{   
-+#ifdef HIM_DEBUG
-+    qDebug() << "QHildonInputContext::setClientCursorLocation offsetIsRelative=" << offsetIsRelative 
-+             << "cursorOffset" << cursorOffset;
-+#endif
++    LOGMESSAGE3("setClientCursorLocation", offsetIsRelative, cursorOffset)
++
 +    if (!offsetIsRelative){
 +        qWarning("setClientCursorLocation can't manage absolute cursor Offsets");
 +        return;
@@ -2010,13 +2108,69 @@ index 0000000..843bd41
 +    e.setCommitString(QString(), cursorOffset,0);
 +    sendEvent(e);
 +}
++
++void QHildonInputContext::setMaskState(int *mask,
++                                              HildonIMInternalModifierMask lock_mask,
++                                              HildonIMInternalModifierMask sticky_mask,
++                                              bool was_press_and_release)
++{
++    LOGMESSAGE3("setMaskState", lock_mask, sticky_mask)
++    LOGMESSAGE3(" - ", "mask=", *mask)
++    //### TODO remove me    
++    int input_mode = 0;
++
++   /* Locking Fn is disabled in TELE and NUMERIC */
++    if (!(input_mode & HILDON_GTK_INPUT_MODE_ALPHA) &&
++        !(input_mode & HILDON_GTK_INPUT_MODE_HEXA)  &&
++        ((input_mode & HILDON_GTK_INPUT_MODE_TELE) || 
++         (input_mode & HILDON_GTK_INPUT_MODE_NUMERIC))
++       ) {
++        if (*mask & lock_mask){
++            /* already locked, remove lock and set it to sticky */
++            *mask &= ~(lock_mask | sticky_mask);
++            *mask |= sticky_mask;
++        }else if (*mask & sticky_mask){
++            /* the key is already sticky, it's fine */
++        }else if (was_press_and_release){
++            /* Pressing the key for the first time stickies the key for one character,
++             * but only if no characters were entered while holding the key down */
++            *mask |= sticky_mask;
++        }
++        return;
++    }
++
++    if (*mask & lock_mask)
++    {
++        /* Pressing the key while already locked clears the state */
++        if (lock_mask & HILDON_IM_SHIFT_LOCK_MASK)
++            sendHildonCommand(HILDON_IM_SHIFT_UNLOCKED, QApplication::focusWidget());
++        else if (lock_mask & HILDON_IM_LEVEL_LOCK_MASK)
++            sendHildonCommand(HILDON_IM_MOD_UNLOCKED, QApplication::focusWidget());    
++    
++        *mask &= ~(lock_mask | sticky_mask);
++    } else if (*mask & sticky_mask) {
++        /* When the key is already sticky, a second press locks the key */
++        *mask |= lock_mask;
++
++        if (lock_mask & HILDON_IM_SHIFT_LOCK_MASK)
++            sendHildonCommand(HILDON_IM_SHIFT_LOCKED, QApplication::focusWidget());
++        else if (lock_mask & HILDON_IM_LEVEL_LOCK_MASK)
++            sendHildonCommand(HILDON_IM_MOD_LOCKED, QApplication::focusWidget());
++    }else if (was_press_and_release){
++        /* Pressing the key for the first time stickies the key for one character,
++         * but only if no characters were entered while holding the key down */
++        *mask |= sticky_mask;
++    }
++
++}
++
 +#endif
 diff --git a/src/gui/inputmethod/qhildoninputmethodprotocol_p.h b/src/gui/inputmethod/qhildoninputmethodprotocol_p.h
 new file mode 100644
-index 0000000..406a447
+index 0000000..15e4136
 --- /dev/null
 +++ b/src/gui/inputmethod/qhildoninputmethodprotocol_p.h
-@@ -0,0 +1,227 @@
+@@ -0,0 +1,241 @@
 +/****************************************************************************
 +**
 +** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
@@ -2061,7 +2215,7 @@ index 0000000..406a447
 +#include "qx11info_x11.h"
 +#include "private/qt_x11_p.h"
 +
-+/******* these are copied from hildon-im-protocol **********/
++/******* from hildon-im-protocol **********/
 +
 +#define HILDON_IM_CLIENT_MESSAGE_BUFFER_SIZE (20 - sizeof(int))
 +
@@ -2121,6 +2275,9 @@ index 0000000..406a447
 +    HILDON_IM_KEY_EVENT_FORMAT = 8,
 +    HILDON_IM_SURROUNDING_CONTENT_FORMAT = 8,
 +    HILDON_IM_SURROUNDING_FORMAT = 8,
++    HILDON_IM_INPUT_MODE_FORMAT = 8,
++    HILDON_IM_PREEDIT_COMMITTED_FORMAT = 8,
++    HILDON_IM_PREEDIT_COMMITTED_CONTENT_FORMAT = 8,
 +    HILDON_IM_CLIPBOARD_SELECTION_REPLY_FORMAT = 32,
 +//  HILDON_IM_CLIPBOARD_FORMAT = 32
 +    HILDON_IM_WINDOW_ID_FORMAT = 32,
@@ -2141,6 +2298,11 @@ index 0000000..406a447
 +    HILDON_IM_SETNSHOW,   // Set the client and show the IM window 
 +    HILDON_IM_SELECT_ALL, // Select the text in the plugin
 +
++    HILDON_IM_SHIFT_LOCKED,
++    HILDON_IM_SHIFT_UNLOCKED,
++    HILDON_IM_MOD_LOCKED,
++    HILDON_IM_MOD_UNLOCKED,
++
 +    /* always last */
 +    HILDON_IM_NUM_COMMANDS
 +};
@@ -2150,25 +2312,27 @@ index 0000000..406a447
 +    HILDON_IM_TRIGGER_NONE = -1,
 +    HILDON_IM_TRIGGER_STYLUS,
 +    HILDON_IM_TRIGGER_FINGER,
-+    HILDON_IM_TRIGGER_KEYBOARD
++    HILDON_IM_TRIGGER_KEYBOARD,
++    HILDON_IM_TRIGGER_UNKNOWN
 +};
 +
++// Command activation message, from context to IM (see HildonIMCommand)
 +struct HildonIMActivateMessage
 +{
 +    Window input_window;
 +    Window app_window;
 +    HildonIMCommand cmd;
-+    int input_mode;
 +    HildonIMTrigger trigger;
 +};
 +
++// Text insertion message, from IM to context
 +struct HildonIMInsertUtf8Message
 +{
 +    int msg_flag;
 +    char utf8_str[HILDON_IM_CLIENT_MESSAGE_BUFFER_SIZE];
 +};
 +
-+/* IM communications, from IM process to context */
++// IM communications, from IM process to context
 +typedef enum
 +{
 +  HILDON_IM_CONTEXT_HANDLE_ENTER,           /* Virtual enter activated */
@@ -2177,44 +2341,43 @@ index 0000000..406a447
 +  HILDON_IM_CONTEXT_HANDLE_SPACE,           /* Virtual space activated */
 +  HILDON_IM_CONTEXT_CONFIRM_SENTENCE_START, /* Query the autocap state at cursor */
 +  HILDON_IM_CONTEXT_FLUSH_PREEDIT,          /* Finalize the preedit to the client widget */
-+#ifdef Q_OS_FREMANTLE
 +  HILDON_IM_CONTEXT_CANCEL_PREEDIT,          /* Clean the preedit buffer */
-+#endif
 +
 +  /* See HildonIMCommitMode for a description of the commit modes */
 +  HILDON_IM_CONTEXT_BUFFERED_MODE,
 +  HILDON_IM_CONTEXT_DIRECT_MODE,
 +  HILDON_IM_CONTEXT_REDIRECT_MODE,
 +  HILDON_IM_CONTEXT_SURROUNDING_MODE,
-+#ifdef Q_OS_FREMANTLE
 +  HILDON_IM_CONTEXT_PREEDIT_MODE,
-+#endif
 +
 +  HILDON_IM_CONTEXT_CLIPBOARD_COPY,            /* Copy client selection to clipboard */
 +  HILDON_IM_CONTEXT_CLIPBOARD_CUT,             /* Cut client selection to clipboard */
 +  HILDON_IM_CONTEXT_CLIPBOARD_PASTE,           /* Paste clipboard selection to client */
 +  HILDON_IM_CONTEXT_CLIPBOARD_SELECTION_QUERY, /* Query if the client has an active selection */
 +  HILDON_IM_CONTEXT_REQUEST_SURROUNDING,       /* Request the content surrounding the cursor */
-+#ifdef Q_OS_FREMANTLE
 +  HILDON_IM_CONTEXT_REQUEST_SURROUNDING_FULL,          /* Request the contents of the text widget */
-+#endif
 +  HILDON_IM_CONTEXT_WIDGET_CHANGED,            /* IM detected that the client widget changed */
 +  HILDON_IM_CONTEXT_OPTION_CHANGED,            /* The OptionMask for the active context is updated */
 +  HILDON_IM_CONTEXT_CLEAR_STICKY,              /* Clear the sticky key state */
 +  HILDON_IM_CONTEXT_ENTER_ON_FOCUS,            /* Generate a virtual enter key event on focus in */
 +
++  HILDON_IM_CONTEXT_SPACE_AFTER_COMMIT,
++  HILDON_IM_CONTEXT_NO_SPACE_AFTER_COMMIT,
++
 +  /* always last */
 +  HILDON_IM_CONTEXT_NUM_COM
 +} HildonIMCommunication;
 +
++// IM context toggle options.
 +enum HildonIMOptionMask
 +{
-+  HILDON_IM_AUTOCASE          = 1 << 0,
-+  HILDON_IM_AUTOCORRECT       = 1 << 1,
-+  HILDON_IM_AUTOLEVEL_NUMERIC = 1 << 2,
-+  HILDON_IM_LOCK_LEVEL        = 1 << 3
++  HILDON_IM_AUTOCASE          = 1 << 0, // Suggest case based on the cursor's position in sentence
++  HILDON_IM_AUTOCORRECT       = 1 << 1, // Limited automatic error correction of commits
++  HILDON_IM_AUTOLEVEL_NUMERIC = 1 << 2, // Default to appropriate key-level in numeric-only clients
++  HILDON_IM_LOCK_LEVEL        = 1 << 3  // Lock the effective key-level at pre-determined value
 +};
 +
++// Communication message from IM to context
 +struct HildonIMComMessage
 +{
 +    Window input_window;
@@ -2222,7 +2385,7 @@ index 0000000..406a447
 +    HildonIMOptionMask options;
 +};
 +
-+/* Key event message, from context to IM */
++// Key event message, from context to IM
 +typedef struct
 +{
 +  Window input_window;
@@ -2242,6 +2405,11 @@ index 0000000..406a447
 +  HILDON_IM_DEAD_KEY_MASK         = 1 << 5,
 +} HildonIMInternalModifierMask;
 +
++typedef struct
++{
++  HildonGtkInputMode input_mode;
++  HildonGtkInputMode default_input_mode;
++} HildonIMInputModeMessage;
 +
 +#endif
 diff --git a/src/gui/inputmethod/qinputcontext.h b/src/gui/inputmethod/qinputcontext.h
@@ -2331,439 +2499,6 @@ index f11c1b8..7af1d71 100644
  #if defined(QT_NO_LIBRARY) || defined(QT_NO_SETTINGS)
      Q_UNUSED(key);
  #else
-diff --git a/src/gui/itemviews/qtableview.cpp b/src/gui/itemviews/qtableview.cpp
-index 597ce04..c5a2729 100644
---- a/src/gui/itemviews/qtableview.cpp
-+++ b/src/gui/itemviews/qtableview.cpp
-@@ -2455,6 +2455,39 @@ void QTableViewPrivate::selectColumn(int column, bool anchor)
-     }
- }
- 
-+#ifdef Q_WS_HILDON
-+void QTableViewPrivate::drawOvershoot(int horizontal, int vertical)
-+{
-+	Q_Q(QTableView);
-+	int overshoot_x = horizontal;
-+	int overshoot_y = vertical;
-+	int header_x = 0;
-+	int header_y = 0;
-+	if (overshoot_x >= 0) {
-+		if (q->isRightToLeft())
-+			overshoot_x += right;
-+		else
-+			overshoot_x += left;
-+		header_x = horizontal;
-+	} else {
-+		if (q->isRightToLeft())
-+			overshoot_x -= left;
-+		else
-+			overshoot_x -= right;
-+	}
-+	if (overshoot_y >= 0) {
-+		overshoot_y += top;
-+		header_y = vertical;
-+	} else
-+		overshoot_y -= bottom;
-+
-+	q->viewport()->move(overshoot_x, overshoot_y);
-+	horizontalHeader->move(overshoot_x, header_y);
-+	verticalHeader->move(header_x, overshoot_y);
-+	cornerWidget->move(header_x, header_y);
-+}
-+#endif
-+
- /*!
-   \reimp
-  */
-diff --git a/src/gui/itemviews/qtableview_p.h b/src/gui/itemviews/qtableview_p.h
-index ef1ae7a..14a2bf7 100644
---- a/src/gui/itemviews/qtableview_p.h
-+++ b/src/gui/itemviews/qtableview_p.h
-@@ -201,6 +201,10 @@ public:
- 
-     void selectRow(int row, bool anchor);
-     void selectColumn(int column, bool anchor);
-+
-+#ifdef Q_WS_HILDON
-+	void drawOvershoot(int horizontal, int vertical);
-+#endif
- };
- 
- QT_END_NAMESPACE
-diff --git a/src/gui/itemviews/qtreeview.cpp b/src/gui/itemviews/qtreeview.cpp
-index cdcce83..a5549d5 100644
---- a/src/gui/itemviews/qtreeview.cpp
-+++ b/src/gui/itemviews/qtreeview.cpp
-@@ -6,11 +6,11 @@
- ** This file is part of the QtGui module of the Qt Toolkit.
- **
- ** $QT_BEGIN_LICENSE:LGPL$
--** No Commercial Usage
--** This file contains pre-release code and may not be distributed.
--** You may use this file in accordance with the terms and conditions
--** contained in the either Technology Preview License Agreement or the
--** Beta Release License Agreement.
-+** Commercial Usage
-+** Licensees holding valid Qt Commercial licenses may use this file in
-+** accordance with the Qt Commercial License Agreement provided with the
-+** Software or, alternatively, in accordance with the terms contained in
-+** a written agreement between you and Nokia.
- **
- ** GNU Lesser General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU Lesser
-@@ -596,13 +596,13 @@ void QTreeView::setRowHidden(int row, const QModelIndex &parent, bool hide)
-     Q_D(QTreeView);
-     if (!d->model)
-         return;
--    QModelIndex index = d->model->index(row, 0, parent);
-+    QPersistentModelIndex index = d->model->index(row, 0, parent);
-     if (!index.isValid())
-         return;
- 
-     if (hide) {
-         d->hiddenIndexes.insert(index);
--    } else if(d->isPersistent(index)) { //if the index is not persistent, it cannot be in the set
-+    } else {
-         d->hiddenIndexes.remove(index);
-     }
- 
-@@ -782,7 +782,7 @@ void QTreeView::collapse(const QModelIndex &index)
- 
-     if (d->delayedPendingLayout) {
-         //A complete relayout is going to be performed, just un-store the expanded index, no need to layout.
--        if (d->isPersistent(index) && d->expandedIndexes.remove(index))
-+        if (d->expandedIndexes.remove(index))
-             emit collapsed(index);
-         return;
-     }
-@@ -794,7 +794,7 @@ void QTreeView::collapse(const QModelIndex &index)
-             viewport()->update();
-         }
-     } else {
--        if (d->isPersistent(index) && d->expandedIndexes.remove(index))
-+        if (d->expandedIndexes.remove(index))
-             emit collapsed(index);
-     }
- }
-@@ -1241,23 +1241,16 @@ bool QTreeView::viewportEvent(QEvent *event)
-         int oldBranch = d->hoverBranch;
-         d->hoverBranch = d->itemDecorationAt(he->pos());
-         if (oldBranch != d->hoverBranch) {
--            QModelIndex oldIndex = d->modelIndex(oldBranch),
--                newIndex = d->modelIndex(d->hoverBranch);
--            if (oldIndex != newIndex) {
--                QRect oldRect = visualRect(oldIndex);
--                QRect newRect = visualRect(newIndex);
--                viewport()->update(oldRect.left() - d->indent, oldRect.top(), d->indent, oldRect.height());
--                viewport()->update(newRect.left() - d->indent, newRect.top(), d->indent, newRect.height());
--            }
-+            QRect oldRect = visualRect(d->modelIndex(oldBranch));
-+            QRect newRect = visualRect(d->modelIndex(d->hoverBranch));
-+            viewport()->update(oldRect.left() - d->indent, oldRect.top(), d->indent, oldRect.height());
-+            viewport()->update(newRect.left() - d->indent, newRect.top(), d->indent, newRect.height());
-         }
-         if (selectionBehavior() == QAbstractItemView::SelectRows) {
--            QModelIndex newHoverIndex = indexAt(he->pos());
--            if (d->hover != newHoverIndex) {
--                QRect oldHoverRect = visualRect(d->hover);
--                QRect newHoverRect = visualRect(newHoverIndex);
--                viewport()->update(QRect(0, newHoverRect.y(), viewport()->width(), newHoverRect.height()));
--                viewport()->update(QRect(0, oldHoverRect.y(), viewport()->width(), oldHoverRect.height()));
--            }
-+            QRect oldHoverRect = visualRect(d->hover);
-+            QRect newHoverRect = visualRect(indexAt(he->pos()));
-+            viewport()->update(QRect(0, newHoverRect.y(), viewport()->width(), newHoverRect.height()));
-+            viewport()->update(QRect(0, oldHoverRect.y(), viewport()->width(), oldHoverRect.height()));
-         }
-         break; }
-     default:
-@@ -1386,7 +1379,7 @@ void QTreeView::drawTree(QPainter *painter, const QRegion &region) const
-         // start at the top of the viewport  and iterate down to the update area
-         for (; i < viewItems.count(); ++i) {
-             const int itemHeight = d->itemHeight(i);
--            if (y + itemHeight > area.top())
-+            if (y + itemHeight >= area.top())
-                 break;
-             y += itemHeight;
-         }
-@@ -2021,7 +2014,6 @@ int QTreeView::verticalOffset() const
-         // If we are scrolling per item and have non-uniform row heights,
-         // finding the vertical offset in pixels is going to be relatively slow.
-         // ### find a faster way to do this
--        d->executePostedLayout();
-         int offset = 0;
-         for (int i = 0; i < d->viewItems.count(); ++i) {
-             if (i == verticalScrollBar()->value())
-@@ -2052,7 +2044,8 @@ QModelIndex QTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
-         while (c < d->header->count() && d->header->isSectionHidden(c))
-             ++c;
-         if (i < d->viewItems.count() && c < d->header->count()) {
--            return d->modelIndex(i, c);
-+            QModelIndex index = d->viewItems.value(i).index;
-+            return (c == index.column() ? index : index.sibling(index.row(), c));
-         }
-         return QModelIndex();
-     }
-@@ -2093,16 +2086,16 @@ QModelIndex QTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
-     case MoveDown:
- #ifdef QT_KEYPAD_NAVIGATION
-         if (vi == d->viewItems.count()-1 && QApplication::keypadNavigationEnabled())
--            return d->model->index(0, current.column(), d->root);
-+            return d->model->index(0, 0, d->root);
- #endif
--        return d->modelIndex(d->below(vi), current.column());
-+        return d->modelIndex(d->below(vi));
-     case MovePrevious:
-     case MoveUp:
- #ifdef QT_KEYPAD_NAVIGATION
-         if (vi == 0 && QApplication::keypadNavigationEnabled())
--            return d->modelIndex(d->viewItems.count() - 1, current.column());
-+            return d->modelIndex(d->viewItems.count() - 1);
- #endif
--        return d->modelIndex(d->above(vi), current.column());
-+        return d->modelIndex(d->above(vi));
-     case MoveLeft: {
-         QScrollBar *sb = horizontalScrollBar();
-         if (vi < d->viewItems.count() && d->viewItems.at(vi).expanded && d->itemsExpandable && sb->value() == sb->minimum())
-@@ -2117,16 +2110,6 @@ QModelIndex QTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
-                     descend = false;
-             }
-             if (!descend) {
--                if (d->selectionBehavior == SelectItems || d->selectionBehavior == SelectColumns) {
--                    int visualColumn = d->header->visualIndex(current.column()) - 1;
--                    while (visualColumn >= 0 && isColumnHidden(d->header->logicalIndex(visualColumn)))
--                        visualColumn--;
--                    int newColumn = d->header->logicalIndex(visualColumn);
--                    QModelIndex next = current.sibling(current.row(), newColumn);
--                    if (next.isValid())
--                        return next;
--                }
--
-                 sb->setValue(sb->value() - sb->singleStep());
-             }
- 
-@@ -2149,17 +2132,6 @@ QModelIndex QTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
-                     descend = false;
-             }
-             if (!descend) {
--                if (d->selectionBehavior == SelectItems || d->selectionBehavior == SelectColumns) {
--                    int visualColumn = d->header->visualIndex(current.column()) + 1;
--                    while (visualColumn < d->model->columnCount(current.parent()) && isColumnHidden(d->header->logicalIndex(visualColumn)))
--                        visualColumn++;
--
--                    QModelIndex next = current.sibling(current.row(), visualColumn);
--                    if (next.isValid())
--                        return next;
--                }
--
--                //last restort: we change the scrollbar value
-                 QScrollBar *sb = horizontalScrollBar();
-                 sb->setValue(sb->value() + sb->singleStep());
-             }
-@@ -2168,13 +2140,13 @@ QModelIndex QTreeView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
-         viewport()->update();
-         break;
-     case MovePageUp:
--        return d->modelIndex(d->pageUp(vi), current.column());
-+        return d->modelIndex(d->pageUp(vi));
-     case MovePageDown:
--        return d->modelIndex(d->pageDown(vi), current.column());
-+        return d->modelIndex(d->pageDown(vi));
-     case MoveHome:
--        return d->model->index(0, current.column(), d->root);
-+        return d->model->index(0, 0, d->root);
-     case MoveEnd:
--        return d->modelIndex(d->viewItems.count() - 1, current.column());
-+        return d->modelIndex(d->viewItems.count() - 1);
-     }
-     return current;
- }
-@@ -2317,16 +2289,15 @@ void QTreeView::scrollContentsBy(int dx, int dy)
-         }
-     }
- 
--    const int itemHeight = d->defaultItemHeight <= 0 ? sizeHintForRow(0) : d->defaultItemHeight;
--    if (d->viewItems.isEmpty() || itemHeight == 0)
-+    if (d->viewItems.isEmpty() || d->defaultItemHeight == 0)
-         return;
- 
-     // guestimate the number of items in the viewport
--    int viewCount = d->viewport->height() / itemHeight;
-+    int viewCount = d->viewport->height() / d->defaultItemHeight;
-     int maxDeltaY = qMin(d->viewItems.count(), viewCount);
-     // no need to do a lot of work if we are going to redraw the whole thing anyway
-     if (qAbs(dy) > qAbs(maxDeltaY) && d->editors.isEmpty()) {
--        verticalScrollBar()->update();
-+        verticalScrollBar()->repaint();
-         d->viewport->update();
-         return;
-     }
-@@ -2569,13 +2540,41 @@ void QTreeView::sortByColumn(int column, Qt::SortOrder order)
- {
-     Q_D(QTreeView);
- 
--    //If sorting is enabled  will emit a signal connected to _q_sortIndicatorChanged, which then actually sorts
-+    //will emit a signal connected to _q_sortIndicatorChanged, which then actually sorts
-     d->header->setSortIndicator(column, order);
--    //If sorting is not enabled, force to sort now.
--    if (!d->sortingEnabled)
--        d->model->sort(column, order);
- }
- 
-+#ifdef Q_WS_HILDON
-+void QTreeViewPrivate::drawOvershoot(int horizontal, int vertical)
-+{
-+	Q_Q(QTreeView);
-+	int overshoot_x = horizontal;
-+	int overshoot_y = vertical;
-+	int header_x = 0;
-+	int header_y = 0;
-+	if (overshoot_x >= 0) {
-+		if (q->isRightToLeft())
-+			overshoot_x += right;
-+		else
-+			overshoot_x += left;
-+		header_x = horizontal;
-+	} else {
-+		if (q->isRightToLeft())
-+			overshoot_x -= left;
-+		else
-+			overshoot_x -= right;
-+	}
-+	if (overshoot_y >= 0) {
-+		overshoot_y += top;
-+		header_y = vertical;
-+	} else
-+		overshoot_y -= bottom;
-+
-+	q->viewport()->move(overshoot_x, overshoot_y);
-+	header->move(overshoot_x, header_y);
-+}
-+#endif
-+
- /*!
-   \reimp
- */
-@@ -2597,7 +2596,7 @@ void QTreeView::selectAll()
-   Expands all expandable items.
- 
-   Warning: if the model contains a large number of items,
--  this function will take some time to execute.
-+  this function will be take time to execute.
- 
-   \sa collapseAll() expand()  collapse() setExpanded()
- */
-@@ -2901,13 +2900,8 @@ void QTreeViewPrivate::collapse(int item, bool emitSignal)
-     if (item == -1 || expandedIndexes.isEmpty())
-         return;
- 
--    //if the current item is now invisible, the autoscroll will expand the tree to see it, so disable the autoscroll
--    delayedAutoScroll.stop();
--
-     int total = viewItems.at(item).total;
-     const QModelIndex &modelIndex = viewItems.at(item).index;
--    if (!isPersistent(modelIndex))
--        return; // if the index is not persistent, no chances it is expanded
-     QSet<QPersistentModelIndex>::iterator it = expandedIndexes.find(modelIndex);
-     if (it == expandedIndexes.end() || viewItems.at(item).expanded == false)
-         return; // nothing to do
-@@ -3374,15 +3368,10 @@ int QTreeViewPrivate::viewIndex(const QModelIndex &_index) const
-     return -1;
- }
- 
--QModelIndex QTreeViewPrivate::modelIndex(int i, int column) const
-+QModelIndex QTreeViewPrivate::modelIndex(int i) const
- {
--    if (i < 0 || i >= viewItems.count())
--        return QModelIndex();
--
--    QModelIndex ret = viewItems.at(i).index;
--    if (column)
--        ret = ret.sibling(ret.row(), column);
--    return ret;
-+    return ((i < 0 || i >= viewItems.count())
-+            ? QModelIndex() : viewItems.at(i).index);
- }
- 
- int QTreeViewPrivate::firstVisibleItem(int *offset) const
-@@ -3510,7 +3499,6 @@ void QTreeViewPrivate::updateScrollBars()
- 
- int QTreeViewPrivate::itemDecorationAt(const QPoint &pos) const
- {
--    const_cast<QTreeView *>(q_func())->executeDelayedItemsLayout();
-     int x = pos.x();
-     int column = header->logicalIndexAt(x);
-     if (column != 0)
-diff --git a/src/gui/itemviews/qtreeview.h b/src/gui/itemviews/qtreeview.h
-index 35a205c..dbe443d 100644
---- a/src/gui/itemviews/qtreeview.h
-+++ b/src/gui/itemviews/qtreeview.h
-@@ -6,11 +6,11 @@
- ** This file is part of the QtGui module of the Qt Toolkit.
- **
- ** $QT_BEGIN_LICENSE:LGPL$
--** No Commercial Usage
--** This file contains pre-release code and may not be distributed.
--** You may use this file in accordance with the terms and conditions
--** contained in the either Technology Preview License Agreement or the
--** Beta Release License Agreement.
-+** Commercial Usage
-+** Licensees holding valid Qt Commercial licenses may use this file in
-+** accordance with the Qt Commercial License Agreement provided with the
-+** Software or, alternatively, in accordance with the terms contained in
-+** a written agreement between you and Nokia.
- **
- ** GNU Lesser General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU Lesser
-@@ -51,7 +51,6 @@ QT_BEGIN_NAMESPACE
- QT_MODULE(Gui)
- 
- #ifndef QT_NO_TREEVIEW
--
- class QTreeViewPrivate;
- class QHeaderView;
- 
-diff --git a/src/gui/itemviews/qtreeview_p.h b/src/gui/itemviews/qtreeview_p.h
-index 6a1dfe5..d9be7f3 100644
---- a/src/gui/itemviews/qtreeview_p.h
-+++ b/src/gui/itemviews/qtreeview_p.h
-@@ -6,11 +6,11 @@
- ** This file is part of the QtGui module of the Qt Toolkit.
- **
- ** $QT_BEGIN_LICENSE:LGPL$
--** No Commercial Usage
--** This file contains pre-release code and may not be distributed.
--** You may use this file in accordance with the terms and conditions
--** contained in the either Technology Preview License Agreement or the
--** Beta Release License Agreement.
-+** Commercial Usage
-+** Licensees holding valid Qt Commercial licenses may use this file in
-+** accordance with the Qt Commercial License Agreement provided with the
-+** Software or, alternatively, in accordance with the terms contained in
-+** a written agreement between you and Nokia.
- **
- ** GNU Lesser General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU Lesser
-@@ -131,7 +131,7 @@ public:
-     int itemAtCoordinate(int coordinate) const;
- 
-     int viewIndex(const QModelIndex &index) const;
--    QModelIndex modelIndex(int i, int column = 0) const;
-+    QModelIndex modelIndex(int i) const;
- 
-     int firstVisibleItem(int *offset = 0) const;
-     int columnAt(int x) const;
-@@ -231,6 +231,10 @@ public:
- 
-     // used for blocking recursion when calling setViewportMargins from updateGeometries
-     bool geometryRecursionBlock;
-+ 
-+#ifdef Q_WS_HILDON
-+	void drawOvershoot(int horizontal, int vertical);
-+#endif
- };
- 
- QT_END_NAMESPACE
 diff --git a/src/gui/kernel/qapplication.cpp b/src/gui/kernel/qapplication.cpp
 index 40795d1..51a938f 100644
 --- a/src/gui/kernel/qapplication.cpp
@@ -2831,7 +2566,7 @@ index ddd5624..d4fc3ad 100644
 diff --git a/src/gui/kernel/qapplication_x11.cpp b/src/gui/kernel/qapplication_x11.cpp
 old mode 100644
 new mode 100755
-index 163ceb6..082507a
+index 163ceb6..31c1427
 --- a/src/gui/kernel/qapplication_x11.cpp
 +++ b/src/gui/kernel/qapplication_x11.cpp
 @@ -126,6 +126,10 @@ extern "C" {
@@ -2845,7 +2580,18 @@ index 163ceb6..082507a
  #include <private/qbackingstore_p.h>
  
  QT_BEGIN_NAMESPACE
-@@ -253,6 +257,11 @@ static const char * x11_atomnames = {
+@@ -241,7 +245,9 @@ static const char * x11_atomnames = {
+     "_NET_WM_WINDOW_TYPE_DND\0"
+     "_NET_WM_WINDOW_TYPE_NORMAL\0"
+     "_KDE_NET_WM_WINDOW_TYPE_OVERRIDE\0"
+-
++#ifdef Q_OS_FREMANTLE
++    "_HILDON_WM_WINDOW_TYPE_APP_MENU\0"
++#endif
+     "_KDE_NET_WM_FRAME_STRUT\0"
+ 
+     "_NET_STARTUP_INFO\0"
+@@ -253,6 +259,11 @@ static const char * x11_atomnames = {
  
      "_NET_SYSTEM_TRAY_VISUAL\0"
  
@@ -2857,11 +2603,12 @@ index 163ceb6..082507a
      // Property formats
      "COMPOUND_TEXT\0"
      "TEXT\0"
-@@ -291,6 +300,30 @@ static const char * x11_atomnames = {
+@@ -291,6 +302,38 @@ static const char * x11_atomnames = {
      // Xkb
      "_XKB_RULES_NAMES\0"
  
 +    //Hildon Input Method Protocol
++/* IM atom names */
 +#ifdef Q_WS_HILDON
 +    // find the global im window
 +    "_HILDON_IM_WINDOW\0"
@@ -2883,12 +2630,19 @@ index 163ceb6..082507a
 +    "_HILDON_IM_CLIPBOARD_SELECTION_QUERY\0"
 +    // tell im whether we have a selection or not
 +    "_HILDON_IM_CLIPBOARD_SELECTION_REPLY\0"
++    /* Fremantle specific HIM Atoms */
++    //
++    "_HILDON_IM_INPUT_MODE\0"
++    //
++    "_HILDON_IM_PREEDIT_COMMITTED\0"
++    //
++    "_HILDON_IM_PREEDIT_COMMITTED_CONTENT\0"
 +#endif
 +
      // XEMBED
      "_XEMBED\0"
      "_XEMBED_INFO\0"
-@@ -318,7 +351,10 @@ static bool        appDoGrab        = false;        // X11 grabbing override (gd
+@@ -318,7 +361,10 @@ static bool        appDoGrab        = false;        // X11 grabbing override (gd
  static bool        app_save_rootinfo = false;        // save root info
  static bool        app_do_modal        = false;        // modal mode
  static Window        curWin = 0;                        // current window
@@ -2900,7 +2654,7 @@ index 163ceb6..082507a
  
  // function to update the workarea of the screen - in qdesktopwidget_x11.cpp
  extern void qt_desktopwidget_update_workarea();
-@@ -343,6 +379,11 @@ static Qt::MouseButtons mouseButtonState     = Qt::NoButton; // mouse button sta
+@@ -343,6 +389,11 @@ static Qt::MouseButtons mouseButtonState     = Qt::NoButton; // mouse button sta
  static Time        mouseButtonPressTime = 0;        // when was a button pressed
  static short        mouseXPos, mouseYPos;                // mouse pres position in act window
  static short        mouseGlobalXPos, mouseGlobalYPos; // global mouse press position
@@ -2912,7 +2666,7 @@ index 163ceb6..082507a
  
  extern QWidgetList *qt_modal_stack;                // stack of modal widgets
  
-@@ -988,6 +1029,7 @@ bool QApplicationPrivate::x11_apply_settings()
+@@ -988,6 +1039,7 @@ bool QApplicationPrivate::x11_apply_settings()
              qt_xim_preferred_style = XIMPreeditNothing | XIMStatusNothing;
      }
  #endif
@@ -2920,7 +2674,7 @@ index 163ceb6..082507a
      QStringList inputMethods = QInputContextFactory::keys();
      if (inputMethods.size() > 2 && inputMethods.contains(QLatin1String("imsw-multi"))) {
          X11->default_im = QLatin1String("imsw-multi");
-@@ -995,6 +1037,7 @@ bool QApplicationPrivate::x11_apply_settings()
+@@ -995,6 +1047,7 @@ bool QApplicationPrivate::x11_apply_settings()
          X11->default_im = settings.value(QLatin1String("DefaultInputMethod"),
                                           QLatin1String("xim")).toString();
      }
@@ -2928,7 +2682,7 @@ index 163ceb6..082507a
  
      settings.endGroup(); // Qt
  
-@@ -1688,8 +1731,11 @@ void qt_init(QApplicationPrivate *priv, int,
+@@ -1688,8 +1741,11 @@ void qt_init(QApplicationPrivate *priv, int,
      X11->seen_badwindow = false;
  
      X11->motifdnd_active = false;
@@ -2941,7 +2695,7 @@ index 163ceb6..082507a
      priv->inputContext = 0;
  
      // colormap control
-@@ -1954,10 +2000,18 @@ void qt_init(QApplicationPrivate *priv, int,
+@@ -1954,10 +2010,18 @@ void qt_init(QApplicationPrivate *priv, int,
              // engine to work on a QImage with BGR layout.
              bool local = displayName.isEmpty() || displayName.lastIndexOf(QLatin1Char(':')) == 0;
              if (local && (qgetenv("QT_X11_NO_MITSHM").toInt() == 0)) {
@@ -2960,7 +2714,7 @@ index 163ceb6..082507a
              }
          }
  #endif // QT_NO_MITSHM
-@@ -2271,6 +2325,10 @@ void qt_init(QApplicationPrivate *priv, int,
+@@ -2271,6 +2335,10 @@ void qt_init(QApplicationPrivate *priv, int,
                          X11->desktopEnvironment = DE_KDE;
                      if (wmName == QLatin1String("Metacity"))
                          X11->desktopEnvironment = DE_GNOME;
@@ -2971,7 +2725,7 @@ index 163ceb6..082507a
                  }
              }
          }
-@@ -2340,7 +2398,9 @@ void qt_init(QApplicationPrivate *priv, int,
+@@ -2340,7 +2408,9 @@ void qt_init(QApplicationPrivate *priv, int,
                  i,
                  j;
              bool gotStylus,
@@ -2982,7 +2736,7 @@ index 163ceb6..082507a
              XDeviceInfo *devices = 0, *devs;
              XInputClassInfo *ip;
              XAnyClassPtr any;
-@@ -2354,6 +2414,9 @@ void qt_init(QApplicationPrivate *priv, int,
+@@ -2354,6 +2424,9 @@ void qt_init(QApplicationPrivate *priv, int,
              const QString XFREENAMEPEN = QLatin1String("pen");
              const QString XFREENAMEERASER = QLatin1String("eraser");
  #endif
@@ -2992,7 +2746,7 @@ index 163ceb6..082507a
  
              if (X11->ptrXListInputDevices) {
                  devices = X11->ptrXListInputDevices(X11->display, &ndev);
-@@ -2384,17 +2447,32 @@ void qt_init(QApplicationPrivate *priv, int,
+@@ -2384,17 +2457,36 @@ void qt_init(QApplicationPrivate *priv, int,
                      deviceType = QTabletEvent::XFreeEraser;
                      gotEraser = true;
                  }
@@ -3019,13 +2773,17 @@ index 163ceb6..082507a
                          continue;
  
 +#ifdef Q_WS_HILDON
++#ifdef Q_OS_FREMANTLE
++                    are_xinput_events_used = false;
++#else
 +                    are_xinput_events_used = true;
++#endif
 +#endif
 +
                      QTabletDeviceData device_data;
                      device_data.deviceType = deviceType;
                      device_data.eventCount = 0;
-@@ -2599,6 +2677,11 @@ void QApplicationPrivate::x11_initialize_style()
+@@ -2599,6 +2691,11 @@ void QApplicationPrivate::x11_initialize_style()
          case DE_CDE:
              QApplicationPrivate::app_style = QStyleFactory::create(QLatin1String("cde"));
              break;
@@ -3037,7 +2795,7 @@ index 163ceb6..082507a
          default:
              // Don't do anything
              break;
-@@ -2757,6 +2840,12 @@ QString QApplicationPrivate::appName() const
+@@ -2757,6 +2854,12 @@ QString QApplicationPrivate::appName() const
      return QString::fromLocal8Bit(QT_PREPEND_NAMESPACE(appName));
  }
  
@@ -3050,7 +2808,7 @@ index 163ceb6..082507a
  const char *QX11Info::appClass()                                // get application class
  {
      return QT_PREPEND_NAMESPACE(appClass);
-@@ -3031,6 +3120,50 @@ void QApplicationPrivate::_q_alertTimeOut()
+@@ -3031,6 +3134,50 @@ void QApplicationPrivate::_q_alertTimeOut()
      }
  }
  
@@ -3101,7 +2859,7 @@ index 163ceb6..082507a
  /*****************************************************************************
    Special lookup functions for windows that have been reparented recently
   *****************************************************************************/
-@@ -3124,10 +3257,30 @@ int QApplication::x11ClientMessage(QWidget* w, XEvent* event, bool passive_only)
+@@ -3124,10 +3271,30 @@ int QApplication::x11ClientMessage(QWidget* w, XEvent* event, bool passive_only)
              X11->xdndHandleDrop(widget, event, passive_only);
          } else if (event->xclient.message_type == ATOM(XdndFinished)) {
              X11->xdndHandleFinished(widget, event, passive_only);
@@ -3132,7 +2890,7 @@ index 163ceb6..082507a
      } else {
          X11->motifdndHandle(widget, event, passive_only);
      }
-@@ -4254,13 +4407,26 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
+@@ -4254,13 +4421,26 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
                  mouseButtonPressed == button &&
                  (long)event->xbutton.time -(long)mouseButtonPressTime
                  < QApplication::doubleClickInterval() &&
@@ -3159,7 +2917,7 @@ index 163ceb6..082507a
              }
              mouseButtonPressed = button;        // save event params for
              mouseXPos = event->xbutton.x;                // future double click tests
-@@ -4286,6 +4452,11 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
+@@ -4286,6 +4466,11 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
              }
  #endif
              type = QEvent::MouseButtonRelease;
@@ -3191,7 +2949,7 @@ index 22dd30b..67e7ee9 100644
      {QKeySequence::PreviousChild,           0,          Qt::CTRL | Qt::Key_Period,              QApplicationPrivate::KB_KDE},
      {QKeySequence::HelpContents,            1,          Qt::CTRL | Qt::Key_Question,            QApplicationPrivate::KB_Mac},
 diff --git a/src/gui/kernel/qt_x11_p.h b/src/gui/kernel/qt_x11_p.h
-index b36b3f4..1593fa3 100644
+index b36b3f4..adcaea5 100644
 --- a/src/gui/kernel/qt_x11_p.h
 +++ b/src/gui/kernel/qt_x11_p.h
 @@ -324,6 +324,9 @@ enum DesktopEnvironment {
@@ -3204,7 +2962,17 @@ index b36b3f4..1593fa3 100644
      DE_4DWM
  };
  
-@@ -610,6 +613,11 @@ struct QX11Data
+@@ -598,6 +601,9 @@ struct QX11Data
+         _NET_WM_WINDOW_TYPE_DND,
+         _NET_WM_WINDOW_TYPE_NORMAL,
+         _KDE_NET_WM_WINDOW_TYPE_OVERRIDE,
++#ifdef Q_OS_FREMANTLE
++        _HILDON_WM_WINDOW_TYPE_APP_MENU,
++#endif
+ 
+         _KDE_NET_WM_FRAME_STRUT,
+ 
+@@ -610,6 +616,11 @@ struct QX11Data
  
          _NET_SYSTEM_TRAY_VISUAL,
  
@@ -3216,7 +2984,7 @@ index b36b3f4..1593fa3 100644
          // Property formats
          COMPOUND_TEXT,
          TEXT,
-@@ -648,6 +656,19 @@ struct QX11Data
+@@ -648,6 +659,22 @@ struct QX11Data
          // Xkb
          _XKB_RULES_NAMES,
  
@@ -3231,13 +2999,16 @@ index b36b3f4..1593fa3 100644
 +        _HILDON_IM_CLIPBOARD_COPIED,          //### NOT USED
 +        _HILDON_IM_CLIPBOARD_SELECTION_QUERY, //### NOT USED
 +        _HILDON_IM_CLIPBOARD_SELECTION_REPLY,
++        _HILDON_IM_INPUT_MODE,
++        _HILDON_IM_PREEDIT_COMMITTED,
++        _HILDON_IM_PREEDIT_COMMITTED_CONTENT,
 +#endif
 +
          // XEMBED
          _XEMBED,
          _XEMBED_INFO,
 diff --git a/src/gui/kernel/qwidget.cpp b/src/gui/kernel/qwidget.cpp
-index e6a5ae0..f2320a0 100644
+index e6a5ae0..1c0b019 100644
 --- a/src/gui/kernel/qwidget.cpp
 +++ b/src/gui/kernel/qwidget.cpp
 @@ -8480,6 +8480,10 @@ QVariant QWidget::inputMethodQuery(Qt::InputMethodQuery query) const
@@ -3251,32 +3022,72 @@ index e6a5ae0..f2320a0 100644
      default:
          return QVariant();
      }
+@@ -10376,6 +10380,21 @@ Qt::HANDLE QWidget::handle() const
+ }
+ #endif
+ 
++#if defined (Q_WS_HILDON)
++/*!
++    Returnsint QWidget::hildonStackableWindow() const the number of the item in the Hildon Windows Stack
++ */
++int QWidget::hildonStackableWindow() const
++{
++    Q_D(const QWidget);
++
++    QWidget *mWindow = window();
++    QTLWExtra *x = mWindow->d_func()->topData();
++    Q_ASSERT(x);
++
++    return x->hildonStackableWindow;
++}
++#endif
+ 
+ /*!
+     Raises this widget to the top of the parent widget's stack.
+diff --git a/src/gui/kernel/qwidget.h b/src/gui/kernel/qwidget.h
+index 40ff671..8f4c347 100644
+--- a/src/gui/kernel/qwidget.h
++++ b/src/gui/kernel/qwidget.h
+@@ -586,6 +586,10 @@ public:
+     Qt::HANDLE handle() const;
+ #endif
+ 
++#if defined(Q_WS_HILDON)
++    int hildonStackableWindow() const;
++#endif
++
+     void setAttribute(Qt::WidgetAttribute, bool on = true);
+     inline bool testAttribute(Qt::WidgetAttribute) const;
+ 
 diff --git a/src/gui/kernel/qwidget_p.h b/src/gui/kernel/qwidget_p.h
-index d6cc4f7..6f2da38 100644
+index d6cc4f7..d83d3e4 100644
 --- a/src/gui/kernel/qwidget_p.h
 +++ b/src/gui/kernel/qwidget_p.h
-@@ -149,6 +149,9 @@ struct QTLWExtra {
+@@ -149,6 +149,10 @@ struct QTLWExtra {
      HICON winIconBig; // internal big Windows icon
      HICON winIconSmall; // internal small Windows icon
  #endif
 +#ifdef Q_WS_HILDON
 +    bool customContextSet;
++    int hildonStackableWindow;
 +#endif
      QRect normalGeometry; // used by showMin/maximized/FullScreen
      QWindowSurface *windowSurface;
      QPainter *sharedPainter;
-@@ -223,6 +226,9 @@ public:
+@@ -223,6 +227,11 @@ public:
      void setMaxWindowState_helper();
      void setFullScreenSize_helper();
  #endif
 +#ifdef Q_WS_HILDON
 +    bool setCustomContext();
++    bool setHildonStackableWindows(int item);
++    int  hildonStackableWindow();
 +#endif
      void init(QWidget *desktopWidget, Qt::WindowFlags f);
      void create_sys(WId window, bool initializeWindow, bool destroyOldWindow);
      void createRecursively();
 diff --git a/src/gui/kernel/qwidget_x11.cpp b/src/gui/kernel/qwidget_x11.cpp
-index c7b32f2..27c134e 100644
+index c7b32f2..33005b2 100644
 --- a/src/gui/kernel/qwidget_x11.cpp
 +++ b/src/gui/kernel/qwidget_x11.cpp
 @@ -68,6 +68,10 @@
@@ -3290,7 +3101,27 @@ index c7b32f2..27c134e 100644
  //#define ALIEN_DEBUG
  
  // defined in qapplication_x11.cpp
-@@ -757,7 +761,10 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
+@@ -177,6 +181,9 @@ static void SetMWMHints(Display *display, Window window, const QtMWMHints &mwmhi
+ static inline bool isTransient(const QWidget *w)
+ {
+     return ((w->windowType() == Qt::Dialog
++#ifdef Q_OS_FREMANTLE
++             || w->windowType() == Qt::HildonAppMenu
++#endif
+              || w->windowType() == Qt::Sheet
+              || w->windowType() == Qt::Tool
+              || w->windowType() == Qt::SplashScreen
+@@ -452,6 +459,9 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
+     bool topLevel = (flags & Qt::Window);
+     bool popup = (type == Qt::Popup);
+     bool dialog = (type == Qt::Dialog
++#ifdef Q_OS_FREMANTLE
++                   || type == Qt::HildonAppMenu
++#endif
+                    || type == Qt::Sheet);
+     bool desktop = (type == Qt::Desktop);
+     bool tool = (type == Qt::Tool || type == Qt::SplashScreen
+@@ -757,7 +767,10 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
          Atom protocols[4];
          int n = 0;
          protocols[n++] = ATOM(WM_DELETE_WINDOW);        // support del window protocol
@@ -3301,7 +3132,21 @@ index c7b32f2..27c134e 100644
          protocols[n++] = ATOM(_NET_WM_PING);                // support _NET_WM_PING protocol
          if (flags & Qt::WindowContextHelpButtonHint)
              protocols[n++] = ATOM(_NET_WM_CONTEXT_HELP);
-@@ -2003,9 +2010,11 @@ void QWidgetPrivate::setNetWmWindowTypes()
+@@ -1993,7 +2006,12 @@ void QWidgetPrivate::setNetWmWindowTypes()
+         // splash netwm type
+         windowTypes.append(ATOM(_NET_WM_WINDOW_TYPE_SPLASH));
+         break;
+-
++#ifdef Q_OS_FREMANTLE
++    case Qt::HildonAppMenu:
++        //Hildon application menu
++        windowTypes.append(ATOM(_HILDON_WM_WINDOW_TYPE_APP_MENU));
++        break;
++#endif
+     default:
+         break;
+     }
+@@ -2003,9 +2021,11 @@ void QWidgetPrivate::setNetWmWindowTypes()
          windowTypes.append(ATOM(_KDE_NET_WM_WINDOW_TYPE_OVERRIDE));
      }
  
@@ -3315,17 +3160,18 @@ index c7b32f2..27c134e 100644
      if (!windowTypes.isEmpty()) {
          XChangeProperty(X11->display, q->winId(), ATOM(_NET_WM_WINDOW_TYPE), XA_ATOM, 32,
                          PropModeReplace, (unsigned char *) windowTypes.constData(),
-@@ -2624,6 +2633,9 @@ void QWidgetPrivate::createTLSysExtra()
+@@ -2624,6 +2644,10 @@ void QWidgetPrivate::createTLSysExtra()
      extra->topextra->validWMState = 0;
      extra->topextra->waitingForMapNotify = 0;
      extra->topextra->userTimeWindow = 0;
 +#ifdef Q_WS_HILDON
 +    extra->topextra->customContextSet = 0;
++    extra->topextra->hildonStackableWindow = -1;
 +#endif
  }
  
  void QWidgetPrivate::deleteTLSysExtra()
-@@ -2853,6 +2865,48 @@ void QWidgetPrivate::setModal_sys()
+@@ -2853,6 +2877,71 @@ void QWidgetPrivate::setModal_sys()
  {
  }
  
@@ -3369,13 +3215,326 @@ index c7b32f2..27c134e 100644
 +    x->customContextSet = 1;
 +    return true;
 +}
++
++bool QWidgetPrivate::setHildonStackableWindows(int item)
++{
++    Q_Q(QWidget);
++
++    QWidget *window = q->window();
++    QTLWExtra *x = window->d_func()->topData();
++    Q_ASSERT(x);
++
++    if (x->hildonStackableWindow >= 0)
++        return false;
++
++    x->hildonStackableWindow = item;
++
++    WId windowHandle = window->winId();
++    
++    //TODO Move in the Qt Atom list
++    Atom hildonStackableWindows = XInternAtom (QX11Info::display(), "_HILDON_STACKABLE_WINDOW", false);
++    XChangeProperty(X11->display, q->winId(), hildonStackableWindows, XA_INTEGER, 32, PropModeAppend, (uchar *)&item, 1);
++
++    return true;
++}
++
 +#endif
 +
  void qt_x11_getX11InfoForWindow(QX11Info * xinfo, const QX11WindowAttributes &att)
  {
      QX11InfoData* xd = xinfo->getX11Data(true);
+diff --git a/src/gui/maemo/maemo.pri b/src/gui/maemo/maemo.pri
+new file mode 100644
+index 0000000..000883c
+--- /dev/null
++++ b/src/gui/maemo/maemo.pri
+@@ -0,0 +1,8 @@
++# Qt Maemo module
++
++HEADERS += \
++           maemo/qhildonappmenu.h \
++           maemo/qhildonappmenu_p.h
++SOURCES += \
++           maemo/qhildonappmenu.cpp
++
+diff --git a/src/gui/maemo/qhildonappmenu.cpp b/src/gui/maemo/qhildonappmenu.cpp
+new file mode 100644
+index 0000000..62b48f9
+--- /dev/null
++++ b/src/gui/maemo/qhildonappmenu.cpp
+@@ -0,0 +1,155 @@
++/****************************************************************************
++**
++** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
++** Contact: antonio.aloisio@nokia.com
++**
++**
++** GNU General Public License Usage
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++****************************************************************************/
++#include "qhildonappmenu.h"
++#include "private/qhildonappmenu_p.h"//TODO Add private and copy it in include directory
++
++#include <qlayout.h>
++#include <qpushbutton.h>
++#include <qaction.h>
++#include <qlayout.h>
++#include <qdesktopwidget.h>
++#include <qapplication.h>
++
++QT_BEGIN_NAMESPACE
++
++void QHildonAppMenuPrivate::init(){
++    Q_Q(QHildonAppMenu);
++    q->setAttribute(Qt::WA_DeleteOnClose);
++    action = 0;
++
++    desktop = QApplication::desktop();
++    QObject::connect(desktop, SIGNAL(resized(int)), q, SLOT(_q_screenResized(int)));
++    updateSize();
++
++    gridLayout = new QGridLayout(q);
++    gridLayout->setSpacing(0);
++}
++
++void QHildonAppMenuPrivate::createButtons(QList<QAction*> actions){
++    QAction *action;
++    foreach(action, actions){
++        if (action->isVisible() && 
++            action->isEnabled() &&
++            !action->isSeparator() &&
++            !action->menu())
++        addButton(action);
++    }
++}
++
++void QHildonAppMenuPrivate::addButton(QAction* action){
++    Q_Q(QHildonAppMenu);
++
++    int row, culumn;
++    QPushButton *pushButton = new QPushButton(q);
++    pushButton->setMinimumSize(QSize(0, 65));
++    pushButton->setText(action->text());
++    buttonList.insert(pushButton, action);
++    
++    switch(menuMode){
++    case Landscape:
++        culumn = ((buttonList.count() % 2) == 0) ? 1 : 0;
++        row = (buttonList.count() - culumn)/ 2;
++        break;
++    case Portrait:
++        culumn = 0;
++        row = gridLayout->rowCount();
++    }
++
++    gridLayout->addWidget(pushButton, row, culumn);
++
++    QObject::connect(pushButton, SIGNAL(clicked()), q, SLOT(_q_activateAction()));
++}
++
++void QHildonAppMenuPrivate::updateSize(){
++    Q_Q(QHildonAppMenu);
++    int menuWidth = desktop->screenGeometry(q).width() -100;
++    q->resize(menuWidth, 100);
++    menuMode = (menuWidth > 480) ? Landscape : Portrait; 
++}
++#if 0
++void QHildonAppMenuPrivate::_q_activateAction()
++{
++    Q_Q(QHildonAppMenu);
++
++    QAction *action = buttonList[sender()];
++    //qDebug() << "activate QAction sender=" << sender();
++    if (action)
++        action->activate(QAction::Trigger);
++    else
++        qWarning("Impossible to activate the action");
++
++}
++#endif 
++
++/*!
++    \class QHildonAppMenu
++    \brief The QHildonAppMenu class is the default Maemo5 Application Menu widget.
++
++    \ingroup menu
++
++    \mainclass
++    QHildoinAppMenu shows QActions in a widget like the HildonAppMenu.
++    This class should not be used by developer. It should be just for internal use.
++    
++    QHildonAppMenu shows actions that are enabled and visible. 
++    Separator or menu QActions won't be shown.
++
++    The widget is destroyed as soon as a button is clicked or if the user click outside the 
++    menu.
++*/
++
++QHildonAppMenu::QHildonAppMenu(QList<QAction*> actions, QWidget *parent)
++    : QDialog(*new QHildonAppMenuPrivate, parent, QFlag(Qt::HildonAppMenu))
++{
++    Q_D(QHildonAppMenu);
++    d->init();
++    d->createButtons(actions);
++}
++
++QHildonAppMenu::~QHildonAppMenu()
++{
++}
++
++void QHildonAppMenu::hideEvent(QHideEvent * event)
++{
++    Q_D(QHildonAppMenu);
++    Q_UNUSED(event);
++    QAction *action = d->action;
++    if (action)
++        action->activate(QAction::Trigger);
++    done(0);
++}
++
++void QHildonAppMenu::_q_activateAction()
++{
++    Q_D(QHildonAppMenu);
++
++    QAction *action = d->buttonList[sender()];
++    if (action){
++        d->action = action;
++        hide();
++    }else{
++        qWarning("Impossible to activate the action");
++    }
++}
++
++void QHildonAppMenu::_q_screenResized(int screen)
++{
++    Q_UNUSED(screen);
++    //Close the menu so that we don't care about
++    //sorting the buttons again.
++    done(1);    
++}
+\ No newline at end of file
+diff --git a/src/gui/maemo/qhildonappmenu.h b/src/gui/maemo/qhildonappmenu.h
+new file mode 100644
+index 0000000..a38e5c6
+--- /dev/null
++++ b/src/gui/maemo/qhildonappmenu.h
+@@ -0,0 +1,53 @@
++/****************************************************************************
++**
++** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
++** Contact: antonio.aloisio@nokia.com
++**
++**
++** GNU General Public License Usage
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++****************************************************************************/
++#ifndef QHILDONAPPMENU_H
++#define QHILDONAPPMENU_H
++
++#include <QtGui/qdialog.h>
++
++QT_BEGIN_HEADER
++
++QT_BEGIN_NAMESPACE
++
++QT_MODULE(Gui)
++
++class QHildonAppMenuPrivate;
++
++class Q_GUI_EXPORT QHildonAppMenu : public QDialog
++{
++    Q_OBJECT
++
++public:
++    explicit QHildonAppMenu(QList<QAction*> actions, QWidget *parent = 0);
++    virtual ~QHildonAppMenu();
++    void hideEvent(QHideEvent * event);
++
++private:
++    Q_DECLARE_PRIVATE(QHildonAppMenu)
++    Q_DISABLE_COPY(QHildonAppMenu)
++
++    //FIXME Doesn't compile :( 
++    //Q_PRIVATE_SLOT(d_func(), void _q_activateAction())
++private Q_SLOTS:
++    void _q_activateAction();
++    void _q_screenResized(int screen);
++};
++
++QT_END_NAMESPACE
++
++QT_END_HEADER
++
++#endif // QDIALOG_H
+diff --git a/src/gui/maemo/qhildonappmenu_p.h b/src/gui/maemo/qhildonappmenu_p.h
+new file mode 100644
+index 0000000..bbd48a7
+--- /dev/null
++++ b/src/gui/maemo/qhildonappmenu_p.h
+@@ -0,0 +1,49 @@
++/****************************************************************************
++**
++** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
++** Contact: antonio.aloisio@nokia.com
++**
++**
++** GNU General Public License Usage
++** General Public License version 3.0 as published by the Free Software
++** Foundation and appearing in the file LICENSE.GPL included in the
++** packaging of this file.  Please review the following information to
++** ensure the GNU General Public License version 3.0 requirements will be
++** met: http://www.gnu.org/copyleft/gpl.html.
++**
++**
++****************************************************************************/
++#ifndef QHILDONAPPMENU_P_H
++#define QHILDONAPPMENU_P_H
++
++#include "private/qdialog_p.h"
++#include "QtGui/qhildonappmenu.h" 
++
++QT_BEGIN_NAMESPACE
++
++class QGridLayout;
++class QAction;
++class QDesktopWidget;
++
++class QHildonAppMenuPrivate : public QDialogPrivate
++{
++    Q_DECLARE_PUBLIC(QHildonAppMenu)
++public:
++    enum orientation { Landscape, Portrait };
++    inline QHildonAppMenuPrivate(){};
++    void init();
++    void createButtons(QList<QAction*> actions);
++    void addButton(QAction* action);
++    void updateSize();
++
++    QAction *action;
++    QGridLayout *gridLayout;
++    QHash<QObject*, QAction*> buttonList;
++    QDesktopWidget * desktop; 
++    orientation menuMode; 
++    //void _q_activateAction();
++};
++
++QT_END_NAMESPACE    
++
++#endif
 diff --git a/src/gui/styles/gtksymbols.cpp b/src/gui/styles/gtksymbols.cpp
-index be9b10a..daf9888 100644
+index be9b10a..68cb275 100644
 --- a/src/gui/styles/gtksymbols.cpp
 +++ b/src/gui/styles/gtksymbols.cpp
 @@ -103,6 +103,9 @@ Ptr_gtk_frame_new QGtk::gtk_frame_new = 0;
@@ -3388,17 +3547,19 @@ index be9b10a..daf9888 100644
  Ptr_gtk_hscale_new QGtk::gtk_hscale_new = 0;
  Ptr_gtk_vscale_new QGtk::gtk_vscale_new = 0;
  Ptr_gtk_hscrollbar_new QGtk::gtk_hscrollbar_new = 0;
-@@ -173,6 +176,9 @@ Ptr_gtk_file_chooser_get_filenames QGtk::gtk_file_chooser_get_filenames = 0;
+@@ -173,6 +176,11 @@ Ptr_gtk_file_chooser_get_filenames QGtk::gtk_file_chooser_get_filenames = 0;
  Ptr_gtk_file_chooser_set_current_name QGtk::gtk_file_chooser_set_current_name = 0;
  Ptr_gtk_dialog_run QGtk::gtk_dialog_run = 0;
  Ptr_gtk_file_chooser_set_filename QGtk::gtk_file_chooser_set_filename = 0;
 +#ifdef Q_WS_HILDON
 +Ptr_hildon_file_chooser_dialog_new QGtk::hildon_file_chooser_dialog_new = 0;
++Ptr_hildon_file_chooser_dialog_set_extension QGtk::hildon_file_chooser_dialog_set_extension = 0;
++Ptr_hildon_file_chooser_dialog_add_extensions_combo QGtk::hildon_file_chooser_dialog_add_extensions_combo = 0;
 +#endif
  
  Ptr_gdk_pixbuf_get_pixels QGtk::gdk_pixbuf_get_pixels = 0;
  Ptr_gdk_pixbuf_get_width QGtk::gdk_pixbuf_get_width = 0;
-@@ -192,6 +198,11 @@ Ptr_gdk_x11_drawable_get_xdisplay QGtk::gdk_x11_drawable_get_xdisplay = 0;
+@@ -192,6 +200,11 @@ Ptr_gdk_x11_drawable_get_xdisplay QGtk::gdk_x11_drawable_get_xdisplay = 0;
  Ptr_gconf_client_get_default QGtk::gconf_client_get_default = 0;
  Ptr_gconf_client_get_string QGtk::gconf_client_get_string = 0;
  
@@ -3410,7 +3571,7 @@ index be9b10a..daf9888 100644
  static QString classPath(GtkWidget *widget)
  {
      char* class_path;
-@@ -208,6 +219,11 @@ static QString classPath(GtkWidget *widget)
+@@ -208,6 +221,11 @@ static QString classPath(GtkWidget *widget)
  static void resolveGtk()
  {
      const QString GTK_PATH(QLS("gtk-x11-2.0"));
@@ -3422,17 +3583,19 @@ index be9b10a..daf9888 100644
      QGtk::gtk_init = (Ptr_gtk_init)QLibrary::resolve(GTK_PATH, 0, "gtk_init");
      QGtk::gtk_window_new = (Ptr_gtk_window_new)QLibrary::resolve(GTK_PATH, 0, "gtk_window_new");
      QGtk::gtk_style_attach = (Ptr_gtk_style_attach)QLibrary::resolve(GTK_PATH, 0, "gtk_style_attach");
-@@ -227,6 +243,9 @@ static void resolveGtk()
+@@ -227,6 +245,11 @@ static void resolveGtk()
      QGtk::gtk_file_chooser_set_current_name = (Ptr_gtk_file_chooser_set_current_name)QLibrary::resolve(GTK_PATH, 0, "gtk_file_chooser_set_current_name");
      QGtk::gtk_dialog_run = (Ptr_gtk_dialog_run)QLibrary::resolve(GTK_PATH, 0, "gtk_dialog_run");
      QGtk::gtk_file_chooser_set_filename = (Ptr_gtk_file_chooser_set_filename)QLibrary::resolve(GTK_PATH, 0, "gtk_file_chooser_set_filename");
 +#ifdef Q_WS_HILDON
 +    QGtk::hildon_file_chooser_dialog_new = (Ptr_hildon_file_chooser_dialog_new)QLibrary::resolve(HILDONFM_PATH, 2, "hildon_file_chooser_dialog_new");
++    QGtk::hildon_file_chooser_dialog_set_extension = (Ptr_hildon_file_chooser_dialog_set_extension)QLibrary::resolve(HILDONFM_PATH, 2, "hildon_file_chooser_dialog_set_extension");
++    QGtk::hildon_file_chooser_dialog_add_extensions_combo = (Ptr_hildon_file_chooser_dialog_add_extensions_combo)QLibrary::resolve(HILDONFM_PATH, 2, "hildon_file_chooser_dialog_add_extensions_combo");
 +#endif
  
      QGtk::gdk_pixbuf_get_pixels = (Ptr_gdk_pixbuf_get_pixels)QLibrary::resolve(GTK_PATH, 0, "gdk_pixbuf_get_pixels");
      QGtk::gdk_pixbuf_get_width = (Ptr_gdk_pixbuf_get_width)QLibrary::resolve(GTK_PATH, 0, "gdk_pixbuf_get_width");
-@@ -268,6 +287,9 @@ static void resolveGtk()
+@@ -268,6 +291,9 @@ static void resolveGtk()
      QGtk::gtk_scrolled_window_new = (Ptr_gtk_scrolled_window_new)QLibrary::resolve(GTK_PATH, 0, "gtk_scrolled_window_new");
      QGtk::gtk_menu_shell_append = (Ptr_gtk_menu_shell_append)QLibrary::resolve(GTK_PATH, 0, "gtk_menu_shell_append");
      QGtk::gtk_entry_new = (Ptr_gtk_entry_new)QLibrary::resolve(GTK_PATH, 0, "gtk_entry_new");
@@ -3442,7 +3605,7 @@ index be9b10a..daf9888 100644
      QGtk::gtk_tree_view_new = (Ptr_gtk_tree_view_new)QLibrary::resolve(GTK_PATH, 0, "gtk_tree_view_new");
      QGtk::gtk_combo_box_new = (Ptr_gtk_combo_box_new)QLibrary::resolve(GTK_PATH, 0, "gtk_combo_box_new");
      QGtk::gtk_progress_set_adjustment = (Ptr_gtk_progress_set_adjustment)QLibrary::resolve(GTK_PATH, 0, "gtk_progress_set_adjustment");
-@@ -319,6 +341,10 @@ static void resolveGtk()
+@@ -319,6 +345,10 @@ static void resolveGtk()
      QGtk::pango_font_description_get_weight = (Ptr_pango_font_description_get_weight)QLibrary::resolve(GTK_PATH, 0, "pango_font_description_get_weight");
      QGtk::pango_font_description_get_family = (Ptr_pango_font_description_get_family)QLibrary::resolve(GTK_PATH, 0, "pango_font_description_get_family");
      QGtk::pango_font_description_get_style = (Ptr_pango_font_description_get_style)QLibrary::resolve(GTK_PATH, 0, "pango_font_description_get_style");
@@ -3453,7 +3616,7 @@ index be9b10a..daf9888 100644
  }
  
  void QGtk::cleanup_gtk_widgets()
-@@ -369,10 +395,17 @@ static QString getThemeName()
+@@ -369,10 +399,17 @@ static QString getThemeName()
          foreach (const QString &rcPath, paths) {
              if (!rcPath.isEmpty()) {
                  QFile rcFile(rcPath);
@@ -3471,7 +3634,7 @@ index be9b10a..daf9888 100644
                          if (line.contains(QLS("gtk-theme-name"))) {
                              line = line.right(line.length() - line.indexOf(QLS("=")) - 1);
                              line.remove(QLS("\""));
-@@ -380,6 +413,13 @@ static QString getThemeName()
+@@ -380,6 +417,13 @@ static QString getThemeName()
                              themeName = line;
                              break;
                          }
@@ -3485,7 +3648,7 @@ index be9b10a..daf9888 100644
                      }
                  }
              }
-@@ -470,6 +510,13 @@ static void init_gtk_menu()
+@@ -470,6 +514,13 @@ static void init_gtk_menu()
      GtkWidget *gtkMenu = QGtk::gtk_menu_new();
      QGtk::gtk_menu_item_set_submenu((GtkMenuItem*)(gtkMenuBarItem), gtkMenu);
      QGtk::gtk_widget_realize(gtkMenu);
@@ -3499,7 +3662,7 @@ index be9b10a..daf9888 100644
  
      GtkWidget *gtkMenuItem = QGtk::gtk_menu_item_new();
      QGtk::gtk_menu_shell_append((GtkMenuShell*)gtkMenu, gtkMenuItem);
-@@ -667,6 +714,9 @@ void QGtk::initGtkWidgets()
+@@ -667,6 +718,9 @@ void QGtk::initGtkWidgets()
              add_widget(QGtk::gtk_combo_box_new());
              add_widget(QGtk::gtk_combo_box_entry_new());
              add_widget(QGtk::gtk_entry_new());
@@ -3509,7 +3672,7 @@ index be9b10a..daf9888 100644
              add_widget(QGtk::gtk_frame_new(NULL));
              add_widget(QGtk::gtk_expander_new(""));
              add_widget(QGtk::gtk_statusbar_new());
-@@ -684,6 +734,10 @@ void QGtk::initGtkWidgets()
+@@ -684,6 +738,10 @@ void QGtk::initGtkWidgets()
              init_gtk_treeview();
              add_widget(QGtk::gtk_vscale_new((GtkAdjustment*)(QGtk::gtk_adjustment_new(1, 0, 1, 0, 0, 0))));
              add_widget(QGtk::gtk_vscrollbar_new(NULL));
@@ -3520,7 +3683,64 @@ index be9b10a..daf9888 100644
          }
          else // Rebuild map
          {
-@@ -756,7 +810,11 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
+@@ -726,6 +784,48 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
+     g_object_set(gtkFileChooser, "local_only", gboolean(true), NULL);
+     if (!filter.isEmpty()) {
+         QStringList filters = qt_make_filter_list(filter);
++        
++#ifdef Q_WS_HILDON
++        if (isSaveDialog) {
++            const int Nfilters = filters.count();
++            char *ext_names[Nfilters];
++            char *extensions[Nfilters];
++
++            for (int i = 0; i < Nfilters; i++) {
++                const QString &rawfilter = filters[i];
++                QString name = rawfilter.left(rawfilter.indexOf(QLatin1Char('(')));
++                QString extension = extract_filter(rawfilter)[0].remove("*.");
++                //Doesn't make sense adding '*' extension in a save dialog;
++                if (extension.compare("*") == 0)
++                    qWarning("'*' is not a valid extension for a save dialog");
++                ext_names[i]= (char*) malloc(name.count()+1);
++                memcpy(ext_names[i], qPrintable(name), name.count());
++                extensions[i]= (char*) malloc(extension.count()+1);
++                memcpy(extensions[i], qPrintable(extension), extension.count());
++            }
++            ext_names[Nfilters] = NULL;
++            extensions[Nfilters] = NULL;
++
++            GtkWidget* gtkExtensionCombo;
++            gtkExtensionCombo = QGtk::hildon_file_chooser_dialog_add_extensions_combo((HildonFileChooserDialog*)(gtkFileChooser),
++                                                                                 extensions,ext_names);
++            //gtk_signal_connect (GTK_OBJECT(gtkExtensionCombo), "changed",
++            //                    GTK_SIGNAL_FUNC (qt_update_file_filter), NULL);
++        }else{
++            //Set "*.ext" filters in the open file dialogs. There we don't have a combobox to select a filter. :( 
++            //TODO the combobox in the HildonFileChooserDialog doesn't change the filter automatically. We have to se it
++            //in Qt..
++            GtkFileFilter *gtkFilter = QGtk::gtk_file_filter_new ();
++            foreach (const QString &rawfilter, filters) {
++                QStringList extensions = extract_filter(rawfilter);
++                foreach (const QString &fileExtension, extensions) {
++                    QGtk::gtk_file_filter_add_pattern (gtkFilter, qPrintable(fileExtension));
++                }
++            }
++            g_object_set(gtkFileChooser, "filter", gtkFilter, NULL);
++        }
++   
++#else
+         foreach (const QString &rawfilter, filters) {
+             GtkFileFilter *gtkFilter = QGtk::gtk_file_filter_new ();
+             QString name = rawfilter.left(rawfilter.indexOf(QLatin1Char('(')));
+@@ -739,6 +839,7 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
+             if (selectedFilter && (rawfilter == *selectedFilter))
+                 QGtk::gtk_file_chooser_set_filter((GtkFileChooser*)gtkFileChooser, gtkFilter);
+         }
++#endif
+     }
+ 
+     // Using the currently active window is not entirely correct, however
+@@ -756,7 +857,11 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
  
      QFileInfo fileinfo(dir);
      if (dir.isEmpty())
@@ -3532,12 +3752,7 @@ index be9b10a..daf9888 100644
      fileinfo.makeAbsolute();
      if (fileinfo.isDir()) {
          QGtk::gtk_file_chooser_set_current_folder((GtkFileChooser*)gtkFileChooser, qPrintable(dir));
-@@ -767,18 +825,20 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
-         QGtk::gtk_file_chooser_set_filename((GtkFileChooser*)gtkFileChooser, qPrintable(dir));
-     }
- }
--
-+#include <QDebug>
+@@ -771,14 +876,16 @@ static void setupGtkFileChooser(GtkWidget* gtkFileChooser, QWidget *parent,
  QString QGtk::openFilename(QWidget *parent, const QString &caption, const QString &dir, const QString &filter,
                              QString *selectedFilter, QFileDialog::Options options)
  {
@@ -3556,7 +3771,7 @@ index be9b10a..daf9888 100644
      setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options);
  
      QWidget modal_widget;
-@@ -787,27 +847,35 @@ QString QGtk::openFilename(QWidget *parent, const QString &caption, const QStrin
+@@ -787,27 +894,33 @@ QString QGtk::openFilename(QWidget *parent, const QString &caption, const QStrin
      QApplicationPrivate::enterModal(&modal_widget);
  
      QString filename;
@@ -3573,13 +3788,12 @@ index be9b10a..daf9888 100644
      QApplicationPrivate::leaveModal(&modal_widget);
      gtk_widget_destroy (gtkFileChooser);
      return filename;
-+
- }
+-}
  
++}
  
  QString QGtk::openDirectory(QWidget *parent, const QString &caption, const QString &dir, QFileDialog::Options options)
  {
-+ qDebug() << "DIR" << dir;
 +#ifdef Q_WS_HILDON
 +    GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);  
 +#else
@@ -3594,7 +3808,7 @@ index be9b10a..daf9888 100644
      setupGtkFileChooser(gtkFileChooser, parent, dir, QString(), 0, options);
      QWidget modal_widget;
      modal_widget.setAttribute(Qt::WA_NoChildEventsForParent, true);
-@@ -815,7 +883,11 @@ QString QGtk::openDirectory(QWidget *parent, const QString &caption, const QStri
+@@ -815,7 +928,11 @@ QString QGtk::openDirectory(QWidget *parent, const QString &caption, const QStri
      QApplicationPrivate::enterModal(&modal_widget);
  
      QString filename;
@@ -3606,7 +3820,7 @@ index be9b10a..daf9888 100644
          char *gtk_filename = QGtk::gtk_file_chooser_get_filename ((GtkFileChooser*)gtkFileChooser);
          filename = QString::fromUtf8(gtk_filename);
          g_free (gtk_filename);
-@@ -830,13 +902,16 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
+@@ -830,13 +947,16 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
                                   QString *selectedFilter, QFileDialog::Options options)
  {
      QStringList filenames;
@@ -3624,7 +3838,7 @@ index be9b10a..daf9888 100644
      setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options);
      g_object_set(gtkFileChooser, "select-multiple", gboolean(true), NULL);
  
-@@ -845,7 +920,11 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
+@@ -845,7 +965,11 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
      modal_widget.setParent(parent, Qt::Window);
      QApplicationPrivate::enterModal(&modal_widget);
  
@@ -3636,13 +3850,10 @@ index be9b10a..daf9888 100644
          GSList *gtk_file_names = QGtk::gtk_file_chooser_get_filenames((GtkFileChooser*)gtkFileChooser);
          for (GSList *iterator  = gtk_file_names ; iterator; iterator = iterator->next)
              filenames << QString::fromUtf8((const char*)iterator->data);
-@@ -860,12 +939,19 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
+@@ -860,12 +984,16 @@ QStringList QGtk::openFilenames(QWidget *parent, const QString &caption, const Q
  QString QGtk::saveFilename(QWidget *parent, const QString &caption, const QString &dir, const QString &filter,
                             QString *selectedFilter, QFileDialog::Options options)
  {
-+    qDebug() << "DIR" << dir
-+             << "filter" << filter
-+             << "selected filter" << selectedFilter;
 +#ifdef Q_WS_HILDON
 +    GtkWidget *gtkFileChooser = QGtk::hildon_file_chooser_dialog_new (NULL, GTK_FILE_CHOOSER_ACTION_SAVE);  
 +#else
@@ -3656,7 +3867,7 @@ index be9b10a..daf9888 100644
      setupGtkFileChooser(gtkFileChooser, parent, dir, filter, selectedFilter, options, true);
  
      QWidget modal_widget;
-@@ -874,7 +960,11 @@ QString QGtk::saveFilename(QWidget *parent, const QString &caption, const QStrin
+@@ -874,7 +1002,11 @@ QString QGtk::saveFilename(QWidget *parent, const QString &caption, const QStrin
      QApplicationPrivate::enterModal(&modal_widget);
  
      QString filename;
@@ -3669,10 +3880,20 @@ index be9b10a..daf9888 100644
          filename = QString::fromUtf8(gtk_filename);
          g_free (gtk_filename);
 diff --git a/src/gui/styles/gtksymbols_p.h b/src/gui/styles/gtksymbols_p.h
-index b0195d2..4dd1c78 100644
+index b0195d2..369e337 100644
 --- a/src/gui/styles/gtksymbols_p.h
 +++ b/src/gui/styles/gtksymbols_p.h
-@@ -108,6 +108,9 @@ typedef GtkWidget* (*Ptr_gtk_scrolled_window_new)(GtkAdjustment*, GtkAdjustment*
+@@ -58,6 +58,9 @@
+ 
+ #undef signals // Collides with GTK stymbols
+ #include <gtk/gtk.h>
++#ifdef Q_WS_HILDON
++#  include <hildon/hildon-file-chooser-dialog.h>
++#endif
+ #include <QtCore/QLibrary>
+ #include <QtGui/QFont>
+ #include <QtGui/QFileDialog>
+@@ -108,6 +111,9 @@ typedef GtkWidget* (*Ptr_gtk_scrolled_window_new)(GtkAdjustment*, GtkAdjustment*
  typedef gchar* (*Ptr_gtk_check_version)(guint, guint, guint);
  typedef GtkToolItem* (*Ptr_gtk_separator_tool_item_new) (void);
  typedef GtkWidget* (*Ptr_gtk_entry_new)(void);
@@ -3682,7 +3903,7 @@ index b0195d2..4dd1c78 100644
  typedef GtkWidget* (*Ptr_gtk_tree_view_new)(void);
  typedef GtkTreeViewColumn* (*Ptr_gtk_tree_view_get_column)(GtkTreeView *, gint);
  typedef GtkWidget* (*Ptr_gtk_combo_box_new)(void);
-@@ -156,6 +159,7 @@ typedef gint (*Ptr_pango_font_description_get_size) (const PangoFontDescription
+@@ -156,6 +162,7 @@ typedef gint (*Ptr_pango_font_description_get_size) (const PangoFontDescription
  typedef PangoWeight (*Ptr_pango_font_description_get_weight) (const PangoFontDescription *);
  typedef const char* (*Ptr_pango_font_description_get_family) (const PangoFontDescription *);
  typedef PangoStyle (*Ptr_pango_font_description_get_style) (const PangoFontDescription *desc);
@@ -3690,19 +3911,24 @@ index b0195d2..4dd1c78 100644
  typedef gboolean (*Ptr_gtk_file_chooser_set_current_folder)(GtkFileChooser *, const gchar *);
  typedef GtkFileFilter* (*Ptr_gtk_file_filter_new)(void);
  typedef void (*Ptr_gtk_file_filter_set_name)(GtkFileFilter *, const gchar *);
-@@ -173,6 +177,11 @@ typedef void (*Ptr_gtk_file_chooser_set_current_name) (GtkFileChooser *, const g
+@@ -173,6 +180,16 @@ typedef void (*Ptr_gtk_file_chooser_set_current_name) (GtkFileChooser *, const g
  typedef gboolean (*Ptr_gtk_file_chooser_set_filename) (GtkFileChooser *chooser, const gchar *name);
  typedef gint (*Ptr_gtk_dialog_run) (GtkDialog*);
  
 +#ifdef Q_WS_HILDON
 +typedef GtkWidget* (*Ptr_hildon_file_chooser_dialog_new)(GtkWindow *parent,
 +                                                         GtkFileChooserAction action);
-+
++typedef void (*Ptr_hildon_file_chooser_dialog_set_extension)(HildonFileChooserDialog *self,
++                                                             const gchar *extension);
++typedef GtkWidget* (*Ptr_hildon_file_chooser_dialog_add_extensions_combo)
++                                                        (HildonFileChooserDialog *self,
++                                                         char **extensions,
++                                                         char **ext_names);
 +#endif
  typedef guchar* (*Ptr_gdk_pixbuf_get_pixels) (const GdkPixbuf *pixbuf);
  typedef int (*Ptr_gdk_pixbuf_get_width) (const GdkPixbuf *pixbuf);
  typedef void (*Ptr_gdk_color_free) (const GdkColor *);
-@@ -193,6 +202,11 @@ typedef void (*Ptr_gdk_x11_window_set_user_time) (GdkWindow *window, guint32);
+@@ -193,6 +210,11 @@ typedef void (*Ptr_gdk_x11_window_set_user_time) (GdkWindow *window, guint32);
  typedef XID  (*Ptr_gdk_x11_drawable_get_xid) (GdkDrawable *);
  typedef Display* (*Ptr_gdk_x11_drawable_get_xdisplay) ( GdkDrawable *);
  
@@ -3714,7 +3940,7 @@ index b0195d2..4dd1c78 100644
  QT_BEGIN_NAMESPACE
  
  class QGtk
-@@ -241,6 +255,9 @@ public:
+@@ -241,6 +263,9 @@ public:
      static Ptr_gtk_frame_new gtk_frame_new;
      static Ptr_gtk_statusbar_new gtk_statusbar_new;
      static Ptr_gtk_entry_new gtk_entry_new;
@@ -3724,17 +3950,19 @@ index b0195d2..4dd1c78 100644
      static Ptr_gtk_hscale_new gtk_hscale_new;
      static Ptr_gtk_vscale_new gtk_vscale_new;
      static Ptr_gtk_hscrollbar_new gtk_hscrollbar_new;
-@@ -309,6 +326,9 @@ public:
+@@ -309,6 +334,11 @@ public:
      static Ptr_gtk_file_chooser_set_current_name gtk_file_chooser_set_current_name;
      static Ptr_gtk_dialog_run gtk_dialog_run;
      static Ptr_gtk_file_chooser_set_filename gtk_file_chooser_set_filename;
 +#ifdef Q_WS_HILDON
 +    static Ptr_hildon_file_chooser_dialog_new hildon_file_chooser_dialog_new;
++    static Ptr_hildon_file_chooser_dialog_set_extension hildon_file_chooser_dialog_set_extension;
++    static Ptr_hildon_file_chooser_dialog_add_extensions_combo hildon_file_chooser_dialog_add_extensions_combo;
 +#endif
  
      static Ptr_gdk_pixbuf_get_pixels gdk_pixbuf_get_pixels;
      static Ptr_gdk_pixbuf_get_width gdk_pixbuf_get_width;
-@@ -327,6 +347,12 @@ public:
+@@ -327,6 +357,12 @@ public:
  
      static Ptr_gconf_client_get_default gconf_client_get_default;
      static Ptr_gconf_client_get_string gconf_client_get_string;
@@ -4648,869 +4876,6 @@ index 1a97a41..a83c117 100644
          break;
  
      case ApplicationsLocation:
-diff --git a/src/gui/widgets/qabstractscrollarea.cpp b/src/gui/widgets/qabstractscrollarea.cpp
-index ead8285..cf7e955 100644
---- a/src/gui/widgets/qabstractscrollarea.cpp
-+++ b/src/gui/widgets/qabstractscrollarea.cpp
-@@ -60,6 +60,19 @@
- #include <private/qt_cocoa_helpers_mac_p.h>
- #endif
- 
-+#ifdef Q_WS_HILDON
-+#include <QGraphicsView>
-+#include <QPlainTextEdit>
-+#include <QTextEdit>
-+#include <QScrollArea>
-+#include <QListView>
-+#include "private/qlistview_p.h"
-+#include <QTableView>
-+#include <QTreeView>
-+#include "private/qtreeview_p.h"
-+#include <QHeaderView>
-+#endif
-+
- QT_BEGIN_NAMESPACE
- 
- /*!
-@@ -288,6 +301,12 @@ void QAbstractScrollAreaPrivate::init()
-     q->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-     q->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-     layoutChildren();
-+#ifdef Q_WS_HILDON
-+//	qDebug() << "Setting fingerscroll property";
-+	fingerScroller = 0;
-+	q->setProperty("FingerScrollable", true); // sets fingerscroller
-+	q->setProperty("FingerScrollBars", true); // sets fingerscrollbars
-+#endif
- }
- 
- void QAbstractScrollAreaPrivate::layoutChildren()
-@@ -462,6 +481,117 @@ void QAbstractScrollAreaPrivate::layoutChildren()
- // ### Fix for 4.4, talk to Bjoern E or Girish.
- void QAbstractScrollAreaPrivate::scrollBarPolicyChanged(Qt::Orientation, Qt::ScrollBarPolicy) {}
- 
-+#ifdef Q_WS_HILDON
-+/*!
-+    This enables or disables finger scrolling; it should only be
-+    called from within the DynamicPropertyChangeEvent handler.
-+
-+    These methods are only available on platforms supporting
-+    Fingerscrolling and can be detected by looking for the
-+    "FingerScrollable" property.
-+*/
-+
-+void QAbstractScrollAreaPrivate::setFingerScrollable(bool setFingerScroller)
-+{
-+    Q_Q(QAbstractScrollArea);
-+
-+	if (setFingerScroller) {
-+		if (! fingerScroller) {
-+			fingerScroller = new QAbstractScrollAreaPrivateScroller(viewport, q, this);
-+		}
-+	} else if (fingerScroller) {
-+		delete fingerScroller;
-+		fingerScroller = 0;
-+	}
-+}
-+
-+/*!
-+    This enables or disables finger scroll bars (narrow bars that
-+    mainly only show position); it should only be called from within
-+    the DynamicPropertyChangeEvent handler.
-+
-+    These methods are only available on platforms supporting
-+    Fingerscrolling and can be detected by looking for the
-+    "FingerScrollBars" property.
-+*/
-+
-+void QAbstractScrollAreaPrivate::setFingerScrollBars(bool setting)
-+{
-+	Q_Q(QAbstractScrollArea);
-+	
-+	if (setting) {
-+		if (!fingerScrollBars)
-+		{
-+			scrollAreaStyle = q->styleSheet();
-+		}
-+		q->setStyleSheet(
-+			"QScrollBar:horizontal { "
-+			"background: palette(window); "
-+			"height: 8px; "
-+			"margin: 0px 0px 0px 0px; "
-+			"padding: 0px 0px 0px 0px; "
-+			"}" 
-+			"QScrollBar::vertical { "
-+			"background: palette(window); "
-+			"width: 8px; "
-+			"margin: 0px 0px 0px 0px; "
-+			"padding: 0px 0px 0px 0px; "
-+			"} "
-+			"QScrollBar::handle:horizontal { "
-+			"background: palette(window-text); "
-+			"min-width: 40px; "
-+			"} "
-+			"QScrollBar::handle::vertical { "
-+			"background: palette(window-text); "
-+			"min-height: 40px; "
-+			"} "
-+			"QScrollBar::add-line::horizontal { "
-+			"width: 0px; "
-+			"} "
-+			"QScrollBar::sub-line::horizontal { "
-+			"width: 0px; "
-+			"} "
-+			"QScrollBar::add-line::vertical { "
-+			"height: 0px; "
-+			"} "
-+			"QScrollBar::sub-line::vertical { "
-+			"height: 0px; "
-+			"} ");
-+	} else {
-+		q->setStyleSheet(scrollAreaStyle);
-+	}
-+	fingerScrollBars = setting;
-+}
-+
-+void QAbstractScrollAreaPrivate::drawOvershoot(int horizontal, int vertical)
-+{
-+	Q_Q(QAbstractScrollArea);
-+	int overshoot_x = horizontal;
-+	int overshoot_y = vertical;
-+	if (overshoot_x >= 0)
-+	{
-+		if (q->isRightToLeft())
-+			overshoot_x += right;
-+		else
-+			overshoot_x += left;
-+	}
-+	else
-+	{
-+		if (q->isRightToLeft())
-+			overshoot_x -= left;
-+		else
-+			overshoot_x -= right;
-+	}
-+	if (overshoot_y >= 0)
-+		overshoot_y += top;
-+	else
-+		overshoot_y -= bottom;
-+
-+	q->viewport()->move(overshoot_x, overshoot_y);
-+}
-+
-+#endif
-+
- /*!
-     \internal
- 
-@@ -518,6 +648,13 @@ void QAbstractScrollArea::setViewport(QWidget *widget)
-         d->viewport->setParent(this);
-         d->viewport->setFocusProxy(this);
-         d->viewport->installEventFilter(d->viewportFilter);
-+#ifdef Q_WS_HILDON
-+		if (d->fingerScroller) {
-+			delete d->fingerScroller;
-+			d->fingerScroller = 0;
-+			setProperty("FingerScrollable", true); // sets a fingerscroller on the new viewport
-+		}
-+#endif
-         d->layoutChildren();
-         if (isVisible())
-             d->viewport->show();
-@@ -909,6 +1046,16 @@ bool QAbstractScrollArea::event(QEvent *e)
-     case QEvent::DragLeave:
- #endif
-         return false;
-+#ifdef Q_WS_HILDON
-+	case QEvent::DynamicPropertyChange: {
-+		QString p = static_cast<QDynamicPropertyChangeEvent *>(e)->propertyName();
-+		if (p == "FingerScrollBars") { // use some boolean short-circuit so !isValid == False
-+			d->setFingerScrollBars(property("FingerScrollBars").isValid() and property("FingerScrollBars").toBool());
-+		} else if (p == "FingerScrollable" and property("FingerScrollable").isValid()) {
-+			d->setFingerScrollable(property("FingerScrollable").isValid() and property("FingerScrollable").toBool());
-+		}
-+	}
-+#endif
-     case QEvent::StyleChange:
-     case QEvent::LayoutDirectionChange:
-     case QEvent::ApplicationLayoutDirectionChange:
-@@ -1295,6 +1442,495 @@ void QAbstractScrollArea::setupViewport(QWidget *viewport)
-     Q_UNUSED(viewport);
- }
- 
-+#ifdef Q_WS_HILDON
-+
-+const int QAbstractScrollAreaPrivateScroller::START_WITHIN    = 300;  // must move within X ms to scroll
-+const int QAbstractScrollAreaPrivateScroller::SENSITIVITY     = 20;   // pixels before we scroll
-+const int QAbstractScrollAreaPrivateScroller::KINETIC_REFRESH = 50;   // ms
-+const int QAbstractScrollAreaPrivateScroller::VSCALE          = 100;  // velocity scaling to ensure not lost in int rounding
-+const int QAbstractScrollAreaPrivateScroller::DECEL_PC        = 93;   // velocity reduction factor/kinetic refresh (%)
-+const int QAbstractScrollAreaPrivateScroller::DECEL_DURATION  = 1500; // ms
-+const int QAbstractScrollAreaPrivateScroller::VMAX            = 500;  // Max velocity
-+//const int QAbstractScrollAreaPrivateScroller::OVERSHOOT_DECEL_PC = 40;   // velocity reduction factor/kinetic refresh (%)
-+#define OVERSHOOT_DECEL_PC 50
-+#define REBOUND_ACCEL 10
-+	
-+QAbstractScrollAreaPrivateScroller::QAbstractScrollAreaPrivateScroller(QWidget *parent_viewport, QAbstractScrollArea *a, QAbstractScrollAreaPrivate *d) :
-+	QObject(parent_viewport),
-+	qabstractscrollarea(a),
-+	qabstractscrollarea_d(d),
-+	scrollState(NotScrolling),
-+	xScrollState(NotScrolling),
-+	yScrollState(NotScrolling),
-+	scrollBase(0,0),
-+	start(0,0),
-+	curr(0,0),
-+	scrollFactor(),
-+	last(0,0),
-+	vel(0,0),
-+	vel1(0,0),
-+	last_ev_time(0),
-+	curr_time(0)
-+{
-+	registerChildrenForFingerScrolling(parent_viewport);
-+
-+	// If the property is not set then use the qapp default or hard default
-+	if (! qabstractscrollarea->property("FingerScrollBars").isValid()) {
-+		if (qApp->property("FingerScrollBars").isValid()) {
-+			d->fingerScrollBars = qApp->property("FingerScrollBars").toBool();
-+		}
-+		qabstractscrollarea->setProperty("FingerScrollBars", d->fingerScrollBars);
-+	} else {
-+		d->fingerScrollBars = qabstractscrollarea->property("FingerScrollBars").toBool();
-+	}
-+
-+}
-+////////////////////////////////////////////////////////////////
-+// Finger scroll - touches, moves and child events
-+bool QAbstractScrollAreaPrivateScroller::eventFilter(QObject *obj, QEvent *event)
-+{
-+	if (scrollState == ReissuingEvents or ! obj->isWidgetType()) {
-+		return false ; // ignore events during re-issue. Should this be QObject::eventFilter(obj, event); 
-+	}
-+	
-+	QMouseEvent * mEv = dynamic_cast<QMouseEvent *>(event);
-+
-+	QScrollBar* vsb = qabstractscrollarea->verticalScrollBar(); 
-+	QScrollBar* hsb = qabstractscrollarea->horizontalScrollBar();
-+
-+	if (scrollState == AutoScroll) {
-+		// We're already doing a kinetic movement. A click resets.
-+		if (event->type() == QEvent::MouseButtonPress and
-+			mEv and mEv->button() == Qt::LeftButton){
-+			scrollState = NotScrolling;
-+			xScrollState = NotScrolling;
-+			yScrollState = NotScrolling;
-+			// Fall through to maybe start another scroll
-+			// Would it be safer to kill the kinetic timer or just let it die?
-+		}
-+	}
-+	
-+	if (scrollState == NotScrolling) {
-+		if (event->type() == QEvent::MouseButtonPress and
-+			mEv and mEv->button() == Qt::LeftButton){
-+			start = mEv->globalPos();
-+			scrollBase.ry() = vsb->value(); // Record scrollbar at first touch - reduces jitter errors
-+			scrollBase.rx() = hsb->value();
-+
-+			scrollFactor = QPointF();
-+			xScrollState = NotScrolling;
-+			yScrollState = NotScrolling;
-+			// We need to know the how much scrollBar->value changes per pixel of movement
-+			if ( vsb->minimum() < vsb->maximum()) {
-+				scrollFactor.ry() = (qreal) vsb->pageStep() / qabstractscrollarea->viewport()->height();
-+//				qDebug() << "scrollFactor.y =" << scrollFactor.ry();
-+				yScrollState = Maybe;
-+			}
-+			if ( hsb->minimum() < hsb->maximum() ) {
-+				scrollFactor.rx() = (qreal) hsb->pageStep() / qabstractscrollarea->viewport()->width();
-+//				qDebug() << "scrollFactor.x =" << scrollFactor.rx();
-+				xScrollState = Maybe;
-+			}
-+
-+			if (xScrollState == NotScrolling and yScrollState == NotScrolling)
-+				return false; // We have no ability to scroll so don't try.
-+			
-+			if (! (eventSourceWidget = dynamic_cast<QWidget *>(obj)))
-+				return false; // just to be sure the object is a widget
-+
-+			// We're definitely going to try and scroll if we get a move in time
-+			scrollState = Maybe;
-+			storedEvents.enqueue(new QMouseEvent(*mEv)); // store the event for maybe replaying
-+
-+			QTimer::singleShot(START_WITHIN, this, SLOT(replayEvents())); // this *will* fire..
-+
-+			event_time.start();
-+			last_ev_time=0;
-+			mEv->accept(); // it's handled. The copy may be replayed.
-+			return true;  
-+		}
-+	}
-+
-+	if (scrollState == Maybe ) {
-+		if (event->type() == QEvent::MouseButtonRelease) {
-+//			qDebug() << "    QAbstractScrollArea::Released";
-+			if (mEv->button() != Qt::LeftButton) return false; // fall through, allow onward handling
-+			storedEvents.enqueue(new QMouseEvent(*mEv));
-+			QTimer::singleShot(0, this, SLOT(replayEvents())); // immediate replay...
-+			mEv->accept(); // it's handled. The copy may be replayed.
-+			return true;  
-+		}
-+		if (event->type() == QEvent::MouseMove) {
-+			handleMoveEvent(mEv);
-+			mEv->accept(); // it's handled. The copy may be replayed.
-+			return true;
-+		}
-+	}
-+	
-+	if (scrollState == ManualScroll) {
-+		if (event->type() == QEvent::MouseButtonRelease) {
-+			scrollState = NotScrolling;
-+			mEv->accept(); // it's handled.
-+			if (last_ev_time) { // Only do velocity if we had a last_ev_time
-+				vel1.rx() = qBound(-VMAX, vel1.rx(), VMAX);
-+				vel1.ry() = qBound(-VMAX, vel1.ry(), VMAX);
-+				vel = vel1; // make a copy of the initial velocity for direction
-+				curr_time = event_time.elapsed();
-+				// Note the current scroll values, possibly overshot
-+				curr = mEv->globalPos();
-+				scrollBase.ry() = scrollBase.ry() + ((start.ry() - curr.ry()) * scrollFactor.ry());
-+				scrollBase.rx() = scrollBase.rx() + ((start.rx() - curr.rx()) * scrollFactor.rx());
-+				curr = QPoint(); // rebase the pointer for the kinetic phase
-+				startTimer(KINETIC_REFRESH);
-+				scrollState = AutoScroll;
-+				if (xScrollState != NotScrolling) xScrollState = AutoScroll;
-+				if (yScrollState != NotScrolling) yScrollState = AutoScroll;
-+			}
-+			return true;
-+		}
-+		if (event->type() == QEvent::MouseMove) {
-+			handleMoveEvent(mEv);
-+			mEv->accept(); // it's handled. The copy may be replayed.
-+			return true;
-+		}
-+	}
-+
-+	// Handle eventFilter to added/removed children
-+	
-+	if (event->type() ==  QEvent::ChildAdded or
-+		event->type() ==  70) { // FIX is this a Qt bug? 70 is ChildInserted which is
-+		// deprecated in 4.4 but it appears from time to time...
-+		registerChildrenForFingerScrolling(static_cast<QChildEvent *>(event)->child());
-+		return false;
-+	}
-+	
-+	if (event->type() == QEvent::ChildRemoved) {
-+		// deregisterChildrenForFingerScrolling
-+		QObject *obj = static_cast<QChildEvent *>(event)->child();
-+		if (obj->isWidgetType())
-+			obj->removeEventFilter(this);
-+		QList<QObject *> children = obj->findChildren<QObject *>();
-+		foreach (obj, children){
-+			if (obj->isWidgetType())
-+				obj->removeEventFilter(this);
-+		}
-+		return false;
-+	}
-+	return false;
-+}
-+
-+
-+void QAbstractScrollAreaPrivateScroller::handleMoveEvent ( QMouseEvent * event )
-+{
-+//	qDebug() << "    QAbstractScrollArea::Released";
-+	if (scrollState == Maybe) {
-+		QPoint delta = start - event->globalPos();
-+		storedEvents.enqueue(new QMouseEvent(*event)); // we may need to play this back...
-+
-+		if (delta.manhattanLength () > SENSITIVITY) { // ...unless there's been enough movement
-+			scrollState = ManualScroll;
-+			if (xScrollState == Maybe) xScrollState = ManualScroll;
-+			if (yScrollState == Maybe) yScrollState = ManualScroll;
-+			while (!(storedEvents.isEmpty()))  // all previous events are ours; clean up
-+				delete storedEvents.dequeue() ;
-+
-+		}
-+	}
-+	
-+	if (scrollState == ManualScroll) {
-+		curr = event->globalPos();
-+
-+		int min_y = qabstractscrollarea->verticalScrollBar()->minimum();
-+		int max_y = qabstractscrollarea->verticalScrollBar()->maximum();// - qabstractscrollarea_d->overshootBottom;
-+		int min_x = qabstractscrollarea->horizontalScrollBar()->minimum();
-+		int max_x = qabstractscrollarea->horizontalScrollBar()->maximum();// - qabstractscrollarea_d->overshootRight;
-+		int val_y = 0;
-+		int val_x = 0;
-+		int overshoot_x = 0;
-+		int overshoot_y = 0;
-+
-+		if (yScrollState == ManualScroll) {
-+			val_y = scrollBase.ry() + ((start.ry() - curr.ry()) * scrollFactor.ry());
-+			if (val_y < min_y) {
-+				overshoot_y = min_y - val_y;
-+			} else if (val_y > max_y) {
-+				overshoot_y = max_y - val_y;
-+			}
-+			qabstractscrollarea->verticalScrollBar()->setValue(val_y);
-+		}
-+		if (xScrollState == ManualScroll) {
-+			val_x = scrollBase.rx() + ((start.rx() - curr.rx()) * scrollFactor.rx());
-+			if (val_x < min_x) {
-+				overshoot_x = min_x - val_x;
-+			} else if (val_x > max_x) {
-+				overshoot_x = max_x - val_x;
-+			}
-+			qabstractscrollarea->horizontalScrollBar()->setValue(val_x);
-+		}
-+
-+		qabstractscrollarea_d->drawOvershoot(overshoot_x, overshoot_y);
-+
-+		curr_time = event_time.elapsed();
-+		
-+		if (curr_time >	last_ev_time){
-+			if (last_ev_time){  // first time round we set v to zero
-+				vel1 = vel;
-+				vel = QPoint((last - curr)*VSCALE / (curr_time - last_ev_time));
-+			} else {
-+				vel = QPoint(0,0);
-+				vel1 = QPoint(0,0);
-+			}
-+			// Store the last values
-+			last_ev_time = 	curr_time;
-+			last = curr; 
-+		}
-+		event->accept();
-+	}
-+}
-+////////////////////////////////////////////////////////////////
-+// Kinetics, reissue pending events
-+void QAbstractScrollAreaPrivateScroller::timerEvent(QTimerEvent *event)
-+{
-+	// Track the projected position using curr. This will allow bounce effects and smooths non-pixel scrolled areas
-+	// In general work in pixels and conver to scrollbar values at the end
-+
-+	// frequently used
-+	QScrollBar* vsb = qabstractscrollarea->verticalScrollBar(); 
-+	QScrollBar* hsb = qabstractscrollarea->horizontalScrollBar();
-+
-+	int min_y = vsb->minimum();
-+	int max_y = vsb->maximum();// - qabstractscrollarea_d->overshootBottom;
-+	int min_x = hsb->minimum();
-+	int max_x = hsb->maximum();// - qabstractscrollarea_d->overshootRight;
-+	int val_y = 0;
-+	int val_x = 0;
-+	int overshoot_x = 0;
-+	int overshoot_y = 0;
-+// Y
-+	
-+	if (yScrollState == NotScrolling)
-+		vel1.ry() = 0;
-+		
-+	if (yScrollState == AutoScroll) {
-+		// decelerate normally
-+		int y = curr.ry();
-+		curr.ry() += (vel1.ry() * KINETIC_REFRESH)/VSCALE;
-+		val_y = scrollBase.ry() + curr.ry() * scrollFactor.ry();
-+		if (min_y < val_y and val_y < max_y) { // in range
-+			vsb->setValue(val_y);
-+			vel1.ry() = (vel1.ry()*DECEL_PC)/100;
-+			if (-1.0 < vel1.ry() and vel1.ry() < 1.0) // ie: stopped
-+				yScrollState = NotScrolling;
-+		} else { // we would have passed the min/max so set the target
-+			if (min_y <= val_y)
-+				rest.ry() = max_y;
-+			else
-+				rest.ry() = min_y;				
-+			curr.ry()  = y; // reset the current position
-+			yScrollState = OverShootDecel;
-+		}
-+	}
-+
-+	if (yScrollState == OverShootDecel) {
-+		// Overshoot needs to track the virtual finger position over time and pull
-+		// it back to a position that represents the start/end of the area
-+		//qDebug() << "OverShootDecel y="  << curr.ry() << " v.y = " << vel1.ry();
-+		if (-1.0 < vel1.ry() and vel1.ry() < 1.0) {
-+			// we stopped (or we may have been placed here)
-+			val_y=scrollBase.ry() + curr.ry() * scrollFactor.ry();
-+			if (val_y < min_y) {
-+				overshoot_y = min_y - val_y;
-+			} else if (val_y > max_y) {
-+				overshoot_y = max_y - val_y;
-+			}
-+			vel1.ry() = 0;
-+			yScrollState = OverShootPause; // this actually stops us for a frame.
-+		} else {
-+			// we're slowing down
-+			curr.ry() += (vel1.ry() * KINETIC_REFRESH)/VSCALE;
-+			vel1.ry() = (vel1.ry()*OVERSHOOT_DECEL_PC)/100;
-+			val_y=scrollBase.ry() + curr.ry() * scrollFactor.ry();
-+			vsb->setValue(val_y); // Is this worth doing if we overshot
-+			if (val_y < min_y) {
-+				overshoot_y = min_y - val_y;
-+			} else if (val_y > max_y) {
-+				overshoot_y = max_y - val_y;
-+			}
-+		}
-+	}
-+
-+	// rest is target resting place in val, not pixels
-+	// if y>rest then reduce vel
-+	if (yScrollState == OverShootStabilise) {
-+		val_y=scrollBase.ry() + curr.ry() * scrollFactor.ry();
-+		if (min_y <= val_y and val_y <= max_y) { // in range
-+			// run out of braking... force setting to min/max
-+			vsb->setValue(rest.ry());
-+			overshoot_y = 0;
-+			yScrollState = NotScrolling;
-+		} else {
-+			// accelerate towards rest
-+			if (val_y < min_y)
-+				vel1.ry() += 5;
-+			else
-+				vel1.ry() -= 5;
-+			curr.ry() += vel1.ry();
-+			val_y = scrollBase.ry() + curr.ry() * scrollFactor.ry();
-+			vsb->setValue(val_y); // in overshoot?
-+			if (val_y < min_y) {
-+				overshoot_y = min_y - val_y;
-+			} else if (val_y > max_y) {
-+				overshoot_y = max_y - val_y;
-+			}
-+		}
-+	}
-+
-+	// Pause is deliberately after OverShootStabilise to force a timerEvent cycle
-+	if (yScrollState == OverShootPause)
-+	{
-+		// there won't be any change, we just need to get the previous amount of overshoot
-+		val_y=scrollBase.ry() + curr.ry() * scrollFactor.ry();
-+		if (val_y < min_y) {
-+			overshoot_y = min_y - val_y;
-+		} else if (val_y > max_y)	{
-+			overshoot_y = max_y - val_y;
-+		}
-+		yScrollState = OverShootStabilise;
-+	}
-+
-+// X
-+
-+	if (xScrollState == NotScrolling)
-+		vel1.rx() = 0;
-+		
-+	if (xScrollState == AutoScroll) {
-+		// decelerate normally
-+		int x = curr.rx();
-+		curr.rx() += (vel1.rx() * KINETIC_REFRESH)/VSCALE;
-+		val_x = scrollBase.rx() + curr.rx() * scrollFactor.rx();
-+		if (min_x < val_x and val_x < max_x) { // in range
-+			hsb->setValue(val_x);
-+			vel1.rx() = (vel1.rx()*DECEL_PC)/100;
-+			if (-1.0 < vel1.rx() and vel1.rx() < 1.0) // ie: stopped
-+				xScrollState = NotScrolling;
-+		} else { // we would have passed the min/max so set the target
-+			if (min_x <= val_x)
-+				rest.rx() = max_x;
-+			else
-+				rest.rx() = min_x;				
-+			curr.rx()  = x; // reset the current position
-+			xScrollState = OverShootDecel;
-+		}
-+	}
-+
-+	if (xScrollState == OverShootDecel) {
-+		// Overshoot needs to track the virtual finger position over time and pull
-+		// it back to a position that represents the start/end of the list
-+		//qDebug() << "OverShootDecel x="  << curr.rx() << " v.x = " << vel1.rx();
-+		if (-1.0 < vel1.rx() and vel1.rx() < 1.0) {
-+			// we stopped (or we may have been placed here)
-+			val_x=scrollBase.rx() + curr.rx() * scrollFactor.rx();
-+			if (val_x < min_x) {
-+				overshoot_x = min_x - val_x;
-+			} else if (val_x > max_x) {
-+				overshoot_x = max_x - val_x;
-+			}
-+			vel1.rx() = 0;
-+			xScrollState = OverShootPause;
-+
-+		} else {
-+			// we're slowing down
-+			curr.rx() += (vel1.rx() * KINETIC_REFRESH)/VSCALE;
-+			vel1.rx() = (vel1.rx()*OVERSHOOT_DECEL_PC)/100;
-+			val_x=scrollBase.rx() + curr.rx() * scrollFactor.rx();
-+			hsb->setValue(val_x);
-+			if (val_x < min_x) {
-+				overshoot_x = min_x - val_x;
-+			} else if (val_x > max_x) {
-+				overshoot_x = max_x - val_x;
-+			}
-+		}
-+	}
-+
-+	if (xScrollState == OverShootStabilise) {
-+		val_x=scrollBase.rx() + curr.rx() * scrollFactor.rx();
-+		if (min_x <= val_x and val_x <= max_x) { // in range
-+			// run out of braking... force setting to min/max
-+			hsb->setValue(rest.rx());
-+			overshoot_x = 0;
-+			xScrollState = NotScrolling;
-+		} else {
-+			// accelerate towards rest
-+			if (val_x < min_x)
-+				vel1.rx() += 5;
-+			else
-+				vel1.rx() -= 5;
-+			curr.rx() += vel1.rx();
-+			val_x = scrollBase.rx() + curr.rx() * scrollFactor.rx();
-+			hsb->setValue(val_x); // in overshoot?
-+			if (val_x < min_x) {
-+				overshoot_x = min_x - val_x;
-+			} else if (val_x > max_x) {
-+				overshoot_x = max_x - val_x;
-+			}
-+		}
-+	}
-+
-+	// Pause is deliberately after OverShootStabilise to force a timerEvent cycle
-+	if (xScrollState == OverShootPause)
-+	{
-+		// there won't be any change, we just need to get the previous amount of overshoot
-+		val_x=scrollBase.rx() + curr.rx() * scrollFactor.rx();
-+		if (val_x < min_x) {
-+			overshoot_x = min_x - val_x;
-+		} else if (val_x > max_x) {
-+			overshoot_x = max_x - val_x;
-+		}
-+		xScrollState = OverShootStabilise;
-+	}
-+
-+	qabstractscrollarea_d->drawOvershoot(overshoot_x, overshoot_y);
-+
-+	qabstractscrollarea->show();
-+
-+	if (xScrollState == NotScrolling and yScrollState == NotScrolling) {
-+		//qDebug() << "Stopped timer";
-+		killTimer(event->timerId());
-+		scrollState = NotScrolling;
-+	}
-+}
-+
-+void QAbstractScrollAreaPrivateScroller::registerChildrenForFingerScrolling(QObject *obj)
-+{
-+
-+	if (qobject_cast<QAbstractScrollArea *>(obj)) return; // Ignore any QAbstractScrollArea derived objects and hence their children
-+
-+	if (obj->isWidgetType())
-+		obj->installEventFilter(this);
-+	
-+	foreach (QObject* child, obj->children()){
-+		registerChildrenForFingerScrolling(child);
-+	}
-+}
-+void QAbstractScrollAreaPrivateScroller::replayEvents()
-+{
-+	if (scrollState != Maybe) return;
-+
-+	QEvent *ev;
-+	scrollState = ReissuingEvents;
-+	while (!storedEvents.isEmpty()) {
-+		ev = storedEvents.dequeue() ;
-+		if (! eventSourceWidget.isNull()) {
-+			qApp->notify(eventSourceWidget, ev);
-+		}
-+		delete ev;
-+	}
-+	scrollState = NotScrolling;
-+}
-+
-+
-+#endif // Q_WS_HILDON
-+
- QT_END_NAMESPACE
- 
- #include "moc_qabstractscrollarea.cpp"
-diff --git a/src/gui/widgets/qabstractscrollarea.h b/src/gui/widgets/qabstractscrollarea.h
-index 3ec41d1..d893e8d 100644
---- a/src/gui/widgets/qabstractscrollarea.h
-+++ b/src/gui/widgets/qabstractscrollarea.h
-@@ -51,7 +51,6 @@ QT_BEGIN_NAMESPACE
- QT_MODULE(Gui)
- 
- #ifndef QT_NO_SCROLLAREA
--
- class QScrollBar;
- class QAbstractScrollAreaPrivate;
- 
-diff --git a/src/gui/widgets/qabstractscrollarea_p.h b/src/gui/widgets/qabstractscrollarea_p.h
-index 3c356e2..a14b6b9 100644
---- a/src/gui/widgets/qabstractscrollarea_p.h
-+++ b/src/gui/widgets/qabstractscrollarea_p.h
-@@ -6,11 +6,11 @@
- ** This file is part of the QtGui module of the Qt Toolkit.
- **
- ** $QT_BEGIN_LICENSE:LGPL$
--** No Commercial Usage
--** This file contains pre-release code and may not be distributed.
--** You may use this file in accordance with the terms and conditions
--** contained in the either Technology Preview License Agreement or the
--** Beta Release License Agreement.
-+** Commercial Usage
-+** Licensees holding valid Qt Commercial licenses may use this file in
-+** accordance with the Qt Commercial License Agreement provided with the
-+** Software or, alternatively, in accordance with the terms contained in
-+** a written agreement between you and Nokia.
- **
- ** GNU Lesser General Public License Usage
- ** Alternatively, this file may be used under the terms of the GNU Lesser
-@@ -60,6 +60,14 @@ QT_BEGIN_NAMESPACE
- 
- #ifndef QT_NO_SCROLLAREA
- 
-+#ifdef Q_WS_HILDON
-+#include <QTime>
-+#include <QQueue>
-+class QTimerEvent;
-+class QEvent;
-+class QAbstractScrollAreaPrivateScroller;
-+#endif
-+
- class QScrollBar;
- class QAbstractScrollAreaScrollBarContainer;
- class Q_GUI_EXPORT QAbstractScrollAreaPrivate: public QFramePrivate
-@@ -74,7 +82,17 @@ public:
-     QAbstractScrollAreaScrollBarContainer *scrollBarContainers[Qt::Vertical + 1];
-     QScrollBar *hbar, *vbar;
-     Qt::ScrollBarPolicy vbarpolicy, hbarpolicy;
--
-+	
-+#ifdef Q_WS_HILDON
-+	QAbstractScrollAreaPrivateScroller *fingerScroller;
-+	bool fingerScrollBars;
-+	bool fingerScrollable;
-+	QString scrollAreaStyle;
-+	void setFingerScrollable(bool);
-+	void setFingerScrollBars(bool);
-+	virtual void drawOvershoot(int horizontal, int vertical);
-+#endif
-+	
-     QWidget *viewport;
-     QWidget *cornerWidget;
-     QRect cornerPaintingRect;
-@@ -132,6 +150,61 @@ private:
-     Qt::Orientation orientation;
- };
- 
-+#ifdef Q_WS_HILDON
-+// This is the Kinetic fingerscroll implementation for Hildon
-+
-+class QAbstractScrollAreaPrivateScroller : public QObject
-+{
-+	Q_OBJECT
-+public:
-+	QAbstractScrollAreaPrivateScroller(QWidget *parent, QAbstractScrollArea *qabstractscrollarea, QAbstractScrollAreaPrivate *priv);
-+	bool eventFilter(QObject *obj, QEvent *event);
-+
-+protected Q_SLOTS:
-+	void replayEvents();
-+
-+protected:
-+	void handleMoveEvent ( QMouseEvent * event );
-+	void timerEvent(QTimerEvent *event);
-+	void registerChildrenForFingerScrolling(QObject *top);
-+
-+	static const int SENSITIVITY, KINETIC_REFRESH, VSCALE,
-+		DECEL_DURATION, DEBOUNCE, DECEL_PC, START_WITHIN,
-+		VMAX;
-+	
-+	QAbstractScrollArea  *qabstractscrollarea;  // the area we're scrolling
-+	QAbstractScrollAreaPrivate *qabstractscrollarea_d; // and its private data
-+	
-+	typedef enum { NotScrolling = 0, Maybe, ManualScroll, AutoScroll,
-+				   OverShootDecel, OverShootPause, OverShootStabilise,
-+				   ReissuingEvents } ScrollState;
-+	ScrollState  scrollState, xScrollState, yScrollState;
-+
-+	QPointer<QWidget> eventSourceWidget; // who do we play events back to
-+	QQueue<QEvent*>   storedEvents;      // events to play back
-+
-+	QPoint scrollBase;           // scrollbar value at fingerdown to establish base position
-+	QPoint start;                // global event x,y at start
-+	QPoint curr;                 // current x,y (kept to allow velocity calc)
-+	QPoint rest;                 // rest x,y (resting place after overshoot
-+
-+	QPointF scrollFactor;        // scroll range factor - converts pixel delta to sb value delta
-+
-+	QTime event_time;
-+	QPoint last;                 // global event x,y at start
-+	QPoint vel;                  // Velocity
-+	QPoint vel1;                 // Velocity before
-+	int last_ev_time, curr_time; // timer for velocity
-+		
-+	int scrollingNotStartedTimer;
-+	int x_braking_cycles;          // how long do we slow down for
-+	int y_braking_cycles;          // how long do we slow down for
-+};
-+
-+#endif // Q_WS_HILDON
-+
-+
-+
- #endif // QT_NO_SCROLLAREA
- 
- QT_END_NAMESPACE
-diff --git a/src/gui/widgets/qabstractslider.cpp b/src/gui/widgets/qabstractslider.cpp
-index 6865a56..23067f5 100644
---- a/src/gui/widgets/qabstractslider.cpp
-+++ b/src/gui/widgets/qabstractslider.cpp
-@@ -531,6 +531,33 @@ void QAbstractSlider::setValue(int value)
-     emit valueChanged(value);
- }
- 
-+#ifdef Q_WS_HILDON
-+/*!
-+    Sets the value but allows out-of-bound values
-+    This changes the slider position if the value is in bounds.
-+*/
-+void QAbstractSlider::setValueOvershoot(int value)
-+{
-+    Q_D(QAbstractSlider);
-+    int v_bound = d->bound(value);
-+	if (v_bound != value)
-+		qDebug() << "setValue: bound() " << v_bound << " : " << value;
-+    if (d->value == value && d->position == value)
-+        return;
-+    d->value = value;
-+    if (d->position != v_bound) {
-+        d->position = v_bound;
-+        if (d->pressed)
-+            emit sliderMoved((d->position = v_bound));
-+    }
-+#ifndef QT_NO_ACCESSIBILITY
-+    QAccessible::updateAccessibility(this, 0, QAccessible::ValueChanged);
-+#endif
-+    sliderChange(SliderValueChange);
-+    emit valueChanged(value);
-+}
-+#endif //Q_WS_HILDON
-+
- /*!
-     \property QAbstractSlider::invertedAppearance
-     \brief whether or not a slider shows its values inverted.
-diff --git a/src/gui/widgets/qabstractslider.h b/src/gui/widgets/qabstractslider.h
-index 7e03b6e..e05a2f0 100644
---- a/src/gui/widgets/qabstractslider.h
-+++ b/src/gui/widgets/qabstractslider.h
-@@ -119,6 +119,9 @@ public:
-     void triggerAction(SliderAction action);
- 
- public Q_SLOTS:
-+#ifdef Q_WS_HILDON
-+	void setValueOvershoot(int);
-+#endif
-     void setValue(int);
-     void setOrientation(Qt::Orientation);
- 
 diff --git a/src/gui/widgets/qabstractspinbox.cpp b/src/gui/widgets/qabstractspinbox.cpp
 index e079271..2393904 100644
 --- a/src/gui/widgets/qabstractspinbox.cpp
@@ -5686,10 +5051,18 @@ index 7e7c654..cad7b0a 100644
           e->reason() == Qt::BacktabFocusReason  ||
           e->reason() == Qt::ShortcutFocusReason) {
 diff --git a/src/gui/widgets/qmainwindow.cpp b/src/gui/widgets/qmainwindow.cpp
-index 0a0faa0..b7fc05e 100644
+index 0a0faa0..ab6acc0 100644
 --- a/src/gui/widgets/qmainwindow.cpp
 +++ b/src/gui/widgets/qmainwindow.cpp
-@@ -99,6 +99,9 @@ public:
+@@ -54,6 +54,7 @@
+ #include <qstyle.h>
+ #include <qdebug.h>
+ #include <qpainter.h>
++#include <qhildonappmenu.h>
+ 
+ #include <private/qwidget_p.h>
+ #include "qtoolbar_p.h"
+@@ -99,6 +100,9 @@ public:
      uint hasOldCursor : 1;
      uint cursorAdjusted : 1;
  #endif
@@ -5699,10 +5072,19 @@ index 0a0faa0..b7fc05e 100644
  };
  
  void QMainWindowPrivate::init()
-@@ -110,6 +113,19 @@ void QMainWindowPrivate::init()
+@@ -110,6 +114,28 @@ void QMainWindowPrivate::init()
      explicitIconSize = false;
  
      q->setAttribute(Qt::WA_Hover);
++
++#ifdef Q_OS_FREMANTLE
++    int item = -1;
++    QWidget *hswParent = qobject_cast<QWidget*>(q->parent());
++    if (hswParent)
++        item = hswParent->hildonStackableWindow();
++
++    setHildonStackableWindows(item +1);
++#endif
 +
 +#ifdef Q_WS_HILDON
 +    //Binding F4 button
@@ -5719,7 +5101,7 @@ index 0a0faa0..b7fc05e 100644
  }
  
  /*
-@@ -674,6 +690,10 @@ void QMainWindow::removeToolBarBreak(QToolBar *before)
+@@ -674,6 +700,10 @@ void QMainWindow::removeToolBarBreak(QToolBar *before)
  */
  void QMainWindow::addToolBar(Qt::ToolBarArea area, QToolBar *toolbar)
  {
@@ -5730,7 +5112,7 @@ index 0a0faa0..b7fc05e 100644
      if (!checkToolBarArea(area, "QMainWindow::addToolBar"))
          return;
  
-@@ -874,6 +894,81 @@ void QMainWindow::setDockNestingEnabled(bool enabled)
+@@ -874,6 +904,100 @@ void QMainWindow::setDockNestingEnabled(bool enabled)
      d->layout->setDockOptions(opts);
  }
  
@@ -5744,12 +5126,34 @@ index 0a0faa0..b7fc05e 100644
 +    //Hides submenues. GlobalMenu will be destroyed as soons
 +    //as QMenu::exec() terminates
 +    if (!d->globalMenu.isNull()){
-+	d->globalMenu->hide();
++        d->globalMenu->hide();
 +        return;
 +    }
 +
 +    if (!menuBar())
 +        return;
++
++    QList<QAction*> actionList = menuBar()->actions();
++
++    QHildonAppMenu *appMenu;
++    
++    if (!actionList.isEmpty()){
++        QAction *action;
++
++        //Looking for "Fremantle" Menu
++        foreach(action, actionList){
++            if (action->text().compare("fremantle", Qt::CaseInsensitive) == 0){
++                QMenu *menu = action->menu();
++                if (menu){
++                    QList<QAction*> fremantleActionList;
++                    fremantleActionList = menu->actions();
++                    appMenu = new QHildonAppMenu(fremantleActionList, this);
++                    appMenu->show();
++                    return;
++                }
++            }
++        }
++    }
 +
 +    //Getting the Menu position from the style
 +    if (menuPos.isNull()){
@@ -5765,7 +5169,6 @@ index 0a0faa0..b7fc05e 100644
 +    //Creating a new Application Context Menu
 +    //so that is always updated
 +    d->globalMenu = new QMenu(this);
-+    QList<QAction*> actionList = menuBar()->actions();
 +
 +    //Filling the App context menu
 +    if (!actionList.isEmpty()){
@@ -5790,17 +5193,15 @@ index 0a0faa0..b7fc05e 100644
 +            }
 +        }
 +        d->globalMenu->addActions(actionList);
-+    }else if (!quitAction){
-+         //Minimal menu for application with empty menuBars
-+         quitAction = new QAction(tr("Close"), menuBar());  
-+         connect(quitAction, SIGNAL(triggered()), SLOT(close()));
-+     }
++    }
 +     
 +     //Add quitAction in the last position
 +     if (quitAction)
 +         d->globalMenu->addAction(quitAction);
++     
++     if (d->globalMenu->actions().count())
++         d->globalMenu->exec(menuPos);
 +
-+     d->globalMenu->exec(menuPos);
 +     delete static_cast<QMenu *>(d->globalMenu);
 +}
 +
@@ -6969,6 +6370,35 @@ index 8281990..4eb3584 100644
  #ifndef QT_NO_NETWORKPROXY
      // Get the proxy information
      d->resolveProxy(hostName, port);
+diff --git a/src/opengl/gl2paintengineex/glgc_shader_source.h b/src/opengl/gl2paintengineex/glgc_shader_source.h
+index 7f0e1b8..37f93b3 100644
+--- a/src/opengl/gl2paintengineex/glgc_shader_source.h
++++ b/src/opengl/gl2paintengineex/glgc_shader_source.h
+@@ -234,7 +234,7 @@ static const char* qglslRadialGradientBrushVertexShader = "\
+         gl_Position.xy = gl_Position.xy * invertedHTexCoordsZ; \
+         gl_Position.w = invertedHTexCoordsZ; \
+         A = hTexCoords.xy * invertedHTexCoordsZ; \
+-        b = 2.0 * fmp * (A.x + A.y); \
++        b = 2.0 * dot(A, fmp);\
+ \
+     }";
+ 
+@@ -274,10 +274,12 @@ static const char* qglslConicalGradientBrushFragmentShader = "\n\
+     uniform         sampler2D   brushTexture; \
+     uniform mediump float       angle; \
+     varying highp   vec2        A; \
+-    mediump vec4 brush() { \
++    lowp vec4 brush() { \
++        highp float t; \
+         if (abs(A.y) == abs(A.x)) \
+-            A.y += 0.002; \
+-        highp float t = (atan2(-A.y, A.x) + angle) * INVERSE_2PI; \
++            t = (atan(-A.y + 0.002, A.x) + angle) * INVERSE_2PI; \
++        else \
++            t = (atan(-A.y, A.x) + angle) * INVERSE_2PI; \
+         return texture2D(brushTexture, vec2(t - floor(t), 0.5)); \
+     }\n";
+ 
 diff --git a/src/src.pro b/src/src.pro
 old mode 100644
 new mode 100755
@@ -6988,3 +6418,120 @@ index f40c6ad..fe72e0b
      !cross_compile {
          contains(QT_CONFIG, qt3support): SRC_SUBDIRS += src_tools_uic3
      }
+diff --git a/tools/assistant/compat/mainwindow.cpp b/tools/assistant/compat/mainwindow.cpp
+index d3e74fe..09ce15d 100644
+--- a/tools/assistant/compat/mainwindow.cpp
++++ b/tools/assistant/compat/mainwindow.cpp
+@@ -398,6 +398,7 @@ QString MainWindow::urlifyFileName(const QString &fileName)
+     return name;
+ }
+ 
++#ifndef QT_NO_PRINTER
+ class PrintThread : public QThread
+ {
+     QPrinter _printer;
+@@ -433,6 +434,7 @@ protected:
+         _document = 0;
+     }
+ };
++#endif
+ 
+ void MainWindow::on_actionFilePrint_triggered()
+ {
+diff --git a/tools/linguist/linguist/mainwindow.cpp b/tools/linguist/linguist/mainwindow.cpp
+index a6ef7c7..bd0e840 100644
+--- a/tools/linguist/linguist/mainwindow.cpp
++++ b/tools/linguist/linguist/mainwindow.cpp
+@@ -876,6 +876,9 @@ void MainWindow::releaseAll()
+ 
+ void MainWindow::print()
+ {
++#ifdef QT_NO_PRINTDIALOG
++    statusBar()->showMessage(tr("Print support is disabled"));
++#else
+     int pageNum = 0;
+     QPrintDialog dlg(&m_printer, this);
+     if (dlg.exec()) {
+@@ -953,6 +956,7 @@ void MainWindow::print()
+     } else {
+         statusBar()->showMessage(tr("Printing aborted"), MessageMS);
+     }
++#endif
+ }
+ 
+ bool MainWindow::searchItem(const QString &searchWhat)
+@@ -1229,6 +1233,9 @@ void MainWindow::editPhraseBook(QAction *action)
+ 
+ void MainWindow::printPhraseBook(QAction *action)
+ {
++#ifdef QT_NO_PRINTDIALOG
++    statusBar()->showMessage(tr("Print support is disabled"));
++#else
+     PhraseBook *phraseBook = m_phraseBookMenu[PhrasePrintMenu].value(action);
+ 
+     int pageNum = 0;
+@@ -1260,6 +1267,7 @@ void MainWindow::printPhraseBook(QAction *action)
+     } else {
+         statusBar()->showMessage(tr("Printing aborted"), MessageMS);
+     }
++#endif
+ }
+ 
+ void MainWindow::addToPhraseBook()
+diff --git a/tools/linguist/linguist/mainwindow.h b/tools/linguist/linguist/mainwindow.h
+index e7ec79b..66f9b85 100644
+--- a/tools/linguist/linguist/mainwindow.h
++++ b/tools/linguist/linguist/mainwindow.h
+@@ -228,8 +228,11 @@ private:
+     QList<QHash<QString, QList<Phrase *> > > m_phraseDict;
+     QList<PhraseBook *> m_phraseBooks;
+     QMap<QAction *, PhraseBook *> m_phraseBookMenu[3];
+-    QPrinter m_printer;
+ 
++#ifndef QT_NO_PRINTER 
++    QPrinter m_printer;
++#endif
++    
+     FindDialog *m_findDialog;
+     QString m_findText;
+     Qt::CaseSensitivity m_findMatchCase;
+diff --git a/tools/linguist/linguist/printout.cpp b/tools/linguist/linguist/printout.cpp
+index 772f55d..7e7cfde 100644
+--- a/tools/linguist/linguist/printout.cpp
++++ b/tools/linguist/linguist/printout.cpp
+@@ -46,6 +46,7 @@
+ 
+ QT_BEGIN_NAMESPACE
+ 
++#ifndef QT_NO_PRINTER
+ PrintOut::PrintOut(QPrinter *printer)
+     : pr(printer), nextRule(NoRule), page(0)
+ {
+@@ -207,4 +208,6 @@ void PrintOut::drawRule(Rule rule)
+     }
+ }
+ 
++#endif
++
+ QT_END_NAMESPACE
+diff --git a/tools/linguist/linguist/printout.h b/tools/linguist/linguist/printout.h
+index 5ac493d..b569054 100644
+--- a/tools/linguist/linguist/printout.h
++++ b/tools/linguist/linguist/printout.h
+@@ -54,6 +54,7 @@ QT_BEGIN_NAMESPACE
+ class QPrinter;
+ class QFontMetrics;
+ 
++#ifndef QT_NO_PRINTER
+ class PrintOut
+ {
+ public:
+@@ -115,6 +116,8 @@ private:
+     int vsize;
+ };
+ 
++#endif
++
+ QT_END_NAMESPACE
+ 
+ #endif
