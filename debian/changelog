@@ -1,3 +1,9 @@
+qt4-x11 (4.5.3~git20090723-0maemo4) unstable; urgency=low
+
+  * Update hildon patch.
+
+ -- Shane Bradley <shane.bradley@nokia.com>  Fri, 18 Sep 2009 16:45:23 +1000
+
 qt4-x11 (4.5.3~git20090723-0maemo3) unstable; urgency=low
 
   * Fixes: NB#129664 - qt4-x11 compiled without any optimization
