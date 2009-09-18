@@ -503,7 +503,21 @@ QPixmap QHildonStyle::standardPixmap(StandardPixmap sp, const QStyleOption *opti
 
 QRect QHildonStyle::subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const
 {
-    return  QGtkStyle::subElementRect(element, option, widget);
+    QRect r;
+    switch (element) {
+    case SE_LineEditContents:
+        if (const QStyleOptionFrame *f = qstyleoption_cast<const QStyleOptionFrame *>(option)) {
+            GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("HildonEntry-finger"));
+            int x = qMax(gtkEntry->style->xthickness, f->lineWidth);
+            int y = qMax(gtkEntry->style->ythickness, f->lineWidth);
+            r = f->rect.adjusted(x,y, -x, -y);
+            r = visualRect(option->direction, option->rect, r);
+        }
+        break;
+    default:
+        return  QGtkStyle::subElementRect(element, option, widget);
+    }
+    return r;
 }
 
 QRect QHildonStyle::itemPixmapRect(const QRect &r, int flags, const QPixmap &pixmap) const
