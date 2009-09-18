@@ -186,6 +186,56 @@ void QHildonStyle::drawPrimitive(PrimitiveElement element,
     QGtkPainter gtkPainter(painter);
 
     switch (element) {
+    case PE_PanelButtonCommand: {
+        bool isDefault = false;
+        if (const QStyleOptionButton *btn = qstyleoption_cast<const QStyleOptionButton*>(option))
+            isDefault = btn->features & QStyleOptionButton::DefaultButton;
+
+        GtkStateType state = gtkPainter.gtkState(option);
+        if (option->state & State_On || option->state & State_Sunken)
+            state = GTK_STATE_ACTIVE;
+        GtkWidget *gtkButton = QGtk::gtkWidget(QLS("HildonButton-finger"));
+        gint focusWidth, focusPad;
+        gboolean interiorFocus = false;
+        QGtk::gtk_widget_style_get (gtkButton,
+                                "focus-line-width", &focusWidth,
+                                "focus-padding", &focusPad,
+                                "interior-focus", &interiorFocus, NULL);
+
+        style = gtkButton->style;
+
+        QRect buttonRect = option->rect;
+
+        QString key;
+        if (isDefault) {
+            key += QLS("def");
+            GTK_WIDGET_SET_FLAGS(gtkButton, GTK_HAS_DEFAULT);
+            gtkPainter.paintBox(gtkButton, "buttondefault", buttonRect, state, GTK_SHADOW_IN,
+                                style, isDefault ? QLS("d") : QString());
+        }
+
+        bool hasFocus = option->state & State_HasFocus;
+
+        if (hasFocus) {
+            key += QLS("def");
+            GTK_WIDGET_SET_FLAGS(gtkButton, GTK_HAS_FOCUS);
+        }
+
+        if (!interiorFocus)
+            buttonRect = buttonRect.adjusted(focusWidth, focusWidth, -focusWidth, -focusWidth);
+
+        GtkShadowType shadow = (option->state & State_Sunken || option->state & State_On ) ?
+                               GTK_SHADOW_IN : GTK_SHADOW_OUT;
+
+        gtkPainter.paintBox(gtkButton, "button", buttonRect, state, shadow,
+                            style, key);
+        if (isDefault)
+            GTK_WIDGET_UNSET_FLAGS(gtkButton, GTK_HAS_DEFAULT);
+        if (hasFocus)
+            GTK_WIDGET_UNSET_FLAGS(gtkButton, GTK_HAS_FOCUS);
+    }
+    break;
+
     case PE_PanelLineEdit:
         if (const QStyleOptionFrame *panel = qstyleoption_cast<const QStyleOptionFrame *>(option)) {
             GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("HildonEntry-finger"));
