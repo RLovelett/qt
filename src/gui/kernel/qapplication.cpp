@@ -419,7 +419,11 @@ QWidget *QApplicationPrivate::focus_widget = 0;        // has keyboard input foc
 QWidget *QApplicationPrivate::hidden_focus_widget = 0; // will get keyboard input focus after show()
 QWidget *QApplicationPrivate::active_window = 0;        // toplevel with keyboard focus
 bool QApplicationPrivate::obey_desktop_settings = true;        // use winsys resources
+#ifdef Q_WS_HILDON
+int QApplicationPrivate::cursor_flash_time = 0;
+#else
 int QApplicationPrivate::cursor_flash_time = 1000;        // text caret flash time
+#endif
 int QApplicationPrivate::mouse_double_click_time = 400;        // mouse dbl click limit
 int QApplicationPrivate::keyboard_input_time = 400; // keyboard input interval
 #ifndef QT_NO_WHEELEVENT

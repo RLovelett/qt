@@ -59,7 +59,7 @@
 #undef signals // Collides with GTK stymbols
 #include <gtk/gtk.h>
 #ifdef Q_WS_HILDON
-#  include <hildon/hildon-file-chooser-dialog.h>
+#  include <hildon-fm-2/hildon/hildon-file-chooser-dialog.h>
 #endif
 #include <QtCore/QLibrary>
 #include <QtGui/QFont>
@@ -112,6 +112,7 @@ typedef gchar* (*Ptr_gtk_check_version)(guint, guint, guint);
 typedef GtkToolItem* (*Ptr_gtk_separator_tool_item_new) (void);
 typedef GtkWidget* (*Ptr_gtk_entry_new)(void);
 #ifdef Q_OS_FREMANTLE
+typedef GtkWidget* (*Ptr_hildon_entry_new)(HildonSizeType);
 typedef GtkWidget* (*Ptr_gtk_text_view_new)(void);
 #endif
 typedef GtkWidget* (*Ptr_gtk_tree_view_new)(void);
@@ -264,6 +265,7 @@ public:
     static Ptr_gtk_statusbar_new gtk_statusbar_new;
     static Ptr_gtk_entry_new gtk_entry_new;
 #ifdef Q_OS_FREMANTLE
+    static Ptr_hildon_entry_new hildon_entry_new;
     static Ptr_gtk_text_view_new gtk_text_view_new;
 #endif
     static Ptr_gtk_hscale_new gtk_hscale_new;

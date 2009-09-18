@@ -249,7 +249,7 @@ QT_BEGIN_NAMESPACE
 
 QDialog::QDialog(QWidget *parent, Qt::WindowFlags f)
     : QWidget(*new QDialogPrivate, parent,
-              f | QFlag((f & Qt::WindowType_Mask) == 0 ? Qt::Dialog : 0))
+              f | QFlag((f & Qt::WindowType_Mask) == 0 ? ((parent) ? Qt::Dialog : Qt::Window) : 0))
 {
 #ifdef Q_OS_WINCE
     if (!qt_wince_is_smartphone())
