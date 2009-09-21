@@ -369,6 +369,9 @@ bool QAbstractSpinBox::hasFrame() const
 void QAbstractSpinBox::setFrame(bool enable)
 {
     Q_D(QAbstractSpinBox);
+#ifdef Q_OS_FREMANTLE
+    d->edit->setFrame(hasFrame());
+#endif
     d->frame = enable;
     update();
     d->updateEditFieldGeometry();
@@ -1518,6 +1521,9 @@ void QAbstractSpinBoxPrivate::init()
 
     q->setLineEdit(new QLineEdit(q));
     edit->setObjectName(QLatin1String("qt_spinbox_lineedit"));
+#ifdef Q_OS_FREMANTLE
+    edit->setFrame(true);
+#endif
     validator = new QSpinBoxValidator(q, this);
     edit->setValidator(validator);
 
