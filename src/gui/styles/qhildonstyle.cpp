@@ -37,12 +37,15 @@
 #include "qhildonstyle.h"
 
 #include <QtGui/QStyleOption>
-#include <QDebug>
-#include <qpixmapcache.h>
+#include <QtGui/QLineEdit>
+
+#include "qpixmapcache.h"
 #undef signals // Collides with GTK stymbols
 #include "qgtkpainter_p.h"
 
 #include <private/qcleanlooksstyle_p.h>
+
+
 #if !defined(QT_NO_STYLE_HILDON) && defined(Q_WS_HILDON)
 
 QT_BEGIN_NAMESPACE
@@ -262,11 +265,17 @@ void QHildonStyle::drawPrimitive(PrimitiveElement element,
                                                    -gtkEntry->style->xthickness, 
                                                    -(gtkEntry->style->ythickness ? gtkEntry->style->ythickness : gtkEntry->style->xthickness) );
 
-            //Frame around LineEdits is drawn just for "pure" lineEdits (lineWidth > 0) and SpinBoxes
-            if (panel->lineWidth > 0 || QString::compare(widget->objectName(),"qt_spinbox_lineedit") == 0 ){
+                 
+            const QLineEdit *le = qobject_cast<const QLineEdit*>(widget);
+
+            if (le && le->hasFrame()) {
                 gtkPainter.paintFlatBox(gtkEntry, "entry_bg", option->rect,
                                         option->state & State_Enabled ? GTK_STATE_NORMAL : GTK_STATE_INSENSITIVE, GTK_SHADOW_NONE, gtkEntry->style);
                 drawPrimitive(PE_FrameLineEdit, option, painter, widget);
+            } else {
+                //QLineEdit used as Delegate widgets (Eg: in QTableView) should not have lineWidth in Hildon.
+                //In this case we have to cover the widget on the back.
+                QCleanlooksStyle::drawPrimitive(element, option, painter, widget);
             }
 
         }
@@ -677,6 +686,11 @@ QSize QHildonStyle::sizeFromContents(ContentsType type, const QStyleOption *opti
 
     switch (type) {
     case CT_LineEdit: {
+        const QLineEdit *le = qobject_cast<const QLineEdit*>(widget);
+        if (le && !le->hasFrame()){
+            newSize = QGtkStyle::sizeFromContents(type, option, size, widget);
+            break;
+        }
         GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("HildonEntry-finger"));
         newSize = size + QSize(2*gtkEntry->style->xthickness,
                                2*qMax(gtkEntry->style->ythickness, gtkEntry->style->xthickness));
@@ -698,7 +712,11 @@ QRect QHildonStyle::subElementRect(SubElement element, const QStyleOption *optio
 {
     QRect r;
     switch (element) {
-    case SE_LineEditContents:
+    case SE_LineEditContents: {
+        const QLineEdit *le = qobject_cast<const QLineEdit*>(widget);
+        if (le && !le->hasFrame())
+            return  QGtkStyle::subElementRect(element, option, widget);
+
         if (const QStyleOptionFrame *f = qstyleoption_cast<const QStyleOptionFrame *>(option)) {
             GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("HildonEntry-finger"));
             int x = qMax(gtkEntry->style->xthickness, f->lineWidth);
@@ -706,7 +724,9 @@ QRect QHildonStyle::subElementRect(SubElement element, const QStyleOption *optio
             r = f->rect.adjusted(x,y, -x, -y);
             r = visualRect(option->direction, option->rect, r);
         }
-        break;
+    }
+    break;
+
     default:
         return  QGtkStyle::subElementRect(element, option, widget);
     }
