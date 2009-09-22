@@ -35,7 +35,7 @@ DEB_MAKE_CLEAN_TARGET := confclean distclean
 # Shlibs of the current upstream version
 DEB_DH_MAKESHLIBS_ARGS_ALL := -V
 
-DEB_DH_STRIP_ARGS := --dbg-package=libqtcore4 --dbg-package=libqtgui4 --dbg-package=libqt4-network --dbg-package=libqt4-script --dbg-package=libqt4-sql --dbg-package=libqt4-sql-sqlite --dbg-package=libqt4-svg --dbg-package=libqt4-xml --dbg-package=libqt4-dbus --dbg-package=libqt4-opengl --dbg-package=libqt4-phonon --dbg-package=libqt4-xmlpatterns --dbg-package=libqt4-webkit --dbg-package=libqt4-designer --dbg-package=libqt4-help --dbg-package=libqt4-assistant --dbg-package=libqt4-test --dbg-package=libqt4-qt3support
+DEB_DH_STRIP_ARGS := --dbg-package=libqt4-core --dbg-package=libqt4-gui --dbg-package=libqt4-network --dbg-package=libqt4-script --dbg-package=libqt4-sql --dbg-package=libqt4-sql-sqlite --dbg-package=libqt4-svg --dbg-package=libqt4-xml --dbg-package=libqt4-dbus --dbg-package=libqt4-opengl --dbg-package=libqt4-phonon --dbg-package=libqt4-xmlpatterns --dbg-package=libqt4-webkit --dbg-package=libqt4-designer --dbg-package=libqt4-help --dbg-package=libqt4-assistant --dbg-package=libqt4-test --dbg-package=libqt4-qt3support
 
 DEB_DH_SHLIBDEPS_ARGS_ALL := --exclude=.debug
 
@@ -222,7 +222,7 @@ common-install-arch::
 #build/qt4-dev-tools::
 #	$(MAKE) sub-tools-qdoc3
 
-install/libqtcore4::
+install/libqt4-core-translations::
 	$(CURDIR)/bin/lrelease debian/translations/qt_ca.ts \
 		-qm $(DEB_DESTDIR)/usr/share/qt4/translations/qt_ca.qm
 

@@ -2,6 +2,7 @@ qt4-x11 (4.5.3~git20090723-0maemo4) unstable; urgency=low
 
   * Update hildon patch.
   * Fixes: NB#126518 - Fremantle Qt GUI package with "hildonization" is missing
+  * Ensure that gui and core packages get stripped.
 
  -- Shane Bradley <shane.bradley@nokia.com>  Fri, 18 Sep 2009 16:45:23 +1000
 
