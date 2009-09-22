@@ -94,7 +94,6 @@ public:
           stretchSections(0),
           contentsSections(0),
           minimumSectionSize(-1),
-          lastSectionSize(0),
           sectionIndicatorOffset(0),
           sectionIndicator(0),
           globalResizeMode(QHeaderView::Interactive)
@@ -275,7 +274,6 @@ public:
     int contentsSections;
     int defaultSectionSize;
     int minimumSectionSize;
-    int lastSectionSize; // $$$
     int sectionIndicatorOffset;
     Qt::Alignment defaultAlignment;
     QLabel *sectionIndicator;

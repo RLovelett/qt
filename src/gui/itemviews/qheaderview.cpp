@@ -722,9 +722,6 @@ void QHeaderView::moveSection(int from, int to)
         return;
     }
 
-    if (stretchLastSection() &&  to == d->lastVisibleVisualIndex())
-        d->lastSectionSize = sectionSize(from);
-
     //int oldHeaderLength = length(); // ### for debugging; remove later
     d->initializeIndexMapping();
 
@@ -876,9 +873,6 @@ void QHeaderView::resizeSection(int logical, int size)
 
     d->executePostedLayout();
     d->invalidateCachedSizeHint();
-
-    if (stretchLastSection() && visual == d->lastVisibleVisualIndex())
-        d->lastSectionSize = size;
 
     if (size != oldSize)
         d->createSectionSpan(visual, visual, size, d->headerSectionResizeMode(visual));
@@ -1893,8 +1887,6 @@ void QHeaderView::initializeSections()
     } else if (newCount != oldCount) {
         const int min = qBound(0, oldCount, newCount - 1);
         initializeSections(min, newCount - 1);
-        if (stretchLastSection()) // we've already gotten the size hint
-            d->lastSectionSize = sectionSize(logicalIndex(d->sectionCount - 1));
 
         //make sure we update the hidden sections
         if (newCount < oldCount)
@@ -2971,7 +2963,14 @@ void QHeaderViewPrivate::resizeSections(QHeaderView::ResizeMode globalMode, bool
 
         if (resizeMode == QHeaderView::Stretch) {
             ++numberOfStretchedSections;
-            section_sizes.append(headerSectionSize(i));
+            int sectionSize = headerSectionSize(i);
+            if (headerSectionResizeMode(i) == QHeaderView::ResizeToContents)
+              {
+              int logicalIndex = q->logicalIndex(i);
+              sectionSize = qMax(viewSectionSizeHint(logicalIndex),
+                                 q->sectionSizeHint(logicalIndex));
+              }
+            section_sizes.append(sectionSize);
             continue;
         }
 
@@ -3020,18 +3019,17 @@ void QHeaderViewPrivate::resizeSections(QHeaderView::ResizeMode globalMode, bool
                               : newSectionResizeMode);
             if (resizeMode == QHeaderView::Stretch && stretchSectionLength != -1) {
                 if (i == lastVisibleSection)
-                    newSectionLength = qMax(stretchSectionLength, lastSectionSize);
+                    newSectionLength = qMax(stretchSectionLength, section_sizes.front());
                 else
                     newSectionLength = stretchSectionLength;
                 if (pixelReminder > 0) {
                     newSectionLength += 1;
                     --pixelReminder;
                 }
-                section_sizes.removeFirst();
             } else {
                 newSectionLength = section_sizes.front();
-                section_sizes.removeFirst();
             }
+            section_sizes.removeFirst();
         }
 
         //Q_ASSERT(newSectionLength > 0);
