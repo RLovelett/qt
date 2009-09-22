@@ -1006,6 +1006,7 @@ void QListWidgetPrivate::setup()
 {
     Q_Q(QListWidget);
     q->QListView::setModel(new QListModel(q));
+    viewport->setBackgroundRole(QPalette::Button);
     // view signals
     QObject::connect(q, SIGNAL(pressed(QModelIndex)), q, SLOT(_q_emitItemPressed(QModelIndex)));
     QObject::connect(q, SIGNAL(clicked(QModelIndex)), q, SLOT(_q_emitItemClicked(QModelIndex)));
