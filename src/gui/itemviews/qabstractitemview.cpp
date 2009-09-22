@@ -120,8 +120,11 @@ void QAbstractItemViewPrivate::init()
     QObject::connect(q->horizontalScrollBar(), SIGNAL(valueChanged(int)),
                      q, SLOT(horizontalScrollbarValueChanged(int)));
 
+#ifdef Q_WS_FREMANTLE
+    viewport->setBackgroundRole(QPalette::Button);
+#else
     viewport->setBackgroundRole(QPalette::Base);
-
+#endif
     doDelayedItemsLayout();
 
     q->setAttribute(Qt::WA_InputMethodEnabled);
