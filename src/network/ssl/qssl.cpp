@@ -101,14 +101,14 @@ QT_BEGIN_NAMESPACE
 
     Describes the protocol of the cipher.
 
-    \value SslV3 SSLv3 - the default protocol.
+    \value SslV3 SSLv3
     \value SslV2 SSLv2
-    \value TlsV1 TLSv1
+    \value TlsV1 TLSv1 - the default protocol.
     \value UnknownProtocol The cipher's protocol cannot be determined.
     \value AnyProtocol The socket understands SSLv2, SSLv3, and TLSv1. This
     value is used by QSslSocket only.
 
-    Note: most servers using SSL understand both versions (2 and 3),
+    Note: most servers using SSL understand both versions (Sslv3 and TlsV1),
     but it is recommended to use the latest version only for security
     reasons. However, SSL and TLS are not compatible with each other:
     if you get unexpected handshake failures, verify that you chose

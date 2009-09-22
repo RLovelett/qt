@@ -213,7 +213,7 @@ bool QSslConfiguration::isNull() const
 */
 QSsl::SslProtocol QSslConfiguration::protocol() const
 {
-    return d ? d->protocol : QSsl::SslV3;
+    return d ? d->protocol : QSsl::TlsV1;
 }
 
 /*!
