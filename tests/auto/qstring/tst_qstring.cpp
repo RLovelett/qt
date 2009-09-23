@@ -201,6 +201,7 @@ private slots:
     void repeatedSignature() const;
     void repeated() const;
     void repeated_data() const;
+    void reverse();
 };
 
 typedef QList<int> IntList;
@@ -4667,6 +4668,12 @@ void tst_QString::repeated_data() const
         << QString(QLatin1String("abc"))
         << QString(QLatin1String("abcabcabcabc"))
         << 4;
+}
+
+void tst_QString::reverse()
+{
+    QString test("abc");
+    QCOMPARE(test.reversed(), QString("cba"));
 }
 
 QTEST_APPLESS_MAIN(tst_QString)
