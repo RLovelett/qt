@@ -3008,6 +3008,19 @@ int QString::count(const QRegExp& rx) const
     Same as size().
 */
 
+/*!
+    \since 4.7
+
+    Returns this string in reverse order.
+*/
+QString QString::reversed() const
+{
+    QString result;
+    result.resize(d->size);
+    for (int i = 0; i < d->size; ++i)
+        result[i] = d->data[d->size - 1 - i];
+    return result;
+}
 
 /*!
     \enum QString::SectionFlag

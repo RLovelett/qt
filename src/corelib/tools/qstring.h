@@ -195,6 +195,8 @@ public:
     int count(QChar c, Qt::CaseSensitivity cs = Qt::CaseSensitive) const;
     int count(const QString &s, Qt::CaseSensitivity cs = Qt::CaseSensitive) const;
 
+    QString reversed() const;
+
 #ifndef QT_NO_REGEXP
     int indexOf(const QRegExp &, int from = 0) const;
     int lastIndexOf(const QRegExp &, int from = -1) const;
