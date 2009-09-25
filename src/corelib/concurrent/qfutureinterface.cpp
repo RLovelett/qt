@@ -286,7 +286,7 @@ void QFutureInterfaceBase::waitForResult(int resultIndex)
     if (!(d->state & Running))
         return;
 
-    // To avoid deadlocks and reduce the number of threads used, try to 
+    // To avoid deadlocks and reduce the number of threads used, try to
     // run the runnable in the current thread.
     QThreadPool::globalInstance()->d_func()->stealRunnable(d->runnable);
 
@@ -497,9 +497,9 @@ void QFutureInterfaceBasePrivate::sendCallOuts(const QFutureCallOutEvent &callOu
         return;
 
     for (int i = 0; i < outputConnections.count(); ++i) {
-        QFutureCallOutInterface *interface = outputConnections.at(i);
-        interface->postCallOutEvent(callOutEvent1);
-        interface->postCallOutEvent(callOutEvent2);
+        QFutureCallOutInterface *iface= outputConnections.at(i);
+        iface->postCallOutEvent(callOutEvent1);
+        iface->postCallOutEvent(callOutEvent2);
     }
 }
 
@@ -507,16 +507,16 @@ void QFutureInterfaceBasePrivate::sendCallOuts(const QFutureCallOutEvent &callOu
 // to this future. While holding the lock we check the state and ready results
 // and add the appropriate callouts to the queue. In order to avoid deadlocks,
 // the actual callouts are made at the end while not holding the lock.
-void QFutureInterfaceBasePrivate::connectOutputInterface(QFutureCallOutInterface *interface)
+void QFutureInterfaceBasePrivate::connectOutputInterface(QFutureCallOutInterface *iface)
 {
     QMutexLocker locker(&m_mutex);
 
     if (state & QFutureInterfaceBase::Started) {
-        interface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::Started));
-        interface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::ProgressRange,
+        iface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::Started));
+        iface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::ProgressRange,
                                                         m_progressMinimum,
                                                         m_progressMaximum));
-        interface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::Progress,
+        iface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::Progress,
                                                         m_progressValue,
                                                         m_progressText));
     }
@@ -525,33 +525,33 @@ void QFutureInterfaceBasePrivate::connectOutputInterface(QFutureCallOutInterface
     while (it != m_results.end()) {
         const int begin = it.resultIndex();
         const int end = begin + it.batchSize();
-        interface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::ResultsReady,
+        iface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::ResultsReady,
                                                         begin,
                                                         end));
         it.batchedAdvance();
     }
 
     if (state & QFutureInterfaceBase::Paused)
-        interface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::Paused));
+        iface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::Paused));
 
     if (state & QFutureInterfaceBase::Canceled)
-        interface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::Canceled));
+        iface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::Canceled));
 
     if (state & QFutureInterfaceBase::Finished)
-        interface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::Finished));
+        iface->postCallOutEvent(QFutureCallOutEvent(QFutureCallOutEvent::Finished));
 
-    outputConnections.append(interface);
+    outputConnections.append(iface);
 }
 
-void QFutureInterfaceBasePrivate::disconnectOutputInterface(QFutureCallOutInterface *interface)
+void QFutureInterfaceBasePrivate::disconnectOutputInterface(QFutureCallOutInterface *iface)
 {
     QMutexLocker lock(&m_mutex);
-    const int index = outputConnections.indexOf(interface);
+    const int index = outputConnections.indexOf(iface);
     if (index == -1)
         return;
     outputConnections.removeAt(index);
 
-    interface->callOutInterfaceDisconnected();
+    iface->callOutInterfaceDisconnected();
 }
 
 void QFutureInterfaceBasePrivate::setState(QFutureInterfaceBase::State newState)
