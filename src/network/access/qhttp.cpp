@@ -2644,6 +2644,7 @@ void QHttpPrivate::_q_slotError(QAbstractSocket::SocketError err)
                 QMetaObject::invokeMethod(q, "_q_slotSendRequest", Qt::QueuedConnection);
                 return;
             }
+            finishedWithError(QLatin1String(QT_TRANSLATE_NOOP("QHttp", "Remote host closed connection")), QHttp::ConnectionRefused);
             break;
 #ifndef QT_NO_NETWORKPROXY
         case QTcpSocket::ProxyAuthenticationRequiredError:
