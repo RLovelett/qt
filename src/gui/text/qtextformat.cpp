@@ -265,19 +265,50 @@ private:
     friend QDataStream &operator>>(QDataStream &, QTextFormat &);
 };
 
-static uint variantHash(const QVariant &variant)
+namespace {
+
+// this is only safe if (sizeof(int) == sizeof(float)
+uint hash(float d) { return *(uint*)&d; }
+
+uint hash(const QColor& color) {
+    return (color.isValid()) ?color.rgba() :0x234109;
+}
+
+uint hash(const QPen& pen) {
+    return hash(pen.color()) + hash(pen.widthF());
+}
+
+uint hash(const QBrush& brush) {
+    return hash(brush.color()) + (brush.style() << 3);
+}
+
+uint variantHash(const QVariant &variant)
 {
-    switch (variant.userType()) {
-    case QVariant::Invalid: return 0;
-    case QVariant::Bool: return variant.toBool();
-    case QVariant::Int: return variant.toInt();
-    case QMetaType::Float: return static_cast<int>(variant.toFloat());
-    case QVariant::Double: return static_cast<int>(variant.toDouble());
+    // simple and fast hash functions to differentiate between type and value
+    switch (variant.type()) { // sorted by occurrence frequency
     case QVariant::String: return qHash(variant.toString());
-    case QVariant::Color: return qHash(qvariant_cast<QColor>(variant).rgb());
+    case QVariant::Double: return hash(variant.toDouble());
+    case QVariant::Int: return 0x811890 + variant.toInt();
+    case QVariant::Brush:
+        return 0x01010101 + hash(qvariant_cast<QBrush>(variant));
+    case QVariant::Bool: return 0x371818 + variant.toBool();
+    case QVariant::Pen: return 0x02020202 + hash(qvariant_cast<QPen>(variant));
+    case QVariant::List:
+        return 0x8377 + qvariant_cast<QVariantList>(variant).count();
+    case QVariant::Color: return hash(qvariant_cast<QColor>(variant));
+      case QVariant::TextLength:
+        return 0x377 + hash(qvariant_cast<QTextLength>(variant).rawValue());
+    case QMetaType::Float: return hash(variant.toFloat());
+    case QVariant::Invalid: return 0;
     default: break;
     }
     return qHash(variant.typeName());
+}
+
+int qHash(const QTextFormatPrivate* d, int format) {
+    return (d ? d->hash() : 0) + format;
+}
+
 }
 
 uint QTextFormatPrivate::recalcHash() const
@@ -3033,13 +3064,15 @@ QTextFormatCollection::~QTextFormatCollection()
 
 int QTextFormatCollection::indexForFormat(const QTextFormat &format)
 {
-    uint hash = format.d ? format.d->hash() : 0;
-    if (hashes.contains(hash)) {
-        for (int i = 0; i < formats.size(); ++i) {
-            if (formats.at(i) == format)
-                return i;
+    uint hash = qHash(format.d, format.format_type);
+    QMultiHash<uint, int>::const_iterator i = hashes.find(hash);
+    while (i != hashes.end()) {
+        if (formats[i.value()] == format) {
+            return i.value();
         }
+        ++i;
     }
+
     int idx = formats.size();
     formats.append(format);
 
@@ -3049,7 +3082,7 @@ int QTextFormatCollection::indexForFormat(const QTextFormat &format)
             f.d = new QTextFormatPrivate;
         f.d->resolveFont(defaultFnt);
 
-        hashes.insert(hash);
+        hashes.insert(hash, idx);
 
     } QT_CATCH(...) {
         formats.pop_back();
@@ -3060,11 +3093,13 @@ int QTextFormatCollection::indexForFormat(const QTextFormat &format)
 
 bool QTextFormatCollection::hasFormatCached(const QTextFormat &format) const
 {
-    uint hash = format.d ? format.d->hash() : 0;
-    if (hashes.contains(hash)) {
-        for (int i = 0; i < formats.size(); ++i)
-            if (formats.at(i) == format)
-                return true;
+    uint hash = qHash(format.d, format.format_type);
+    QMultiHash<uint, int>::const_iterator i = hashes.find(hash);
+    while (i != hashes.end()) {
+        if (formats[i.value()] == format) {
+            return true;
+        }
+        ++i;
     }
     return false;
 }
