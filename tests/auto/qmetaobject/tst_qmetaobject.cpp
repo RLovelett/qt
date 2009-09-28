@@ -162,6 +162,8 @@ private slots:
     void normalizedSignature();
     void normalizedType_data();
     void normalizedType();
+    void methodName_data();
+    void methodName();
     void customPropertyType();
     void checkScope();
     void propertyNotify();
@@ -709,6 +711,38 @@ void tst_QMetaObject::normalizedType()
     QFETCH(QString, result);
 
     QCOMPARE(QString::fromLatin1(QMetaObject::normalizedType(type.toLatin1())), result);
+}
+
+void tst_QMetaObject::methodName_data()
+{
+    QTest::addColumn<QString>("signature");
+    QTest::addColumn<QString>("result");
+
+    QTest::newRow("function") << "void foo()" << "foo";
+    QTest::newRow("spaces") << " void  foo( ) " << "foo";
+    QTest::newRow("template args") << " void  foo( QMap<a, a>, QList<b>) "
+                                   << "foo";
+    QTest::newRow("rettype") << "QList<int, int> foo()" << "foo";
+    QTest::newRow("const rettype") << "const QString *foo()" << "foo";
+    QTest::newRow("const ref") << "const QString &foo()" << "foo";
+    QTest::newRow("reference") << "QString &foo()" << "foo";
+    QTest::newRow("const2") << "void foo(QString const *)" << "foo";
+    QTest::newRow("const2") << "void foo(QString * const)" << "foo";
+    QTest::newRow("const3") << "void foo(QString const &)" << "foo";
+    QTest::newRow("const4") << "void foo(const int)" << "foo";
+    QTest::newRow("const5") << "void foo(const int, int const, const int &, int const &)"
+                            << "foo";
+    QTest::newRow("const6") << "void foo(QList<const int>)" << "foo";
+    QTest::newRow("const7") << "void foo(QList<const int*>)" << "foo";
+    QTest::newRow("const7") << "void foo(QList<int const*>)" << "foo";
+}
+
+void tst_QMetaObject::methodName()
+{
+    QFETCH(QString, signature);
+    QFETCH(QString, result);
+
+    QCOMPARE(QString::fromLatin1(QMetaObject::methodName(signature.toLatin1())), result);
 }
 
 void tst_QMetaObject::customPropertyType()

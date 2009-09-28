@@ -989,6 +989,38 @@ QByteArray QMetaObject::normalizedSignature(const char *method)
     return result;
 }
 
+/*!
+    \since 4.7
+
+    Returns the method name of the given \a signature.
+
+    Example:
+
+    \snippet doc/src/snippets/code/src_corelib_kernel_qmetaobject.cpp 9
+
+    \sa invokeMethod()
+ */
+QByteArray QMetaObject::methodName(const char *signature)
+{
+    if (!signature || !*signature)
+        return QByteArray();
+    int len = int(strlen(signature));
+    QVarLengthArray<char> stackbuf(len + 1);
+    char *d = stackbuf.data();
+    qRemoveWhitespace(signature, d);
+
+    char *begin = d;
+    while (*d && *d != '(') {
+        if (!is_ident_char(*d) && d++)
+            begin = d++;
+        ++d;
+    }
+    if (*begin >= '0' && *begin <= '9')
+        ++begin;
+
+    return QByteArray(begin, d - begin);
+}
+
 enum { MaximumParamCount = 11 }; // up to 10 arguments + 1 return value
 
 /*!

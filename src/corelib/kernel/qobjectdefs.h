@@ -326,6 +326,7 @@ struct Q_CORE_EXPORT QMetaObject
     static bool checkConnectArgs(const char *signal, const char *method);
     static QByteArray normalizedSignature(const char *method);
     static QByteArray normalizedType(const char *type);
+    static QByteArray methodName(const char* signature);
 
     // internal index-based connect
     static bool connect(const QObject *sender, int signal_index,

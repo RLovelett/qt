@@ -134,4 +134,9 @@ method.invoke(obj,
               Q_ARG(double, 9.7));
 //! [8]
 
+//! [9]
+QByteArray method = QMetaObject::methodName("QString compute(QString, int, double)");
+// method is now "compute"
+//! [9]
+
 }
