@@ -56,6 +56,7 @@
 #include "qvalidator.h"
 #include "qevent.h"
 #include "qdialog_p.h"
+#include "qdesktopwidget.h"
 
 QT_USE_NAMESPACE
 
@@ -244,11 +245,26 @@ void QInputDialogPrivate::ensureLayout()
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Vertical, q);
     QObject::connect(buttonBox, SIGNAL(accepted()), q, SLOT(accept()));
 
-    mainLayout = new QGridLayout(q);
+    mainLayout = new QGridLayout;
     mainLayout->setHorizontalSpacing(20);
     mainLayout->addWidget(label,0,0);
     mainLayout->addWidget(inputWidget,1,0);
-    mainLayout->addWidget(buttonBox,1,1);
+
+    QBoxLayout *dialogLayout;
+    QBoxLayout *buttonsLayout;
+    if (QApplication::desktop()->screenGeometry().width() <= 480) {
+        // Portrait mode
+        dialogLayout = new QVBoxLayout(q); //Portrait mode
+        buttonsLayout = new QHBoxLayout;
+    } else {
+        // Landscape mode
+        dialogLayout = new QHBoxLayout(q); 
+        buttonsLayout = new QVBoxLayout;
+    }
+    buttonsLayout->addStretch();
+    buttonsLayout->addWidget(buttonBox); 
+    dialogLayout->addLayout(mainLayout);
+    dialogLayout->addLayout(buttonsLayout);
 #endif    
     ensureEnabledConnection(qobject_cast<QAbstractSpinBox *>(inputWidget));
     inputWidget->show();
