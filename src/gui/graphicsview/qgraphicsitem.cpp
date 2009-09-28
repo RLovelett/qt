@@ -343,6 +343,12 @@
     introduced in Qt 4.6.
 
     \omitvalue ItemIsFocusScope Internal only (for now).
+
+    \value ItemSendsScenePositionChanges The item enables itemChange()
+    notifications for ItemScenePositionHasChanged. For performance reasons,
+    these notifications are disabled by default. You must enable this flag
+    to receive notifications for scene position changes. This flag was
+    introduced in Qt 4.7.
 */
 
 /*!
@@ -519,6 +525,14 @@
     \value ItemOpacityHasChanged The item's opacity has changed. The value
     argument is the new opacity (i.e., a double). Do not call setOpacity() as
     this notification is delivered. The return value is ignored.
+
+    \value ItemScenePositionHasChanged The item's scene position has changed.
+    This notification is sent if the ItemSendsScenePositionChanges flag is
+    enabled, and after the item's scene position has changed (i.e., the
+    position of the item itself or any the position of any ancestor has
+    changed). The value argument is the new scene position (the same as
+    scenePos()), and QGraphicsItem ignores the return value for this
+    notification (i.e., a read-only notification).
 */
 
 /*!
@@ -652,6 +666,21 @@ static QPainterPath qt_graphicsItem_shapeFromPath(const QPainterPath &path, cons
     QPainterPath p = ps.createStroke(path);
     p.addPath(path);
     return p;
+}
+
+/*!
+    \internal
+
+    Sends scene position changes to descendants.
+*/
+void QGraphicsItemPrivate::sendChildScenePositionChanges()
+{
+    foreach (QGraphicsItem *child, children) {
+        if (child->d_ptr->flags & QGraphicsItem::ItemSendsScenePositionChanges)
+            child->itemChange(QGraphicsItem::ItemScenePositionHasChanged, child->scenePos());
+        if (child->d_ptr->scenePosDescendants)
+            child->d_ptr->sendChildScenePositionChanges();
+    }
 }
 
 /*!
@@ -963,8 +992,12 @@ void QGraphicsItemPrivate::setParentItemHelper(QGraphicsItem *newParent)
     // its descendents.
     QGraphicsItem *p = parent;
     QGraphicsItem *parentFocusScopeItem = 0;
+    bool foundFocusScope = false;
+    int totalScenePosDescendants = scenePosDescendants;
+    if (flags & QGraphicsItem::ItemSendsScenePositionChanges)
+        ++totalScenePosDescendants;
     while (p) {
-        if (p->flags() & QGraphicsItem::ItemIsFocusScope) {
+        if (!foundFocusScope && p->flags() & QGraphicsItem::ItemIsFocusScope) {
             // If this item's focus scope's focus scope item points
             // to this item or a descendent, then clear it.
             QGraphicsItem *fsi = p->d_ptr->focusScopeItem;
@@ -972,24 +1005,33 @@ void QGraphicsItemPrivate::setParentItemHelper(QGraphicsItem *newParent)
                 parentFocusScopeItem = fsi;
                 p->d_ptr->focusScopeItem = 0;
             }
-            break;
+            foundFocusScope = true;
+            if (!totalScenePosDescendants)
+                break;
         }
+        if (totalScenePosDescendants)
+            p->d_ptr->scenePosDescendants -= totalScenePosDescendants;
         p = p->d_ptr->parent;
     }
 
     // Update focus scope item ptr in new scope.
     if (newParent) {
         QGraphicsItem *p = newParent;
+        foundFocusScope = false;
         while (p) {
-            if (p->flags() & QGraphicsItem::ItemIsFocusScope) {
+            if (!foundFocusScope && p->flags() & QGraphicsItem::ItemIsFocusScope) {
                 // ### We really want the parent's focus scope item to point
                 // to this item's focusItem...
                 if (q_ptr->flags() & QGraphicsItem::ItemIsFocusScope)
                     p->d_ptr->focusScopeItem = q_ptr;
                 else
                     p->d_ptr->focusScopeItem = subFocusItem ? subFocusItem : parentFocusScopeItem;
-                break;
+                foundFocusScope = true;
+                if (!totalScenePosDescendants)
+                    break;
             }
+            if (totalScenePosDescendants)
+                p->d_ptr->scenePosDescendants += totalScenePosDescendants;
             p = p->d_ptr->parent;
         }
     }
@@ -1234,12 +1276,20 @@ QGraphicsItem::~QGraphicsItem()
 
     // Update focus scope item ptr.
     QGraphicsItem *p = d_ptr->parent;
+    bool foundFocusScope = false;
+    int totalScenePosDescendants = d_ptr->scenePosDescendants;
+    if (d_ptr->flags & ItemSendsScenePositionChanges)
+        ++totalScenePosDescendants;
     while (p) {
-        if (p->flags() & ItemIsFocusScope) {
+        if (!foundFocusScope && p->flags() & ItemIsFocusScope) {
             if (p->d_ptr->focusScopeItem == this)
                 p->d_ptr->focusScopeItem = 0;
-            break;
+            foundFocusScope = true;
+            if (!totalScenePosDescendants)
+                break;
         }
+        if (totalScenePosDescendants)
+            p->d_ptr->scenePosDescendants -= totalScenePosDescendants;
         p = p->d_ptr->parent;
     }
 
@@ -1648,6 +1698,17 @@ void QGraphicsItem::setFlags(GraphicsItemFlags flags)
     if ((flags & ItemNegativeZStacksBehindParent) != (oldFlags & ItemNegativeZStacksBehindParent)) {
         // Update stack-behind.
         setFlag(ItemStacksBehindParent, d_ptr->z < qreal(0.0));
+    }
+
+    if ((flags & ItemSendsScenePositionChanges) != (oldFlags & ItemSendsScenePositionChanges)) {
+        QGraphicsItem* p = d_ptr->parent;
+        while (p) {
+            if (flags & ItemSendsScenePositionChanges)
+                ++p->d_ptr->scenePosDescendants;
+            else
+                --p->d_ptr->scenePosDescendants;
+            p = p->d_ptr->parent;
+        }
     }
 
     if (d_ptr->scene) {
@@ -3224,6 +3285,12 @@ void QGraphicsItem::setPos(const QPointF &pos)
 
     // Send post-notification.
     itemChange(QGraphicsItem::ItemPositionHasChanged, newPosVariant);
+    if (d_ptr->scene) {
+        if (d_ptr->flags & ItemSendsScenePositionChanges)
+            itemChange(QGraphicsItem::ItemScenePositionHasChanged, scenePos());
+        if (d_ptr->scenePosDescendants)
+            d_ptr->sendChildScenePositionChanges();
+    }
 }
 
 /*!
@@ -10575,6 +10642,9 @@ QDebug operator<<(QDebug debug, QGraphicsItem::GraphicsItemChange change)
     case QGraphicsItem::ItemOpacityHasChanged:
         str = "ItemOpacityHasChanged";
         break;
+    case QGraphicsItem::ItemScenePositionHasChanged:
+        str = "ItemScenePositionHasChanged";
+        break;
     }
     debug << str;
     return debug;
@@ -10631,6 +10701,9 @@ QDebug operator<<(QDebug debug, QGraphicsItem::GraphicsItemFlag flag)
         break;
     case QGraphicsItem::ItemIsFocusScope:
         str = "ItemIsFocusScope";
+        break;
+    case QGraphicsItem::ItemSendsScenePositionChanges:
+        str = "ItemSendsScenePositionChanges";
         break;
     }
     debug << str;

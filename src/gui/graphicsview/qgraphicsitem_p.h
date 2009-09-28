@@ -127,6 +127,7 @@ public:
         index(-1),
         siblingIndex(-1),
         itemDepth(-1),
+        scenePosDescendants(0),
         focusProxy(0),
         subFocusItem(0),
         focusScopeItem(0),
@@ -191,6 +192,7 @@ public:
         return item->d_ptr.data();
     }
 
+    void sendChildScenePositionChanges();
     void updateAncestorFlag(QGraphicsItem::GraphicsItemFlag childFlag,
                             AncestorFlag flag = NoFlag, bool enabled = false, bool root = true);
     void setIsMemberOfGroup(bool enabled);
@@ -439,6 +441,7 @@ public:
     int index;
     int siblingIndex;
     int itemDepth;  // Lazily calculated when calling depth().
+    int scenePosDescendants;
     QGraphicsItem *focusProxy;
     QList<QGraphicsItem **> focusProxyRefs;
     QGraphicsItem *subFocusItem;
@@ -473,7 +476,7 @@ public:
 
     // Packed 32 bits
     quint32 fullUpdatePending : 1;
-    quint32 flags : 16;
+    quint32 flags : 17;
     quint32 dirtyChildrenBoundingRect : 1;
     quint32 paintedViewBoundingRectsNeedRepaint : 1;
     quint32 dirtySceneTransform : 1;
@@ -488,9 +491,9 @@ public:
     quint32 sceneTransformTranslateOnly : 1;
     quint32 notifyBoundingRectChanged : 1;
     quint32 notifyInvalidated : 1;
-    quint32 mouseSetsFocus : 1;
 
     // New 32 bits
+    quint32 mouseSetsFocus : 1;
     quint32 explicitActivate : 1;
     quint32 wantsActive : 1;
 
