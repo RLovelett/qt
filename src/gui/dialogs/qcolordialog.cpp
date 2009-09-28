@@ -1381,7 +1381,12 @@ void QColorDialogPrivate::init(const QColor &initial)
     nextCust = 0;
 
 #ifdef Q_OS_FREMANTLE
-    QHBoxLayout *mainLay = new QHBoxLayout(q);
+    QBoxLayout *mainLay;
+    if (QApplication::desktop()->screenGeometry().width() <= 480) {
+        mainLay = new QVBoxLayout(q);
+    } else {
+        mainLay =  new QHBoxLayout(q);
+    }
 #else
     QVBoxLayout *mainLay = new QVBoxLayout(q);
 #endif
