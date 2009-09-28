@@ -1429,7 +1429,12 @@ void QColorDialogPrivate::init(const QColor &initial)
 #endif
 
     if (!smallDisplay) {
+#ifdef Q_OS_FREMANTLE
+        standard = new QColorWell(q, 5, 8, stdrgb);
+#else
         standard = new QColorWell(q, 6, 8, stdrgb);
+        
+#endif
         lblBasicColors = new QLabel(q);
 #ifndef QT_NO_SHORTCUT
         lblBasicColors->setBuddy(standard);
@@ -1456,6 +1461,10 @@ void QColorDialogPrivate::init(const QColor &initial)
         addCusBt = new QPushButton(q);
         QObject::connect(addCusBt, SIGNAL(clicked()), q, SLOT(_q_addCustom()));
         leftLay->addWidget(addCusBt);
+#ifdef Q_OS_FREMANTLE
+        pWidth = 320;
+        pHeight = 200;
+#endif
     } else {
         // better color picker size for small displays
         pWidth = 150;
@@ -1486,7 +1495,9 @@ void QColorDialogPrivate::init(const QColor &initial)
     QObject::connect(cp, SIGNAL(newCol(int,int)), lp, SLOT(setCol(int,int)));
     QObject::connect(lp, SIGNAL(newHsv(int,int,int)), q, SLOT(_q_newHsv(int,int,int)));
 
+#ifndef Q_OS_FREMANTLE
     rightLay->addStretch();
+#endif
 
     cs = new QColorShower(q);
     QObject::connect(cs, SIGNAL(newCol(QRgb)), q, SLOT(_q_newColorTypedIn(QRgb)));
