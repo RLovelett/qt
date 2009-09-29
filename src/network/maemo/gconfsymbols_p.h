@@ -86,11 +86,11 @@ DEFINEFUNC(GConfValue*,  gconf_client_get, (GConfClient* a, const gchar* b, GErr
 DEFINEFUNC(char* , gconf_client_get_string, (GConfClient* a, const char* b, GError ** c), (a, b, c), return)
 DEFINEFUNC(gboolean, gconf_client_get_bool, (GConfClient* a, const char* b, GError ** c), (a, b, c), return)
 DEFINEFUNC(gint, gconf_client_get_int, (GConfClient* a, const char* b, GError ** c), (a, b, c), return)
+DEFINEFUNC(GSList*, gconf_value_get_list, (const GConfValue *a), (a), return)
+DEFINEFUNC(gchar*, gconf_value_to_string, (GConfValue* a),(a),return)
 DEFINEFUNC(void, gconf_client_add_dir, (GConfClient* a, const gchar*b, GConfClientPreloadType c, GError** d), (a, b, c, d), )
 DEFINEFUNC(guint, gconf_client_notify_add, (GConfClient* a, const gchar* b, GConfClientNotifyFunc c, gpointer d, GFreeFunc e, GError** f),
            (a, b, c, d, e, f), return)
-
-
 
 QT_END_NAMESPACE
 

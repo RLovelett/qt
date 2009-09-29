@@ -68,19 +68,19 @@ QVariant QGConfBackend::getValue(const QString &key)
         GConfClient* client = q_gconf_client_get_default();
         GError *err = 0;
         //Getting the Gconf value type
-        GConfValue* value = 0;
+        const GConfValue* value = q_gconf_client_get(client, qPrintable(key), &err);
 
-        value = q_gconf_client_get(client, qPrintable(key), &err);
         if (err) {
-            //qDebug() << "ERROR: Unable to get the Value";
+            qWarning() << "Warning: GConf is Unable to get a valid value for the key:" << key;
             g_error_free (err);
             return QVariant();
         }
         if (!value){
-            //qDebug() << "VALUE is 0";
+            qWarning() << "Warning: Qt GConf backend has got a NULL value for the key:" << key;
             return QVariant();
         }
         switch(value->type){
+
         case GCONF_VALUE_STRING: {
             char *str = q_gconf_client_get_string(client, qPrintable(key), &err);
             if (!err) {
@@ -100,8 +100,36 @@ QVariant QGConfBackend::getValue(const QString &key)
                 retValue.setValue((int)i);
             }
         } break;
+        case GCONF_VALUE_LIST: {
+            GSList* list;
+            
+            list = q_gconf_value_get_list(value);
+            if (list == NULL || err) {
+                return QVariant();
+            }
+            QString str = QString::fromUtf8(q_gconf_value_to_string((GConfValue*)list->data));
+            retValue.setValue(str);
+            //g_free(list);     
+        } break;
+        case GCONF_VALUE_INVALID: {
+            qWarning("GConf value is invalid");
+            return QVariant();
+        } break;
+        case GCONF_VALUE_FLOAT: {
+            qWarning("GCONF_VALUE_FLOAT has not been ported yet");
+            return QVariant();
+        } break;
+        case GCONF_VALUE_SCHEMA: {
+            qWarning("GCONF_VALUE_SCHEMA has not been ported yet");
+            return QVariant();
+        } break;
+        case GCONF_VALUE_PAIR: {
+            qWarning("GCONF_VALUE_PAIR has not been ported yet");
+            return QVariant();
+        } break;
+
         default:
-            //qDebug("QGConfBackend::getGConfValue: Sorry, the type %d has not been ported ", value->type);
+            qWarning("QGConfBackend::getGConfValue: Sorry, the type %d has not been ported ", value->type);
             return QVariant();
         }
 
