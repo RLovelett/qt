@@ -267,6 +267,7 @@ Q_SIGNALS:
     void itemActivated(QListWidgetItem *item);
     void itemEntered(QListWidgetItem *item);
     void itemChanged(QListWidgetItem *item);
+    void itemCheckStateChanged(QListWidgetItem *item);
 
     void currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
     void currentTextChanged(const QString &currentText);
@@ -300,6 +301,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_emitItemActivated(const QModelIndex &index))
     Q_PRIVATE_SLOT(d_func(), void _q_emitItemEntered(const QModelIndex &index))
     Q_PRIVATE_SLOT(d_func(), void _q_emitItemChanged(const QModelIndex &index))
+    Q_PRIVATE_SLOT(d_func(), void _q_emitItemCheckStateChanged(const QModelIndex &index))
     Q_PRIVATE_SLOT(d_func(), void _q_emitCurrentItemChanged(const QModelIndex &previous, const QModelIndex &current))
     Q_PRIVATE_SLOT(d_func(), void _q_sort())
     Q_PRIVATE_SLOT(d_func(), void _q_dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight))

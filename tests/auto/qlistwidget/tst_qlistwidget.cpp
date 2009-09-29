@@ -1065,6 +1065,7 @@ void tst_QListWidget::setData_data()
     QTest::addColumn<IntList>("roles");
     QTest::addColumn<QVariantList>("values");
     QTest::addColumn<int>("expectedSignalCount");
+    QTest::addColumn<int>("expectedCheckStateSignalCount");
 
     QStringList initialItems;
     IntList roles;
@@ -1076,7 +1077,7 @@ void tst_QListWidget::setData_data()
         roles << Qt::DisplayRole;
         values << "xxx";
         QTest::newRow("changing a role should emit")
-            << initialItems << 0 << roles << values << 1;
+            << initialItems << 0 << roles << values << 1 << 0;
     }
     {
         initialItems.clear(); roles.clear(); values.clear();
@@ -1084,7 +1085,7 @@ void tst_QListWidget::setData_data()
         roles << Qt::DisplayRole;
         values << "foo";
         QTest::newRow("setting the same value should not emit")
-            << initialItems << 0 << roles << values << 0;
+            << initialItems << 0 << roles << values << 0 << 0;
     }
     {
         initialItems.clear(); roles.clear(); values.clear();
@@ -1092,15 +1093,23 @@ void tst_QListWidget::setData_data()
         roles << Qt::DisplayRole << Qt::DisplayRole;
         values << "bar" << "bar";
         QTest::newRow("setting the same value twice should only emit once")
-            << initialItems << 0 << roles << values << 1;
+            << initialItems << 0 << roles << values << 1 << 0;
     }
     {
         initialItems.clear(); roles.clear(); values.clear();
         initialItems << "foo";
-        roles << Qt::DisplayRole << Qt::ToolTipRole << Qt::WhatsThisRole;
-        values << "bar" << "bartooltip" << "barwhatsthis";
-        QTest::newRow("changing three roles should emit three times")
-            << initialItems << 0 << roles << values << 3;
+        roles << Qt::DisplayRole << Qt::ToolTipRole << Qt::WhatsThisRole << Qt::CheckStateRole;
+        values << "bar" << "bartooltip" << "barwhatsthis" << Qt::Checked;
+        QTest::newRow("changing four roles should emit four times")
+            << initialItems << 0 << roles << values << 4 << 1;
+    }
+    {
+        initialItems.clear(); roles.clear(); values.clear();
+        initialItems << "foo";
+        roles << Qt::CheckStateRole << Qt::CheckStateRole;
+        values << Qt::PartiallyChecked << Qt::PartiallyChecked;
+        QTest::newRow("setting the same check state twice should only emit once")
+            << initialItems << 0 << roles << values << 1 << 1;
     }
 }
 
@@ -1111,6 +1120,7 @@ void tst_QListWidget::setData()
     QFETCH(IntList, roles);
     QFETCH(QVariantList, values);
     QFETCH(int, expectedSignalCount);
+    QFETCH(int, expectedCheckStateSignalCount);
     qRegisterMetaType<QListWidgetItem *>("QListWidgetItem*");
     qRegisterMetaType<QModelIndex>("QModelIndex");
 
@@ -1123,6 +1133,7 @@ void tst_QListWidget::setData()
 
         QSignalSpy itemChanged(testWidget, SIGNAL(itemChanged(QListWidgetItem *)));
         QSignalSpy dataChanged(testWidget->model(), SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)));
+        QSignalSpy itemCheckStateChanged(testWidget, SIGNAL(itemCheckStateChanged(QListWidgetItem *)));
 
         for (int i=0; i < roles.count(); ++i) {
             if (manipulateModel)
@@ -1141,6 +1152,7 @@ void tst_QListWidget::setData()
         // make sure we get the right number of emits
         QCOMPARE(itemChanged.count(), expectedSignalCount);
         QCOMPARE(dataChanged.count(), expectedSignalCount);
+        QCOMPARE(itemCheckStateChanged.count(), expectedCheckStateSignalCount);
     }
 }
 

@@ -307,6 +307,7 @@ Q_SIGNALS:
     void itemActivated(QTableWidgetItem *item);
     void itemEntered(QTableWidgetItem *item);
     void itemChanged(QTableWidgetItem *item);
+    void itemCheckStateChanged(QTableWidgetItem *item);
 
     void currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
     void itemSelectionChanged();
@@ -345,6 +346,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_emitItemActivated(const QModelIndex &index))
     Q_PRIVATE_SLOT(d_func(), void _q_emitItemEntered(const QModelIndex &index))
     Q_PRIVATE_SLOT(d_func(), void _q_emitItemChanged(const QModelIndex &index))
+    Q_PRIVATE_SLOT(d_func(), void _q_emitItemCheckStateChanged(const QModelIndex &index))
     Q_PRIVATE_SLOT(d_func(), void _q_emitCurrentItemChanged(const QModelIndex &previous, const QModelIndex &current))
     Q_PRIVATE_SLOT(d_func(), void _q_sort())
     Q_PRIVATE_SLOT(d_func(), void _q_dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight))

@@ -118,6 +118,7 @@ public:
         Qt::SortOrder order, QListWidgetItem *item);
 
     void itemChanged(QListWidgetItem *item);
+    void itemCheckStateChanged(QListWidgetItem *item);
 
     // dnd
     QStringList mimeTypes() const;
@@ -129,6 +130,10 @@ public:
 #endif
 
     QMimeData *internalMimeData()  const;
+
+signals:
+    void checkStateChanged(const QModelIndex &index);
+
 private:
     QList<QListWidgetItem*> items;
 
@@ -151,6 +156,7 @@ public:
     void _q_emitItemActivated(const QModelIndex &index);
     void _q_emitItemEntered(const QModelIndex &index);
     void _q_emitItemChanged(const QModelIndex &index);
+    void _q_emitItemCheckStateChanged(const QModelIndex &index);
     void _q_emitCurrentItemChanged(const QModelIndex &current, const QModelIndex &previous);
     void _q_sort();
     void _q_dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);

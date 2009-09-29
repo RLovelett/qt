@@ -138,9 +138,13 @@ public:
     inline QModelIndex createIndexFromItem(int row, int col, QTreeWidgetItem *item) const
     { return createIndex(row, col, item); }
 
+signals:
+    void checkStateChanged(const QModelIndex &index);
+
 protected:
     QTreeModel(QTreeModelPrivate &, QTreeWidget *parent = 0);
     void emitDataChanged(QTreeWidgetItem *item, int column);
+    void emitCheckStateChanged(QTreeWidgetItem *item, int column);
     void beginInsertItems(QTreeWidgetItem *parent, int row, int count);
     void endInsertItems();
     void beginRemoveItems(QTreeWidgetItem *parent, int row, int count);
@@ -230,6 +234,7 @@ public:
     void _q_emitItemActivated(const QModelIndex &index);
     void _q_emitItemEntered(const QModelIndex &index);
     void _q_emitItemChanged(const QModelIndex &index);
+    void _q_emitItemCheckStateChanged(const QModelIndex &index);
     void _q_emitItemExpanded(const QModelIndex &index);
     void _q_emitItemCollapsed(const QModelIndex &index);
     void _q_emitCurrentItemChanged(const QModelIndex &previous, const QModelIndex &index);

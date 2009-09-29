@@ -346,6 +346,7 @@ Q_SIGNALS:
     void itemActivated(QTreeWidgetItem *item, int column);
     void itemEntered(QTreeWidgetItem *item, int column);
     void itemChanged(QTreeWidgetItem *item, int column);
+    void itemCheckStateChanged(QTreeWidgetItem *item, int column);
     void itemExpanded(QTreeWidgetItem *item);
     void itemCollapsed(QTreeWidgetItem *item);
     void currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
@@ -376,6 +377,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_emitItemActivated(const QModelIndex &index))
     Q_PRIVATE_SLOT(d_func(), void _q_emitItemEntered(const QModelIndex &index))
     Q_PRIVATE_SLOT(d_func(), void _q_emitItemChanged(const QModelIndex &index))
+    Q_PRIVATE_SLOT(d_func(), void _q_emitItemCheckStateChanged(const QModelIndex &index))
     Q_PRIVATE_SLOT(d_func(), void _q_emitItemExpanded(const QModelIndex &index))
     Q_PRIVATE_SLOT(d_func(), void _q_emitItemCollapsed(const QModelIndex &index))
     Q_PRIVATE_SLOT(d_func(), void _q_emitCurrentItemChanged(const QModelIndex &previous, const QModelIndex &current))

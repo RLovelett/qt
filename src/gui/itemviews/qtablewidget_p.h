@@ -160,6 +160,7 @@ public:
     void clear();
     void clearContents();
     void itemChanged(QTableWidgetItem *item);
+    void itemCheckStateChanged(QTableWidgetItem *item);
 
     QTableWidgetItem *createItem() const;
     const QTableWidgetItem *itemPrototype() const;
@@ -173,6 +174,9 @@ public:
     Qt::DropActions supportedDropActions() const;
 
     QMimeData *internalMimeData()  const;
+
+signals:
+    void checkStateChanged(const QModelIndex &index);
 
 private:
     const QTableWidgetItem *prototype;
@@ -200,6 +204,7 @@ public:
     void _q_emitItemEntered(const QModelIndex &index);
     // model signals
     void _q_emitItemChanged(const QModelIndex &index);
+    void _q_emitItemCheckStateChanged(const QModelIndex &index);
     // selection signals
     void _q_emitCurrentItemChanged(const QModelIndex &previous, const QModelIndex &current);
     // sorting

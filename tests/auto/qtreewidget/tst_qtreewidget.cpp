@@ -1025,33 +1025,39 @@ void tst_QTreeWidget::checkState_data()
 void tst_QTreeWidget::checkState()
 {
     QTreeWidgetItem *item = new QTreeWidgetItem(testWidget);
+    QSignalSpy itemCheckStateChanged(testWidget, SIGNAL(itemCheckStateChanged(QTreeWidgetItem *, int)));
     item->setCheckState(0, Qt::Unchecked);
     QTreeWidgetItem *firstChild = new QTreeWidgetItem(item);
     firstChild->setCheckState(0, Qt::Unchecked);
     QTreeWidgetItem *seccondChild = new QTreeWidgetItem(item);
     seccondChild->setCheckState(0, Qt::Unchecked);
 
+    QCOMPARE(itemCheckStateChanged.count(), 3);
     QCOMPARE(item->checkState(0), Qt::Unchecked);
     QCOMPARE(firstChild->checkState(0), Qt::Unchecked);
     QCOMPARE(seccondChild->checkState(0), Qt::Unchecked);
 
     firstChild->setCheckState(0, Qt::Checked);
+    QCOMPARE(itemCheckStateChanged.count(), 4);
     QCOMPARE(item->checkState(0), Qt::Unchecked);
     QCOMPARE(firstChild->checkState(0), Qt::Checked);
     QCOMPARE(seccondChild->checkState(0), Qt::Unchecked);
 
     item->setFlags(item->flags()|Qt::ItemIsTristate);
+    QCOMPARE(itemCheckStateChanged.count(), 4);
     QCOMPARE(item->checkState(0), Qt::PartiallyChecked);
     QCOMPARE(firstChild->checkState(0), Qt::Checked);
     QCOMPARE(seccondChild->checkState(0), Qt::Unchecked);
 
     seccondChild->setCheckState(0, Qt::Checked);
+    QCOMPARE(itemCheckStateChanged.count(), 6); // tristate parent
     QCOMPARE(item->checkState(0), Qt::Checked);
     QCOMPARE(firstChild->checkState(0), Qt::Checked);
     QCOMPARE(seccondChild->checkState(0), Qt::Checked);
 
     firstChild->setCheckState(0, Qt::Unchecked);
     seccondChild->setCheckState(0, Qt::Unchecked);
+    QCOMPARE(itemCheckStateChanged.count(), 10); // tristate parent
     QCOMPARE(item->checkState(0), Qt::Unchecked);
     QCOMPARE(firstChild->checkState(0), Qt::Unchecked);
     QCOMPARE(seccondChild->checkState(0), Qt::Unchecked);

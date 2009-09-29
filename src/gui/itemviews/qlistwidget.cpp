@@ -395,6 +395,12 @@ void QListModel::itemChanged(QListWidgetItem *item)
     emit dataChanged(idx, idx);
 }
 
+void QListModel::itemCheckStateChanged(QListWidgetItem *item)
+{
+    QModelIndex idx = index(item);
+    emit checkStateChanged(idx);
+}
+
 QStringList QListModel::mimeTypes() const
 {
     const QListWidget *view = qobject_cast<const QListWidget*>(QObject::parent());
@@ -682,8 +688,11 @@ void QListWidgetItem::setData(int role, const QVariant &value)
     }
     if (!found)
         d->values.append(QWidgetItemData(role, value));
-    if (QListModel *model = (view ? qobject_cast<QListModel*>(view->model()) : 0))
+    if (QListModel *model = (view ? qobject_cast<QListModel*>(view->model()) : 0)) {
         model->itemChanged(this);
+        if (role == Qt::CheckStateRole)
+            model->itemCheckStateChanged(this);
+    }
 }
 
 /*!
@@ -1043,6 +1052,8 @@ void QListWidgetPrivate::setup()
     QObject::connect(q, SIGNAL(entered(QModelIndex)), q, SLOT(_q_emitItemEntered(QModelIndex)));
     QObject::connect(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
                      q, SLOT(_q_emitItemChanged(QModelIndex)));
+    QObject::connect(model, SIGNAL(checkStateChanged(QModelIndex)),
+                     q, SLOT(_q_emitItemCheckStateChanged(QModelIndex)));
     QObject::connect(q->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
                      q, SLOT(_q_emitCurrentItemChanged(QModelIndex,QModelIndex)));
     QObject::connect(q->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
@@ -1086,6 +1097,12 @@ void QListWidgetPrivate::_q_emitItemChanged(const QModelIndex &index)
 {
     Q_Q(QListWidget);
     emit q->itemChanged(listModel()->at(index.row()));
+}
+
+void QListWidgetPrivate::_q_emitItemCheckStateChanged(const QModelIndex &index)
+{
+    Q_Q(QListWidget);
+    emit q->itemCheckStateChanged(listModel()->at(index.row()));
 }
 
 void QListWidgetPrivate::_q_emitCurrentItemChanged(const QModelIndex &current,
@@ -1259,6 +1276,14 @@ void QListWidgetPrivate::_q_dataChanged(const QModelIndex &topLeft,
     \fn void QListWidget::itemChanged(QListWidgetItem *item)
 
     This signal is emitted whenever the data of \a item has changed.
+*/
+
+/*!
+    \since 4.7
+
+    \fn void QListWidget::itemCheckStateChanged(QListWidgetItem *item)
+
+    This signal is emitted whenever the check state of \a item has changed.
 */
 
 /*!

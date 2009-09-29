@@ -100,6 +100,7 @@ private slots:
     void itemData();
     void setItemData();
     void cellWidget();
+    void checkStateChanged();
     void task231094();
     void task219380_removeLastRow();
 
@@ -1430,6 +1431,21 @@ void tst_QTableWidget::cellWidget()
     QCOMPARE(table.cellWidget(5, 5), &widget);
     table.removeCellWidget(5, 5);
     QCOMPARE(table.cellWidget(5, 5), static_cast<QWidget*>(0));
+}
+
+void tst_QTableWidget::checkStateChanged()
+{
+    QTableWidget testWidget(3, 1);
+    qRegisterMetaType<QTableWidgetItem *>("QTableWidgetItem*");
+    QSignalSpy itemCheckStateChanged(&testWidget, SIGNAL(itemCheckStateChanged(QTableWidgetItem *)));
+    for (int r = 0; r < testWidget.rowCount(); ++r) {
+        for (int c = 0; c < testWidget.columnCount(); ++c) {
+            testWidget.setItem(r, c, new QTableWidgetItem);
+            for (int i = 0; i < 2; ++i)
+                testWidget.item(r, c)->setCheckState(static_cast<Qt::CheckState>(r));
+        }
+    }
+    QCOMPARE(itemCheckStateChanged.count(), 3);
 }
 
 void tst_QTableWidget::task231094()

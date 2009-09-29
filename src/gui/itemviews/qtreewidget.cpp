@@ -796,6 +796,15 @@ void QTreeModel::emitDataChanged(QTreeWidgetItem *item, int column)
     emit dataChanged(topLeft, bottomRight);
 }
 
+void QTreeModel::emitCheckStateChanged(QTreeWidgetItem *item, int column)
+{
+    if (signalsBlocked())
+        return;
+
+    QModelIndex idx = index(item, column);
+    emit checkStateChanged(idx);
+}
+
 void QTreeModel::beginInsertItems(QTreeWidgetItem *parent, int row, int count)
 {
     QModelIndex par = index(parent, 0);
@@ -1750,9 +1759,12 @@ void QTreeWidgetItem::setData(int column, int role, const QVariant &value)
     if (model) {
         model->emitDataChanged(this, column);
         if (role == Qt::CheckStateRole) {
+            model->emitCheckStateChanged(this, column);
             QTreeWidgetItem *p;
-            for (p = par; p && (p->itemFlags & Qt::ItemIsTristate); p = p->par)
+            for (p = par; p && (p->itemFlags & Qt::ItemIsTristate); p = p->par) {
                 model->emitDataChanged(p, column);
+                model->emitCheckStateChanged(p, column);
+            }
         }
     }
 }
@@ -2262,6 +2274,14 @@ void QTreeWidgetPrivate::_q_emitItemChanged(const QModelIndex &index)
         emit q->itemChanged(indexItem, index.column());
 }
 
+void QTreeWidgetPrivate::_q_emitItemCheckStateChanged(const QModelIndex &index)
+{
+    Q_Q(QTreeWidget);
+    QTreeWidgetItem *indexItem = item(index);
+    if (indexItem)
+        emit q->itemCheckStateChanged(indexItem, index.column());
+}
+
 void QTreeWidgetPrivate::_q_emitItemExpanded(const QModelIndex &index)
 {
     Q_Q(QTreeWidget);
@@ -2490,6 +2510,15 @@ void QTreeWidgetPrivate::_q_dataChanged(const QModelIndex &topLeft,
 */
 
 /*!
+    \since 4.7
+
+    \fn void QTreeWidget::itemCheckStateChanged(QTreeWidgetItem *item, int column)
+
+    This signal is emitted when the check state of the \a column in the specified
+    \a item changes.
+*/
+
+/*!
   \since 4.3
 
   \fn void QTreeWidget::removeItemWidget(QTreeWidgetItem *item, int column)
@@ -2522,6 +2551,8 @@ QTreeWidget::QTreeWidget(QWidget *parent)
             this, SLOT(_q_emitCurrentItemChanged(QModelIndex,QModelIndex)));
     connect(model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
             this, SLOT(_q_emitItemChanged(QModelIndex)));
+    connect(model(), SIGNAL(checkStateChanged(QModelIndex)),
+            this, SLOT(_q_emitItemCheckStateChanged(QModelIndex)));
     connect(model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
             this, SLOT(_q_dataChanged(QModelIndex,QModelIndex)));
     connect(model(), SIGNAL(columnsRemoved(QModelIndex,int,int)),

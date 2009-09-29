@@ -783,6 +783,16 @@ void QTableModel::itemChanged(QTableWidgetItem *item)
     }
 }
 
+void QTableModel::itemCheckStateChanged(QTableWidgetItem *item)
+{
+    if (!item || item->flags() & ItemIsHeaderItem)
+        return;
+
+    QModelIndex idx = index(item);
+    if (idx.isValid())
+        emit checkStateChanged(idx);
+}
+
 QTableWidgetItem* QTableModel::createItem() const
 {
     return prototype ? prototype->clone() : new QTableWidgetItem;
@@ -1371,8 +1381,11 @@ void QTableWidgetItem::setData(int role, const QVariant &value)
     }
     if (!found)
         values.append(QWidgetItemData(role, value));
-    if (QTableModel *model = (view ? qobject_cast<QTableModel*>(view->model()) : 0))
+    if (QTableModel *model = (view ? qobject_cast<QTableModel*>(view->model()) : 0)) {
         model->itemChanged(this);
+        if (role == Qt::CheckStateRole)
+            model->itemCheckStateChanged(this);
+    }
 }
 
 /*!
@@ -1572,6 +1585,8 @@ void QTableWidgetPrivate::setup()
     // model signals
     QObject::connect(model, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
                      q, SLOT(_q_emitItemChanged(QModelIndex)));
+    QObject::connect(model, SIGNAL(checkStateChanged(QModelIndex)),
+                     q, SLOT(_q_emitItemCheckStateChanged(QModelIndex)));
     // selection signals
     QObject::connect(q->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
                      q, SLOT(_q_emitCurrentItemChanged(QModelIndex,QModelIndex)));
@@ -1629,6 +1644,13 @@ void QTableWidgetPrivate::_q_emitItemChanged(const QModelIndex &index)
     if (QTableWidgetItem *item = tableModel()->item(index))
         emit q->itemChanged(item);
     emit q->cellChanged(index.row(), index.column());
+}
+
+void QTableWidgetPrivate::_q_emitItemCheckStateChanged(const QModelIndex &index)
+{
+    Q_Q(QTableWidget);
+    if (QTableWidgetItem *item = tableModel()->item(index))
+        emit q->itemCheckStateChanged(item);
 }
 
 void QTableWidgetPrivate::_q_emitCurrentItemChanged(const QModelIndex &current,
@@ -1704,6 +1726,14 @@ void QTableWidgetPrivate::_q_dataChanged(const QModelIndex &topLeft,
     \fn void QTableWidget::itemChanged(QTableWidgetItem *item)
 
     This signal is emitted whenever the data of \a item has changed.
+*/
+
+/*!
+    \since 4.7
+
+    \fn void QTableWidget::itemCheckStateChanged(QTableWidgetItem *item)
+
+    This signal is emitted whenever the check state of \a item has changed.
 */
 
 /*!
