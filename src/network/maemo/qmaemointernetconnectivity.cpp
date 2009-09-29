@@ -49,8 +49,12 @@
     \ingroup maemo
     \inmodule QtNetwork
 
-    QMaemoInternetConnectivity TODO
+    QMaemoInternetConnectivity
+
+    Missing supports:
+     - Switch to WLAN if available 
 */
+
 #include "qmaemointernetconnectivity.h"
 #include "qmaemointernetconnectivity_p.h"
 
