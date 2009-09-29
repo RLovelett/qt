@@ -1473,6 +1473,16 @@ static QMessageBox::StandardButton showNewMessageBox(QWidget *parent,
         mask <<= 1;
         if (!sb)
             continue;
+#ifdef Q_OS_FREMANTLE
+        //Reject buttons are not allowed
+        switch ((QMessageBox::StandardButton)sb) {
+            //Reject Role
+            case QMessageBox::Cancel:
+            case QMessageBox::Close:
+            case QMessageBox::Abort:
+                continue;
+        }
+#endif
         QPushButton *button = msgBox.addButton((QMessageBox::StandardButton)sb);
         // Choose the first accept role as the default
         if (msgBox.defaultButton())
