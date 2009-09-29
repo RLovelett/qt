@@ -145,7 +145,13 @@ bool QMaemoICPrivate::isConnected()
     QMCDEBUG << "isConnected() :" << connected;
     if (connected == UNKNOWN)
         checkConnectionStatus();
-    return connected;
+
+    switch (connected) {
+    case CONNECTED:
+    case CONNECTING:
+        return true;   
+    }
+    return false;
 }
 
 void QMaemoICPrivate::connectionRequest()
@@ -155,33 +161,28 @@ void QMaemoICPrivate::connectionRequest()
         return;
     }
 
-    if (!isAutoConnect()) {
-        QMCDEBUG << "auto connect disabled";
-        return;
-    }
-
     QDBusMessage reply;
 
-    //Check last used network
-    //NOTE: Chinook needs lastApName
-    const QString lastNetwork = lastAPid();
-    QMCDEBUG << "Last used network is " << lastNetwork;
-    
-    if (lastNetwork.isEmpty()) {
-        //Show the the Access point list to the user
+    if (!isAutoConnect()) {
+        QMCDEBUG << "auto connect disabled. User have to choose the AP.";
         reply = icdUiInterface->call(ICD_UI_SHOW_CONNDLG_REQ, false);
     } else {
-        //Connect to the last Access Point used
-        quint32 i = 0;
-        reply = icdInterface->call(ICD_CONNECT_REQ, lastNetwork, i);
+        //Check last used network
+        //NOTE: Chinook needs lastApName
+        const QString lastNetwork = lastAPid();
+        QMCDEBUG << "Last used network is " << lastNetwork;
+        if (lastNetwork.isEmpty()) {
+            //Show the the Access point list to the user
+            reply = icdUiInterface->call(ICD_UI_SHOW_CONNDLG_REQ, false);
+        } else {
+            //Connect to the last Access Point used
+            quint32 i = 0;
+            reply = icdInterface->call(ICD_CONNECT_REQ, lastNetwork, i);
+        }
     }
-    
-    
+
     if (reply.type() == QDBusMessage::ErrorMessage) {
         readErrorDBusErrorMsg(reply);
-        if (!lastNetwork.isEmpty())
-            icdUiInterface->call(ICD_UI_SHOW_CONNDLG_REQ, false);
-        return;
     }
 }
 
@@ -237,7 +238,7 @@ void QMaemoICPrivate::checkConnectionStatus()
 
     QList<QVariant> values;
     values = reply.arguments();
-    QMCDEBUG << "reply arg size:" << values.size();
+    QMCDEBUG << " get state req has returned:" << values;
 #if 0
     if (values.takeFirst().toInt()) {
         connected = CONNECTED;
