@@ -52,6 +52,7 @@
 #include "qstyleoption.h"
 #include "qsizegrip.h"
 #include "qmainwindow.h"
+#include "qaction.h"
 
 #include <private/qlayoutengine_p.h>
 #include <private/qwidget_p.h>
@@ -63,6 +64,8 @@ class QStatusBarPrivate : public QWidgetPrivate
     Q_DECLARE_PUBLIC(QStatusBar)
 public:
     QStatusBarPrivate() {}
+
+    void init();
 
     struct SBItem {
         SBItem(QWidget* widget, int stretch, bool permanent)
@@ -77,6 +80,7 @@ public:
 
     QBoxLayout * box;
     QTimer * timer;
+    QAction * toggleViewAction;
 
 #ifndef QT_NO_SIZEGRIP
     QSizeGrip * resizer;
@@ -115,8 +119,27 @@ public:
 #endif
 
     QRect messageRect() const;
+
+    void _q_toggleView(bool b);
 };
 
+void QStatusBarPrivate::init()
+{
+    Q_Q(QStatusBar);
+    box = 0;
+    timer = 0;
+    toggleViewAction = new QAction(q);
+    toggleViewAction->setCheckable(true);
+    QObject::connect(toggleViewAction, SIGNAL(triggered(bool)), q, SLOT(_q_toggleView(bool)));
+
+#ifndef QT_NO_SIZEGRIP
+    resizer = 0;
+    showSizeGrip = false;
+    q->setSizeGripEnabled(true); // causes reformat()
+#else
+    q->reformat();
+#endif
+}
 
 QRect QStatusBarPrivate::messageRect() const
 {
@@ -152,6 +175,16 @@ QRect QStatusBarPrivate::messageRect() const
     return QRect(left, 0, right-left, q->height());
 }
 
+void QStatusBarPrivate::_q_toggleView(bool b)
+{
+    Q_Q(QStatusBar);
+    if (b == q->isHidden()) {
+        if (b)
+            q->show();
+        else
+            q->close();
+    }
+}
 
 /*!
     \class QStatusBar
@@ -238,16 +271,7 @@ QStatusBar::QStatusBar(QWidget * parent, const char *name)
 {
     Q_D(QStatusBar);
     setObjectName(QString::fromAscii(name));
-    d->box = 0;
-    d->timer = 0;
-
-#ifndef QT_NO_SIZEGRIP
-    d->resizer = 0;
-    d->showSizeGrip = false;
-    setSizeGripEnabled(true); // causes reformat()
-#else
-    reformat();
-#endif
+    d->init();
 }
 
 
@@ -277,15 +301,7 @@ QStatusBar::QStatusBar(QWidget * parent)
     : QWidget(*new QStatusBarPrivate, parent, 0)
 {
     Q_D(QStatusBar);
-    d->box = 0;
-    d->timer = 0;
-
-#ifndef QT_NO_SIZEGRIP
-    d->resizer = 0;
-    setSizeGripEnabled(true); // causes reformat()
-#else
-    reformat();
-#endif
+    d->init();
 }
 
 /*!
@@ -646,6 +662,22 @@ QString QStatusBar::currentMessage() const
 }
 
 /*!
+    \since 4.7
+
+    Returns a checkable action that can be used to show or hide this
+    status bar.
+
+    The action's text is set to the status bar's window title.
+
+    \sa QAction::text QWidget::windowTitle
+*/
+QAction *QStatusBar::toggleViewAction() const
+{
+    Q_D(const QStatusBar);
+    return d->toggleViewAction;
+}
+
+/*!
     \fn void QStatusBar::message(const QString &message, int timeout)
 
     Use the showMessage() function instead.
@@ -754,11 +786,29 @@ void QStatusBar::resizeEvent(QResizeEvent * e)
 /*!
     \reimp
 */
+void QStatusBar::changeEvent(QEvent *e)
+{
+    Q_D(QStatusBar);
+    if (e->type() == QEvent::WindowTitleChange)
+        d->toggleViewAction->setText(windowTitle());
+    QWidget::changeEvent(e);
+}
+
+/*!
+    \reimp
+*/
 
 bool QStatusBar::event(QEvent *e)
 {
     Q_D(QStatusBar);
 
+    if (e->type() == QEvent::Hide) {
+        if (!isHidden())
+            d->toggleViewAction->setChecked(false);
+    }
+    else if (e->type() == QEvent::Show) {
+        d->toggleViewAction->setChecked(true);
+    }
     if (e->type() == QEvent::LayoutRequest
 #ifdef QT3_SUPPORT
         || e->type() == QEvent::LayoutHint
@@ -844,4 +894,5 @@ bool QStatusBar::event(QEvent *e)
 
 QT_END_NAMESPACE
 
+#include "moc_qstatusbar.cpp"
 #endif

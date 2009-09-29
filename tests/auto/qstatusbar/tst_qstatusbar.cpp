@@ -47,6 +47,7 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QSizeGrip>
+#include <QAction>
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -74,6 +75,7 @@ private slots:
     void insertWidget();
     void insertPermanentWidget();
     void setSizeGripEnabled();
+    void toggleViewAction();
     void task194017_hiddenWidget();
 
 private:
@@ -228,6 +230,33 @@ void tst_QStatusBar::setSizeGripEnabled()
 #endif
     qApp->processEvents();
     QVERIFY(sizeGrip->isVisible());
+}
+
+void tst_QStatusBar::toggleViewAction()
+{
+    {
+        QStatusBar sb;
+        QAction *toggleViewAction = sb.toggleViewAction();
+        QVERIFY(sb.isHidden());
+        toggleViewAction->trigger();
+        QVERIFY(!sb.isHidden());
+        toggleViewAction->trigger();
+        QVERIFY(sb.isHidden());
+    }
+
+    {
+        QMainWindow mw;
+        QStatusBar* sb = mw.statusBar();
+        mw.show();
+        QAction *toggleViewAction = sb->toggleViewAction();
+        QVERIFY(!sb->isHidden());
+        toggleViewAction->trigger();
+        QVERIFY(sb->isHidden());
+        toggleViewAction->trigger();
+        QVERIFY(!sb->isHidden());
+        toggleViewAction->trigger();
+        QVERIFY(sb->isHidden());
+    }
 }
 
 void tst_QStatusBar::task194017_hiddenWidget()

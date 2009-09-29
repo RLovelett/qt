@@ -291,6 +291,8 @@ void MainWindow::createToolBars()
 void MainWindow::createStatusBar()
 {
     statusBar()->showMessage(tr("Ready"));
+	statusBar()->setWindowTitle(tr("Status Bar"));
+    viewMenu->addAction(statusBar()->toggleViewAction());
 }
 //! [8]
 

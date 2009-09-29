@@ -75,6 +75,8 @@ public:
 
     QString currentMessage() const;
 
+    QAction *toggleViewAction() const;
+
 public Q_SLOTS:
     void showMessage(const QString &text, int timeout = 0);
     void clearMessage();
@@ -96,6 +98,7 @@ protected:
     void showEvent(QShowEvent *);
     void paintEvent(QPaintEvent *);
     void resizeEvent(QResizeEvent *);
+    void changeEvent(QEvent *);
 
     // ### Qt 5: consider making reformat() and hideOrShow() private
     void reformat();
@@ -105,6 +108,7 @@ protected:
 private:
     Q_DISABLE_COPY(QStatusBar)
     Q_DECLARE_PRIVATE(QStatusBar)
+    Q_PRIVATE_SLOT(d_func(), void _q_toggleView(bool))
 };
 
 #endif // QT_NO_STATUSBAR
