@@ -158,6 +158,7 @@ private slots:
     void painterStateProtectionOnWindowFrame();
     void ensureClipping();
     void respectHFW();
+    void autoFillBackground();
 
     // Task fixes
     void task236127_bspTreeIndexFails();
@@ -2643,6 +2644,32 @@ void tst_QGraphicsWidget::respectHFW()
     qreal minHFW = window->effectiveSizeHint(Qt::MinimumSize, QSizeF(winSize.width(), -1)).height();
     QVERIFY(qAbs(minHFW - winSize.height()) < 1);
 #endif
+}
+
+void tst_QGraphicsWidget::autoFillBackground()
+{
+    QGraphicsWidget *widget = new QGraphicsWidget;
+    QCOMPARE(widget->autoFillBackground(), false);
+    widget->setAutoFillBackground(true);
+    QCOMPARE(widget->autoFillBackground(), true);
+
+    const QColor color(Qt::red);
+    const QRect rect(0, 0, 1, 1);
+
+    QGraphicsScene scene;
+    scene.addItem(widget);
+    widget->setGeometry(rect);
+
+    QPalette palette = widget->palette();
+    palette.setColor(QPalette::Window, color);
+    widget->setPalette(palette);
+
+    QImage image(rect.size(), QImage::Format_RGB32);
+    QPainter painter;
+    painter.begin(&image);
+    scene.render(&painter, rect, rect);
+    painter.end();
+    QCOMPARE(image.pixel(0, 0), color.rgb());
 }
 
 QTEST_MAIN(tst_QGraphicsWidget)
