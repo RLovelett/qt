@@ -544,6 +544,11 @@ void QLineEdit::setEchoMode(EchoMode mode)
     Q_D(QLineEdit);
     if (mode == (EchoMode)d->echoMode)
         return;
+#ifndef Q_WS_HILDON
+    setAttribute(Qt::WA_InputMethodEnabled, mode == Normal || mode == PasswordEchoOnEdit);
+#else
+    setAttribute(Qt::WA_InputMethodEnabled);
+#endif
     setAttribute(Qt::WA_InputMethodEnabled, shouldEnableInputMethod(this));
     d->echoMode = mode;
     d->passwordEchoEditing = false;
@@ -1749,6 +1754,15 @@ void QLineEdit::mouseReleaseEvent(QMouseEvent* e)
     Q_D(QLineEdit);
     if (d->sendMouseEventToInputContext(e))
 	return;
+#ifdef Q_WS_HILDON
+    //Propagate the event to the parent widget.
+    // QHildonInputMethod installs a filter in a widget  to get
+    // the mouseRelease event. 
+    // In complex widgets like QSpinBoxes or QComboBoxes, these events
+    // are consumed in the sub-widget so they don't reach the parent widget.
+    // Then the Hildon Input Main UI can not be shown if we can't receive them.
+    e->ignore();
+#endif
 #ifndef QT_NO_DRAGANDDROP
     if (e->button() == Qt::LeftButton) {
         if (d->dndTimer.isActive()) {
@@ -2312,6 +2326,10 @@ void QLineEdit::inputMethodEvent(QInputMethodEvent *e)
     if (!e->commitString().isEmpty())
         d->complete(Qt::Key_unknown);
 #endif
+#ifdef Q_WS_HILDON
+    // Sets the cursor position via QInputMethodEvent
+    d->cursor += e->replacementStart();
+#endif
 }
 
 /*!\reimp
@@ -2330,6 +2348,17 @@ QVariant QLineEdit::inputMethodQuery(Qt::InputMethodQuery property) const
         return QVariant(d->text);
     case Qt::ImCurrentSelection:
         return QVariant(selectedText());
+#ifdef Q_WS_HILDON
+    case Qt::ImMode:{
+        int mode;
+        if (d->echoMode == Normal)
+            mode = HILDON_GTK_INPUT_MODE_FULL | HILDON_GTK_INPUT_MODE_AUTOCAP | HILDON_GTK_INPUT_MODE_DICTIONARY;
+        else
+            mode = HILDON_GTK_INPUT_MODE_FULL | HILDON_GTK_INPUT_MODE_INVISIBLE;
+            
+        return QVariant(mode);
+    }
+#endif
     default:
         return QVariant();
     }
@@ -2341,6 +2370,7 @@ QVariant QLineEdit::inputMethodQuery(Qt::InputMethodQuery property) const
 void QLineEdit::focusInEvent(QFocusEvent *e)
 {
     Q_D(QLineEdit);
+    
     if (e->reason() == Qt::TabFocusReason ||
          e->reason() == Qt::BacktabFocusReason  ||
          e->reason() == Qt::ShortcutFocusReason) {

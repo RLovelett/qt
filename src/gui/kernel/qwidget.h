@@ -586,6 +586,10 @@ public:
     Qt::HANDLE handle() const;
 #endif
 
+#if defined(Q_WS_HILDON)
+    int hildonStackableWindow() const;
+#endif
+
     void setAttribute(Qt::WidgetAttribute, bool on = true);
     inline bool testAttribute(Qt::WidgetAttribute) const;
 

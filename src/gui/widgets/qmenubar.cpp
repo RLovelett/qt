@@ -726,6 +726,10 @@ void QMenuBarPrivate::init()
     if(mac_menubar)
         q->hide();
 #endif
+#ifdef Q_WS_HILDON
+    if (setCustomContext())
+        q->hide();
+#endif
 #ifdef Q_OS_WINCE
     if (qt_wince_is_mobile()) {
         wceCreateMenuBar(q->parentWidget());
@@ -1373,6 +1377,10 @@ void QMenuBarPrivate::handleReparent()
 #ifdef Q_WS_MAC
     macDestroyMenuBar();
     macCreateMenuBar(newParent);
+#endif
+
+#ifdef Q_WS_HILDON
+    setCustomContext();
 #endif
 
 #ifdef Q_OS_WINCE

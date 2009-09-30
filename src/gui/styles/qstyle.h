@@ -511,6 +511,10 @@ public:
         PM_MenuPanelWidth,
         PM_MenuTearoffHeight,
         PM_MenuDesktopFrameWidth,
+#ifdef Q_WS_HILDON
+        PM_MenuOffsetHorizontal,        // X offset beetween upper left corners of the hildon app menu and its app
+        PM_MenuOffsetVertical,          //
+#endif
 
         PM_MenuBarPanelWidth,
         PM_MenuBarItemSpacing,

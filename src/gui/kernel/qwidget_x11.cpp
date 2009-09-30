@@ -68,6 +68,10 @@
 
 #include <stdlib.h>
 
+#ifdef Q_WS_HILDON
+#  include "qvarlengtharray.h"
+#endif
+
 //#define ALIEN_DEBUG
 
 // defined in qapplication_x11.cpp
@@ -177,6 +181,9 @@ static void SetMWMHints(Display *display, Window window, const QtMWMHints &mwmhi
 static inline bool isTransient(const QWidget *w)
 {
     return ((w->windowType() == Qt::Dialog
+#ifdef Q_OS_FREMANTLE
+             || w->windowType() == Qt::HildonAppMenu
+#endif
              || w->windowType() == Qt::Sheet
              || w->windowType() == Qt::Tool
              || w->windowType() == Qt::SplashScreen
@@ -452,6 +459,9 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
     bool topLevel = (flags & Qt::Window);
     bool popup = (type == Qt::Popup);
     bool dialog = (type == Qt::Dialog
+#ifdef Q_OS_FREMANTLE
+                   || type == Qt::HildonAppMenu
+#endif
                    || type == Qt::Sheet);
     bool desktop = (type == Qt::Desktop);
     bool tool = (type == Qt::Tool || type == Qt::SplashScreen
@@ -757,7 +767,10 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
         Atom protocols[4];
         int n = 0;
         protocols[n++] = ATOM(WM_DELETE_WINDOW);        // support del window protocol
+#ifndef Q_OS_FREMANTLE
+	//This is just a workaround
         protocols[n++] = ATOM(WM_TAKE_FOCUS);                // support take focus window protocol
+#endif
         protocols[n++] = ATOM(_NET_WM_PING);                // support _NET_WM_PING protocol
         if (flags & Qt::WindowContextHelpButtonHint)
             protocols[n++] = ATOM(_NET_WM_CONTEXT_HELP);
@@ -1993,7 +2006,12 @@ void QWidgetPrivate::setNetWmWindowTypes()
         // splash netwm type
         windowTypes.append(ATOM(_NET_WM_WINDOW_TYPE_SPLASH));
         break;
-
+#ifdef Q_OS_FREMANTLE
+    case Qt::HildonAppMenu:
+        //Hildon application menu
+        windowTypes.append(ATOM(_HILDON_WM_WINDOW_TYPE_APP_MENU));
+        break;
+#endif
     default:
         break;
     }
@@ -2003,9 +2021,11 @@ void QWidgetPrivate::setNetWmWindowTypes()
         windowTypes.append(ATOM(_KDE_NET_WM_WINDOW_TYPE_OVERRIDE));
     }
 
-    // normal netwm type - default
-    windowTypes.append(ATOM(_NET_WM_WINDOW_TYPE_NORMAL));
+    if (windowTypes.isEmpty()) {
+        windowTypes.append(ATOM(_NET_WM_WINDOW_TYPE_NORMAL));
+    }
 
+    //FIXME Upstream Qt bug: XDeleteProperty won't never executed.
     if (!windowTypes.isEmpty()) {
         XChangeProperty(X11->display, q->winId(), ATOM(_NET_WM_WINDOW_TYPE), XA_ATOM, 32,
                         PropModeReplace, (unsigned char *) windowTypes.constData(),
@@ -2624,6 +2644,10 @@ void QWidgetPrivate::createTLSysExtra()
     extra->topextra->validWMState = 0;
     extra->topextra->waitingForMapNotify = 0;
     extra->topextra->userTimeWindow = 0;
+#ifdef Q_WS_HILDON
+    extra->topextra->customContextSet = 0;
+    extra->topextra->hildonStackableWindow = -1;
+#endif
 }
 
 void QWidgetPrivate::deleteTLSysExtra()
@@ -2852,6 +2876,71 @@ Picture QX11Data::getSolidFill(int screen, const QColor &c)
 void QWidgetPrivate::setModal_sys()
 {
 }
+
+#ifdef Q_WS_HILDON
+/*
+    Sets the _NET_WM_CONTEXT_CUSTOM atom on the root window
+    then Hildon knows that the app is capable to display a global menu
+ */
+bool QWidgetPrivate::setCustomContext()
+{
+    Q_Q(QWidget);
+
+    QWidget *window = q->window();
+    QTLWExtra *x = window->d_func()->topData();
+    Q_ASSERT(x);
+
+    if (x->customContextSet)
+        return true;
+
+    WId windowHandle = window->winId();
+    Atom *oldAtoms = 0;
+    int count = 0;
+
+    if (!XGetWMProtocols(QX11Info::display(), windowHandle, &oldAtoms, &count)) {
+        qWarning("Hildon Integration: Unable to get WM Protocols");
+        return false;
+    }
+    Atom customContext = XInternAtom (QX11Info::display(), "_NET_WM_CONTEXT_CUSTOM", false);
+
+    // create a new list of atoms
+    QVarLengthArray<Atom, 8> newAtoms; //FIXME is the prealloc value okay?
+    newAtoms.append(oldAtoms, count);
+    newAtoms.append(customContext);
+    XFree(oldAtoms);
+
+    if (!XSetWMProtocols(QX11Info::display(), windowHandle, newAtoms.data(), newAtoms.count())) {
+        qWarning("Hildon Integration: Unable to set WM Protocols");
+        return false;
+    }
+
+    x->customContextSet = 1;
+    return true;
+}
+
+bool QWidgetPrivate::setHildonStackableWindows(int item)
+{
+    Q_Q(QWidget);
+
+    QWidget *window = q->window();
+    QTLWExtra *x = window->d_func()->topData();
+    Q_ASSERT(x);
+
+    if (x->hildonStackableWindow >= 0)
+        return false;
+
+    x->hildonStackableWindow = item;
+
+    WId windowHandle = window->winId();
+    
+    //TODO Move in the Qt Atom list
+    Atom hildonStackableWindows = XInternAtom (QX11Info::display(), "_HILDON_STACKABLE_WINDOW", false);
+    XChangeProperty(X11->display, q->winId(), hildonStackableWindows, XA_INTEGER, 32, PropModeAppend, (uchar *)&item, 1);
+
+    return true;
+}
+
+#endif
 
 void qt_x11_getX11InfoForWindow(QX11Info * xinfo, const QX11WindowAttributes &att)
 {

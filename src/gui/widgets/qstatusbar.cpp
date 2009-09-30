@@ -248,6 +248,9 @@ QStatusBar::QStatusBar(QWidget * parent, const char *name)
 #else
     reformat();
 #endif
+#ifdef Q_WS_HILDON
+    hide();
+#endif
 }
 
 
@@ -285,6 +288,9 @@ QStatusBar::QStatusBar(QWidget * parent)
     setSizeGripEnabled(true); // causes reformat()
 #else
     reformat();
+#endif
+#ifdef Q_WS_HILDON
+    hide();
 #endif
 }
 

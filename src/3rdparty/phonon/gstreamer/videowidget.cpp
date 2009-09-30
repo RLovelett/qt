@@ -72,7 +72,6 @@ VideoWidget::~VideoWidget()
 
 void VideoWidget::setupVideoBin()
 {
-
     m_renderer = m_backend->deviceManager()->createVideoRenderer(this);
     GstElement *videoSink = m_renderer->videoSink();
 
@@ -97,6 +96,10 @@ void VideoWidget::setupVideoBin()
         //Ensure that the bare essentials are prepared
         gst_bin_add_many (GST_BIN (m_videoBin), queue, m_colorspace, m_videoplug, videoScale, videoSink, (const char*)NULL);
         bool success = false;
+#ifdef Q_OS_FREMANTLE
+        //We can't use videobalance due performance issues
+        success = gst_element_link_many(queue, m_colorspace, videoScale, m_videoplug, videoSink, (const char*)NULL);
+#else
         //Video balance controls color/sat/hue in the YUV colorspace
         m_videoBalance = gst_element_factory_make ("videobalance", NULL);
         if (m_videoBalance) {
@@ -110,7 +113,7 @@ void VideoWidget::setupVideoBin()
             //If video balance is not available, just connect to sink directly
             success = gst_element_link_many(queue, m_colorspace, videoScale, m_videoplug, videoSink, (const char*)NULL);
         }
-
+#endif
         if (success) {
             GstPad *videopad = gst_element_get_pad (queue, "sink");
             gst_element_add_pad (m_videoBin, gst_ghost_pad_new ("sink", videopad));

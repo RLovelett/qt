@@ -324,6 +324,9 @@ enum DesktopEnvironment {
     DE_KDE,
     DE_GNOME,
     DE_CDE,
+#ifdef Q_WS_HILDON
+    DE_HILDON,
+#endif
     DE_4DWM
 };
 
@@ -598,6 +601,9 @@ struct QX11Data
         _NET_WM_WINDOW_TYPE_DND,
         _NET_WM_WINDOW_TYPE_NORMAL,
         _KDE_NET_WM_WINDOW_TYPE_OVERRIDE,
+#ifdef Q_OS_FREMANTLE
+        _HILDON_WM_WINDOW_TYPE_APP_MENU,
+#endif
 
         _KDE_NET_WM_FRAME_STRUT,
 
@@ -609,6 +615,11 @@ struct QX11Data
         _NET_WM_CM_S0,
 
         _NET_SYSTEM_TRAY_VISUAL,
+
+        // Hildon Menu
+#ifdef Q_WS_HILDON
+        _MB_GRAB_TRANSFER,
+#endif
 
         // Property formats
         COMPOUND_TEXT,
@@ -647,6 +658,22 @@ struct QX11Data
 
         // Xkb
         _XKB_RULES_NAMES,
+
+#ifdef Q_WS_HILDON
+        _HILDON_IM_WINDOW,
+        _HILDON_IM_ACTIVATE,
+        _HILDON_IM_SURROUNDING,
+        _HILDON_IM_SURROUNDING_CONTENT,
+        _HILDON_IM_KEY_EVENT,
+        _HILDON_IM_INSERT_UTF8,
+        _HILDON_IM_COM,
+        _HILDON_IM_CLIPBOARD_COPIED,          //### NOT USED
+        _HILDON_IM_CLIPBOARD_SELECTION_QUERY, //### NOT USED
+        _HILDON_IM_CLIPBOARD_SELECTION_REPLY,
+        _HILDON_IM_INPUT_MODE,
+        _HILDON_IM_PREEDIT_COMMITTED,
+        _HILDON_IM_PREEDIT_COMMITTED_CONTENT,
+#endif
 
         // XEMBED
         _XEMBED,

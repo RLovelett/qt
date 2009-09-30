@@ -228,8 +228,11 @@ private:
     QList<QHash<QString, QList<Phrase *> > > m_phraseDict;
     QList<PhraseBook *> m_phraseBooks;
     QMap<QAction *, PhraseBook *> m_phraseBookMenu[3];
-    QPrinter m_printer;
 
+#ifndef QT_NO_PRINTER 
+    QPrinter m_printer;
+#endif
+    
     FindDialog *m_findDialog;
     QString m_findText;
     Qt::CaseSensitivity m_findMatchCase;

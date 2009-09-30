@@ -243,7 +243,11 @@ void HTMLInputElement::aboutToUnload()
 
 bool HTMLInputElement::shouldUseInputMethod() const
 {
+#ifdef Q_WS_HILDON
+    return m_type == TEXT || m_type == SEARCH || m_type == ISINDEX || m_type == PASSWORD ;
+#else
     return m_type == TEXT || m_type == SEARCH || m_type == ISINDEX;
+#endif
 }
 
 void HTMLInputElement::dispatchFocusEvent()

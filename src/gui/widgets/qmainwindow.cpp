@@ -54,6 +54,7 @@
 #include <qstyle.h>
 #include <qdebug.h>
 #include <qpainter.h>
+#include <qhildonappmenu.h>
 
 #include <private/qwidget_p.h>
 #include "qtoolbar_p.h"
@@ -99,6 +100,9 @@ public:
     uint hasOldCursor : 1;
     uint cursorAdjusted : 1;
 #endif
+#ifdef Q_WS_HILDON
+    QPointer<QMenu> globalMenu;
+#endif
 };
 
 void QMainWindowPrivate::init()
@@ -110,6 +114,28 @@ void QMainWindowPrivate::init()
     explicitIconSize = false;
 
     q->setAttribute(Qt::WA_Hover);
+
+#ifdef Q_OS_FREMANTLE
+    int item = -1;
+    QWidget *hswParent = qobject_cast<QWidget*>(q->parent());
+    if (hswParent)
+        item = hswParent->hildonStackableWindow();
+
+    setHildonStackableWindows(item +1);
+#endif
+
+#ifdef Q_WS_HILDON
+    //Binding F4 button
+    QAction *showAppContextMenuAct = new QAction(q);
+    showAppContextMenuAct->setShortcut(Qt::Key_F4);
+    q->connect(showAppContextMenuAct, SIGNAL(triggered()),q , SLOT(showApplicationContextMenu()));
+    q->addAction(showAppContextMenuAct);
+    //Binding F6 button
+    QAction *toggleWindowStateAct = new QAction(q);
+    toggleWindowStateAct->setShortcut(Qt::Key_F6);
+    q->connect(toggleWindowStateAct, SIGNAL(triggered()),q , SLOT(toggleWindowState()));
+    q->addAction(toggleWindowStateAct);
+#endif
 }
 
 /*
@@ -674,6 +700,10 @@ void QMainWindow::removeToolBarBreak(QToolBar *before)
 */
 void QMainWindow::addToolBar(Qt::ToolBarArea area, QToolBar *toolbar)
 {
+#ifdef Q_WS_HILDON
+    area = Qt::BottomToolBarArea;
+    toolbar->setMovable(false);
+#endif
     if (!checkToolBarArea(area, "QMainWindow::addToolBar"))
         return;
 
@@ -873,6 +903,100 @@ void QMainWindow::setDockNestingEnabled(bool enabled)
 
     d->layout->setDockOptions(opts);
 }
+
+#ifdef Q_WS_HILDON
+void QMainWindow::showApplicationContextMenu(){
+    Q_D(QMainWindow);
+
+    static QPoint menuPos;
+    static QAction *quitAction = 0;
+
+    //Hides submenues. GlobalMenu will be destroyed as soons
+    //as QMenu::exec() terminates
+    if (!d->globalMenu.isNull()){
+        d->globalMenu->hide();
+        return;
+    }
+
+    if (!menuBar())
+        return;
+
+    QList<QAction*> actionList = menuBar()->actions();
+
+    QHildonAppMenu *appMenu;
+    
+    if (!actionList.isEmpty()){
+        QAction *action;
+
+        //Looking for "Fremantle" Menu
+        foreach(action, actionList){
+            if (action->text().compare("fremantle", Qt::CaseInsensitive) == 0){
+                QMenu *menu = action->menu();
+                if (menu){
+                    QList<QAction*> fremantleActionList;
+                    fremantleActionList = menu->actions();
+                    appMenu = new QHildonAppMenu(fremantleActionList, this);
+                    appMenu->show();
+                    return;
+                }
+            }
+        }
+    }
+
+    //Getting the Menu position from the style
+    if (menuPos.isNull()){
+        int hMenuOffset = 0, 
+            vMenuOffset = 0;
+
+        hMenuOffset = style()->pixelMetric(QStyle::PM_MenuOffsetHorizontal, 0, this);
+        vMenuOffset = style()->pixelMetric(QStyle::PM_MenuOffsetVertical, 0, this);
+        menuPos = mapToGlobal(QPoint(0, 0));
+        menuPos += QPoint(hMenuOffset, vMenuOffset);
+    }
+
+    //Creating a new Application Context Menu
+    //so that is always updated
+    d->globalMenu = new QMenu(this);
+
+    //Filling the App context menu
+    if (!actionList.isEmpty()){
+        //Trying to get the quitAction from the file menu    
+        QMenu *fileMenu = actionList[0]->menu();
+
+        if (!quitAction && fileMenu){
+            QList<QAction*> fileActionList;
+
+            fileActionList = fileMenu->actions();
+            if (!fileActionList.isEmpty()){
+                QRegExp quitString("(?:close)|(?:exit)|(?:quit)", Qt::CaseInsensitive);
+
+                quitAction = fileActionList.last();   
+                if (quitAction && quitAction->text().remove(QChar('&')).contains(quitString)){
+                    fileMenu->removeAction(quitAction);
+                    if (fileActionList.isEmpty())
+                        actionList.removeFirst();   
+                }else{
+                    quitAction = 0;
+                }
+            }
+        }
+        d->globalMenu->addActions(actionList);
+    }
+     
+     //Add quitAction in the last position
+     if (quitAction)
+         d->globalMenu->addAction(quitAction);
+     
+     if (d->globalMenu->actions().count())
+         d->globalMenu->exec(menuPos);
+
+     delete static_cast<QMenu *>(d->globalMenu);
+}
+
+void QMainWindow::toggleWindowState() {
+    setWindowState(windowState() ^ Qt::WindowFullScreen);
+}
+#endif
 
 #if 0
 /*! \property QMainWindow::verticalTabsEnabled

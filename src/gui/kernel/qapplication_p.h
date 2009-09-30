@@ -234,6 +234,10 @@ public:
     void createEventDispatcher();
     QString appName() const;
 
+#ifdef Q_WS_HILDON
+    static bool areXInputEventsUsed();
+#endif
+
     static void dispatchEnterLeave(QWidget *enter, QWidget *leave);
 
     //modality
@@ -270,6 +274,9 @@ public:
         KB_KDE = 8,
         KB_Gnome = 16,
         KB_CDE = 32,
+#ifdef Q_WS_HILDON
+        KB_Hildon = 64,
+#endif
         KB_All = 0xffff
     };
 
@@ -410,6 +417,9 @@ public:
 #endif
 #if defined(QT_MAC_USE_COCOA)
     void _q_runModalWindow();
+#endif
+#ifdef Q_WS_HILDON
+    void _q_longPushTimeOut();
 #endif
 #ifndef QT_NO_STYLE_STYLESHEET
     static QString styleSheet;

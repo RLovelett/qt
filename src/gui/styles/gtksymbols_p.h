@@ -58,6 +58,9 @@
 
 #undef signals // Collides with GTK stymbols
 #include <gtk/gtk.h>
+#ifdef Q_WS_HILDON
+#  include <hildon-fm-2/hildon/hildon-file-chooser-dialog.h>
+#endif
 #include <QtCore/QLibrary>
 #include <QtGui/QFont>
 #include <QtGui/QFileDialog>
@@ -108,6 +111,10 @@ typedef GtkWidget* (*Ptr_gtk_scrolled_window_new)(GtkAdjustment*, GtkAdjustment*
 typedef gchar* (*Ptr_gtk_check_version)(guint, guint, guint);
 typedef GtkToolItem* (*Ptr_gtk_separator_tool_item_new) (void);
 typedef GtkWidget* (*Ptr_gtk_entry_new)(void);
+#ifdef Q_OS_FREMANTLE
+typedef GtkWidget* (*Ptr_hildon_entry_new)(HildonSizeType);
+typedef GtkWidget* (*Ptr_gtk_text_view_new)(void);
+#endif
 typedef GtkWidget* (*Ptr_gtk_tree_view_new)(void);
 typedef GtkTreeViewColumn* (*Ptr_gtk_tree_view_get_column)(GtkTreeView *, gint);
 typedef GtkWidget* (*Ptr_gtk_combo_box_new)(void);
@@ -156,6 +163,7 @@ typedef gint (*Ptr_pango_font_description_get_size) (const PangoFontDescription 
 typedef PangoWeight (*Ptr_pango_font_description_get_weight) (const PangoFontDescription *);
 typedef const char* (*Ptr_pango_font_description_get_family) (const PangoFontDescription *);
 typedef PangoStyle (*Ptr_pango_font_description_get_style) (const PangoFontDescription *desc);
+
 typedef gboolean (*Ptr_gtk_file_chooser_set_current_folder)(GtkFileChooser *, const gchar *);
 typedef GtkFileFilter* (*Ptr_gtk_file_filter_new)(void);
 typedef void (*Ptr_gtk_file_filter_set_name)(GtkFileFilter *, const gchar *);
@@ -173,6 +181,16 @@ typedef void (*Ptr_gtk_file_chooser_set_current_name) (GtkFileChooser *, const g
 typedef gboolean (*Ptr_gtk_file_chooser_set_filename) (GtkFileChooser *chooser, const gchar *name);
 typedef gint (*Ptr_gtk_dialog_run) (GtkDialog*);
 
+#ifdef Q_WS_HILDON
+typedef GtkWidget* (*Ptr_hildon_file_chooser_dialog_new)(GtkWindow *parent,
+                                                         GtkFileChooserAction action);
+typedef void (*Ptr_hildon_file_chooser_dialog_set_extension)(HildonFileChooserDialog *self,
+                                                             const gchar *extension);
+typedef GtkWidget* (*Ptr_hildon_file_chooser_dialog_add_extensions_combo)
+                                                        (HildonFileChooserDialog *self,
+                                                         char **extensions,
+                                                         char **ext_names);
+#endif
 typedef guchar* (*Ptr_gdk_pixbuf_get_pixels) (const GdkPixbuf *pixbuf);
 typedef int (*Ptr_gdk_pixbuf_get_width) (const GdkPixbuf *pixbuf);
 typedef void (*Ptr_gdk_color_free) (const GdkColor *);
@@ -192,6 +210,11 @@ typedef gint (*Ptr_gdk_drawable_get_depth)(GdkDrawable *);
 typedef void (*Ptr_gdk_x11_window_set_user_time) (GdkWindow *window, guint32);
 typedef XID  (*Ptr_gdk_x11_drawable_get_xid) (GdkDrawable *);
 typedef Display* (*Ptr_gdk_x11_drawable_get_xdisplay) ( GdkDrawable *);
+
+#ifdef Q_WS_HILDON
+typedef GtkWidget* (*Ptr_hildon_number_editor_new) (int,int);
+typedef void (*Ptr_gtk_widget_set_name) (GtkWidget *, const gchar *);
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -241,6 +264,10 @@ public:
     static Ptr_gtk_frame_new gtk_frame_new;
     static Ptr_gtk_statusbar_new gtk_statusbar_new;
     static Ptr_gtk_entry_new gtk_entry_new;
+#ifdef Q_OS_FREMANTLE
+    static Ptr_hildon_entry_new hildon_entry_new;
+    static Ptr_gtk_text_view_new gtk_text_view_new;
+#endif
     static Ptr_gtk_hscale_new gtk_hscale_new;
     static Ptr_gtk_vscale_new gtk_vscale_new;
     static Ptr_gtk_hscrollbar_new gtk_hscrollbar_new;
@@ -309,6 +336,11 @@ public:
     static Ptr_gtk_file_chooser_set_current_name gtk_file_chooser_set_current_name;
     static Ptr_gtk_dialog_run gtk_dialog_run;
     static Ptr_gtk_file_chooser_set_filename gtk_file_chooser_set_filename;
+#ifdef Q_WS_HILDON
+    static Ptr_hildon_file_chooser_dialog_new hildon_file_chooser_dialog_new;
+    static Ptr_hildon_file_chooser_dialog_set_extension hildon_file_chooser_dialog_set_extension;
+    static Ptr_hildon_file_chooser_dialog_add_extensions_combo hildon_file_chooser_dialog_add_extensions_combo;
+#endif
 
     static Ptr_gdk_pixbuf_get_pixels gdk_pixbuf_get_pixels;
     static Ptr_gdk_pixbuf_get_width gdk_pixbuf_get_width;
@@ -327,6 +359,12 @@ public:
 
     static Ptr_gconf_client_get_default gconf_client_get_default;
     static Ptr_gconf_client_get_string gconf_client_get_string;
+
+#ifdef Q_WS_HILDON
+    static Ptr_hildon_number_editor_new hildon_number_editor_new;
+    static Ptr_gtk_widget_set_name gtk_widget_set_name;
+#endif
+
 };
 
 // Helper to ensure that we have polished all our gtk widgets

@@ -163,6 +163,17 @@ GstElement *DeviceManager::createAudioSink(Category category)
     {
         if (m_audioSink == "auto") //this is the default value
         {
+#ifdef Q_OS_FREMANTLE
+            if (!sink) {
+                sink = gst_element_factory_make ("pulsesink", NULL);
+                if (canOpenDevice(sink))
+                    m_backend->logMessage("AudioOutput using pulse audio sink");
+                else if (sink) {
+                    gst_object_unref(sink);
+                    sink = 0;
+                }
+            }
+#endif
             //### TODO : get equivalent KDE settings here
 
             if (!qgetenv("GNOME_DESKTOP_SESSION_ID").isEmpty()) {

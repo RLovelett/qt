@@ -126,6 +126,10 @@ extern "C" {
 
 #include "qwidget_p.h"
 
+#ifdef Q_WS_HILDON
+#  include "qmainwindow.h"
+#endif
+
 #include <private/qbackingstore_p.h>
 
 QT_BEGIN_NAMESPACE
@@ -241,7 +245,9 @@ static const char * x11_atomnames = {
     "_NET_WM_WINDOW_TYPE_DND\0"
     "_NET_WM_WINDOW_TYPE_NORMAL\0"
     "_KDE_NET_WM_WINDOW_TYPE_OVERRIDE\0"
-
+#ifdef Q_OS_FREMANTLE
+    "_HILDON_WM_WINDOW_TYPE_APP_MENU\0"
+#endif
     "_KDE_NET_WM_FRAME_STRUT\0"
 
     "_NET_STARTUP_INFO\0"
@@ -252,6 +258,11 @@ static const char * x11_atomnames = {
     "_NET_WM_CM_S0\0"
 
     "_NET_SYSTEM_TRAY_VISUAL\0"
+
+    // Hildon Menu
+#ifdef Q_WS_HILDON
+    "_MB_GRAB_TRANSFER\0"
+#endif
 
     // Property formats
     "COMPOUND_TEXT\0"
@@ -291,6 +302,38 @@ static const char * x11_atomnames = {
     // Xkb
     "_XKB_RULES_NAMES\0"
 
+    //Hildon Input Method Protocol
+/* IM atom names */
+#ifdef Q_WS_HILDON
+    // find the global im window
+    "_HILDON_IM_WINDOW\0"
+    // activate the input method
+    "_HILDON_IM_ACTIVATE\0"
+    //send sourrounding
+    "_HILDON_IM_SURROUNDING\0"
+    //send sourrounding header
+    "_HILDON_IM_SURROUNDING_CONTENT\0"
+    // send key event to im
+    "_HILDON_IM_KEY_EVENT\0"
+    // input method wants to insert data
+    "_HILDON_IM_INSERT_UTF8\0"
+    // input method wants to communicate with us
+    "_HILDON_IM_COM\0"
+    //### NOT USED YET
+    "_HILDON_IM_CLIPBOARD_COPIED\0"
+    //### NOT USED YET
+    "_HILDON_IM_CLIPBOARD_SELECTION_QUERY\0"
+    // tell im whether we have a selection or not
+    "_HILDON_IM_CLIPBOARD_SELECTION_REPLY\0"
+    /* Fremantle specific HIM Atoms */
+    //
+    "_HILDON_IM_INPUT_MODE\0"
+    //
+    "_HILDON_IM_PREEDIT_COMMITTED\0"
+    //
+    "_HILDON_IM_PREEDIT_COMMITTED_CONTENT\0"
+#endif
+
     // XEMBED
     "_XEMBED\0"
     "_XEMBED_INFO\0"
@@ -318,7 +361,10 @@ static bool        appDoGrab        = false;        // X11 grabbing override (gd
 static bool        app_save_rootinfo = false;        // save root info
 static bool        app_do_modal        = false;        // modal mode
 static Window        curWin = 0;                        // current window
-
+#ifdef Q_WS_HILDON
+//XInput events are managed by Qt for some input devices (eg. touchscreen)
+static bool are_xinput_events_used = false; 
+#endif
 
 // function to update the workarea of the screen - in qdesktopwidget_x11.cpp
 extern void qt_desktopwidget_update_workarea();
@@ -343,6 +389,11 @@ static Qt::MouseButtons mouseButtonState     = Qt::NoButton; // mouse button sta
 static Time        mouseButtonPressTime = 0;        // when was a button pressed
 static short        mouseXPos, mouseYPos;                // mouse pres position in act window
 static short        mouseGlobalXPos, mouseGlobalYPos; // global mouse press position
+#ifdef Q_WS_HILDON
+#define RIGHT_CLICK_TIME 2000
+static QPointer<QTimer> longPushTimer = 0; // hildon emulates right click with long press - needs a timer
+static QPointer<QWidget> qetWidget=0; 
+#endif
 
 extern QWidgetList *qt_modal_stack;                // stack of modal widgets
 
@@ -988,6 +1039,7 @@ bool QApplicationPrivate::x11_apply_settings()
             qt_xim_preferred_style = XIMPreeditNothing | XIMStatusNothing;
     }
 #endif
+#ifndef Q_WS_HILDON // hildon has its own input method
     QStringList inputMethods = QInputContextFactory::keys();
     if (inputMethods.size() > 2 && inputMethods.contains(QLatin1String("imsw-multi"))) {
         X11->default_im = QLatin1String("imsw-multi");
@@ -995,6 +1047,7 @@ bool QApplicationPrivate::x11_apply_settings()
         X11->default_im = settings.value(QLatin1String("DefaultInputMethod"),
                                          QLatin1String("xim")).toString();
     }
+#endif
 
     settings.endGroup(); // Qt
 
@@ -1688,8 +1741,11 @@ void qt_init(QApplicationPrivate *priv, int,
     X11->seen_badwindow = false;
 
     X11->motifdnd_active = false;
-
+#ifdef Q_WS_HILDON
+    X11->default_im = QLatin1String("hildon");
+#else
     X11->default_im = QLatin1String("imsw-multi");
+#endif
     priv->inputContext = 0;
 
     // colormap control
@@ -1954,10 +2010,18 @@ void qt_init(QApplicationPrivate *priv, int,
             // engine to work on a QImage with BGR layout.
             bool local = displayName.isEmpty() || displayName.lastIndexOf(QLatin1Char(':')) == 0;
             if (local && (qgetenv("QT_X11_NO_MITSHM").toInt() == 0)) {
+
+#ifdef Q_WS_HILDON
+				// The original code assumes 24bit color but NIT is 16 color,
+				// so X11->use_mitshm is set as false, and it causes a slowness issue
+				// for raster drawing.
+				X11->use_mitshm = mitshm_pixmaps;
+#else
                 Visual *defaultVisual = DefaultVisual(X11->display, DefaultScreen(X11->display));
                 X11->use_mitshm = mitshm_pixmaps && (defaultVisual->red_mask == 0xff0000
                                                      && defaultVisual->green_mask == 0xff00
                                                      && defaultVisual->blue_mask == 0xff);
+#endif // Q_WS_HILDON
             }
         }
 #endif // QT_NO_MITSHM
@@ -2271,6 +2335,10 @@ void qt_init(QApplicationPrivate *priv, int,
                         X11->desktopEnvironment = DE_KDE;
                     if (wmName == QLatin1String("Metacity"))
                         X11->desktopEnvironment = DE_GNOME;
+#ifdef Q_WS_HILDON
+                    if (wmName == QLatin1String("matchbox") || wmName == QLatin1String("hildon-desktop"))
+                        X11->desktopEnvironment = DE_HILDON;
+#endif
                 }
             }
         }
@@ -2340,7 +2408,9 @@ void qt_init(QApplicationPrivate *priv, int,
                 i,
                 j;
             bool gotStylus,
-                gotEraser;
+                 gotEraser,
+                 gotTouchscreen; //Maemo changes: Using XInput to get Touchscreen events
+
             XDeviceInfo *devices = 0, *devs;
             XInputClassInfo *ip;
             XAnyClassPtr any;
@@ -2353,6 +2423,9 @@ void qt_init(QApplicationPrivate *priv, int,
             const QString XFREENAMESTYLUS = QLatin1String("stylus");
             const QString XFREENAMEPEN = QLatin1String("pen");
             const QString XFREENAMEERASER = QLatin1String("eraser");
+#endif
+#ifdef Q_WS_HILDON
+            const QString XFREENAMETOUCHSCREEN = QLatin1String("touchscreen");
 #endif
 
             if (X11->ptrXListInputDevices) {
@@ -2384,16 +2457,35 @@ void qt_init(QApplicationPrivate *priv, int,
                     deviceType = QTabletEvent::XFreeEraser;
                     gotEraser = true;
                 }
+#ifdef Q_WS_HILDON
+                else if (devName.endsWith(XFREENAMETOUCHSCREEN)) {
+                    deviceType = QTabletEvent::Stylus;
+                    gotTouchscreen = true;
+                }
 #endif
+#endif //Q_OS_IRIX
+
                 if (deviceType == QTabletEvent::NoDevice)
                     continue;
 
+#ifdef Q_WS_HILDON
+                if (gotStylus || gotEraser || gotTouchscreen) {
+#else
                 if (gotStylus || gotEraser) {
+#endif
                     if (X11->ptrXOpenDevice)
                         dev = X11->ptrXOpenDevice(X11->display, devs->id);
 
                     if (!dev)
                         continue;
+
+#ifdef Q_WS_HILDON
+#ifdef Q_OS_FREMANTLE
+                    are_xinput_events_used = false;
+#else
+                    are_xinput_events_used = true;
+#endif
+#endif
 
                     QTabletDeviceData device_data;
                     device_data.deviceType = deviceType;
@@ -2599,6 +2691,11 @@ void QApplicationPrivate::x11_initialize_style()
         case DE_CDE:
             QApplicationPrivate::app_style = QStyleFactory::create(QLatin1String("cde"));
             break;
+#ifdef Q_WS_HILDON
+        case DE_HILDON:
+            QApplicationPrivate::app_style = QStyleFactory::create(QLatin1String("hildon"));
+        break;
+#endif
         default:
             // Don't do anything
             break;
@@ -2756,6 +2853,12 @@ QString QApplicationPrivate::appName() const
 {
     return QString::fromLocal8Bit(QT_PREPEND_NAMESPACE(appName));
 }
+
+#ifdef Q_WS_HILDON
+bool QApplicationPrivate::areXInputEventsUsed(){
+    return are_xinput_events_used;
+}
+#endif
 
 const char *QX11Info::appClass()                                // get application class
 {
@@ -3031,6 +3134,50 @@ void QApplicationPrivate::_q_alertTimeOut()
     }
 }
 
+#ifdef Q_WS_HILDON
+void QApplicationPrivate::_q_longPushTimeOut(){
+
+    const int radius= 15;
+    const QPoint globalMousePressPos(mouseGlobalXPos,mouseGlobalYPos);
+    const QPoint globalCurrentPos= QCursor::pos();
+
+    // Exits if the cursor is not in the surrounding area
+    // of the press event
+    const QPoint deltaPos= globalMousePressPos - globalCurrentPos;
+    if ( qAbs(deltaPos.x())  >= radius ||
+         qAbs(deltaPos.y())  >= radius){
+        return;
+    }
+
+    // Gets the Widget under the mouse and the relative cursor position
+    QWidget *w;
+    QPoint pos;
+
+    if (qetWidget.isNull()){
+        return;
+    }
+
+    pos = qetWidget->mapFromGlobal(globalMousePressPos);
+    w = qetWidget->childAt(pos);
+    if (!w) {
+        w= qetWidget;
+        pos= w->mapFromGlobal(globalMousePressPos);
+    }
+
+    //Emulates the following events in the correct order
+    QMouseEvent mpe( QEvent::MouseButtonPress, pos, Qt::RightButton, 
+                     mouse_buttons, modifier_buttons );
+    QApplication::sendSpontaneousEvent(w, &mpe);
+
+    QContextMenuEvent e(QContextMenuEvent::Mouse, pos, modifier_buttons);
+    QApplication::sendSpontaneousEvent(w, &e);
+
+    QMouseEvent mre( QEvent::MouseButtonPress, pos, Qt::RightButton, 
+                     mouse_buttons, modifier_buttons );
+    QApplication::sendSpontaneousEvent(w, &mre);
+}
+#endif
+
 /*****************************************************************************
   Special lookup functions for windows that have been reparented recently
  *****************************************************************************/
@@ -3124,10 +3271,30 @@ int QApplication::x11ClientMessage(QWidget* w, XEvent* event, bool passive_only)
             X11->xdndHandleDrop(widget, event, passive_only);
         } else if (event->xclient.message_type == ATOM(XdndFinished)) {
             X11->xdndHandleFinished(widget, event, passive_only);
+#ifdef Q_WS_HILDON
+        } else if (event->xclient.message_type == ATOM(_MB_GRAB_TRANSFER)) {
+
+            if (passive_only || !QApplicationPrivate::active_window)
+                return 0;
+
+            QMainWindow *mw=qobject_cast<QMainWindow*>(widget);
+            if (mw)
+              mw->showApplicationContextMenu();
+#endif
         } else {
             if (passive_only) return 0;
             // All other are interactions
+
         }
+#ifdef Q_WS_HILDON
+    } else if (event->xclient.message_type == ATOM(_HILDON_IM_INSERT_UTF8)
+            || event->xclient.message_type == ATOM(_HILDON_IM_COM)
+            || event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING)
+            || event->xclient.message_type == ATOM(_HILDON_IM_SURROUNDING_CONTENT)) {
+        QInputContext *qic = w->inputContext();
+        if (qic && qic->x11FilterEvent(w, event))
+            return 0;
+#endif
     } else {
         X11->motifdndHandle(widget, event, passive_only);
     }
@@ -4249,13 +4416,26 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
                 mouseButtonPressed == button &&
                 (long)event->xbutton.time -(long)mouseButtonPressTime
                 < QApplication::doubleClickInterval() &&
+#ifndef Q_WS_HILDON
                 qAbs(event->xbutton.x - mouseXPos) < 5 &&
                 qAbs(event->xbutton.y - mouseYPos) < 5) {
+#else
+                //Increasing the double click radius for fingers taps
+                qAbs(event->xbutton.x - mouseXPos) < 20 &&
+                qAbs(event->xbutton.y - mouseYPos) < 20) {
+#endif
                 type = QEvent::MouseButtonDblClick;
                 mouseButtonPressTime -= 2000;        // no double-click next time
             } else {
                 type = QEvent::MouseButtonPress;
                 mouseButtonPressTime = event->xbutton.time;
+#ifdef Q_WS_HILDON
+                qetWidget=this;
+                longPushTimer= new QTimer(qApp);// RMB emulation
+                longPushTimer->setSingleShot(true);
+                connect(longPushTimer, SIGNAL(timeout()),qApp, SLOT(_q_longPushTimeOut()));
+                longPushTimer->start(RIGHT_CLICK_TIME);
+#endif
             }
             mouseButtonPressed = button;        // save event params for
             mouseXPos = event->xbutton.x;                // future double click tests
@@ -4281,6 +4461,11 @@ bool QETWidget::translateMouseEvent(const XEvent *event)
             }
 #endif
             type = QEvent::MouseButtonRelease;
+#ifdef Q_WS_HILDON
+            //Prevent crashes when the application doesn't receive a mouse press button
+            if (longPushTimer)
+                longPushTimer->stop();
+#endif
         }
     }
     mouseActWindow = effectiveWinId();                        // save some event params

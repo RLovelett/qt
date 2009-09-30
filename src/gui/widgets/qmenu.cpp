@@ -79,6 +79,9 @@
 #   include <private/qt_cocoa_helpers_mac_p.h>
 #endif
 
+#ifdef Q_WS_HILDON
+#   include <qmainwindow.h>
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -170,7 +173,11 @@ QRect QMenuPrivate::popupGeometry(int screen) const
 #ifdef Q_WS_WIN
     return QApplication::desktop()->screenGeometry(screen);
 #elif defined Q_WS_X11
-    if (X11->desktopEnvironment == DE_KDE)
+    if (X11->desktopEnvironment == DE_KDE
+#ifdef Q_WS_HILDON
+        || X11->desktopEnvironment == DE_HILDON
+#endif
+    )
         return QApplication::desktop()->screenGeometry(screen);
     else
         return QApplication::desktop()->availableGeometry(screen);
@@ -2315,6 +2322,16 @@ QMenu::event(QEvent *e)
             keyPressEvent(ke);
             return true;
         }
+#ifdef Q_WS_HILDON
+        //HACK
+        if (ke->key() == Qt::Key_F4){
+            QMainWindow *mw = qobject_cast<QMainWindow*>(parent());
+            if (mw){
+                mw->showApplicationContextMenu();
+                return true;
+            }
+        }
+#endif
     } break;
     case QEvent::ContextMenu:
         if(QMenuPrivate::menuDelayTimer.isActive()) {
