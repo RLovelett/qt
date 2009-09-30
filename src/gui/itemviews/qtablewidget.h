@@ -102,6 +102,7 @@ public:
     inline bool isSelected() const;
 
     inline Qt::ItemFlags flags() const { return itemFlags; }
+    inline void setFlag(Qt::ItemFlag flag, bool enabled = true);
     void setFlags(Qt::ItemFlags flags);
 
     inline QString text() const
@@ -187,6 +188,9 @@ private:
     QTableWidgetItemPrivate *d;
     Qt::ItemFlags itemFlags;
 };
+
+inline void QTableWidgetItem::setFlag(Qt::ItemFlag flag, bool enabled)
+{ enabled ? setFlags(flags() | flag) : setFlags(flags() & ~flag); }
 
 inline void QTableWidgetItem::setText(const QString &atext)
 { setData(Qt::DisplayRole, atext); }

@@ -169,7 +169,7 @@ private slots:
     void setTextUpdate();
     void taskQTBUG2844_visualItemRect();
     void setChildIndicatorPolicy();
-
+    void flags();
 
 public slots:
     void itemSelectionChanged();
@@ -3346,7 +3346,39 @@ void tst_QTreeWidget::setChildIndicatorPolicy()
     QTRY_COMPARE(delegate.numPaints, 1);
 }
 
+void tst_QTreeWidget::flags()
+{
+    QTreeWidget treeWidget;
+    QTreeWidgetItem *item = new QTreeWidgetItem(&treeWidget);
 
+    Qt::ItemFlags flags = Qt::NoItemFlags;
+    item->setFlags(flags);
+    QVERIFY(item->flags() == flags);
+
+    flags |= Qt::ItemIsEnabled;
+    item->setFlag(Qt::ItemIsEnabled);
+    QVERIFY(item->flags() == flags);
+
+    flags |= Qt::ItemIsSelectable;
+    item->setFlag(Qt::ItemIsSelectable, true);
+    QVERIFY(item->flags() == flags);
+
+    flags &= ~Qt::ItemIsEnabled;
+    item->setFlag(Qt::ItemIsEnabled, false);
+    QVERIFY(item->flags() == flags);
+
+    flags |= Qt::ItemIsEditable;
+    item->setFlag(Qt::ItemIsEditable, true);
+    QVERIFY(item->flags() == flags);
+
+    flags &= ~Qt::ItemIsSelectable;
+    item->setFlag(Qt::ItemIsSelectable, false);
+    QVERIFY(item->flags() == flags);
+
+    flags &= ~Qt::ItemIsEditable;
+    item->setFlag(Qt::ItemIsEditable, false);
+    QVERIFY(item->flags() == Qt::NoItemFlags);
+}
 
 QTEST_MAIN(tst_QTreeWidget)
 #include "tst_qtreewidget.moc"

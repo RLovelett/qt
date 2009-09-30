@@ -1087,6 +1087,17 @@ QTableWidgetSelectionRange::~QTableWidgetSelectionRange()
 */
 
 /*!
+    \since 4.8
+
+    \fn void QTableWidgetItem::setFlag(Qt::ItemFlag flag, bool enabled)
+
+    If \a enabled is true, the item flag \a flag is enabled; otherwise, it is
+    disabled.
+
+    \sa flags(), setFlags()
+*/
+
+/*!
     \fn void QTableWidgetItem::setFlags(Qt::ItemFlags flags)
 
     Sets the flags for the item to the given \a flags. These determine whether

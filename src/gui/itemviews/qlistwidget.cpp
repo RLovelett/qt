@@ -934,6 +934,16 @@ QDataStream &operator>>(QDataStream &in, QListWidgetItem &item)
 */
 
 /*!
+    \fn void QListWidgetItem::setFlag(Qt::ItemFlag flag, bool enabled)
+    \since 4.8
+
+    If \a enabled is true, the item flag \a flag is enabled; otherwise, it is
+    disabled.
+
+    \sa flags(), setFlags()
+*/
+
+/*!
     \fn void QListWidgetItem::setFlags(Qt::ItemFlags flags)
 
     Sets the item flags for the list item to \a flags.

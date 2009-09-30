@@ -1599,6 +1599,23 @@ QTreeWidgetItem::ChildIndicatorPolicy QTreeWidgetItem::childIndicatorPolicy() co
 }
 
 /*!
+    \fn void QTreeWidgetItem::setFlag(Qt::ItemFlag flag, bool enabled)
+    \since 4.8
+
+    If \a enabled is true, the item flag \a flag is enabled; otherwise, it is
+    disabled.
+
+    \sa flags(), setFlags()
+*/
+void QTreeWidgetItem::setFlag(Qt::ItemFlag flag, bool enabled)
+{
+    if (enabled)
+        setFlags(flags() | flag);
+    else
+        setFlags(flags() & ~flag);
+}
+
+/*!
     \fn void QTreeWidgetItem::setFlags(Qt::ItemFlags flags)
 
     Sets the flags for the item to the given \a flags. These determine whether

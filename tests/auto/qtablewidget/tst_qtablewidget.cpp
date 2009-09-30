@@ -103,6 +103,7 @@ private slots:
     void task231094();
     void task219380_removeLastRow();
     void task262056_sortDuplicate();
+    void flags();
 
 private:
     QTableWidget *testWidget;
@@ -1495,6 +1496,38 @@ void tst_QTableWidget::task262056_sortDuplicate()
 
 }
 
+void tst_QTableWidget::flags()
+{
+    QTableWidgetItem item;
+
+    Qt::ItemFlags flags = Qt::NoItemFlags;
+    item.setFlags(flags);
+    QVERIFY(item.flags() == flags);
+
+    flags |= Qt::ItemIsEnabled;
+    item.setFlag(Qt::ItemIsEnabled);
+    QVERIFY(item.flags() == flags);
+
+    flags |= Qt::ItemIsSelectable;
+    item.setFlag(Qt::ItemIsSelectable, true);
+    QVERIFY(item.flags() == flags);
+
+    flags &= ~Qt::ItemIsEnabled;
+    item.setFlag(Qt::ItemIsEnabled, false);
+    QVERIFY(item.flags() == flags);
+
+    flags |= Qt::ItemIsEditable;
+    item.setFlag(Qt::ItemIsEditable, true);
+    QVERIFY(item.flags() == flags);
+
+    flags &= ~Qt::ItemIsSelectable;
+    item.setFlag(Qt::ItemIsSelectable, false);
+    QVERIFY(item.flags() == flags);
+
+    flags &= ~Qt::ItemIsEditable;
+    item.setFlag(Qt::ItemIsEditable, false);
+    QVERIFY(item.flags() == Qt::NoItemFlags);
+}
 
 QTEST_MAIN(tst_QTableWidget)
 #include "tst_qtablewidget.moc"

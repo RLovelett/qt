@@ -134,7 +134,7 @@ private slots:
     void task258949_keypressHangup();
     void QTBUG8086_currentItemChangedOnClick();
     void QTBUG14363_completerWithAnyKeyPressedEditTriggers();
-
+    void flags();
 
 protected slots:
     void rowsAboutToBeInserted(const QModelIndex &parent, int first, int last)
@@ -1687,7 +1687,39 @@ void tst_QListWidget::QTBUG14363_completerWithAnyKeyPressedEditTriggers()
     QCOMPARE(le->completer()->currentCompletion(), QString("completer"));
 }
 
+void tst_QListWidget::flags()
+{
+    QListWidget listWidget;
+    QListWidgetItem *item = new QListWidgetItem(&listWidget);
 
+    Qt::ItemFlags flags = Qt::NoItemFlags;
+    item->setFlags(flags);
+    QVERIFY(item->flags() == flags);
+
+    flags |= Qt::ItemIsEnabled;
+    item->setFlag(Qt::ItemIsEnabled);
+    QVERIFY(item->flags() == flags);
+
+    flags |= Qt::ItemIsSelectable;
+    item->setFlag(Qt::ItemIsSelectable, true);
+    QVERIFY(item->flags() == flags);
+
+    flags &= ~Qt::ItemIsEnabled;
+    item->setFlag(Qt::ItemIsEnabled, false);
+    QVERIFY(item->flags() == flags);
+
+    flags |= Qt::ItemIsEditable;
+    item->setFlag(Qt::ItemIsEditable, true);
+    QVERIFY(item->flags() == flags);
+
+    flags &= ~Qt::ItemIsSelectable;
+    item->setFlag(Qt::ItemIsSelectable, false);
+    QVERIFY(item->flags() == flags);
+
+    flags &= ~Qt::ItemIsEditable;
+    item->setFlag(Qt::ItemIsEditable, false);
+    QVERIFY(item->flags() == Qt::NoItemFlags);
+}
 
 QTEST_MAIN(tst_QListWidget)
 #include "tst_qlistwidget.moc"

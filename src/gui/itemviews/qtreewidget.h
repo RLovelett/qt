@@ -105,6 +105,7 @@ public:
 
     Qt::ItemFlags flags() const;
     void setFlags(Qt::ItemFlags flags);
+    void setFlag(Qt::ItemFlag flag, bool enabled = true);
 
     inline QString text(int column) const
         { return data(column, Qt::DisplayRole).toString(); }
