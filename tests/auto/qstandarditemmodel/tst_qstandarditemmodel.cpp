@@ -128,6 +128,7 @@ private slots:
     void setHeaderLabels_data();
     void setHeaderLabels();
     void itemDataChanged();
+    void itemCheckStateChanged();
     void takeHeaderItem();
     void useCase1();
     void useCase2();
@@ -1257,6 +1258,26 @@ void tst_QStandardItemModel::itemDataChanged()
     item.setFlags(item.flags());
     QCOMPARE(dataChangedSpy.count(), 0);
     QCOMPARE(itemChangedSpy.count(), 0);
+}
+
+void tst_QStandardItemModel::itemCheckStateChanged()
+{
+    QStandardItemModel model(6, 4);
+    QStandardItem item;
+    model.setItem(0, &item);
+    QSignalSpy itemCheckStateChangedSpy(
+        &model, SIGNAL(itemCheckStateChanged(QStandardItem *)));
+
+    QList<QVariant> args;
+    for (int i = Qt::Unchecked; i <= Qt::Checked; ++i) {
+        item.setData(static_cast<Qt::CheckState>(i), Qt::CheckStateRole);
+        QCOMPARE(itemCheckStateChangedSpy.count(), 1);
+        args = itemCheckStateChangedSpy.takeFirst();
+        QCOMPARE(qvariant_cast<QStandardItem*>(args.at(0)), &item);
+    }
+
+    item.setData(item.data(Qt::CheckStateRole), Qt::CheckStateRole);
+    QCOMPARE(itemCheckStateChangedSpy.count(), 0);
 }
 
 void tst_QStandardItemModel::takeHeaderItem()

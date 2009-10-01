@@ -819,14 +819,20 @@ void QStandardItem::setData(const QVariant &value, int role)
             } else {
                 d->values.erase(it);
             }
-            if (d->model)
+            if (d->model) {
                 d->model->d_func()->itemChanged(this);
+                if (role == Qt::CheckStateRole)
+                    emit d->model->itemCheckStateChanged(this);
+            }
             return;
         }
     }
     d->values.append(QWidgetItemData(role, value));
-    if (d->model)
+    if (d->model) {
         d->model->d_func()->itemChanged(this);
+        if (role == Qt::CheckStateRole)
+            emit d->model->itemCheckStateChanged(this);
+    }
 }
 
 /*!
@@ -2031,6 +2037,13 @@ QDataStream &operator<<(QDataStream &out, const QStandardItem &item)
     \since 4.2
 
     This signal is emitted whenever the data of \a item has changed.
+*/
+
+/*!
+    \fn void QStandardItemModel::itemCheckStateChanged(QStandardItem *item)
+    \since 4.7
+
+    This signal is emitted whenever the check state of \a item has changed.
 */
 
 /*!

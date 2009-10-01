@@ -414,6 +414,7 @@ public:
 
 Q_SIGNALS:
     void itemChanged(QStandardItem *item);
+    void itemCheckStateChanged(QStandardItem *item);
 
 protected:
     QStandardItemModel(QStandardItemModelPrivate &dd, QObject *parent = 0);
