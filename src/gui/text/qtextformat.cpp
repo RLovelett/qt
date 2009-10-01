@@ -309,7 +309,7 @@ uint variantHash(const QVariant &variant)
     return qHash(variant.typeName());
 }
 
-int getHash(const QTextFormatPrivate* d, int format)
+static inline int getHash(const QTextFormatPrivate* d, int format)
 {
     return (d ? d->hash() : 0) + format;
 }
