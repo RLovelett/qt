@@ -265,27 +265,31 @@ private:
     friend QDataStream &operator>>(QDataStream &, QTextFormat &);
 };
 
-namespace {
+// this is only safe if sizeof(int) == sizeof(float)
+static inline uint hash(float d)
+{
+    return reinterpret_cast<uint&>(d);
+}
 
-// this is only safe if (sizeof(int) == sizeof(float)
-uint hash(float d) { return *(uint*)&d; }
-
-uint hash(const QColor& color) {
+uint hash(const QColor& color)
+{
     return (color.isValid()) ?color.rgba() :0x234109;
 }
 
-uint hash(const QPen& pen) {
+uint hash(const QPen& pen)
+{
     return hash(pen.color()) + hash(pen.widthF());
 }
 
-uint hash(const QBrush& brush) {
+uint hash(const QBrush& brush)
+{
     return hash(brush.color()) + (brush.style() << 3);
 }
 
 uint variantHash(const QVariant &variant)
 {
     // simple and fast hash functions to differentiate between type and value
-    switch (variant.type()) { // sorted by occurrence frequency
+    switch (variant.userType()) { // sorted by occurrence frequency
     case QVariant::String: return qHash(variant.toString());
     case QVariant::Double: return hash(variant.toDouble());
     case QVariant::Int: return 0x811890 + variant.toInt();
@@ -305,10 +309,9 @@ uint variantHash(const QVariant &variant)
     return qHash(variant.typeName());
 }
 
-int qHash(const QTextFormatPrivate* d, int format) {
+int getHash(const QTextFormatPrivate* d, int format)
+{
     return (d ? d->hash() : 0) + format;
-}
-
 }
 
 uint QTextFormatPrivate::recalcHash() const
@@ -3064,7 +3067,7 @@ QTextFormatCollection::~QTextFormatCollection()
 
 int QTextFormatCollection::indexForFormat(const QTextFormat &format)
 {
-    uint hash = qHash(format.d, format.format_type);
+    uint hash = getHash(format.d, format.format_type);
     QMultiHash<uint, int>::const_iterator i = hashes.find(hash);
     while (i != hashes.end() && i.key() == hash) {
         if (formats[i.value()] == format) {
@@ -3093,7 +3096,7 @@ int QTextFormatCollection::indexForFormat(const QTextFormat &format)
 
 bool QTextFormatCollection::hasFormatCached(const QTextFormat &format) const
 {
-    uint hash = qHash(format.d, format.format_type);
+    uint hash = getHash(format.d, format.format_type);
     QMultiHash<uint, int>::const_iterator i = hashes.find(hash);
     while (i != hashes.end() && i.key() == hash) {
         if (formats[i.value()] == format) {
