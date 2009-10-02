@@ -483,6 +483,38 @@ bool QTextDocument::isUndoRedoEnabled() const
 }
 
 /*!
+    \property QTextDocument::undoLimit
+    \brief the maximum number of undo commands.
+    \since 4.7
+
+    When the number of commands on a stack exceedes the undoLimit, commands are
+    deleted from the bottom of the stack. The default value is 0, which means 
+    that there is no limit.
+
+    This property may only be set when the undo stack is empty, since setting it on a
+    non-empty stack might delete the command at the current index. Calling setUndoLimit()
+    on a non-empty stack prints a warning and does nothing.
+*/
+
+void QTextDocument::setUndoLimit(int limit)
+{
+    Q_D(QTextDocument);
+
+    if (!d->undoStack.isEmpty()) {
+        qWarning("QTextDocument::setUndoLimit(): an undo limit can only be set when the stack is empty");
+        return;
+    }
+    d->undoLimit = limit;
+}
+
+int QTextDocument::undoLimit() const
+{
+    Q_D(const QTextDocument);
+
+    return d->undoLimit;
+}
+
+/*!
     \property QTextDocument::maximumBlockCount
     \since 4.2
     \brief Specifies the limit for blocks in the document.

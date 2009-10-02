@@ -253,6 +253,7 @@ private:
     bool split(int pos);
     bool unite(uint f);
     void truncateUndoStack();
+    void limitUndoStack();
 
     void insert_string(int pos, uint strPos, uint length, int format, QTextUndoCommand::Operation op);
     int insert_block(int pos, uint strPos, int format, int blockformat, QTextUndoCommand::Operation op, int command);
@@ -345,6 +346,7 @@ public:
     QString url;
     qreal indentWidth;
     qreal documentMargin;
+    int undoLimit;
 
     void mergeCachedResources(const QTextDocumentPrivate *priv);
 

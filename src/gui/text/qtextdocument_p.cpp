@@ -189,7 +189,8 @@ QTextDocumentPrivate::QTextDocumentPrivate()
     docChangeLength(0),
     framesDirty(true),
     rtFrame(0),
-    initialBlockCharFormatIndex(-1) // set correctly later in init()
+    initialBlockCharFormatIndex(-1), // set correctly later in init()
+    undoLimit(0)
 {
     editBlock = 0;
     docChangeFrom = -1;
@@ -1034,6 +1035,8 @@ void QTextDocumentPrivate::appendUndoItem(const QTextUndoCommand &c)
     if (modifiedState > undoState)
         modifiedState = -1;
     undoStack.append(c);
+    if (undoLimit > 0)
+        limitUndoStack();
     undoState++;
     emitUndoAvailable(true);
     emitRedoAvailable(false);
@@ -1062,6 +1065,17 @@ void QTextDocumentPrivate::truncateUndoStack()
         }
     }
     undoStack.resize(undoState);
+}
+
+void QTextDocumentPrivate::limitUndoStack()
+{
+    while (undoStack.size() > undoLimit) {
+        QTextUndoCommand c = undoStack.first();
+        if (c.command & QTextUndoCommand::Custom)
+            delete c.custom;
+        undoStack.erase(undoStack.begin());
+        --undoState;
+    }
 }
 
 void QTextDocumentPrivate::emitUndoAvailable(bool available)

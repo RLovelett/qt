@@ -125,6 +125,7 @@ class Q_GUI_EXPORT QTextDocument : public QObject
     Q_PROPERTY(int maximumBlockCount READ maximumBlockCount WRITE setMaximumBlockCount)
     Q_PROPERTY(qreal documentMargin READ documentMargin WRITE setDocumentMargin)
     QDOC_PROPERTY(QTextOption defaultTextOption READ defaultTextOption WRITE setDefaultTextOption)
+    Q_PROPERTY(int undoLimit READ undoLimit WRITE setUndoLimit)
 
 public:
     explicit QTextDocument(QObject *parent = 0);
@@ -138,6 +139,9 @@ public:
 
     void setUndoRedoEnabled(bool enable);
     bool isUndoRedoEnabled() const;
+
+    void setUndoLimit(int limit);
+    int undoLimit() const;
 
     bool isUndoAvailable() const;
     bool isRedoAvailable() const;
