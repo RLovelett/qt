@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
 **
 ** This file is part of the QtGui module of the unofficial Maemo Qt Toolkit.
 **
@@ -700,6 +699,31 @@ QSize QHildonStyle::sizeFromContents(ContentsType type, const QStyleOption *opti
                                2*qMax(gtkEntry->style->ythickness, gtkEntry->style->xthickness));
     }
     break;
+        case CT_PushButton:
+        if (const QStyleOptionButton *btn = qstyleoption_cast<const QStyleOptionButton *>(option)) {
+            GtkWidget *gtkButton = QGtk::gtkWidget(QLS("HildonButton-finger"));
+            gint focusPadding, focusWidth;
+            QGtk::gtk_widget_style_get(gtkButton, "focus-padding", &focusPadding, NULL);
+            QGtk::gtk_widget_style_get(gtkButton, "focus-line-width", &focusWidth, NULL);
+            newSize = size;
+            newSize += QSize(2*gtkButton->style->xthickness + 4, 2*gtkButton->style->ythickness);
+            newSize += QSize(2*(focusWidth + focusPadding + 2), 2*(focusWidth + focusPadding));
+
+            GtkWidget *gtkButtonBox = QGtk::gtkWidget(QLS("GtkHButtonBox"));
+            gint minWidth = 85, minHeight = 0;
+            QGtk::gtk_widget_style_get(gtkButtonBox, "child-min-width", &minWidth,
+                                   "child-min-height", &minHeight, NULL);
+
+            //osso-hbuttonbox min height is 47, we want to set minHeight to 65px (Finger size)
+            minHeight = qMax(minHeight, 65);
+
+            if (!btn->text.isEmpty() && newSize.width() < minWidth)
+                newSize.setWidth(minWidth);
+            if (newSize.height() < minHeight)
+                newSize.setHeight(minHeight);
+        }
+
+        break;
     default:
         return  QGtkStyle::sizeFromContents(type, option, size, widget);
     }
