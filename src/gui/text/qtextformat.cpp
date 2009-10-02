@@ -271,22 +271,22 @@ static inline uint hash(float d)
     return reinterpret_cast<uint&>(d);
 }
 
-uint hash(const QColor& color)
+static inline uint hash(const QColor &color)
 {
     return (color.isValid()) ?color.rgba() :0x234109;
 }
 
-uint hash(const QPen& pen)
+static inline uint hash(const QPen &pen)
 {
     return hash(pen.color()) + hash(pen.widthF());
 }
 
-uint hash(const QBrush& brush)
+static inline uint hash(const QBrush &brush)
 {
     return hash(brush.color()) + (brush.style() << 3);
 }
 
-uint variantHash(const QVariant &variant)
+static inline uint variantHash(const QVariant &variant)
 {
     // simple and fast hash functions to differentiate between type and value
     switch (variant.userType()) { // sorted by occurrence frequency
@@ -309,7 +309,7 @@ uint variantHash(const QVariant &variant)
     return qHash(variant.typeName());
 }
 
-static inline int getHash(const QTextFormatPrivate* d, int format)
+static inline int getHash(const QTextFormatPrivate *d, int format)
 {
     return (d ? d->hash() : 0) + format;
 }
