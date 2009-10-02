@@ -2043,17 +2043,18 @@ QModelIndexList QAbstractItemModel::match(const QModelIndex &start, int role,
     QModelIndexList result;
     uint matchType = flags & 0x0F;
     Qt::CaseSensitivity cs = flags & Qt::MatchCaseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive;
+    bool backward = flags & Qt::MatchBackward;
     bool recurse = flags & Qt::MatchRecursive;
     bool wrap = flags & Qt::MatchWrap;
     bool allHits = (hits == -1);
     QString text; // only convert to a string if it is needed
     QModelIndex p = parent(start);
     int from = start.row();
-    int to = rowCount(p);
+    int to = backward ? 0 : rowCount(p);
 
     // iterates twice if wrapping
     for (int i = 0; (wrap && i < 2) || (!wrap && i < 1); ++i) {
-        for (int r = from; (r < to) && (allHits || result.count() < hits); ++r) {
+        for (int r = from; (backward ? (r >= to) : (r < to)) && (allHits || result.count() < hits); backward ? --r : ++r) {
             QModelIndex idx = index(r, start.column(), p);
             if (!idx.isValid())
                  continue;
@@ -2100,7 +2101,7 @@ QModelIndexList QAbstractItemModel::match(const QModelIndex &start, int role,
             }
         }
         // prepare for the next iteration
-        from = 0;
+        from = backward ? rowCount(p) - 1 : 0;
         to = start.row();
     }
     return result;

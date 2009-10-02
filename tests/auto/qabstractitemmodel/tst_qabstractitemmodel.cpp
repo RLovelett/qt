@@ -398,6 +398,15 @@ void tst_QAbstractItemModel::match()
     res = model.match(start, Qt::DisplayRole, QVariant("bat"), -1,
                       Qt::MatchFixedString | Qt::MatchCaseSensitive);
     QCOMPARE(res.count(), 1);
+    res = model.match(start, Qt::DisplayRole, QVariant("boar"), -1,
+                      Qt::MatchExactly | Qt::MatchBackwards | Qt::MatchWrap);
+    QCOMPARE(res.count(), 1);
+    res = model.match(res.first(), Qt::DisplayRole, QVariant("cat"), -1,
+                      Qt::MatchExactly | Qt::MatchBackwards);
+    QCOMPARE(res.count(), 1);
+    res = model.match(res.first(), Qt::DisplayRole, QVariant("dog"), -1,
+                      Qt::MatchExactly | Qt::MatchBackwards);
+    QCOMPARE(res.count(), 0);
 }
 
 typedef QPair<int, int> Position;

@@ -1649,7 +1649,8 @@ public:
         MatchFixedString = 8,
         MatchCaseSensitive = 16,
         MatchWrap = 32,
-        MatchRecursive = 64
+        MatchRecursive = 64,
+        MatchBackward = 128
     };
     Q_DECLARE_FLAGS(MatchFlags, MatchFlag)
 
