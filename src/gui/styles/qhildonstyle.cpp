@@ -335,7 +335,7 @@ void QHildonStyle::drawPrimitive(PrimitiveElement element,
             QGtkStyle::drawPrimitive(element, option, painter, widget);
         break;
     case PE_PanelItemViewItem:
-       if (qobject_cast<const QListView*>(widget)) {
+       if (qobject_cast<const QListWidget*>(widget)) {
            GtkWidget *touchSelector = QGtk::gtkWidget(QLS("HildonTouchSelector.GtkHBox.HildonPannableArea.GtkTreeView"));
            gtkPainter.paintFlatBox(touchSelector, "cell_even", option->rect,
                                         option->state & State_HasFocus ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, touchSelector->style); 
@@ -822,6 +822,11 @@ QSize QHildonStyle::sizeFromContents(ContentsType type, const QStyleOption *opti
         GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("HildonEntry-finger"));
         newSize = size + QSize(2*gtkEntry->style->xthickness,
                                2*qMax(gtkEntry->style->ythickness, gtkEntry->style->xthickness));
+    }
+    break;
+    case CT_ItemViewItem: {
+        if (qobject_cast<const QListWidget*>(widget))
+            newSize = newSize.expandedTo(QSize(0, 65));
     }
     break;
         case CT_PushButton:
