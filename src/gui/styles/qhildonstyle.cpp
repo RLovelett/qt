@@ -22,11 +22,6 @@
 ** are described in the Nokia Qt GPL Exception version 1.3, included in
 ** the file GPL_EXCEPTION.txt in this package.
 **
-** Qt for Windows(R) Licensees
-** As a special exception, Nokia, as the sole copyright holder for Qt
-** Designer, grants users of the Qt/Eclipse Integration plug-in the
-** right for the Qt/Eclipse Integration to link to functionality
-** provided by Qt Designer and its related libraries.
 **
 ** If you are unsure which license is appropriate for your use, please
 ** contact the sales department at qt-sales@nokia.com.
@@ -37,6 +32,7 @@
 
 #include <QtGui/QStyleOption>
 #include <QtGui/QLineEdit>
+#include <QtGui/QDialogButtonBox>
 
 #include "qpixmapcache.h"
 #undef signals // Collides with GTK stymbols
@@ -187,6 +183,10 @@ int QHildonStyle::styleHint(StyleHint hint, const QStyleOption *option, const QW
     case SH_DialogButtonBox_ButtonsHaveIcons:
     case SH_ScrollBar_ContextMenu:
         return int(false);
+    case SH_DialogButtonLayout: {
+        int ret = QDialogButtonBox::HildonLayout;
+        return ret;
+    }
     default:
         return QGtkStyle::styleHint(hint, option, widget, returnData);
     }
