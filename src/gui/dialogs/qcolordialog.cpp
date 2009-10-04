@@ -63,6 +63,9 @@
 #include "qspinbox.h"
 #include "qdialogbuttonbox.h"
 
+#ifdef Q_OS_FREMANTLE
+#define QT_NO_DRAGANDDROP
+#endif
 QT_BEGIN_NAMESPACE
 
 //////////// QWellArray BEGIN
@@ -1151,6 +1154,22 @@ QColorShower::QColorShower(QColorDialog *parent)
     connect(alphaEd, SIGNAL(valueChanged(int)), this, SLOT(rgbEd()));
 
     retranslateStrings();
+#ifdef Q_WS_HILDON
+    //Hugly but less invasive than flagging too much stuff.
+    hEd->hide();
+    sEd->hide();
+    vEd->hide();
+    lblHue->hide();
+    lblSat->hide();
+    lblVal->hide();
+
+    rEd->hide();
+    gEd->hide();
+    bEd->hide();
+    lblRed->hide();
+    lblGreen->hide();
+    lblBlue->hide();
+#endif
 }
 
 inline QRgb QColorDialogPrivate::currentColor() const { return cs->currentColor(); }
@@ -1360,7 +1379,17 @@ void QColorDialogPrivate::init(const QColor &initial)
     q->setWindowTitle(QColorDialog::tr("Select Color"));
 
     nextCust = 0;
+
+#ifdef Q_OS_FREMANTLE
+    QBoxLayout *mainLay;
+    if (QApplication::desktop()->screenGeometry().width() <= 480) {
+        mainLay = new QVBoxLayout(q);
+    } else {
+        mainLay =  new QHBoxLayout(q);
+    }
+#else
     QVBoxLayout *mainLay = new QVBoxLayout(q);
+#endif
     // there's nothing in this dialog that benefits from sizing up
     mainLay->setSizeConstraint(QLayout::SetFixedSize);
 
@@ -1400,7 +1429,12 @@ void QColorDialogPrivate::init(const QColor &initial)
 #endif
 
     if (!smallDisplay) {
+#ifdef Q_OS_FREMANTLE
+        standard = new QColorWell(q, 5, 8, stdrgb);
+#else
         standard = new QColorWell(q, 6, 8, stdrgb);
+        
+#endif
         lblBasicColors = new QLabel(q);
 #ifndef QT_NO_SHORTCUT
         lblBasicColors->setBuddy(standard);
@@ -1427,6 +1461,10 @@ void QColorDialogPrivate::init(const QColor &initial)
         addCusBt = new QPushButton(q);
         QObject::connect(addCusBt, SIGNAL(clicked()), q, SLOT(_q_addCustom()));
         leftLay->addWidget(addCusBt);
+#ifdef Q_OS_FREMANTLE
+        pWidth = 320;
+        pHeight = 200;
+#endif
     } else {
         // better color picker size for small displays
         pWidth = 150;
@@ -1457,7 +1495,9 @@ void QColorDialogPrivate::init(const QColor &initial)
     QObject::connect(cp, SIGNAL(newCol(int,int)), lp, SLOT(setCol(int,int)));
     QObject::connect(lp, SIGNAL(newHsv(int,int,int)), q, SLOT(_q_newHsv(int,int,int)));
 
+#ifndef Q_OS_FREMANTLE
     rightLay->addStretch();
+#endif
 
     cs = new QColorShower(q);
     QObject::connect(cs, SIGNAL(newCol(QRgb)), q, SLOT(_q_newColorTypedIn(QRgb)));
@@ -1466,14 +1506,24 @@ void QColorDialogPrivate::init(const QColor &initial)
     rightLay->addWidget(cs);
 
     buttons = new QDialogButtonBox(q);
+#ifdef Q_OS_FREMANTLE
+    QVBoxLayout *buttonsLay = new QVBoxLayout;
+    buttonsLay->addStretch();
+    buttonsLay->addWidget(buttons);
+    mainLay->addLayout(buttonsLay);
+    
+#else
     mainLay->addWidget(buttons);
+#endif
+    
 
     ok = buttons->addButton(QDialogButtonBox::Ok);
     QObject::connect(ok, SIGNAL(clicked()), q, SLOT(accept()));
     ok->setDefault(true);
+#ifndef Q_OS_FREMANTLE
     cancel = buttons->addButton(QDialogButtonBox::Cancel);
     QObject::connect(cancel, SIGNAL(clicked()), q, SLOT(reject()));
-
+#endif
     retranslateStrings();
 
 #ifdef Q_WS_MAC
