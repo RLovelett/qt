@@ -81,20 +81,8 @@ class QDESIGNER_SHARED_EXPORT HintLineEdit : public QLineEdit {
 public:
     explicit HintLineEdit(QWidget *parent = 0);
 
-    QString hintText() const;
-
-    bool isShowingHintText() const;
-
-    // Convenience for accessing the text that returns "" in case of isShowingHintText().
-    QString typedText() const;
-
     bool refuseFocus() const;
     void setRefuseFocus(bool v);
-
-public slots:
-    void setHintText(const QString &ht);
-    void showHintText(bool force = false);
-    void hideHintText();
 
 protected:
     virtual void mousePressEvent(QMouseEvent *event);
@@ -102,14 +90,8 @@ protected:
     virtual void focusOutEvent(QFocusEvent *e);
 
 private:
-    void setTextColor(const QColor &newColor, QColor *oldColor = 0);
-
     const Qt::FocusPolicy m_defaultFocusPolicy;
-    const QColor m_hintColor;
-    QColor m_textColor;
     bool m_refuseFocus;
-    QString m_hintText;
-    bool m_showingHintText;
 };
 
 // FilterWidget: For filtering item views, with reset button Uses HintLineEdit.

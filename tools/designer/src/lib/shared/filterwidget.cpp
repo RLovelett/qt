@@ -61,9 +61,7 @@ namespace qdesigner_internal {
 HintLineEdit::HintLineEdit(QWidget *parent) :
     QLineEdit(parent),
     m_defaultFocusPolicy(focusPolicy()),
-    m_hintColor(QColor(0xbbbbbb)),
-    m_refuseFocus(false),
-    m_showingHintText(false)
+    m_refuseFocus(false)
 {
 }
 
@@ -111,7 +109,6 @@ void HintLineEdit::focusInEvent(QFocusEvent *e)
         }
     }
 
-    hideHintText();
     QLineEdit::focusInEvent(e);
 }
 
@@ -119,62 +116,8 @@ void HintLineEdit::focusOutEvent(QFocusEvent *e)
 {
     if (debugFilter)
         qDebug() << Q_FUNC_INFO;
-    // Focus out: Switch to displaying the hint text unless there is user input
-    showHintText();
     QLineEdit::focusOutEvent(e);
 }
-
-QString HintLineEdit::hintText() const
-{
-    return m_hintText;
-}
-
-void HintLineEdit::setHintText(const QString &ht)
-{
-    if (ht == m_hintText)
-        return;
-    hideHintText();
-    m_hintText = ht;
-    if (!hasFocus() && !ht.isEmpty())
-        showHintText();
-}
-
-void HintLineEdit::showHintText(bool force)
-{
-    if (m_showingHintText || m_hintText.isEmpty())
-        return;
-    if (force || text().isEmpty()) {
-        m_showingHintText = true;
-        setText(m_hintText);
-        setTextColor(m_hintColor, &m_textColor);
-    }
-}
-void HintLineEdit::hideHintText()
-{
-    if (m_showingHintText && !m_hintText.isEmpty()) {
-        m_showingHintText = false;
-        setText(QString());
-        setTextColor(m_textColor);
-    }
-}
-
-bool  HintLineEdit::isShowingHintText() const
-{
-    return m_showingHintText;
-}
-
-QString  HintLineEdit::typedText() const
-{
-    return m_showingHintText ? QString() : text();
-}
-
-void HintLineEdit::setTextColor(const QColor &newColor, QColor *oldColor)
-{
-    QPalette pal = palette();
-    if (oldColor)
-        *oldColor = pal.color(QPalette::Text);
-    pal.setColor(QPalette::Text, newColor);
-    setPalette(pal);}
 
 // ------------------- FilterWidget
 FilterWidget::FilterWidget(QWidget *parent, LayoutMode lm)  :
@@ -204,7 +147,7 @@ FilterWidget::FilterWidget(QWidget *parent, LayoutMode lm)  :
 
 QString FilterWidget::text() const
 {
-    return m_editor->typedText();
+    return m_editor->displayText();
 }
 
 void FilterWidget::checkButton(const QString &)
@@ -218,7 +161,6 @@ void FilterWidget::reset()
         qDebug() << Q_FUNC_INFO;
     if (!text().isEmpty()) {
         // Editor has lost focus once this is pressed
-        m_editor->showHintText(true);
         emit filterChanged(QString());
     }
 }
