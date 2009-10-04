@@ -659,8 +659,11 @@ void QHildonStyle::drawControl(ControlElement element,
     QGtkPainter gtkPainter(p);
 
     switch (element) {
-    #ifndef QT_NO_ITEMVIEWS
-
+#ifndef QT_NO_FRAME
+    case CE_ShapedFrame:
+        break;
+#endif
+#ifndef QT_NO_ITEMVIEWS
     case CE_ItemViewItem:
         if (const QStyleOptionViewItemV4 *vopt = qstyleoption_cast<const QStyleOptionViewItemV4 *>(opt)) {
             Q_D(const QHildonStyle);
