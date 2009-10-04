@@ -113,7 +113,8 @@ public:
         WinLayout,
         MacLayout,
         KdeLayout,
-        GnomeLayout
+        GnomeLayout,
+        HildonLayout
     };
 
     QDialogButtonBox(QWidget *parent = 0);

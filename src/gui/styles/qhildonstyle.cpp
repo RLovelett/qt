@@ -1,7 +1,6 @@
 /****************************************************************************
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Qt Software Information (qt-info@nokia.com)
 **
 ** This file is part of the QtGui module of the unofficial Maemo Qt Toolkit.
 **
@@ -23,11 +22,6 @@
 ** are described in the Nokia Qt GPL Exception version 1.3, included in
 ** the file GPL_EXCEPTION.txt in this package.
 **
-** Qt for Windows(R) Licensees
-** As a special exception, Nokia, as the sole copyright holder for Qt
-** Designer, grants users of the Qt/Eclipse Integration plug-in the
-** right for the Qt/Eclipse Integration to link to functionality
-** provided by Qt Designer and its related libraries.
 **
 ** If you are unsure which license is appropriate for your use, please
 ** contact the sales department at qt-sales@nokia.com.
@@ -38,6 +32,7 @@
 
 #include <QtGui/QStyleOption>
 #include <QtGui/QLineEdit>
+#include <QtGui/QDialogButtonBox>
 #include <QtGui/QListWidget>
 
 #include "qpixmapcache.h"
@@ -156,6 +151,10 @@ int QHildonStyle::pixelMetric(PixelMetric metric,
    
    switch (metric) {
     //coordinate of the Application Context Menu upper left corner.
+    case PM_DialogButtonsButtonHeight:
+        return 65;
+    case PM_DialogButtonsButtonWidth:
+        return 180;
     case PM_ToolBarIconSize:
         return 48;
     case PM_ButtonShiftHorizontal: {
@@ -201,6 +200,10 @@ int QHildonStyle::styleHint(StyleHint hint, const QStyleOption *option, const QW
     case SH_DialogButtonBox_ButtonsHaveIcons:
     case SH_ScrollBar_ContextMenu:
         return int(false);
+    case SH_DialogButtonLayout: {
+        int ret = QDialogButtonBox::HildonLayout;
+        return ret;
+    }
     default:
         return QGtkStyle::styleHint(hint, option, widget, returnData);
     }
@@ -818,6 +821,31 @@ QSize QHildonStyle::sizeFromContents(ContentsType type, const QStyleOption *opti
                                2*qMax(gtkEntry->style->ythickness, gtkEntry->style->xthickness));
     }
     break;
+        case CT_PushButton:
+        if (const QStyleOptionButton *btn = qstyleoption_cast<const QStyleOptionButton *>(option)) {
+            GtkWidget *gtkButton = QGtk::gtkWidget(QLS("HildonButton-finger"));
+            gint focusPadding, focusWidth;
+            QGtk::gtk_widget_style_get(gtkButton, "focus-padding", &focusPadding, NULL);
+            QGtk::gtk_widget_style_get(gtkButton, "focus-line-width", &focusWidth, NULL);
+            newSize = size;
+            newSize += QSize(2*gtkButton->style->xthickness + 4, 2*gtkButton->style->ythickness);
+            newSize += QSize(2*(focusWidth + focusPadding + 2), 2*(focusWidth + focusPadding));
+
+            GtkWidget *gtkButtonBox = QGtk::gtkWidget(QLS("GtkHButtonBox"));
+            gint minWidth = 85, minHeight = 0;
+            QGtk::gtk_widget_style_get(gtkButtonBox, "child-min-width", &minWidth,
+                                   "child-min-height", &minHeight, NULL);
+
+            //osso-hbuttonbox min height is 47, we want to set minHeight to 65px (Finger size)
+            minHeight = qMax(minHeight, 65);
+
+            if (!btn->text.isEmpty() && newSize.width() < minWidth)
+                newSize.setWidth(minWidth);
+            if (newSize.height() < minHeight)
+                newSize.setHeight(minHeight);
+        }
+
+        break;
     default:
         return  QGtkStyle::sizeFromContents(type, option, size, widget);
     }
