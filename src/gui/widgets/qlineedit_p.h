@@ -138,6 +138,7 @@ public:
     void drag();
 #endif
 
+    QString hintText;
     int leftTextMargin;
     int topTextMargin;
     int rightTextMargin;

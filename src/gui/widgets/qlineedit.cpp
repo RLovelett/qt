@@ -1084,6 +1084,36 @@ bool QLineEdit::hasAcceptableInput() const
 }
 
 /*!
+    \property QLineEdit::hintText
+    \brief the line edit's hint text
+    \since 4.7
+
+    The hint text is shown when the line edit is empty and has
+    no focus.
+
+    The hint text is truncated to maxLength() length.
+
+    By default, this property contains an empty string.
+
+    \sa text()
+*/
+QString QLineEdit::hintText() const
+{
+    Q_D(const QLineEdit);
+    return d->hintText;
+}
+
+void QLineEdit::setHintText(const QString &text)
+{
+    Q_D(QLineEdit);
+    if (d->hintText != text) {
+        d->hintText = text;
+        if (d->control->displayText().isEmpty() && !hasFocus())
+            update();
+    }
+}
+
+/*!
     Sets the margins around the text inside the frame to have the
     sizes \a left, \a top, \a right, and \a bottom.
     \since 4.5
@@ -1844,6 +1874,15 @@ void QLineEdit::paintEvent(QPaintEvent *)
     }
 #endif
     p.setPen(pal.text().color());
+
+    if (d->control->displayText().isEmpty() && !hasFocus()) {
+        QString text = d->hintText.left(d->control->maxLength());
+        if (!text.isEmpty()) {
+            pal.setCurrentColorGroup(QPalette::Disabled);
+            style()->drawItemText(&p, r, alignment(), pal, false, text, QPalette::Text);
+        }
+        return;
+    }
 
     int flags = QLineControl::DrawText;
 

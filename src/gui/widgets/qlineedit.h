@@ -82,6 +82,7 @@ class Q_GUI_EXPORT QLineEdit : public QWidget
     Q_PROPERTY(bool undoAvailable READ isUndoAvailable)
     Q_PROPERTY(bool redoAvailable READ isRedoAvailable)
     Q_PROPERTY(bool acceptableInput READ hasAcceptableInput)
+    Q_PROPERTY(QString hintText READ hintText WRITE setHintText)
 
 public:
     explicit QLineEdit(QWidget* parent=0);
@@ -156,6 +157,9 @@ public:
     QString inputMask() const;
     void setInputMask(const QString &inputMask);
     bool hasAcceptableInput() const;
+
+    QString hintText() const;
+    void setHintText(const QString &text);
 
     void setTextMargins(int left, int top, int right, int bottom);
     void getTextMargins(int *left, int *top, int *right, int *bottom) const;
