@@ -33,6 +33,7 @@
 #include <QtGui/QStyleOption>
 #include <QtGui/QLineEdit>
 #include <QtGui/QDialogButtonBox>
+#include <QtGui/QListWidget>
 
 #include "qpixmapcache.h"
 #undef signals // Collides with GTK stymbols
@@ -40,10 +41,26 @@
 
 #include <private/qcleanlooksstyle_p.h>
 
+#include <QDebug>
 
 #if !defined(QT_NO_STYLE_HILDON) && defined(Q_WS_HILDON)
 
 QT_BEGIN_NAMESPACE
+
+class QHildonStylePrivate : public QCleanlooksStylePrivate
+{
+    Q_DECLARE_PUBLIC(QHildonStyle)
+public:
+    QHildonStylePrivate():
+        QCleanlooksStylePrivate()
+    {
+        
+    }
+
+    ~QHildonStylePrivate() {
+    }
+};
+
 
 static bool UsePixmapCache = true;
 
@@ -311,6 +328,22 @@ void QHildonStyle::drawPrimitive(PrimitiveElement element,
                                    option->state & State_HasFocus ? QLS("focus") : QString());
     }
     break;
+    #ifndef QT_NO_ITEMVIEWS
+    case PE_PanelItemViewRow:
+        //TODO restrict this just to viewMode() == QListWidget::ListMode
+        if (!qobject_cast<const QListWidget*>(widget))
+            QGtkStyle::drawPrimitive(element, option, painter, widget);
+        break;
+    case PE_PanelItemViewItem:
+       if (qobject_cast<const QListView*>(widget)) {
+           GtkWidget *touchSelector = QGtk::gtkWidget(QLS("HildonTouchSelector.GtkHBox.HildonPannableArea.GtkTreeView"));
+           gtkPainter.paintFlatBox(touchSelector, "cell_even", option->rect,
+                                        option->state & State_HasFocus ? GTK_STATE_SELECTED : GTK_STATE_NORMAL, GTK_SHADOW_NONE, touchSelector->style); 
+       } else {
+           QGtkStyle::drawPrimitive(element, option, painter, widget);
+       }
+       break;
+#endif //QT_NO_ITEMVIEWS
     default:
         QGtkStyle::drawPrimitive(element, option, painter, widget);
     }
@@ -613,22 +646,114 @@ void QHildonStyle::drawComplexControl(ComplexControl control, const QStyleOption
 }
 
 void QHildonStyle::drawControl(ControlElement element,
-                            const QStyleOption *option,
-                            QPainter *painter,
+                            const QStyleOption *opt,
+                            QPainter *p,
                             const QWidget *widget) const
 {
     if (!QGtk::isThemeAvailable()) {
-        QCleanlooksStyle::drawControl(element, option, painter, widget);
+        QCleanlooksStyle::drawControl(element, opt, p, widget);
         return;
     }
 
     GtkStyle* style = QGtk::gtkStyle();
-    QGtkPainter gtkPainter(painter);
+    QGtkPainter gtkPainter(p);
 
     switch (element) {
+#ifndef QT_NO_FRAME
+    case CE_ShapedFrame:
+        break;
+#endif
+#ifndef QT_NO_ITEMVIEWS
+    case CE_ItemViewItem:
+        if (const QStyleOptionViewItemV4 *vopt = qstyleoption_cast<const QStyleOptionViewItemV4 *>(opt)) {
+            Q_D(const QHildonStyle);
+            //QIcon::State state = vopt->state & QStyle::State_Open ? QIcon::On : QIcon::Off;
+            p->save();
 
+            QRect checkRect = subElementRect(SE_ItemViewItemCheckIndicator, vopt, widget);
+            QRect iconRect = subElementRect(SE_ItemViewItemDecoration, vopt, widget);
+            QRect textRect = subElementRect(SE_ItemViewItemText, vopt, widget);
+
+            // draw the background
+            drawPrimitive(PE_PanelItemViewItem, opt, p, widget);
+
+            // draw the check mark
+            if (checkRect.isValid()) {
+                QStyleOptionViewItemV4 option(*vopt);
+                option.rect = checkRect;
+                option.state = option.state & ~QStyle::State_HasFocus;
+
+                switch (vopt->checkState) {
+                case Qt::Unchecked:
+                    option.state |= QStyle::State_Off;
+                    break;
+                case Qt::PartiallyChecked:
+                    option.state |= QStyle::State_NoChange;
+                    break;
+                case Qt::Checked:
+                    option.state |= QStyle::State_On;
+                    break;
+                }
+                drawPrimitive(QStyle::PE_IndicatorViewItemCheck, &option, p, widget);
+            }
+
+            // draw the icon
+            QIcon::Mode mode = QIcon::Normal;
+            if (!(vopt->state & QStyle::State_Enabled))
+                mode = QIcon::Disabled;
+            else if (vopt->state & QStyle::State_Selected)
+                mode = QIcon::Selected;
+            QIcon::State state = vopt->state & QStyle::State_Open ? QIcon::On : QIcon::Off;
+            vopt->icon.paint(p, iconRect, vopt->decorationAlignment, mode, state);
+
+            // draw the text
+            if (!vopt->text.isEmpty()) {
+                if (qobject_cast<const QListWidget*>(widget)) {
+                    //We want to use actual color from the theme for QListWidget
+                    //so that they looks like HildonTouchSelector
+                
+                    GtkStyle *style = QGtk::gtkStyle();
+                    GtkWidget *gtkEntry = QGtk::gtkWidget(QLS("HildonTouchSelector.GtkHBox.HildonPannableArea.GtkTreeView"));
+                    QColor textColor, textInactiveColor;
+                    GdkColor gdkText, gdkTextInactive;
+                    gdkText = gtkEntry->style->text[GTK_STATE_NORMAL];
+                    gdkTextInactive = gtkEntry->style->text[GTK_STATE_INSENSITIVE];
+                    textColor = QColor(gdkText.red>>8, gdkText.green>>8, gdkText.blue>>8);
+                    textInactiveColor = QColor(gdkTextInactive.red>>8, gdkTextInactive.green>>8, gdkTextInactive.blue>>8);
+
+                    if (vopt->state & QStyle::State_Enabled) {
+                        p->setPen(textColor);
+                    } else {
+                        p->setPen(textInactiveColor);
+                    }
+                } else {
+                    //Many Qt widget needs light background with dark text. For those widget
+                    //we use the widget palette.
+                    QPalette::ColorGroup cg = vopt->state & QStyle::State_Enabled
+                                              ? QPalette::Normal : QPalette::Disabled;
+                    if (cg == QPalette::Normal && !(vopt->state & QStyle::State_Active))
+                        cg = QPalette::Inactive;
+
+                    if (vopt->state & QStyle::State_Selected) {
+                        p->setPen(vopt->palette.color(cg, QPalette::HighlightedText));
+                    } else {
+                        p->setPen(vopt->palette.color(cg, QPalette::Text));
+                    }
+ 
+                    if (vopt->state & QStyle::State_Editing) {
+                        p->setPen(vopt->palette.color(cg, QPalette::Text));
+                        p->drawRect(textRect.adjusted(0, 0, -1, -1));
+                    }
+                }
+                d->viewItemDrawText(p, vopt, textRect);
+            }
+            p->restore();
+        }
+    break;
+
+#endif // QT_NO_ITEMVIEWS
     default:
-        QGtkStyle::drawControl(element, option, painter, widget);
+        QGtkStyle::drawControl(element, opt, p, widget);
     }
     
 }

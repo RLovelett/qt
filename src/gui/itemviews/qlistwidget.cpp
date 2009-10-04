@@ -1023,6 +1023,9 @@ void QListWidgetPrivate::setup()
     QObject::connect(model(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),
                      q, SLOT(_q_dataChanged(QModelIndex,QModelIndex)));
     QObject::connect(model(), SIGNAL(columnsRemoved(QModelIndex,int,int)), q, SLOT(_q_sort()));
+#ifdef Q_OS_FREMANTLE
+    q->viewport()->setBackgroundRole(QPalette::Button);
+#endif
 }
 
 void QListWidgetPrivate::_q_emitItemPressed(const QModelIndex &index)
