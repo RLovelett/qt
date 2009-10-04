@@ -47,6 +47,7 @@
 #include "qfontdialog_p.h"
 
 #include <qapplication.h>
+#include <qdesktopwidget.h>
 #include <qcheckbox.h>
 #include <qcombobox.h>
 #include <qevent.h>
@@ -220,7 +221,11 @@ void QFontDialogPrivate::init()
     sample = new QGroupBox(q);
     QHBoxLayout *hbox = new QHBoxLayout(sample);
     sampleEdit = new QLineEdit(sample);
+#ifdef Q_WS_HILDON
+    sampleEdit->setMinimumSize(300, 80);
+#endif
     sampleEdit->setSizePolicy(QSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored));
+
     sampleEdit->setAlignment(Qt::AlignCenter);
     // Note that the sample text is *not* translated with tr(), as the
     // characters used depend on the charset encoding.
@@ -260,8 +265,20 @@ void QFontDialogPrivate::init()
         familyList->setCurrentItem(0);
 
     // grid layout
+#ifdef Q_OS_FREMANTLE
+    QBoxLayout *mainLay;
+    if (QApplication::desktop()->screenGeometry().width() <= 480){
+        //Portrait mode
+        mainLay = new QVBoxLayout(q);
+    } else {
+        //Landscape mode
+        mainLay = new QHBoxLayout(q);
+    }
+    QGridLayout *mainGrid = new QGridLayout;
+    mainLay->addLayout(mainGrid);
+#else
     QGridLayout *mainGrid = new QGridLayout(q);
-
+#endif
     int spacing = mainGrid->spacing();
     if (spacing >= 0) {     // uniform spacing
        mainGrid->setSpacing(0);
@@ -295,21 +312,31 @@ void QFontDialogPrivate::init()
 
     mainGrid->addWidget(effects, 4, 0);
 
-    mainGrid->addWidget(sample, 4, 2, 4, 3);
+    mainGrid->addWidget(sample, 4, 0, 4, 3);
 
     mainGrid->addWidget(writingSystemAccel, 5, 0);
     mainGrid->addWidget(writingSystemCombo, 7, 0);
 
+
     buttonBox = new QDialogButtonBox(q);
+#ifdef Q_OS_FREMANTLE
+    QVBoxLayout *buttonsLay = new QVBoxLayout;
+    mainLay->addLayout(buttonsLay);
+    buttonsLay->addStretch();
+    buttonsLay->addWidget(buttonBox);
+#else
     mainGrid->addWidget(buttonBox, 9, 0, 1, 5);
+#endif
 
     QPushButton *button
             = static_cast<QPushButton *>(buttonBox->addButton(QDialogButtonBox::Ok));
     QObject::connect(buttonBox, SIGNAL(accepted()), q, SLOT(accept()));
     button->setDefault(true);
 
+#ifndef Q_OS_FREMANTLE
     buttonBox->addButton(QDialogButtonBox::Cancel);
     QObject::connect(buttonBox, SIGNAL(rejected()), q, SLOT(reject()));
+#endif
 
 #if defined(Q_OS_WINCE)
     q->resize(180, 120);
@@ -327,6 +354,22 @@ void QFontDialogPrivate::init()
 
 #ifdef Q_WS_MAC
     delegate = 0;
+#endif
+
+#ifdef Q_WS_HILDON
+    //Semplyfing the UI
+    familyEdit->hide();
+    styleEdit->hide();
+    sizeEdit->hide();
+
+    familyAccel->hide();
+    styleAccel->hide();
+    sizeAccel->hide();
+
+    effects->hide();
+
+    writingSystemCombo->hide();
+    writingSystemAccel->hide();
 #endif
 }
 
@@ -637,6 +680,10 @@ void QFontDialogPrivate::updateSizes()
         int current = -1;
         QStringList str_sizes;
         for(QList<int>::const_iterator it = sizes.constBegin(); it != sizes.constEnd(); ++it) {
+#ifdef Q_WS_HILDON
+            //Limit shown sizes to 36
+            if (*it <= 36)
+#endif
             str_sizes.append(QString::number(*it));
             if (current == -1 && *it >= size)
                 current = i;
@@ -783,7 +830,9 @@ void QFontDialogPrivate::retranslateStrings()
     effects->setTitle(QFontDialog::tr("Effects"));
     strikeout->setText(QFontDialog::tr("Stri&keout"));
     underline->setText(QFontDialog::tr("&Underline"));
+#ifndef Q_WS_HILDON
     sample->setTitle(QFontDialog::tr("Sample"));
+#endif
     writingSystemAccel->setText(QFontDialog::tr("Wr&iting System"));
 }
 

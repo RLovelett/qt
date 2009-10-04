@@ -1160,6 +1160,10 @@ void QLabelPrivate::updateShortcut()
     // off by default, so QKeySequence::mnemonic always returns an empty sequence.
     // But then we do want to hide the ampersands, so we can't use shortcutId.
     hasShortcut = false;
+#ifdef Q_OS_FREMANTLE
+    text.remove(text.indexOf("&"),1);
+    return;
+#endif
 
     if (control) {
         ensureTextPopulated();

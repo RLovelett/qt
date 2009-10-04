@@ -47,6 +47,8 @@
 #include <QtGui/qapplication.h>
 #include <QtGui/private/qwidget_p.h>
 
+#include <QtGui/qstyleoption.h>
+
 #include "qdialogbuttonbox.h"
 
 QT_BEGIN_NAMESPACE
@@ -207,7 +209,7 @@ static QDialogButtonBox::ButtonRole roleFor(QDialogButtonBox::StandardButton but
     return QDialogButtonBox::InvalidRole;
 }
 
-static const int layouts[2][5][14] =
+static const int layouts[2][6][14] =
 {
     // Qt::Horizontal
     {
@@ -225,6 +227,10 @@ static const int layouts[2][5][14] =
 
         // GnomeLayout
         { HelpRole, ResetRole, Stretch, ActionRole, ApplyRole | Reverse, DestructiveRole | Reverse,
+          AlternateRole | Reverse, RejectRole | Reverse, AcceptRole | Reverse, NoRole | Reverse, YesRole | Reverse, EOL },
+
+          // HildonLayout
+        { Stretch, HelpRole, ResetRole, ActionRole, ApplyRole | Reverse, DestructiveRole | Reverse,
           AlternateRole | Reverse, RejectRole | Reverse, AcceptRole | Reverse, NoRole | Reverse, YesRole | Reverse, EOL },
 
         // Mac modeless
@@ -247,6 +253,10 @@ static const int layouts[2][5][14] =
 
         // GnomeLayout
         { YesRole, NoRole, AcceptRole, RejectRole, AlternateRole, DestructiveRole, ApplyRole, ActionRole, Stretch,
+          ResetRole, HelpRole, EOL, EOL, EOL },
+
+        // HildonLayout
+        { Stretch, YesRole, NoRole, AcceptRole, RejectRole, AlternateRole, DestructiveRole, ApplyRole, ActionRole,
           ResetRole, HelpRole, EOL, EOL, EOL },
 
         // Mac modeless
@@ -367,7 +377,7 @@ void QDialogButtonBoxPrivate::layoutButtons()
             }
         }
         if (!hasModalButton)
-            tmpPolicy = 4;  // Mac modeless
+            tmpPolicy = 5;  // Mac modeless
     }
 
     const int *currentLayout = layouts[orientation == Qt::Vertical][tmpPolicy];
@@ -513,9 +523,14 @@ QPushButton *QDialogButtonBoxPrivate::createButton(QDialogButtonBox::StandardBut
         ;
     }
     buttonText = standardButtonText(sbutton);
-
     QPushButton *button = new QPushButton(QDialogButtonBox::tr(buttonText), q);
+
     QStyle *style = q->style();
+#ifdef Q_OS_FREMANTLE
+    QStyleOption opt;
+    button->setMinimumSize(style->pixelMetric(QStyle::PM_DialogButtonsButtonWidth, &opt, q),
+                           style->pixelMetric(QStyle::PM_DialogButtonsButtonHeight, &opt, q));
+#endif
     if (style->styleHint(QStyle::SH_DialogButtonBox_ButtonsHaveIcons, 0, q) && icon != 0)
         button->setIcon(style->standardIcon(QStyle::StandardPixmap(icon), 0, q));
     if (style != QApplication::style()) // Propagate style
@@ -556,9 +571,11 @@ const char *QDialogButtonBoxPrivate::standardButtonText(QDialogButtonBox::Standa
 {
     const char *buttonText = 0;
     bool gnomeLayout = (layoutPolicy == QDialogButtonBox::GnomeLayout);
+    bool hildonLayout = (layoutPolicy == QDialogButtonBox::HildonLayout);
     switch (sbutton) {
     case QDialogButtonBox::Ok:
-        buttonText = gnomeLayout ? QT_TRANSLATE_NOOP("QDialogButtonBox", "&OK") : QT_TRANSLATE_NOOP("QDialogButtonBox", "OK");
+        buttonText = gnomeLayout ? QT_TRANSLATE_NOOP("QDialogButtonBox", "&OK") : 
+                     hildonLayout ? QT_TRANSLATE_NOOP("QDialogButtonBox", "Done") :QT_TRANSLATE_NOOP("QDialogButtonBox", "OK");
         break;
     case QDialogButtonBox::Save:
         buttonText = gnomeLayout ? QT_TRANSLATE_NOOP("QDialogButtonBox", "&Save") : QT_TRANSLATE_NOOP("QDialogButtonBox", "Save");
@@ -590,16 +607,16 @@ const char *QDialogButtonBoxPrivate::standardButtonText(QDialogButtonBox::Standa
             buttonText = QT_TRANSLATE_NOOP("QDialogButtonBox", "Discard");
         break;
     case QDialogButtonBox::Yes:
-        buttonText = QT_TRANSLATE_NOOP("QDialogButtonBox", "&Yes");
+        buttonText = hildonLayout ? QT_TRANSLATE_NOOP("QDialogButtonBox", "Yes") : QT_TRANSLATE_NOOP("QDialogButtonBox", "&Yes");
         break;
     case QDialogButtonBox::YesToAll:
-        buttonText = QT_TRANSLATE_NOOP("QDialogButtonBox", "Yes to &All");
+        buttonText = hildonLayout ? QT_TRANSLATE_NOOP("QDialogButtonBox", "Yes to All") : QT_TRANSLATE_NOOP("QDialogButtonBox", "Yes to &All");
         break;
     case QDialogButtonBox::No:
-        buttonText = QT_TRANSLATE_NOOP("QDialogButtonBox", "&No");
+        buttonText = hildonLayout ? QT_TRANSLATE_NOOP("QDialogButtonBox", "No") : QT_TRANSLATE_NOOP("QDialogButtonBox", "&No");
         break;
     case QDialogButtonBox::NoToAll:
-        buttonText = QT_TRANSLATE_NOOP("QDialogButtonBox", "N&o to All");
+        buttonText =  hildonLayout ? QT_TRANSLATE_NOOP("QDialogButtonBox", "No to All") : QT_TRANSLATE_NOOP("QDialogButtonBox", "N&o to All");
         break;
     case QDialogButtonBox::SaveAll:
         buttonText = QT_TRANSLATE_NOOP("QDialogButtonBox", "Save All");
@@ -940,6 +957,12 @@ QPushButton *QDialogButtonBox::addButton(const QString &text, ButtonRole role)
         return 0;
     }
     QPushButton *button = new QPushButton(text, this);
+
+#ifdef Q_OS_FREMANTLE
+    QStyleOption opt;
+    button->setMinimumSize(style()->pixelMetric(QStyle::PM_DialogButtonsButtonWidth, &opt, this),
+                           style()->pixelMetric(QStyle::PM_DialogButtonsButtonHeight, &opt, this));
+#endif
     d->addButton(button, role);
     return button;
 }
