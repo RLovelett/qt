@@ -289,7 +289,8 @@ void QAbstractScrollAreaPrivate::init()
     q->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     layoutChildren();
 #ifdef Q_WS_HILDON
-    new QAbstractScrollAreaScroller(viewport, q, this);
+    fingerScroller = 0;
+    q->setProperty("FingerScrollable", true); // sets a fingerscroller on the new viewport
 #endif
 }
 
@@ -521,6 +522,13 @@ void QAbstractScrollArea::setViewport(QWidget *widget)
         d->viewport->setParent(this);
         d->viewport->setFocusProxy(this);
         d->viewport->installEventFilter(d->viewportFilter);
+#ifdef Q_WS_HILDON
+        if (d->fingerScroller) {
+            delete d->fingerScroller;
+            d->fingerScroller = 0;
+            setProperty("FingerScrollable", true); // sets a fingerscroller on the new viewport
+        }
+#endif
         d->layoutChildren();
         if (isVisible())
             d->viewport->show();
@@ -893,6 +901,7 @@ bool QAbstractScrollArea::event(QEvent *e)
 #endif
         QFrame::paintEvent((QPaintEvent*)e);
         break;
+
 #ifndef QT_NO_CONTEXTMENU
     case QEvent::ContextMenu:
         if (static_cast<QContextMenuEvent *>(e)->reason() == QContextMenuEvent::Keyboard)
@@ -912,6 +921,17 @@ bool QAbstractScrollArea::event(QEvent *e)
     case QEvent::DragLeave:
 #endif
         return false;
+#ifdef Q_WS_HILDON
+    case QEvent::DynamicPropertyChange: {
+        QString p = static_cast<QDynamicPropertyChangeEvent *>(e)->propertyName();
+        if (QString::compare(p, "FingerScrollable")) {
+            delete d->fingerScroller;
+            d->fingerScroller = 0;
+        }else
+            d->fingerScroller = new QAbstractScrollAreaScroller(this, d);
+    }
+    break;
+#endif
     case QEvent::StyleChange:
     case QEvent::LayoutDirectionChange:
     case QEvent::ApplicationLayoutDirectionChange:
@@ -1313,10 +1333,11 @@ const int QAbstractScrollAreaScroller::MAX_OVERSHOOT   = 150;  // max pixels to 
 const int QAbstractScrollAreaScroller::OVERSHOOT_DECEL_PC = 50;   // velocity reduction factor/kinetic refresh (%)
 const int QAbstractScrollAreaScroller::REBOUND_ACCEL   = 10;   // accel to apply when stabilising overshoot
     
-QAbstractScrollAreaScroller::QAbstractScrollAreaScroller(QWidget *parent_viewport, QAbstractScrollArea *a, QAbstractScrollAreaPrivate *d) :
-    QObject(parent_viewport),
-    qabstractscrollarea(a),
-    qabstractscrollarea_d(d),
+QAbstractScrollAreaScroller::QAbstractScrollAreaScroller(QAbstractScrollArea *parent,
+                                                         QAbstractScrollAreaPrivate *parentPriv):
+    QObject(parent),
+    scrollArea(parent),
+    scrollAreaPriv(parentPriv),
     scrollState(NotScrolling),
     xScrollState(NotScrolling),
     yScrollState(NotScrolling),
@@ -1331,16 +1352,16 @@ QAbstractScrollAreaScroller::QAbstractScrollAreaScroller(QWidget *parent_viewpor
     curr_time(0),
     overshoot(0,0)
 {
-    registerChildrenForFingerScrolling(parent_viewport);
+    registerChildrenForFingerScrolling(scrollArea->viewport());
 #if 0
     // If the property is not set then use the qapp default or hard default
-    if (! qabstractscrollarea->property("FingerScrollBars").isValid()) {
+    if (! scrollArea->property("FingerScrollBars").isValid()) {
         if (qApp->property("FingerScrollBars").isValid()) {
             d->fingerScrollBars = qApp->property("FingerScrollBars").toBool();
         }
-        qabstractscrollarea->setProperty("FingerScrollBars", d->fingerScrollBars);
+        scrollArea->setProperty("FingerScrollBars", d->fingerScrollBars);
     } else {
-        d->fingerScrollBars = qabstractscrollarea->property("FingerScrollBars").toBool();
+        d->fingerScrollBars = scrollArea->property("FingerScrollBars").toBool();
     }
 #endif
 }
@@ -1354,8 +1375,8 @@ bool QAbstractScrollAreaScroller::eventFilter(QObject *obj, QEvent *event)
     
     QMouseEvent * mEv = dynamic_cast<QMouseEvent *>(event);
 
-    QScrollBar* vsb = qabstractscrollarea->verticalScrollBar(); 
-    QScrollBar* hsb = qabstractscrollarea->horizontalScrollBar();
+    QScrollBar* vsb = scrollArea->verticalScrollBar(); 
+    QScrollBar* hsb = scrollArea->horizontalScrollBar();
 
     if (scrollState == AutoScroll) {
         // We're already doing a kinetic movement. A click resets.
@@ -1384,12 +1405,12 @@ bool QAbstractScrollAreaScroller::eventFilter(QObject *obj, QEvent *event)
             yScrollState = NotScrolling;
             // We need to know the how much scrollBar->value changes per pixel of movement
             if ( vsb->minimum() < vsb->maximum()) {
-                scrollFactor.ry() = (qreal) vsb->pageStep() / qabstractscrollarea->viewport()->height();
+                scrollFactor.ry() = (qreal) vsb->pageStep() / scrollArea->viewport()->height();
 //                qDebug() << "scrollFactor.y =" << scrollFactor.ry();
                 yScrollState = Maybe;
             }
             if ( hsb->minimum() < hsb->maximum() ) {
-                scrollFactor.rx() = (qreal) hsb->pageStep() / qabstractscrollarea->viewport()->width();
+                scrollFactor.rx() = (qreal) hsb->pageStep() / scrollArea->viewport()->width();
 //                qDebug() << "scrollFactor.x =" << scrollFactor.rx();
                 xScrollState = Maybe;
             }
@@ -1486,30 +1507,30 @@ void QAbstractScrollAreaScroller::drawOvershoot(QPoint overshoot){
     int overshoot_y = overshoot.ry();
     int header_x = 0;
     int header_y = 0;
-
+    
     if (overshoot_x >= 0) {
-        if (qabstractscrollarea->isRightToLeft())
-            overshoot_x += qabstractscrollarea_d->right;
+        if (scrollArea->isRightToLeft())
+            overshoot_x += scrollAreaPriv->right;
         else
-            overshoot_x += qabstractscrollarea_d->left;
+            overshoot_x += scrollAreaPriv->left;
         header_x = overshoot.rx();
     } else {
-        if (qabstractscrollarea->isRightToLeft())
-            overshoot_x -= qabstractscrollarea_d->left;
+        if (scrollArea->isRightToLeft())
+            overshoot_x -= scrollAreaPriv->left;
         else
-            overshoot_x -= qabstractscrollarea_d->right;
+            overshoot_x -= scrollAreaPriv->right;
     }
     if (overshoot_y >= 0) {
-        overshoot_y += qabstractscrollarea_d->top;
+        overshoot_y += scrollAreaPriv->top;
         header_y = overshoot.ry();
-    } else
-        overshoot_y -= qabstractscrollarea_d->bottom;
+    } else {
+        overshoot_y -= scrollAreaPriv->bottom;
+    }
 
-    QWidget *viewport = qobject_cast<QWidget*>(parent());
-    viewport->move(overshoot_x, overshoot_y);
+    scrollArea->viewport()->move(overshoot_x, overshoot_y);
 #if 0
-    horizontalHeader->move(overshoot_x, header_y);
-    verticalHeader->move(header_x, overshoot_y);
+    horizontalHeader()->move(overshoot_x, header_y);
+    verticalHeader()->move(header_x, overshoot_y);
     cornerWidget->move(header_x, header_y);
 #endif
 }
@@ -1534,10 +1555,10 @@ void QAbstractScrollAreaScroller::handleMoveEvent ( QMouseEvent * event )
     if (scrollState == ManualScroll) {
         curr = event->globalPos();
 
-        int min_y = qabstractscrollarea->verticalScrollBar()->minimum();
-        int max_y = qabstractscrollarea->verticalScrollBar()->maximum();
-        int min_x = qabstractscrollarea->horizontalScrollBar()->minimum();
-        int max_x = qabstractscrollarea->horizontalScrollBar()->maximum();
+        int min_y = scrollArea->verticalScrollBar()->minimum();
+        int max_y = scrollArea->verticalScrollBar()->maximum();
+        int min_x = scrollArea->horizontalScrollBar()->minimum();
+        int max_x = scrollArea->horizontalScrollBar()->maximum();
         int val_y = 0;
         int val_x = 0;
 
@@ -1548,7 +1569,7 @@ void QAbstractScrollAreaScroller::handleMoveEvent ( QMouseEvent * event )
             } else if (val_y > max_y) {
                 overshoot.ry() = max_y - val_y;
             }
-            qabstractscrollarea->verticalScrollBar()->setValue(val_y);
+            scrollArea->verticalScrollBar()->setValue(val_y);
         }
         if (xScrollState == ManualScroll) {
             val_x = scrollBase.rx() + ((start.rx() - curr.rx()) * scrollFactor.rx());
@@ -1557,7 +1578,7 @@ void QAbstractScrollAreaScroller::handleMoveEvent ( QMouseEvent * event )
             } else if (val_x > max_x) {
                 overshoot.rx() = max_x - val_x;
             }
-            qabstractscrollarea->horizontalScrollBar()->setValue(val_x);
+            scrollArea->horizontalScrollBar()->setValue(val_x);
         }
 
         overshoot.ry() = qBound(-MAX_OVERSHOOT, overshoot.ry(), MAX_OVERSHOOT);
@@ -1590,13 +1611,13 @@ void QAbstractScrollAreaScroller::timerEvent(QTimerEvent *event)
     // In general work in pixels and conver to scrollbar values at the end
 
     // frequently used
-    QScrollBar* vsb = qabstractscrollarea->verticalScrollBar(); 
-    QScrollBar* hsb = qabstractscrollarea->horizontalScrollBar();
+    QScrollBar* vsb = scrollArea->verticalScrollBar(); 
+    QScrollBar* hsb = scrollArea->horizontalScrollBar();
 
     int min_y = vsb->minimum();
-    int max_y = vsb->maximum();// - qabstractscrollarea_d->overshootBottom;
+    int max_y = vsb->maximum();// - scrollAreaPriv->overshootBottom;
     int min_x = hsb->minimum();
-    int max_x = hsb->maximum();// - qabstractscrollarea_d->overshootRight;
+    int max_x = hsb->maximum();// - scrollAreaPriv->overshootRight;
     int val_y = vsb->value();
     int val_x = hsb->value();
 
@@ -1791,7 +1812,7 @@ void QAbstractScrollAreaScroller::timerEvent(QTimerEvent *event)
     vsb->setValue(val_y);
     hsb->setValue(val_x);
 
-    qabstractscrollarea->show();
+    scrollArea->show();
 
     if (xScrollState == NotScrolling and yScrollState == NotScrolling) {
         //qDebug() << "Stopped timer";

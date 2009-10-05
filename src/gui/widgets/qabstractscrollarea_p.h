@@ -62,6 +62,7 @@ QT_BEGIN_NAMESPACE
 
 class QScrollBar;
 class QAbstractScrollAreaScrollBarContainer;
+class QAbstractScrollAreaScroller;
 class Q_GUI_EXPORT QAbstractScrollAreaPrivate: public QFramePrivate
 {
     Q_DECLARE_PUBLIC(QAbstractScrollArea)
@@ -95,7 +96,9 @@ public:
     void _q_showOrHideScrollBars();
 
     virtual QPoint contentsOffset() const;
-
+#ifdef Q_WS_HILDON
+    QAbstractScrollAreaScroller *fingerScroller;
+#endif
     inline bool viewportEvent(QEvent *event)
     { return q_func()->viewportEvent(event); }
     QObject *viewportFilter;
@@ -104,6 +107,7 @@ public:
 class QAbstractScrollAreaFilter : public QObject
 {
     Q_OBJECT
+    
 public:
     QAbstractScrollAreaFilter(QAbstractScrollAreaPrivate *p) : d(p)
     { setObjectName(QLatin1String("qt_abstractscrollarea_filter")); }
@@ -142,7 +146,8 @@ class QAbstractScrollAreaScroller : public QObject
 {
     Q_OBJECT
 public:
-    QAbstractScrollAreaScroller(QWidget *parent, QAbstractScrollArea *qabstractscrollarea, QAbstractScrollAreaPrivate *priv);
+    QAbstractScrollAreaScroller(QAbstractScrollArea *parent,
+                                QAbstractScrollAreaPrivate *parentPriv);
     bool eventFilter(QObject *obj, QEvent *event);
 
 protected Q_SLOTS:
@@ -166,9 +171,8 @@ protected:
                      OVERSHOOT_DECEL_PC,
                      REBOUND_ACCEL;
     
-    QAbstractScrollArea  *qabstractscrollarea;  // the area we're scrolling
-    QAbstractScrollAreaPrivate *qabstractscrollarea_d; // and its private data
-    
+    QAbstractScrollArea* scrollArea;  // the area we're scrolling
+    QAbstractScrollAreaPrivate* scrollAreaPriv; //Ugly: Fast way to get Margins
     typedef enum { NotScrolling = 0,
                    Maybe,
                    ManualScroll,
