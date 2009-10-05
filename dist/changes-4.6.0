@@ -32,6 +32,9 @@ information about a particular change.
     * Added QVariant::toFloat() and QVariant::toReal()
     * Added QVariant(float) constructor
 
+ - QTest
+    * Added QTest::QFUZZ_COMPARE
+
 ****************************************************************************
 *                      Platform Specific Changes                           *
 ****************************************************************************

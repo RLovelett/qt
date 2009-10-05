@@ -225,5 +225,9 @@ void MyTestClass::cleanup()
 QTest::qSleep(250);
 //! [23]
 
+//! [24]
+QCOMPAREFUZZ(pi, 3.14159, 0.0001);
+//! [24]
+
 }
 

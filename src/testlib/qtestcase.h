@@ -82,6 +82,12 @@ do {\
         return;\
 } while (0)
 
+#define QFUZZ_COMPARE(actual, expected, fuzz) \
+do {\
+    if (!QTest::qCompare(actual, expected, fuzz, #actual, #expected, #fuzz, __FILE__, __LINE__))\
+        return;\
+} while (0)
+
 #define QSKIP(statement, mode) \
 do {\
     QTest::qSkip(statement, QTest::mode, __FILE__, __LINE__);\
@@ -159,6 +165,9 @@ namespace QTest
     Q_TESTLIB_EXPORT bool compare_helper(bool success, const char *msg, char *val1, char *val2,
                                          const char *expected, const char *actual,
                                          const char *file, int line);
+    Q_TESTLIB_EXPORT bool compare_helper(bool success, const char *msg, char *val1, char *val2,
+                                         char *val3, const char *expected, const char *actual,
+					 const char *fuzz, const char *file, int line);
     Q_TESTLIB_EXPORT void qSleep(int ms);
     Q_TESTLIB_EXPORT void addColumnInternal(int id, const char *name);
 
@@ -187,6 +196,19 @@ namespace QTest
     template <>
     Q_TESTLIB_EXPORT bool qCompare<double>(double const &t1, double const &t2,
                     const char *actual, const char *expected, const char *file, int line);
+
+    template <typename T>
+    Q_TESTLIB_EXPORT bool qCompare(T const &t1, T const &t2, T const &t3,
+				   const char *actual, const char *expected,
+				   const char *fuzz,
+				   const char *file, int line)
+    {
+      return (qAbs(t1 - t2) <= t3)
+	      ? compare_helper(true, "FUZZ_COMPARE()", file, line)
+	      : compare_helper(false, "Compared values are not the same (fuzzy compare)",
+			       toString(t1), toString(t2), toString(t3),
+			       actual, expected, fuzz, file, line);
+    }
 
     inline bool compare_ptr_helper(const void *t1, const void *t2, const char *actual,
                                    const char *expected, const char *file, int line)

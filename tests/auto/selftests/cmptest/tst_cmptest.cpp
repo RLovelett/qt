@@ -52,6 +52,12 @@ private slots:
     void compare_pointerfuncs();
     void compare_tostring();
     void compare_tostring_data();
+    void qfuzz_compare_int();
+    void qfuzz_compare_int_data();
+    void qfuzz_compare_float();
+    void qfuzz_compare_float_data();
+    void qfuzz_compare_char();
+    void qfuzz_compare_char_data();
 };
 
 static bool boolfunc() { return true; }
@@ -120,6 +126,106 @@ void tst_Cmptest::compare_tostring()
     QFETCH(QVariant, expected);
 
     QCOMPARE(actual, expected);
+}
+
+
+//for testing the int versions of a QFUZZ_COMPARE.
+void tst_Cmptest::qfuzz_compare_int()
+{
+  QFETCH(int, expected);
+  QFETCH(int, comparison);
+  QFETCH(int, fuzz);
+
+  QFUZZ_COMPARE(expected, comparison, fuzz);
+}
+
+void tst_Cmptest::qfuzz_compare_int_data()
+{
+  QTest::addColumn<int>("expected");
+  QTest::addColumn<int>("comparison");
+  QTest::addColumn<int>("fuzz");
+
+  QTest::newRow("positive fuzz pass") << 1 << 2 << 1;
+  QTest::newRow("positive swap pass") << 2 << 1 << 1;
+  QTest::newRow("negative fuzz pass") << -1 << -2 << 1;
+  QTest::newRow("negative swap pass") << -2 << -1 << 1;
+  QTest::newRow("positive match pass") << 1 << 1 << 0;
+  QTest::newRow("negative match pass") << -1 << -1 << 0;
+  QTest::newRow("neg/pos fuzz pass") << 1 << -1 << 2;
+  QTest::newRow("pos/neg swap pass") << -1 << 1 << 2;
+
+  QTest::newRow("positive fuzz fail") << 1 << 3 << 1;
+  QTest::newRow("positive swap fail") << 3 << 1 << 1;
+  QTest::newRow("negative fuzz fail") << -1 << -3 << 1;
+  QTest::newRow("negative swap fail") << -3 << -1 << 1;
+  QTest::newRow("positive match fail") << 1 << 2 << 0;
+  QTest::newRow("negative match fail") << -1 << -2 << 0;
+  QTest::newRow("neg/pos fuzz fail") << 1 << -2 << 2;
+  QTest::newRow("pos/neg swap fail") << -2 << 1 << 2;
+
+  QTest::newRow("big value fuzz pass") << -10000 << 10000 << 20000;
+  QTest::newRow("big value fuzz fail") << -10000 << 10000 << 19999;
+}
+
+//for testing the float versions of a QFUZZ_COMPARE.
+void tst_Cmptest::qfuzz_compare_float()
+{
+  QFETCH(float, expected);
+  QFETCH(float, comparison);
+  QFETCH(float, fuzz);
+
+  QFUZZ_COMPARE(expected, comparison, fuzz);
+}
+
+void tst_Cmptest::qfuzz_compare_float_data()
+{
+  QTest::addColumn<float>("expected");
+  QTest::addColumn<float>("comparison");
+  QTest::addColumn<float>("fuzz");
+
+  QTest::newRow("positive fuzz pass") << 1.0f << 1.0f << 1.0f;
+  QTest::newRow("positive swap pass") << 2.0f << 1.0f << 1.0f;
+  QTest::newRow("negative fuzz pass") << -1.0f << -2.0f << 1.0f;
+  QTest::newRow("negative swap pass") << -2.0f << -1.0f << 1.0f;
+  QTest::newRow("positive match pass") << 1.0f << 1.0f << 0.0f;
+  QTest::newRow("negative match pass") << -1.0f << -1.0f << 0.0f;
+  QTest::newRow("neg/pos fuzz pass") << 1.0f << -1.0f << 2.0f;
+  QTest::newRow("pos/neg swap pass") << -1.0f << 1.0f << 2.0f;
+
+  QTest::newRow("positive fuzz fail") << 1.0f << 3.0f << 1.0f;
+  QTest::newRow("positive swap fail") << 3.0f << 1.0f << 1.0f;
+  QTest::newRow("negative fuzz fail") << -1.0f << -3.0f << 1.0f;
+  QTest::newRow("negative swap fail") << -3.0f << -1.0f << 1.0f;
+  QTest::newRow("positive match fail") << 1.0f << 2.0f << 0.0f;
+  QTest::newRow("negative match fail") << -1.0f << -2.0f << 0.0f;
+  QTest::newRow("neg/pos fuzz fail") << 1.0f << -2.0f << 2.0f;
+  QTest::newRow("pos/neg swap fail") << -2.0f << 1.0f << 2.0f;
+
+  QTest::newRow("big value fuzz pass") << -10000.0f << 10000.0f << 20000.0f;
+  QTest::newRow("big value fuzz fail") << -10000.0f << 10000.0f << 19999.0f;
+}
+
+//for testing the char versions of a QFUZZ_COMPARE.
+void tst_Cmptest::qfuzz_compare_char()
+{
+  QFETCH(char, expected);
+  QFETCH(char, comparison);
+  QFETCH(char, fuzz);
+
+  QFUZZ_COMPARE(expected, comparison, fuzz);
+}
+
+void tst_Cmptest::qfuzz_compare_char_data()
+{
+  QTest::addColumn<char>("expected");
+  QTest::addColumn<char>("comparison");
+  QTest::addColumn<char>("fuzz");
+
+  QTest::newRow("match") << 'a' << 'a' << (char) 1;
+  QTest::newRow("pass") << 'a' << 'c' << (char) 2;
+  QTest::newRow("fail") << 'a' << 'c' << (char) 1;
+  QTest::newRow("A-z fail") << 'A' << 'z' << (char) 25;
+  QTest::newRow("a-z pass") << 'a' << 'z' << (char) 25;
 }
 
 QTEST_MAIN(tst_Cmptest)

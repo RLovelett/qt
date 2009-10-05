@@ -6,19 +6,119 @@ PASS   : tst_Cmptest::compare_pointerfuncs()
 FAIL!  : tst_Cmptest::compare_tostring(int, string) Compared values are not the same
    Actual (actual): QVariant(int,123)
    Expected (expected): QVariant(QString,hi)
-   Loc: [/home/rmcgover/depot/qt/master/tests/auto/selftests/cmptest/tst_cmptest.cpp(122)]
+   Loc: [tst_cmptest.cpp(128)]
 FAIL!  : tst_Cmptest::compare_tostring(null hash, invalid) Compared values are not the same
    Actual (actual): QVariant(QVariantHash)
    Expected (expected): QVariant()
-   Loc: [/home/rmcgover/depot/qt/master/tests/auto/selftests/cmptest/tst_cmptest.cpp(122)]
+   Loc: [tst_cmptest.cpp(128)]
 FAIL!  : tst_Cmptest::compare_tostring(string, null user type) Compared values are not the same
    Actual (actual): QVariant(QString,A simple string)
    Expected (expected): QVariant(PhonyClass)
-   Loc: [/home/rmcgover/depot/qt/master/tests/auto/selftests/cmptest/tst_cmptest.cpp(122)]
+   Loc: [tst_cmptest.cpp(128)]
 FAIL!  : tst_Cmptest::compare_tostring(both non-null user type) Compared values are not the same
    Actual (actual): QVariant(PhonyClass,<value not representable as string>)
    Expected (expected): QVariant(PhonyClass,<value not representable as string>)
-   Loc: [/home/rmcgover/depot/qt/master/tests/auto/selftests/cmptest/tst_cmptest.cpp(122)]
+   Loc: [tst_cmptest.cpp(128)]
+FAIL!  : tst_Cmptest::qfuzz_compare_int(positive fuzz fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): 3
+   Fuzz (fuzz): 1
+   Loc: [tst_cmptest.cpp(139)]
+FAIL!  : tst_Cmptest::qfuzz_compare_int(positive swap fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): 3
+   Expected (comparison): 1
+   Fuzz (fuzz): 1
+   Loc: [tst_cmptest.cpp(139)]
+FAIL!  : tst_Cmptest::qfuzz_compare_int(negative fuzz fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): -1
+   Expected (comparison): -3
+   Fuzz (fuzz): 1
+   Loc: [tst_cmptest.cpp(139)]
+FAIL!  : tst_Cmptest::qfuzz_compare_int(negative swap fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): -3
+   Expected (comparison): -1
+   Fuzz (fuzz): 1
+   Loc: [tst_cmptest.cpp(139)]
+FAIL!  : tst_Cmptest::qfuzz_compare_int(positive match fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): 2
+   Fuzz (fuzz): 0
+   Loc: [tst_cmptest.cpp(139)]
+FAIL!  : tst_Cmptest::qfuzz_compare_int(negative match fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): -1
+   Expected (comparison): -2
+   Fuzz (fuzz): 0
+   Loc: [tst_cmptest.cpp(139)]
+FAIL!  : tst_Cmptest::qfuzz_compare_int(neg/pos fuzz fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): -2
+   Fuzz (fuzz): 2
+   Loc: [tst_cmptest.cpp(139)]
+FAIL!  : tst_Cmptest::qfuzz_compare_int(pos/neg swap fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): -2
+   Expected (comparison): 1
+   Fuzz (fuzz): 2
+   Loc: [tst_cmptest.cpp(139)]
+FAIL!  : tst_Cmptest::qfuzz_compare_int(big value fuzz fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): -10000
+   Expected (comparison): 10000
+   Fuzz (fuzz): 19999
+   Loc: [tst_cmptest.cpp(139)]
+FAIL!  : tst_Cmptest::qfuzz_compare_float(positive fuzz fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): 3
+   Fuzz (fuzz): 1
+   Loc: [tst_cmptest.cpp(177)]
+FAIL!  : tst_Cmptest::qfuzz_compare_float(positive swap fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): 3
+   Expected (comparison): 1
+   Fuzz (fuzz): 1
+   Loc: [tst_cmptest.cpp(177)]
+FAIL!  : tst_Cmptest::qfuzz_compare_float(negative fuzz fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): -1
+   Expected (comparison): -3
+   Fuzz (fuzz): 1
+   Loc: [tst_cmptest.cpp(177)]
+FAIL!  : tst_Cmptest::qfuzz_compare_float(negative swap fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): -3
+   Expected (comparison): -1
+   Fuzz (fuzz): 1
+   Loc: [tst_cmptest.cpp(177)]
+FAIL!  : tst_Cmptest::qfuzz_compare_float(positive match fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): 2
+   Fuzz (fuzz): 0
+   Loc: [tst_cmptest.cpp(177)]
+FAIL!  : tst_Cmptest::qfuzz_compare_float(negative match fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): -1
+   Expected (comparison): -2
+   Fuzz (fuzz): 0
+   Loc: [tst_cmptest.cpp(177)]
+FAIL!  : tst_Cmptest::qfuzz_compare_float(neg/pos fuzz fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): -2
+   Fuzz (fuzz): 2
+   Loc: [tst_cmptest.cpp(177)]
+FAIL!  : tst_Cmptest::qfuzz_compare_float(pos/neg swap fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): -2
+   Expected (comparison): 1
+   Fuzz (fuzz): 2
+   Loc: [tst_cmptest.cpp(177)]
+FAIL!  : tst_Cmptest::qfuzz_compare_float(big value fuzz fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): -10000
+   Expected (comparison): 10000
+   Fuzz (fuzz): 19999
+   Loc: [tst_cmptest.cpp(177)]
+FAIL!  : tst_Cmptest::qfuzz_compare_char(fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): a
+   Expected (comparison): c
+   Fuzz (fuzz): ?
+   Loc: [tst_cmptest.cpp(215)]
+FAIL!  : tst_Cmptest::qfuzz_compare_char(A-z fail) Compared values are not the same (fuzzy compare)
+   Actual (expected): A
+   Expected (comparison): z
+   Fuzz (fuzz): ?
+   Loc: [tst_cmptest.cpp(215)]
 PASS   : tst_Cmptest::cleanupTestCase()
-Totals: 4 passed, 4 failed, 0 skipped
+Totals: 4 passed, 24 failed, 0 skipped
 ********* Finished testing of tst_Cmptest *********

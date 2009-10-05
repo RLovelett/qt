@@ -164,7 +164,36 @@ QT_BEGIN_NAMESPACE
    Example:
    \snippet doc/src/snippets/code/src_qtestlib_qtestcase.cpp 2
 
-   \sa QVERIFY(), QTest::toString()
+   \sa QFUZZ_COMPARE(), QVERIFY(), QTest::toString(), qFuzzyCompare()
+*/
+
+/*! \macro QFUZZ_COMPARE(actual, expected, tolerance)
+
+   \relates QTest
+   \since 4.6
+
+   The QFUZZ_COMPARE macro compares an \a actual value to an \a expected value using
+   the equals operator, with a given tolerance. If \a actual and \a expected are
+   within the tolerance, execution continues. If not, a failure is recorded in the
+   test log and the test won't be executed further.
+
+   QFUZZ_COMPARE only operates on ints, floats and doubles. The tolerance would be taken
+   as a float or double. This function can be used for comparing to 0 (compared to
+   the limiations of QCOMPARE), given that a useful tolerance is defined.
+
+   QFUZZ_COMPARE tries to output the contents of the values and the specified tolerance
+   if the comparison fails, so it is visible from the test log why the comparison failed.
+
+   QFUZZ_COMPARE is very strict on the data types. \a actual \a expected and \a tolerance
+   all have to be ints, floats or doubles, otherwise the test won't compile.
+
+   \note This macro can only be used in a test function that is invoked
+   by the test framework.
+
+   Example:
+   \snippet doc/src/snippets/code/src_qtestlib_qtestcase.cpp 24
+
+   \sa QCOMPARE(), QVERIFY()
 */
 
 /*! \macro QFETCH(type, name)
@@ -1960,6 +1989,15 @@ bool QTest::compare_helper(bool success, const char *msg, char *val1, char *val2
                     const char *actual, const char *expected, const char *file, int line)
 {
     return QTestResult::compare(success, msg, val1, val2, actual, expected, file, line);
+}
+
+/*! \internal
+ */
+bool QTest::compare_helper(bool success, const char *msg, char *val1, char *val2, char *val3,
+                           const char *actual, const char *expected,
+			   const char *fuzz, const char *file, int line)
+{
+    return QTestResult::compare(success, msg, val1, val2, val3, actual, expected, fuzz, file, line);
 }
 
 /*! \fn bool QTest::qCompare<float>(float const &t1, float const &t2, const char *actual, const char *expected, const char *file, int line)
