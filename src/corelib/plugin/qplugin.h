@@ -59,6 +59,25 @@ QT_MODULE(Core)
 #  endif
 #endif
 
+template <typename T>
+class QPluginInstanceDeleter
+{
+public:
+    QPluginInstanceDeleter(QPointer<T> *instance)
+    {
+        instancePointer = instance;
+    }
+
+    ~QPluginInstanceDeleter()
+    {
+        if (instancePointer && !instancePointer->isNull())
+            delete instancePointer->data();
+    }
+
+protected:
+    QPointer<T> *instancePointer;
+};
+
 typedef QObject *(*QtPluginInstanceFunction)();
 
 void Q_CORE_EXPORT qRegisterStaticPluginInstanceFunction(QtPluginInstanceFunction function);
@@ -76,6 +95,7 @@ void Q_CORE_EXPORT qRegisterStaticPluginInstanceFunction(QtPluginInstanceFunctio
 #define Q_PLUGIN_INSTANCE(IMPLEMENTATION) \
         { \
             static QT_PREPEND_NAMESPACE(QPointer)<QT_PREPEND_NAMESPACE(QObject)> _instance; \
+            static QT_PREPEND_NAMESPACE(QPluginInstanceDeleter)<QT_PREPEND_NAMESPACE(QObject)> _deleter(&_instance); \
             if (!_instance)      \
                 _instance = new IMPLEMENTATION; \
             return _instance; \
