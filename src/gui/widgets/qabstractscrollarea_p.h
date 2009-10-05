@@ -149,6 +149,7 @@ protected Q_SLOTS:
     void replayEvents();
 
 protected:
+    void drawOvershoot(QPoint overshoot);
     void handleMoveEvent ( QMouseEvent * event );
     void timerEvent(QTimerEvent *event);
     void registerChildrenForFingerScrolling(QObject *top);

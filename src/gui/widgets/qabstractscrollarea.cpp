@@ -288,6 +288,9 @@ void QAbstractScrollAreaPrivate::init()
     q->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     q->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     layoutChildren();
+#ifdef Q_WS_HILDON
+    new QAbstractScrollAreaScroller(viewport, q, this);
+#endif
 }
 
 void QAbstractScrollAreaPrivate::layoutChildren()
@@ -1478,6 +1481,38 @@ bool QAbstractScrollAreaScroller::eventFilter(QObject *obj, QEvent *event)
     return false;
 }
 
+void QAbstractScrollAreaScroller::drawOvershoot(QPoint overshoot){
+    int overshoot_x = overshoot.rx();
+    int overshoot_y = overshoot.ry();
+    int header_x = 0;
+    int header_y = 0;
+
+    if (overshoot_x >= 0) {
+        if (qabstractscrollarea->isRightToLeft())
+            overshoot_x += qabstractscrollarea_d->right;
+        else
+            overshoot_x += qabstractscrollarea_d->left;
+        header_x = overshoot.rx();
+    } else {
+        if (qabstractscrollarea->isRightToLeft())
+            overshoot_x -= qabstractscrollarea_d->left;
+        else
+            overshoot_x -= qabstractscrollarea_d->right;
+    }
+    if (overshoot_y >= 0) {
+        overshoot_y += qabstractscrollarea_d->top;
+        header_y = overshoot.ry();
+    } else
+        overshoot_y -= qabstractscrollarea_d->bottom;
+
+    QWidget *viewport = qobject_cast<QWidget*>(parent());
+    viewport->move(overshoot_x, overshoot_y);
+#if 0
+    horizontalHeader->move(overshoot_x, header_y);
+    verticalHeader->move(header_x, overshoot_y);
+    cornerWidget->move(header_x, header_y);
+#endif
+}
 
 void QAbstractScrollAreaScroller::handleMoveEvent ( QMouseEvent * event )
 {
@@ -1527,9 +1562,9 @@ void QAbstractScrollAreaScroller::handleMoveEvent ( QMouseEvent * event )
 
         overshoot.ry() = qBound(-MAX_OVERSHOOT, overshoot.ry(), MAX_OVERSHOOT);
         overshoot.rx() = qBound(-MAX_OVERSHOOT, overshoot.rx(), MAX_OVERSHOOT);
-#if 0     
-        qabstractscrollarea_d->drawOvershoot(overshoot);
-#endif
+
+        drawOvershoot(overshoot);
+
         curr_time = event_time.elapsed();
         
         if (curr_time >    last_ev_time){
@@ -1564,6 +1599,7 @@ void QAbstractScrollAreaScroller::timerEvent(QTimerEvent *event)
     int max_x = hsb->maximum();// - qabstractscrollarea_d->overshootRight;
     int val_y = vsb->value();
     int val_x = hsb->value();
+
 // Y
     
     if (yScrollState == NotScrolling)
@@ -1749,9 +1785,9 @@ void QAbstractScrollAreaScroller::timerEvent(QTimerEvent *event)
         vel1.rx() = 0;
         xScrollState = OverShootPause;
     }
-#if 0
-    qabstractscrollarea_d->drawOvershoot(overshoot);
-#endif
+
+    drawOvershoot(overshoot);
+
     vsb->setValue(val_y);
     hsb->setValue(val_x);
 
