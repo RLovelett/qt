@@ -1541,7 +1541,7 @@ protected:
     {
         Q_UNUSED(e)
 
-#ifndef Q_WS_MAC
+#if !defined(Q_WS_MAC) && !defined(Q_OS_FREMANTLE)
         QStyleOptionToolButton opt;
         initStyleOption(&opt);
 
@@ -1692,7 +1692,11 @@ void QCalendarWidgetPrivate::createNavigationBar(QWidget *widget)
     navBarBackground = new QWidget(widget);
     navBarBackground->setObjectName(QLatin1String("qt_calendar_navigationbar"));
     navBarBackground->setAutoFillBackground(true);
+#ifdef Q_OS_FREMANTLE
+    navBarBackground->setBackgroundRole(QPalette::Window);
+#else
     navBarBackground->setBackgroundRole(QPalette::Highlight);
+#endif
 
     prevMonth = new QPrevNextCalButton(navBarBackground);
     nextMonth = new QPrevNextCalButton(navBarBackground);
