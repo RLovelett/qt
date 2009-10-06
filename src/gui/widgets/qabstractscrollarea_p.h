@@ -148,13 +148,15 @@ class QAbstractScrollAreaScroller : public QObject
 public:
     QAbstractScrollAreaScroller(QAbstractScrollArea *parent,
                                 QAbstractScrollAreaPrivate *parentPriv);
+    ~QAbstractScrollAreaScroller();
     bool eventFilter(QObject *obj, QEvent *event);
 
-protected Q_SLOTS:
+private Q_SLOTS:
     void replayEvents();
 
-protected:
+private:
     void drawOvershoot(QPoint overshoot);
+    void setScrollbarsStyle(int fremantleStyle); //TODO Use QHildon style instead of stylesheets
     void handleMoveEvent ( QMouseEvent * event );
     void timerEvent(QTimerEvent *event);
     void registerChildrenForFingerScrolling(QObject *top);
@@ -173,6 +175,7 @@ protected:
     
     QAbstractScrollArea* scrollArea;  // the area we're scrolling
     QAbstractScrollAreaPrivate* scrollAreaPriv; //Ugly: Fast way to get Margins
+
     typedef enum { NotScrolling = 0,
                    Maybe,
                    ManualScroll,

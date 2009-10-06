@@ -923,12 +923,16 @@ bool QAbstractScrollArea::event(QEvent *e)
         return false;
 #ifdef Q_WS_HILDON
     case QEvent::DynamicPropertyChange: {
-        QString p = static_cast<QDynamicPropertyChangeEvent *>(e)->propertyName();
-        if (QString::compare(p, "FingerScrollable")) {
-            delete d->fingerScroller;
-            d->fingerScroller = 0;
-        }else
-            d->fingerScroller = new QAbstractScrollAreaScroller(this, d);
+        const QString p = static_cast<QDynamicPropertyChangeEvent *>(e)->propertyName();
+
+        if (QString::compare(p, "FingerScrollable") == 0) {
+            if (property("FingerScrollable").isValid() && property("FingerScrollable").toBool()) {
+                d->fingerScroller = new QAbstractScrollAreaScroller(this, d);
+            } else {
+                delete d->fingerScroller;
+                d->fingerScroller = 0;
+            }
+        }
     }
     break;
 #endif
@@ -1353,20 +1357,13 @@ QAbstractScrollAreaScroller::QAbstractScrollAreaScroller(QAbstractScrollArea *pa
     overshoot(0,0)
 {
     registerChildrenForFingerScrolling(scrollArea->viewport());
-#if 0
-    // If the property is not set then use the qapp default or hard default
-    if (! scrollArea->property("FingerScrollBars").isValid()) {
-        if (qApp->property("FingerScrollBars").isValid()) {
-            d->fingerScrollBars = qApp->property("FingerScrollBars").toBool();
-        }
-        scrollArea->setProperty("FingerScrollBars", d->fingerScrollBars);
-    } else {
-        d->fingerScrollBars = scrollArea->property("FingerScrollBars").toBool();
-    }
-#endif
 }
-////////////////////////////////////////////////////////////////
-// Finger scroll - touches, moves and child events
+QAbstractScrollAreaScroller::~QAbstractScrollAreaScroller()
+{
+    setScrollbarsStyle(false);
+    setProperty("FingerScrollable", false);
+}
+
 bool QAbstractScrollAreaScroller::eventFilter(QObject *obj, QEvent *event)
 {
     if (scrollState == ReissuingEvents or ! obj->isWidgetType()) {
@@ -1533,6 +1530,51 @@ void QAbstractScrollAreaScroller::drawOvershoot(QPoint overshoot){
     verticalHeader()->move(header_x, overshoot_y);
     cornerWidget->move(header_x, header_y);
 #endif
+}
+
+void QAbstractScrollAreaScroller::setScrollbarsStyle(int fremantleStyle)
+{
+    static QString scrollAreaStyle;
+   
+    if (fremantleStyle){
+        scrollAreaStyle = scrollArea->styleSheet();
+        scrollArea->setStyleSheet(
+            "QScrollBar:horizontal { "
+            "background: palette(window); "
+            "height: 8px; "
+            "margin: 0px 0px 0px 0px; "
+            "padding: 0px 0px 0px 0px; "
+            "} " 
+            "QScrollBar:vertical { "
+            "background: palette(window); "
+            "width: 8px; "
+            "margin: 0px 0px 0px 0px; "
+            "padding: 0px 0px 0px 0px; "
+            "} "
+            "QScrollBar::handle:horizontal { "
+            "background: palette(window-text); "
+            "min-width: 40px; "
+            "} "
+            "QScrollBar::handle::vertical { "
+            "background: palette(window-text); "
+            "min-height: 40px; "
+            "} "
+            "QScrollBar::add-line::horizontal { "
+            "width: 0px; "
+            "} "
+            "QScrollBar::sub-line::horizontal { "
+            "width: 0px; "
+            "} "
+            "QScrollBar::add-line::vertical { "
+            "height: 0px; "
+            "} "
+            "QScrollBar::sub-line::vertical { "
+            "height: 0px; "
+            "} "
+             );
+    } else if (!scrollAreaStyle.isEmpty()){
+        scrollArea->setStyleSheet(scrollAreaStyle);
+    }
 }
 
 void QAbstractScrollAreaScroller::handleMoveEvent ( QMouseEvent * event )
@@ -1823,7 +1865,6 @@ void QAbstractScrollAreaScroller::timerEvent(QTimerEvent *event)
 
 void QAbstractScrollAreaScroller::registerChildrenForFingerScrolling(QObject *obj)
 {
-
     if (qobject_cast<QAbstractScrollArea *>(obj)) return; // Ignore any QAbstractScrollArea derived objects and hence their children
 
     if (obj->isWidgetType())
@@ -1832,6 +1873,8 @@ void QAbstractScrollAreaScroller::registerChildrenForFingerScrolling(QObject *ob
     foreach (QObject* child, obj->children()){
         registerChildrenForFingerScrolling(child);
     }
+  
+    setScrollbarsStyle(true);
 }
 
 void QAbstractScrollAreaScroller::replayEvents()
