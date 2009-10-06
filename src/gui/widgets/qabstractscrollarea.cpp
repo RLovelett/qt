@@ -1325,6 +1325,9 @@ void QAbstractScrollArea::setupViewport(QWidget *viewport)
 
 #ifdef Q_WS_HILDON
 #include <qtimer.h>
+#include <qtableview.h>
+#include <qheaderview.h>
+#include <qtreeview.h>
 
 const int QAbstractScrollAreaScroller::START_WITHIN    = 300;  // must move within X ms to scroll
 const int QAbstractScrollAreaScroller::SENSITIVITY     = 20;   // pixels before we scroll
@@ -1500,6 +1503,12 @@ bool QAbstractScrollAreaScroller::eventFilter(QObject *obj, QEvent *event)
 }
 
 void QAbstractScrollAreaScroller::drawOvershoot(QPoint overshoot){
+    //Disable overshoot for drawing performance reason for these widgets.
+    if (qobject_cast<QTableView*>(scrollArea) ||
+        qobject_cast<QTreeView*>(scrollArea)
+       )
+        return;
+
     int overshoot_x = overshoot.rx();
     int overshoot_y = overshoot.ry();
     int header_x = 0;
@@ -1525,10 +1534,19 @@ void QAbstractScrollAreaScroller::drawOvershoot(QPoint overshoot){
     }
 
     scrollArea->viewport()->move(overshoot_x, overshoot_y);
+    
 #if 0
-    horizontalHeader()->move(overshoot_x, header_y);
-    verticalHeader()->move(header_x, overshoot_y);
-    cornerWidget->move(header_x, header_y);
+    if (QTableView* tw = qobject_cast<QTableView*>(scrollArea)){
+        if (tw->horizontalHeader())
+            tw->horizontalHeader()->move(overshoot_x, header_y);
+        if (tw->verticalHeader())
+            tw->verticalHeader()->move(header_x, overshoot_y);
+        if (tw->cornerWidget())
+            tw->cornerWidget()->move(header_x, header_y);
+    } else if (QTreeView* tw = qobject_cast<QTreeView*>(scrollArea)){
+        if (tw->Header())
+            tw->header()->move(overshoot_x, header_y);
+    }
 #endif
 }
 
