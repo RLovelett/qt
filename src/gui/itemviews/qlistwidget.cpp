@@ -1025,6 +1025,7 @@ void QListWidgetPrivate::setup()
     QObject::connect(model(), SIGNAL(columnsRemoved(QModelIndex,int,int)), q, SLOT(_q_sort()));
 #ifdef Q_OS_FREMANTLE
     q->viewport()->setBackgroundRole(QPalette::Button);
+    q->setProperty("FingerScrollable", true); // sets a fingerscroller on the new viewport
 #endif
 }
 
