@@ -1505,7 +1505,9 @@ bool QAbstractScrollAreaScroller::eventFilter(QObject *obj, QEvent *event)
 void QAbstractScrollAreaScroller::drawOvershoot(QPoint overshoot){
     //Disable overshoot for drawing performance reason for these widgets.
     if (qobject_cast<QTableView*>(scrollArea) ||
-        qobject_cast<QTreeView*>(scrollArea)
+        qobject_cast<QTreeView*>(scrollArea) || 
+        ( scrollArea->property("FingerScrollOvershoot").isValid() &&
+        !scrollArea->property("FingerScrollOvershoot").toBool() )
        )
         return;
 
