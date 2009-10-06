@@ -290,7 +290,7 @@ void QAbstractScrollAreaPrivate::init()
     layoutChildren();
 #ifdef Q_WS_HILDON
     fingerScroller = 0;
-    q->setProperty("FingerScrollable", true); // sets a fingerscroller on the new viewport
+    //q->setProperty("FingerScrollable", true); // sets a fingerscroller on the new viewport
 #endif
 }
 
@@ -526,7 +526,7 @@ void QAbstractScrollArea::setViewport(QWidget *widget)
         if (d->fingerScroller) {
             delete d->fingerScroller;
             d->fingerScroller = 0;
-            setProperty("FingerScrollable", true); // sets a fingerscroller on the new viewport
+            setProperty("FingerScrollable", true);
         }
 #endif
         d->layoutChildren();
@@ -935,6 +935,11 @@ bool QAbstractScrollArea::event(QEvent *e)
         }
     }
     break;
+    case QEvent::Show: {
+        //HACK
+        if (d->fingerScroller)
+            d->fingerScroller->setScrollForPixel();
+    }break;
 #endif
     case QEvent::StyleChange:
     case QEvent::LayoutDirectionChange:
@@ -1406,12 +1411,12 @@ bool QAbstractScrollAreaScroller::eventFilter(QObject *obj, QEvent *event)
             // We need to know the how much scrollBar->value changes per pixel of movement
             if ( vsb->minimum() < vsb->maximum()) {
                 scrollFactor.ry() = (qreal) vsb->pageStep() / scrollArea->viewport()->height();
-//                qDebug() << "scrollFactor.y =" << scrollFactor.ry();
+                //qDebug() << "scrollFactor.y =" << scrollFactor.ry();
                 yScrollState = Maybe;
             }
             if ( hsb->minimum() < hsb->maximum() ) {
                 scrollFactor.rx() = (qreal) hsb->pageStep() / scrollArea->viewport()->width();
-//                qDebug() << "scrollFactor.x =" << scrollFactor.rx();
+                //qDebug() << "scrollFactor.x =" << scrollFactor.rx();
                 xScrollState = Maybe;
             }
 
@@ -1436,7 +1441,7 @@ bool QAbstractScrollAreaScroller::eventFilter(QObject *obj, QEvent *event)
 
     if (scrollState == Maybe ) {
         if (event->type() == QEvent::MouseButtonRelease) {
-//            qDebug() << "    QAbstractScrollArea::Released";
+            //qDebug() << "    QAbstractScrollArea::Released";
             if (mEv->button() != Qt::LeftButton) return false; // fall through, allow onward handling
             storedEvents.enqueue(new QMouseEvent(*mEv));
             QTimer::singleShot(0, this, SLOT(replayEvents())); // immediate replay...
@@ -1575,20 +1580,20 @@ void QAbstractScrollAreaScroller::setScrollbarsStyle(int fremantleStyle)
             "background: palette(window-text); "
             "min-width: 40px; "
             "} "
-            "QScrollBar::handle::vertical { "
+            "QScrollBar::handle:vertical { "
             "background: palette(window-text); "
             "min-height: 40px; "
             "} "
-            "QScrollBar::add-line::horizontal { "
+            "QScrollBar::add-line:horizontal { "
             "width: 0px; "
             "} "
-            "QScrollBar::sub-line::horizontal { "
+            "QScrollBar::sub-line:horizontal { "
             "width: 0px; "
             "} "
-            "QScrollBar::add-line::vertical { "
+            "QScrollBar::add-line:vertical { "
             "height: 0px; "
             "} "
-            "QScrollBar::sub-line::vertical { "
+            "QScrollBar::sub-line:vertical { "
             "height: 0px; "
             "} "
              );
@@ -1597,9 +1602,18 @@ void QAbstractScrollAreaScroller::setScrollbarsStyle(int fremantleStyle)
     }
 }
 
+void QAbstractScrollAreaScroller::setScrollForPixel(){
+   
+    QAbstractItemView* absItemView = qobject_cast<QAbstractItemView*>(scrollArea);
+    if (!absItemView)
+        return;
+    absItemView->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);
+    absItemView->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+}
+
 void QAbstractScrollAreaScroller::handleMoveEvent ( QMouseEvent * event )
 {
-//    qDebug() << "    QAbstractScrollArea::Released";
+    //qDebug() << "    QAbstractScrollArea::Released";
     if (scrollState == Maybe) {
         QPoint delta = start - event->globalPos();
         storedEvents.enqueue(new QMouseEvent(*event)); // we may need to play this back...

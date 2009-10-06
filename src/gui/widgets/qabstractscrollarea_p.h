@@ -150,6 +150,7 @@ public:
                                 QAbstractScrollAreaPrivate *parentPriv);
     ~QAbstractScrollAreaScroller();
     bool eventFilter(QObject *obj, QEvent *event);
+    void setScrollForPixel();
 
 private Q_SLOTS:
     void replayEvents();
@@ -157,6 +158,7 @@ private Q_SLOTS:
 private:
     void drawOvershoot(QPoint overshoot);
     void setScrollbarsStyle(int fremantleStyle); //TODO Use QHildon style instead of stylesheets
+    
     void handleMoveEvent ( QMouseEvent * event );
     void timerEvent(QTimerEvent *event);
     void registerChildrenForFingerScrolling(QObject *top);
