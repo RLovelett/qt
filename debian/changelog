@@ -1,3 +1,10 @@
+qt4-x11 (4.5.3~git20090723-0maemo4.1) unstable; urgency=low
+
+  * HACK No core packages can be installed with 4.5.3~git20090723-0maemo4+0m5 
+    core packages
+  
+ -- Antonio Aloisio <antonio.aloisio@nokia.com>  Thu, 8 Oct 2009 02:07:34 +0300
+
 qt4-x11 (4.5.3~git20090723-0maemo4) unstable; urgency=low
 
   * Update hildon patch.
