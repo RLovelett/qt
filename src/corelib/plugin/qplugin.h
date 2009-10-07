@@ -43,7 +43,7 @@
 #define QPLUGIN_H
 
 #include <QtCore/qobject.h>
-#include <QtCore/qpointer.h>
+#include <QtCore/qweakpointer>
 
 QT_BEGIN_HEADER
 
@@ -60,22 +60,15 @@ QT_MODULE(Core)
 #endif
 
 template <typename T>
-class QPluginInstanceDeleter
+class QPluginInstancePointer
 {
 public:
-    QPluginInstanceDeleter(QPointer<T> *instance)
+    ~QPluginInstancePointer()
     {
-        instancePointer = instance;
+        delete instancePointer.data();
     }
 
-    ~QPluginInstanceDeleter()
-    {
-        if (instancePointer && !instancePointer->isNull())
-            delete instancePointer->data();
-    }
-
-protected:
-    QPointer<T> *instancePointer;
+    QWeakPointer<T> instancePointer;
 };
 
 typedef QObject *(*QtPluginInstanceFunction)();
@@ -94,11 +87,10 @@ void Q_CORE_EXPORT qRegisterStaticPluginInstanceFunction(QtPluginInstanceFunctio
 
 #define Q_PLUGIN_INSTANCE(IMPLEMENTATION) \
         { \
-            static QT_PREPEND_NAMESPACE(QPointer)<QT_PREPEND_NAMESPACE(QObject)> _instance; \
-            static QT_PREPEND_NAMESPACE(QPluginInstanceDeleter)<QT_PREPEND_NAMESPACE(QObject)> _deleter(&_instance); \
-            if (!_instance)      \
-                _instance = new IMPLEMENTATION; \
-            return _instance; \
+            static QT_PREPEND_NAMESPACE(QPluginInstancePointer)<QT_PREPEND_NAMESPACE(QObject)> _instance; \
+            if (!_instance.instancePointer)   \
+                _instance.instancePointer = new IMPLEMENTATION; \
+            return _instance.instancePointer.data(); \
         }
 
 #  define Q_EXPORT_PLUGIN(PLUGIN) \
