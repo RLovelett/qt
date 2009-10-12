@@ -3070,7 +3070,7 @@ int QTextFormatCollection::indexForFormat(const QTextFormat &format)
     uint hash = getHash(format.d, format.format_type);
     QMultiHash<uint, int>::const_iterator i = hashes.find(hash);
     while (i != hashes.end() && i.key() == hash) {
-        if (formats[i.value()] == format) {
+        if (formats.value(i.value()) == format) {
             return i.value();
         }
         ++i;
@@ -3099,7 +3099,7 @@ bool QTextFormatCollection::hasFormatCached(const QTextFormat &format) const
     uint hash = getHash(format.d, format.format_type);
     QMultiHash<uint, int>::const_iterator i = hashes.find(hash);
     while (i != hashes.end() && i.key() == hash) {
-        if (formats[i.value()] == format) {
+        if (formats.value(i.value()) == format) {
             return true;
         }
         ++i;
