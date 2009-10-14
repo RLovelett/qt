@@ -106,6 +106,7 @@ Ptr_gtk_entry_new QGtk::gtk_entry_new = 0;
 Ptr_hildon_entry_new QGtk::hildon_entry_new = 0;
 Ptr_gtk_text_view_new QGtk::gtk_text_view_new = 0;
 Ptr_hildon_touch_selector_new_text QGtk::hildon_touch_selector_new_text = 0;
+Ptr_hildon_dialog_new_with_buttons QGtk::hildon_dialog_new_with_buttons = 0;
 #endif
 Ptr_gtk_hscale_new QGtk::gtk_hscale_new = 0;
 Ptr_gtk_vscale_new QGtk::gtk_vscale_new = 0;
@@ -297,6 +298,7 @@ static void resolveGtk()
     QGtk::hildon_entry_new = (Ptr_hildon_entry_new)QLibrary::resolve(HILDON_PATH, 0, "hildon_entry_new");
     QGtk::gtk_text_view_new  = (Ptr_gtk_text_view_new)QLibrary::resolve(GTK_PATH, 0, "gtk_text_view_new");
     QGtk::hildon_touch_selector_new_text = (Ptr_hildon_touch_selector_new_text)QLibrary::resolve(HILDON_PATH, 0, "hildon_touch_selector_new_text");
+    QGtk::hildon_dialog_new_with_buttons = (Ptr_hildon_dialog_new_with_buttons)QLibrary::resolve(HILDON_PATH, 0, "hildon_dialog_new_with_buttons");
 #endif
     QGtk::gtk_tree_view_new = (Ptr_gtk_tree_view_new)QLibrary::resolve(GTK_PATH, 0, "gtk_tree_view_new");
     QGtk::gtk_combo_box_new = (Ptr_gtk_combo_box_new)QLibrary::resolve(GTK_PATH, 0, "gtk_combo_box_new");
@@ -731,6 +733,7 @@ void QGtk::initGtkWidgets()
             add_widget(QGtk::hildon_entry_new(HILDON_SIZE_FINGER_HEIGHT));
             add_widget(QGtk::gtk_text_view_new());
             add_widget(QGtk::hildon_touch_selector_new_text());
+            add_widget(QGtk::hildon_dialog_new_with_buttons("Alessia", NULL, GTK_DIALOG_MODAL, "ti", "amo"));
 #endif
             add_widget(QGtk::gtk_frame_new(NULL));
             add_widget(QGtk::gtk_expander_new(""));

@@ -115,6 +115,11 @@ typedef GtkWidget* (*Ptr_gtk_entry_new)(void);
 typedef GtkWidget* (*Ptr_hildon_entry_new)(HildonSizeType);
 typedef GtkWidget* (*Ptr_gtk_text_view_new)(void);
 typedef GtkWidget* (*Ptr_hildon_touch_selector_new_text)(void);
+typedef GtkWidget* (*Ptr_hildon_dialog_new_with_buttons)(const gchar*,
+                                                         GtkWindow*,
+                                                         GtkDialogFlags,
+                                                         const gchar*,
+                                                         ...);
 #endif
 typedef GtkWidget* (*Ptr_gtk_tree_view_new)(void);
 typedef GtkTreeViewColumn* (*Ptr_gtk_tree_view_get_column)(GtkTreeView *, gint);
@@ -269,6 +274,7 @@ public:
     static Ptr_hildon_entry_new hildon_entry_new;
     static Ptr_gtk_text_view_new gtk_text_view_new;
     static Ptr_hildon_touch_selector_new_text hildon_touch_selector_new_text;
+    static Ptr_hildon_dialog_new_with_buttons hildon_dialog_new_with_buttons;
 #endif
     static Ptr_gtk_hscale_new gtk_hscale_new;
     static Ptr_gtk_vscale_new gtk_vscale_new;

@@ -34,14 +34,13 @@
 #include <QtGui/QLineEdit>
 #include <QtGui/QDialogButtonBox>
 #include <QtGui/QListWidget>
+#include <QtGui/QDialogButtonBox>
 
 #include "qpixmapcache.h"
 #undef signals // Collides with GTK stymbols
 #include "qgtkpainter_p.h"
 
 #include <private/qcleanlooksstyle_p.h>
-
-#include <QDebug>
 
 #if !defined(QT_NO_STYLE_HILDON) && defined(Q_WS_HILDON)
 
@@ -225,13 +224,20 @@ void QHildonStyle::drawPrimitive(PrimitiveElement element,
     switch (element) {
     case PE_PanelButtonCommand: {
         bool isDefault = false;
+        bool isDialogButton = (widget && qobject_cast<QDialogButtonBox*>(widget->parent()));
         if (const QStyleOptionButton *btn = qstyleoption_cast<const QStyleOptionButton*>(option))
             isDefault = btn->features & QStyleOptionButton::DefaultButton;
 
         GtkStateType state = gtkPainter.gtkState(option);
         if (option->state & State_On || option->state & State_Sunken)
             state = GTK_STATE_ACTIVE;
-        GtkWidget *gtkButton = QGtk::gtkWidget(QLS("HildonButton-finger"));
+
+        GtkWidget *gtkButton;
+        if (isDialogButton)
+            gtkButton = QGtk::gtkWidget(QLS("HildonDialog.GtkAlignment.GtkHBox.hildon-dialog-action-area.GtkButton-finger"));
+        else
+            gtkButton = QGtk::gtkWidget(QLS("HildonButton-finger"));
+
         gint focusWidth, focusPad;
         gboolean interiorFocus = false;
         QGtk::gtk_widget_style_get (gtkButton,
