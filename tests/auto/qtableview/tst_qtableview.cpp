@@ -3252,6 +3252,9 @@ void tst_QTableView::resizeToContents()
 
 void tst_QTableView::tabFocus()
 {
+#ifdef Q_WS_MAC
+    QSKIP("Mac OS X only allows tabbing to a text box or list by default", SkipAll);
+#endif
     // QTableView enables tabKeyNavigation by default, but you should be able
     // to change focus on an empty table view, or on a table view that doesn't
     // have this property set.
