@@ -171,11 +171,18 @@ public:
 };
 
 static QSqlError qMakeError(const QString& err, QSqlError::ErrorType type,
-                            const QPSQLDriverPrivate *p)
+                            const QPSQLDriverPrivate *p, int iSqlState = -1)
 {
     const char *s = PQerrorMessage(p->connection);
     QString msg = p->isUtf8 ? QString::fromUtf8(s) : QString::fromLocal8Bit(s);
-    return QSqlError(QLatin1String("QPSQL: ") + err, msg, type);
+    return QSqlError(QLatin1String("QPSQL: ") + err, msg, type, iSqlState);
+}
+
+static int qGetSQLState(const PGresult *result)
+{
+    bool isOk;
+    const int sqlState = QString::fromLatin1(PQresultErrorField(result, PG_DIAG_SQLSTATE)).toInt(&isOk);
+    return isOk ? sqlState : -1;
 }
 
 bool QPSQLResultPrivate::processResults()
@@ -196,7 +203,7 @@ bool QPSQLResultPrivate::processResults()
         return true;
     }
     q->setLastError(qMakeError(QCoreApplication::translate("QPSQLResult",
-                    "Unable to create query"), QSqlError::StatementError, driver));
+                    "Unable to create query"), QSqlError::StatementError, driver, qGetSQLState(result)));
     return false;
 }
 
@@ -568,7 +575,7 @@ bool QPSQLResult::prepare(const QString &query)
 
     if (PQresultStatus(result) != PGRES_COMMAND_OK) {
         setLastError(qMakeError(QCoreApplication::translate("QPSQLResult",
-                                "Unable to prepare statement"), QSqlError::StatementError, d->driver));
+                                "Unable to prepare statement"), QSqlError::StatementError, d->driver, qGetSQLState(result)));
         PQclear(result);
         d->preparedStmtId.clear();
         return false;
