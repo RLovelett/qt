@@ -33,6 +33,7 @@ public:
     virtual void scroll(int dx, int dy, const QRect&) = 0;
     virtual void update(const QRect&) = 0;
 
+#ifndef QT_NO_CURSOR
     inline void resetCursor()
     {
         if (!cursor().bitmap() && cursor().shape() == m_lastCursor.shape())
@@ -47,16 +48,19 @@ public:
             return;
         updateCursor(cursor);
     }
+#endif // QT_NO_CURSOR
 
     virtual int screenNumber() const = 0;
     virtual WId winId() const = 0;
 
+#ifndef QT_NO_CURSOR
 protected:
     virtual QCursor cursor() const = 0;
     virtual void updateCursor(const QCursor& cursor) = 0;
 
 private:
     QCursor m_lastCursor;
+#endif // QT_NO_CURSOR
 };
 
 #endif
