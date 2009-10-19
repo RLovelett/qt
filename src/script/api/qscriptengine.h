@@ -53,6 +53,8 @@
 #include <QtCore/qobjectdefs.h>
 #endif
 
+#include <QtCore/qlibrary.h>
+
 #include <QtScript/qscriptvalue.h>
 #include <QtScript/qscriptcontext.h>
 #include <QtScript/qscriptstring.h>
@@ -127,6 +129,7 @@ class Q_SCRIPT_EXPORT QScriptEngine
 {
 #ifndef QT_NO_QOBJECT
     Q_OBJECT
+    Q_PROPERTY(QLibrary::LoadHints loadHints READ loadHints WRITE setLoadHints)
 #endif
 public:
     enum ValueOwnership {
@@ -256,6 +259,9 @@ public:
 
     QScriptString toStringHandle(const QString &str);
     QScriptValue toObject(const QScriptValue &value);
+
+    void setLoadHints(QLibrary::LoadHints loadHints);
+    QLibrary::LoadHints loadHints() const;
 
     QScriptValue objectById(qint64 id) const;
 

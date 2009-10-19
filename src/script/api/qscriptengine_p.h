@@ -263,6 +263,7 @@ public:
     QSet<QString> extensionsBeingImported;
     
     QHash<intptr_t, QScript::UStringSourceProviderWithFeedback*> loadedScripts;
+    QLibrary::LoadHints loadHints;
 
 #ifndef QT_NO_QOBJECT
     QHash<QObject*, QScript::QObjectData*> m_qobjectData;
