@@ -285,6 +285,8 @@ public:
     QHash<intptr_t, QScript::UStringSourceProviderWithFeedback*> loadedScripts;
     QScriptValue m_currentException;
 
+    QLibrary::LoadHints extensionLoadHints;
+
 #ifndef QT_NO_QOBJECT
     QHash<QObject*, QScript::QObjectData*> m_qobjectData;
 #endif

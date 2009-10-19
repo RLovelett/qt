@@ -3011,6 +3011,7 @@ QScriptValue QScriptEngine::importExtension(const QString &extension)
                     QFileInfo entry = files.at(k);
                     QString filePath = entry.canonicalFilePath();
                     QPluginLoader loader(filePath);
+                    loader.setLoadHints(extensionLoadHints());
                     iface = qobject_cast<QScriptExtensionInterface*>(loader.instance());
                     if (iface) {
                         if (iface->keys().contains(ext))
@@ -3143,6 +3144,7 @@ QStringList QScriptEngine::availableExtensions() const
             QFileInfo entry = files.at(j);
             QString filePath = entry.canonicalFilePath();
             QPluginLoader loader(filePath);
+            loader.setLoadHints(extensionLoadHints());
             QScriptExtensionInterface *iface;
             iface = qobject_cast<QScriptExtensionInterface*>(loader.instance());
             if (iface) {
@@ -3687,6 +3689,32 @@ QScriptValue QScriptEngine::toObject(const QScriptValue &value)
     JSC::ExecState* exec = d->currentFrame;
     JSC::JSValue result = jscValue.toObject(exec);
     return d->scriptValueFromJSCValue(result);
+}
+
+/*! \since 4.7
+
+    \property QScriptEngine::extensionLoadHints
+    \brief Give the importExtension() function some hints on how it should behave.
+
+    You can give hints on how the symbols in plugin-based extensions are
+    resolved. By default, none of the hints are set.
+
+    See the documentation of QLibrary::loadHints for a complete
+    description of how this property works.
+
+    \sa importExtension(), QLibrary::loadHints
+*/
+
+void QScriptEngine::setExtensionLoadHints(QLibrary::LoadHints loadHints)
+{
+    Q_D(QScriptEngine);
+    d->extensionLoadHints = loadHints;
+}
+
+QLibrary::LoadHints QScriptEngine::extensionLoadHints() const
+{
+    Q_D(const QScriptEngine);
+    return d->extensionLoadHints;
 }
 
 /*!
