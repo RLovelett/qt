@@ -1829,14 +1829,14 @@ void QWidgetPrivate::show_sys()
         }
         if (setUserTime)
             qt_net_update_user_time(q, userTime);
-
+#ifndef Q_WS_HILDON
         if (!topData()->embedded
             && (topData()->validWMState || topData()->waitingForMapNotify)
             && !q->isMinimized()) {
             X11->deferred_map.append(q);
             return;
         }
-
+#endif
         if (q->isMaximized() && !q->isFullScreen()
             && !(X11->isSupportedByWM(ATOM(_NET_WM_STATE_MAXIMIZED_HORZ))
                  && X11->isSupportedByWM(ATOM(_NET_WM_STATE_MAXIMIZED_VERT)))) {
