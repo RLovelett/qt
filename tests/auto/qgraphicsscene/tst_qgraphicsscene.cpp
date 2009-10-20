@@ -1452,6 +1452,13 @@ void tst_QGraphicsScene::focusItemLostFocus()
     item->clearFocus();
 }
 
+class ClearTestItem : public QGraphicsRectItem
+{
+public:
+    ~ClearTestItem() { qDeleteAll(items); }
+    QList<QGraphicsItem *> items;
+};
+
 void tst_QGraphicsScene::clear()
 {
     QGraphicsScene scene;
@@ -1462,6 +1469,19 @@ void tst_QGraphicsScene::clear()
     scene.clear();
     QVERIFY(scene.items().isEmpty());
     QCOMPARE(scene.sceneRect(), QRectF(0, 0, 100, 100));
+
+    ClearTestItem *firstItem = new ClearTestItem;
+    QGraphicsItem *secondItem = new QGraphicsRectItem;
+    firstItem->items += secondItem;
+
+    scene.setItemIndexMethod(QGraphicsScene::NoIndex);
+    scene.addItem(firstItem);
+    scene.addItem(secondItem);
+    QCOMPARE(scene.items().at(0), firstItem);
+    QCOMPARE(scene.items().at(1), secondItem);
+    // must not crash even if firstItem deletes secondItem
+    scene.clear();
+    QVERIFY(scene.items().isEmpty());
 }
 
 void tst_QGraphicsScene::setFocusItem()
