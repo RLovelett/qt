@@ -54,7 +54,7 @@
 #include <qstyle.h>
 #include <qdebug.h>
 #include <qpainter.h>
-#include <qhildonappmenu.h>
+
 
 #include <private/qwidget_p.h>
 #include "qtoolbar_p.h"
@@ -907,10 +907,8 @@ void QMainWindow::setDockNestingEnabled(bool enabled)
 #ifdef Q_WS_HILDON
 void QMainWindow::showApplicationContextMenu(){
     Q_D(QMainWindow);
-
     static QPoint menuPos;
     static QAction *quitAction = 0;
-
     //Hides submenues. GlobalMenu will be destroyed as soons
     //as QMenu::exec() terminates
     if (!d->globalMenu.isNull()){
@@ -920,34 +918,10 @@ void QMainWindow::showApplicationContextMenu(){
 
     if (!menuBar())
         return;
-
-    QList<QAction*> actionList = menuBar()->actions();
-
-    QHildonAppMenu *appMenu;
-    
-    if (!actionList.isEmpty()){
-        QAction *action;
-
-        //Looking for "Fremantle" Menu
-        foreach(action, actionList){
-            if (action->text().compare("fremantle", Qt::CaseInsensitive) == 0){
-                QMenu *menu = action->menu();
-                if (menu){
-                    QList<QAction*> fremantleActionList;
-                    fremantleActionList = menu->actions();
-                    appMenu = new QHildonAppMenu(fremantleActionList, this);
-                    appMenu->show();
-                    return;
-                }
-            }
-        }
-    }
-
     //Getting the Menu position from the style
     if (menuPos.isNull()){
-        int hMenuOffset = 0, 
-            vMenuOffset = 0;
-
+        int hMenuOffset = 0,
+         vMenuOffset = 0;
         hMenuOffset = style()->pixelMetric(QStyle::PM_MenuOffsetHorizontal, 0, this);
         vMenuOffset = style()->pixelMetric(QStyle::PM_MenuOffsetVertical, 0, this);
         menuPos = mapToGlobal(QPoint(0, 0));
@@ -955,42 +929,45 @@ void QMainWindow::showApplicationContextMenu(){
     }
 
     //Creating a new Application Context Menu
+
     //so that is always updated
     d->globalMenu = new QMenu(this);
-
+    QList<QAction*> actionList = menuBar()->actions();
     //Filling the App context menu
     if (!actionList.isEmpty()){
-        //Trying to get the quitAction from the file menu    
+        //Trying to get the quitAction from the file menu
         QMenu *fileMenu = actionList[0]->menu();
-
         if (!quitAction && fileMenu){
             QList<QAction*> fileActionList;
-
             fileActionList = fileMenu->actions();
             if (!fileActionList.isEmpty()){
                 QRegExp quitString("(?:close)|(?:exit)|(?:quit)", Qt::CaseInsensitive);
-
-                quitAction = fileActionList.last();   
+                quitAction = fileActionList.last();
                 if (quitAction && quitAction->text().remove(QChar('&')).contains(quitString)){
                     fileMenu->removeAction(quitAction);
                     if (fileActionList.isEmpty())
-                        actionList.removeFirst();   
+                        actionList.removeFirst();
                 }else{
-                    quitAction = 0;
+                         quitAction = 0;
                 }
             }
         }
         d->globalMenu->addActions(actionList);
+    }else if (!quitAction){
+        //Minimal menu for application with empty menuBars
+        quitAction = new QAction(tr("Close"), menuBar());
+        connect(quitAction, SIGNAL(triggered()), SLOT(close()));
     }
-     
-     //Add quitAction in the last position
-     if (quitAction)
+    //Add quitAction in the last position
+    if (quitAction)
          d->globalMenu->addAction(quitAction);
-     
-     if (d->globalMenu->actions().count())
-         d->globalMenu->exec(menuPos);
-
+     d->globalMenu->exec(menuPos);
      delete static_cast<QMenu *>(d->globalMenu);
+
+
+
+
+
 }
 
 void QMainWindow::toggleWindowState() {

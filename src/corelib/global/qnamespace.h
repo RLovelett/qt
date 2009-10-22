@@ -264,9 +264,7 @@ public:
         SplashScreen = 0x0000000e | Window,
         Desktop = 0x00000010 | Window,
         SubWindow =  0x00000012,
-#ifdef Q_OS_FREMANTLE
-        HildonAppMenu = 0x0000014 | Window,
-#endif		
+
 	WindowType_Mask = 0x000000ff,
         MSWindowsFixedSizeDialogHint = 0x00000100,
         MSWindowsOwnDC = 0x00000200,
