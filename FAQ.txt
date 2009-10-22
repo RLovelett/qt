@@ -1,5 +1,6 @@
 This is a list of Frequently Asked Questions regarding this Qt release.
 
+
 Q: I'm using a Unix system and I downloaded the Zip package. However, when I try
 to run the configure script, I get the following error message:
 "bash: ./configure: /bin/sh^M: bad interpreter: No such file or directory"
