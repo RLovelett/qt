@@ -810,6 +810,21 @@ bool QMainWindow::toolBarBreak(QToolBar *toolbar) const
     return d_func()->layout->toolBarBreak(toolbar);
 }
 
+/*!
+    Updates the internal toolbar layout structures from the actual toolbar
+    widgets. Use this if you want to position toolbars programmatically
+    by first positioning the toolbar widgets and then calling this method.
+    Care must be taken that the event loop is not run between changing the
+    widgets' positions and synchronizing or the layout changes will be lost.
+    Toolbars must be inserted in the correct tool bar areas prior to positioning,
+    but not in the correct lines (i.e. the will be moved into the correct lines
+    by the algorithm according to their positions).
+ */
+void QMainWindow::synchronizeFromToolBars()
+{
+    d_func()->layout->layoutState.toolBarAreaLayout.synchronizeFromToolBars();
+}
+
 #endif // QT_NO_TOOLBAR
 
 #ifndef QT_NO_DOCKWIDGET
@@ -1165,6 +1180,18 @@ void QMainWindow::removeDockWidget(QDockWidget *dockwidget)
 */
 Qt::DockWidgetArea QMainWindow::dockWidgetArea(QDockWidget *dockwidget) const
 { return d_func()->layout->dockWidgetArea(dockwidget); }
+
+
+/*!
+    Updates the internal dock widget layout structures from the actual dock
+    widgets.
+
+    \sa synchronizeFromToolBars()
+ */
+void QMainWindow::synchronizeFromDockWidgets()
+{
+  d_func()->layout->layoutState.dockAreaLayout.synchronizeFromDockWidgets();
+}
 
 #endif // QT_NO_DOCKWIDGET
 

@@ -159,6 +159,8 @@ public:
 
     Qt::ToolBarArea toolBarArea(QToolBar *toolbar) const;
     bool toolBarBreak(QToolBar *toolbar) const;
+
+    void synchronizeFromToolBars();
 #endif
 #ifndef QT_NO_DOCKWIDGET
     void addDockWidget(Qt::DockWidgetArea area, QDockWidget *dockwidget);
@@ -172,6 +174,8 @@ public:
     bool restoreDockWidget(QDockWidget *dockwidget);
 
     Qt::DockWidgetArea dockWidgetArea(QDockWidget *dockwidget) const;
+
+    void synchronizeFromDockWidgets();
 #endif // QT_NO_DOCKWIDGET
 
     QByteArray saveState(int version = 0) const;

@@ -105,6 +105,8 @@ struct QDockAreaLayoutItem
     bool expansive(Qt::Orientation o) const;
     bool hasFixedSize(Qt::Orientation o) const;
 
+    int synchronizeFromDockWidget(Qt::Orientation o);
+
     QLayoutItem *widgetItem;
     QDockAreaLayoutInfo *subinfo;
     QPlaceHolderItem *placeHolderItem;
@@ -157,6 +159,8 @@ public:
     };
     void saveState(QDataStream &stream) const;
     bool restoreState(QDataStream &stream, QList<QDockWidget*> &widgets, bool testing);
+
+    void synchronizeFromDockWidgets();
 
     void fitItems();
     bool expansive(Qt::Orientation o) const;
@@ -260,6 +264,8 @@ public:
     void remove(const QList<int> &path);
 
     void fitLayout();
+
+    void synchronizeFromDockWidgets();
 
     void clear();
 

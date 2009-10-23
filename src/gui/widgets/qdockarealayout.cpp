@@ -207,6 +207,23 @@ QDockAreaLayoutItem
     return *this;
 }
 
+int QDockAreaLayoutItem::synchronizeFromDockWidget(Qt::Orientation o)
+{
+    QWidget *wid = (widgetItem == 0) ? 0 : widgetItem->widget();
+    if (wid != 0) {
+
+        QSize wsize = wid->size();
+        size = pick(o, wsize);
+        flags = KeepSize;
+
+        if (!wid->isHidden())
+            pos = pick(o, wid->pos());
+
+        return perp(o, wsize);
+    }
+    return 0;
+}
+
 /******************************************************************************
 ** QDockAreaLayoutInfo
 */
@@ -2066,6 +2083,18 @@ void QDockAreaLayoutInfo::updateSeparatorWidgets() const
     Q_ASSERT(separatorWidgets.size() == j);
 }
 
+void QDockAreaLayoutInfo::synchronizeFromDockWidgets()
+{
+    QSize shint(sizeHint());
+
+    for (QList<QDockAreaLayoutItem>::iterator it = item_list.begin(); it != item_list.end(); ++it) {
+        int w = it->synchronizeFromDockWidget(o);
+        rperp(o, shint) = qMax(perp(o, shint), w);
+    }
+
+    rect.setSize(shint);
+}
+
 #ifndef QT_NO_TABBAR
 void QDockAreaLayoutInfo::updateTabBar() const
 {
@@ -3310,6 +3339,15 @@ void QDockAreaLayout::keepSize(QDockWidget *w)
     QDockAreaLayoutItem &item = this->item(path);
     if (item.size != -1)
         item.flags |= QDockAreaLayoutItem::KeepSize;
+}
+
+void QDockAreaLayout::synchronizeFromDockWidgets()
+{
+    for (int i = 0; i < QInternal::DockCount; ++i) {
+        docks[i].synchronizeFromDockWidgets();
+    }
+
+    rect.setSize(sizeHint());
 }
 
 QT_END_NAMESPACE

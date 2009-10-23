@@ -103,6 +103,7 @@ public:
     QSize minimumSize() const;
     QSize sizeHint() const;
     QSize realSizeHint() const;
+    void synchronizeFromToolBar(Qt::Orientation o);
 
     void resize(Qt::Orientation o, int newSize)
     {
@@ -146,6 +147,8 @@ public:
     void fitLayout();
     bool skip() const;
 
+    void synchronizeFromToolBars();
+
     QRect rect;
     Qt::Orientation o;
 
@@ -165,6 +168,8 @@ public:
     QSize minimumSize() const;
 
     void fitLayout();
+
+    void synchronizeFromToolBars();
 
     QLayoutItem *insertToolBar(QToolBar *before, QToolBar *toolBar);
     void insertItem(QToolBar *before, QLayoutItem *item);
@@ -201,6 +206,8 @@ public:
     QToolBarAreaLayout(const QMainWindow *win);
 
     QRect fitLayout();
+
+    void synchronizeFromToolBars();
 
     QSize minimumSize(const QSize &centerMin) const;
     QRect rectHint(const QRect &r) const;

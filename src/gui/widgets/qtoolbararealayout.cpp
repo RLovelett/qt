@@ -95,6 +95,17 @@ bool QToolBarAreaLayoutItem::skip() const
     return widgetItem == 0 || widgetItem->isEmpty();
 }
 
+void QToolBarAreaLayoutItem::synchronizeFromToolBar(Qt::Orientation o)
+{
+    QWidget *wid = (widgetItem == 0) ? 0 : widgetItem->widget();
+    if (wid != 0) {
+        pos = pick(o, wid->pos());
+        size = pick(o, wid->size());
+        int shint = pick(o, wid->sizeHint());
+        preferredSize = (size == shint) ? -1 : size;
+    }
+}
+
 /******************************************************************************
 ** QToolBarAreaLayoutLine
 */
@@ -193,6 +204,15 @@ bool QToolBarAreaLayoutLine::skip() const
             return false;
     }
     return true;
+}
+
+void QToolBarAreaLayoutLine::synchronizeFromToolBars()
+{
+    for (int i = 0, n = toolBarItems.size(); i < n; ++i) {
+        toolBarItems[i].synchronizeFromToolBar(o);
+    }
+
+    rect.setSize(sizeHint());
 }
 
 /******************************************************************************
@@ -613,6 +633,77 @@ QRect QToolBarAreaLayoutInfo::appendLineDropRect() const
     }
 
     return result;
+}
+
+void QToolBarAreaLayoutInfo::synchronizeFromToolBars()
+{
+    int lineHeight = 0;
+    for (int i = 0, n = lines.size(); (i < n) && (lineHeight == 0); ++i) {
+        lineHeight = perp(o, lines[i].sizeHint());
+    }
+
+    if (lineHeight > 0) {
+
+        // Step 1: make sure all items are in the correct lines
+        QPoint origin = rect.topLeft();
+
+        // Notes:
+        // 1) end of iteration should be fixed in loop init or we'll reprocess lines added in this loop
+        // 2) since we may modify the size of lines in the loop, don't use iterators and references to objects
+        for (int i = 0, n = lines.size(); i < n; ++i) {
+
+            for (int j = 0; j < lines[i].toolBarItems.size(); /* inc in loop */) {
+
+                QToolBarAreaLayoutItem &item = lines[i].toolBarItems[j];
+                QWidget *wid = (item.widgetItem == 0) ? 0 : item.widgetItem->widget();
+                int nextIdx = j + 1;
+                if (wid != 0) {
+
+                    int pos = perp(o, wid->pos()) - perp(o, origin);
+                    // handle rounding and negative value specials
+                    int lnum = qAbs((pos + lineHeight/2) / lineHeight);
+
+                    if (lnum != i) {
+
+                        QToolBarAreaLayoutItem newItem(item);
+                        int delta = (pos >= 0) ? lineHeight : -lineHeight;
+                        while (lines.size() <= lnum) {
+
+                            QToolBarAreaLayoutLine newLine(o);
+                            QPoint newPos(lines[0].rect.topLeft());
+                            rperp(o, newPos) += delta * lines.size();
+                            newLine.rect = QRect(newPos, QSize(0, 0));
+                            lines.push_back(newLine);
+                        }
+
+                        lines[lnum].toolBarItems.push_back(newItem);
+                        lines[i].toolBarItems.removeAt(j);
+                        nextIdx = j;
+                    }
+                }
+                j = nextIdx;
+            }
+        }
+
+        // Step 2: remove trailing empty lines
+        int validLines = lines.size();
+        while (validLines > 0) {
+
+            if (lines[validLines-1].toolBarItems.size() == 0) {
+                lines.pop_back();
+                --validLines;
+            }
+            else
+                break;
+        }
+
+        // Step 3: synchronize lines
+        for (int i = 0, n = lines.size(); i < n; ++i) {
+            lines[i].synchronizeFromToolBars();
+        }
+
+        rect.setSize(sizeHint());
+    }
 }
 
 /******************************************************************************
@@ -1366,6 +1457,14 @@ bool QToolBarAreaLayout::restoreState(QDataStream &stream, const QList<QToolBar*
 
 
     return stream.status() == QDataStream::Ok;
+}
+
+void QToolBarAreaLayout::synchronizeFromToolBars()
+{
+    // Toolbars already have to be in the correct areas
+    for (int i = 0; i < QInternal::DockCount; ++i) {
+        docks[i].synchronizeFromToolBars();
+    }
 }
 
 bool QToolBarAreaLayout::isEmpty() const
