@@ -2014,7 +2014,12 @@ void QWidgetPrivate::setNetWmWindowTypes()
     if (windowTypes.isEmpty()) {
         windowTypes.append(ATOM(_NET_WM_WINDOW_TYPE_NORMAL));
     }
-
+#if defined(Q_WS_HILDON)
+    if (q->testAttribute(Qt::WA_Maemo5ApplicationMenu)) {
+        windowTypes.clear();
+        windowTypes.append(ATOM(_HILDON_WM_WINDOW_TYPE_APP_MENU));
+    }
+#endif
     //FIXME Upstream Qt bug: XDeleteProperty won't never executed.
     if (!windowTypes.isEmpty()) {
         XChangeProperty(X11->display, q->winId(), ATOM(_NET_WM_WINDOW_TYPE), XA_ATOM, 32,

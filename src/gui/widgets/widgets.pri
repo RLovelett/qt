@@ -78,7 +78,8 @@ HEADERS += \
         widgets/qtoolbararealayout_p.h \
         widgets/qplaintextedit.h \
         widgets/qplaintextedit_p.h \
-        widgets/qprintpreviewwidget.h
+        widgets/qprintpreviewwidget.h \
+        widgets/qmenu_maemo5_p.h
 
 SOURCES += \
         widgets/qabstractbutton.cpp \
@@ -138,8 +139,8 @@ SOURCES += \
         widgets/qwidgetanimator.cpp \
         widgets/qtoolbararealayout.cpp \
         widgets/qplaintextedit.cpp \
-        widgets/qprintpreviewwidget.cpp
-
+        widgets/qprintpreviewwidget.cpp \
+        widgets/qmenu_maemo5.cpp
 
 !embedded:mac {
     HEADERS += widgets/qmacnativewidget_mac.h \
@@ -160,3 +161,4 @@ wince*: {
     RC_FILE = widgets/qmenu_wince.rc
     !static: QMAKE_WRITE_DEFAULT_RC = 1
 }
+

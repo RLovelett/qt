@@ -420,6 +420,8 @@ public:
 #endif
 #ifdef Q_WS_HILDON
     void _q_longPushTimeOut();
+    static void maemo5ShowApplicationMenu();
+    static void maemo5ToggleFullScreen();
 #endif
 #ifndef QT_NO_STYLE_STYLESHEET
     static QString styleSheet;

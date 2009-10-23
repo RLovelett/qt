@@ -107,6 +107,11 @@ typedef GtkWidget* (*Ptr_gtk_hscale_new)(GtkAdjustment*);
 typedef GtkWidget* (*Ptr_gtk_vscale_new)(GtkAdjustment*);
 typedef GtkWidget* (*Ptr_gtk_hscrollbar_new)(GtkAdjustment*);
 typedef GtkWidget* (*Ptr_gtk_vscrollbar_new)(GtkAdjustment*);
+#ifdef Q_WS_HILDON
+typedef GtkWidget* (*Ptr_hildon_app_menu_new)(void);
+typedef void (*Ptr_hildon_gtk_widget_set_theme_size)(GtkWidget*, HildonSizeType);
+typedef void (*Ptr_gtk_widget_get_size_request)(GtkWidget *, gint *, gint *);
+#endif
 typedef GtkWidget* (*Ptr_gtk_scrolled_window_new)(GtkAdjustment*, GtkAdjustment*);
 typedef gchar* (*Ptr_gtk_check_version)(guint, guint, guint);
 typedef GtkToolItem* (*Ptr_gtk_separator_tool_item_new) (void);
@@ -280,6 +285,11 @@ public:
     static Ptr_gtk_vscale_new gtk_vscale_new;
     static Ptr_gtk_hscrollbar_new gtk_hscrollbar_new;
     static Ptr_gtk_vscrollbar_new gtk_vscrollbar_new;
+#ifdef Q_WS_HILDON
+    static Ptr_hildon_app_menu_new hildon_app_menu_new;
+    static Ptr_hildon_gtk_widget_set_theme_size hildon_gtk_widget_set_theme_size;
+    static Ptr_gtk_widget_get_size_request gtk_widget_get_size_request;
+#endif
     static Ptr_gtk_scrolled_window_new gtk_scrolled_window_new;
     static Ptr_gtk_notebook_new gtk_notebook_new;
     static Ptr_gtk_toolbar_new gtk_toolbar_new;

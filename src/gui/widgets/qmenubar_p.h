@@ -181,6 +181,9 @@ public:
     void macDestroyMenuBar();
     OSMenuRef macMenu();
 #endif
+#ifdef Q_WS_HILDON
+    static void maemoResetApplicationMenuAtom(QWidget *w);
+#endif
 #ifdef Q_OS_WINCE
     void wceCreateMenuBar(QWidget *);
     void wceDestroyMenuBar();
@@ -219,6 +222,7 @@ public:
     void wceCommands(uint command);
     void wceRefresh();
     bool wceEmitSignals(QList<QWceMenuAction*> actions, uint command);
+
 #endif
 };
 #endif

@@ -108,6 +108,11 @@ Ptr_gtk_text_view_new QGtk::gtk_text_view_new = 0;
 Ptr_hildon_touch_selector_new_text QGtk::hildon_touch_selector_new_text = 0;
 Ptr_hildon_dialog_new_with_buttons QGtk::hildon_dialog_new_with_buttons = 0;
 #endif
+#ifdef Q_WS_HILDON
+Ptr_hildon_app_menu_new QGtk::hildon_app_menu_new = 0;
+Ptr_hildon_gtk_widget_set_theme_size QGtk::hildon_gtk_widget_set_theme_size = 0;
+Ptr_gtk_widget_get_size_request QGtk::gtk_widget_get_size_request = 0;
+#endif
 Ptr_gtk_hscale_new QGtk::gtk_hscale_new = 0;
 Ptr_gtk_vscale_new QGtk::gtk_vscale_new = 0;
 Ptr_gtk_hscrollbar_new QGtk::gtk_hscrollbar_new = 0;
@@ -225,8 +230,9 @@ static void resolveGtk()
 {
     const QString GTK_PATH(QLS("gtk-x11-2.0"));
 #ifdef Q_WS_HILDON
-    const QString HILDON_PATH(QLS("hildon-1"));
-    const QString HILDONFM_PATH("hildonfm");
+    QString HILDON_PATH(QLS("hildon-1"));
+    QString HILDONFM_PATH("hildonfm");
+    QLibrary libhildon(QLS("hildon-1"), 0, 0);
 #endif
 
     QGtk::gtk_init = (Ptr_gtk_init)QLibrary::resolve(GTK_PATH, 0, "gtk_init");
@@ -291,6 +297,9 @@ static void resolveGtk()
     QGtk::gtk_vscale_new = (Ptr_gtk_vscale_new)QLibrary::resolve(GTK_PATH, 0, "gtk_vscale_new");
     QGtk::gtk_hscrollbar_new = (Ptr_gtk_hscrollbar_new)QLibrary::resolve(GTK_PATH, 0, "gtk_hscrollbar_new");
     QGtk::gtk_vscrollbar_new = (Ptr_gtk_vscrollbar_new)QLibrary::resolve(GTK_PATH, 0, "gtk_vscrollbar_new");
+#ifdef Q_WS_HILDON
+    QGtk::hildon_app_menu_new = (Ptr_hildon_app_menu_new)libhildon.resolve("hildon_app_menu_new");
+#endif
     QGtk::gtk_scrolled_window_new = (Ptr_gtk_scrolled_window_new)QLibrary::resolve(GTK_PATH, 0, "gtk_scrolled_window_new");
     QGtk::gtk_menu_shell_append = (Ptr_gtk_menu_shell_append)QLibrary::resolve(GTK_PATH, 0, "gtk_menu_shell_append");
     QGtk::gtk_entry_new = (Ptr_gtk_entry_new)QLibrary::resolve(GTK_PATH, 0, "gtk_entry_new");
@@ -716,6 +725,11 @@ void QGtk::initGtkWidgets()
             GtkWidget *gtkButton = QGtk::gtk_button_new();
             add_widget(gtkButton);
             g_signal_connect(gtkButton, "style-set", G_CALLBACK(gtkStyleSetCallback), NULL);
+            #ifdef Q_WS_HILDON
+            gtkButton = QGtk::gtk_button_new();
+            QGtk::hildon_gtk_widget_set_theme_size(gtkButton, HILDON_SIZE_FINGER_HEIGHT);
+            add_widget(gtkButton);
+            #endif
             add_widget(QGtk::gtk_arrow_new(GTK_ARROW_DOWN, GTK_SHADOW_NONE));
             add_widget(QGtk::gtk_hbutton_box_new());
             add_widget(QGtk::gtk_check_button_new());
@@ -755,6 +769,8 @@ void QGtk::initGtkWidgets()
 #ifdef Q_WS_HILDON
             //ComboBoxes buttons
             add_widget(QGtk::hildon_number_editor_new(0,1));
+            add_widget(QGtk::hildon_app_menu_new());
+
 #endif
         }
         else // Rebuild map

@@ -128,6 +128,9 @@ extern "C" {
 
 #ifdef Q_WS_HILDON
 #  include "qmainwindow.h"
+#include "../widgets/qmenu_maemo5_p.h"
+# include <QMenuBar>
+# include <QWidgetAction>
 #endif
 
 #include <private/qbackingstore_p.h>
@@ -259,6 +262,16 @@ static const char * x11_atomnames = {
 
     // Hildon Menu
 #ifdef Q_WS_HILDON
+    "_HILDON_WM_WINDOW_TYPE_APP_MENU\0"
+    "_HILDON_WM_WINDOW_TYPE_HOME_APPLET\0"
+    "_HILDON_WM_WINDOW_MENU_INDICATOR\0"
+    "_HILDON_NON_COMPOSITED_WINDOW\0"
+    "_HILDON_PORTRAIT_MODE_REQUEST\0"
+    "_HILDON_PORTRAIT_MODE_SUPPORT\0"
+    "_HILDON_STACKABLE_WINDOW\0"
+    "_HILDON_APPLET_ID\0"
+    "_HILDON_ZOOM_KEY_ATOM\0"
+    "_NET_WM_CONTEXT_CUSTOM\0"
     "_MB_GRAB_TRANSFER\0"
 #endif
 
@@ -3275,9 +3288,8 @@ int QApplication::x11ClientMessage(QWidget* w, XEvent* event, bool passive_only)
             if (passive_only || !QApplicationPrivate::active_window)
                 return 0;
 
-            QMainWindow *mw=qobject_cast<QMainWindow*>(widget);
-            if (mw)
-              mw->showApplicationContextMenu();
+            QApplicationPrivate::maemo5ShowApplicationMenu();
+
 #endif
         } else {
             if (passive_only) return 0;
@@ -3427,6 +3439,18 @@ int QApplication::x11ProcessEvent(XEvent* event)
             if (XFilterEvent(event, XNone))
                 return true;
         }
+#if defined(Q_WS_HILDON)
+    if (event->type == XKeyPress) {
+        //qWarning("XKE: %d %d", event->xkey.keycode, event->xkey.state);
+        if (event->xkey.keycode == 72 && event->xkey.state == 0) {
+            QApplicationPrivate::maemo5ToggleFullScreen();
+            return true;
+        } else if (event->xkey.keycode == 70 && event->xkey.state == 0) {
+            QApplicationPrivate::maemo5ShowApplicationMenu();
+            return true;
+        }
+    }
+#endif
 
     if (qt_x11EventFilter(event))                // send through app filter
         return 1;
@@ -6072,5 +6096,32 @@ void QSessionManager::requestPhase2()
 }
 
 #endif // QT_NO_SESSIONMANAGER
+
+
+#if defined(Q_WS_HILDON)
+
+void QApplicationPrivate::maemo5ShowApplicationMenu()
+{
+    if (QWidget *w = qApp->activeWindow()) {
+        if (QMenuBar *menubar = w->findChild<QMenuBar *>()) {
+            QMaemo5ApplicationMenu appmenu(menubar);
+
+            if (!appmenu.isEmpty()) {
+                appmenu.exec();
+                if (appmenu.selectedAction())
+                    appmenu.selectedAction()->trigger();
+            }
+        }
+    }
+}
+
+void QApplicationPrivate::maemo5ToggleFullScreen()
+{
+    if (QWidget *w = qApp->activeWindow())
+        w->setWindowState(w->windowState() ^ Qt::WindowFullScreen);
+}
+
+
+#endif // Q_WS_MAEMO_5
 
 QT_END_NAMESPACE
