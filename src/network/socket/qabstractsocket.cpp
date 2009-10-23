@@ -1013,6 +1013,7 @@ void QAbstractSocketPrivate::_q_connectToNextAddress()
         // Wait for a write notification that will eventually call
         // _q_testConnection().
         socketEngine->setWriteNotificationEnabled(true);
+        socketEngine->setExceptionNotificationEnabled(true);
         break;
     } while (state != QAbstractSocket::ConnectedState);
 }
@@ -1071,9 +1072,10 @@ void QAbstractSocketPrivate::_q_abortConnectionAttempt()
 #if defined(QABSTRACTSOCKET_DEBUG)
     qDebug("QAbstractSocketPrivate::_q_abortConnectionAttempt() (timed out)");
 #endif
-    if (socketEngine)
+    if (socketEngine) {
         socketEngine->setWriteNotificationEnabled(false);
-
+        socketEngine->setExceptionNotificationEnabled(false);
+    }
     connectTimer->stop();
 
     if (addresses.isEmpty()) {
@@ -1177,6 +1179,13 @@ void QAbstractSocketPrivate::fetchConnectionParameters()
 #endif
 }
 
+bool QAbstractSocketPrivate::notifyException()
+{
+#if defined (Q_OS_SYMBIAN)
+	Q_Q(QAbstractSocket);
+    emit q->error(socketError);
+#endif
+}
 /*! \internal
 
     Constructs a new abstract socket of type \a socketType. The \a
