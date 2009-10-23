@@ -485,11 +485,11 @@ public:
         WA_WState_WindowOpacitySet = 119, // internal
         WA_TranslucentBackground = 120,
         WA_Maemo5ApplicationMenu = 125,
-        WA_Maemo5DesktopApplet = 126,
+        /*WA_Maemo5DesktopApplet = 126,
         WA_Maemo5NonComposited = 127,
         WA_Maemo5StackedWindow = 128,
         WA_Maemo5ForcePortraitOrientation = 129,
-        WA_Maemo5ForceLandscapeOrientation = 130,
+        WA_Maemo5ForceLandscapeOrientation = 130,*/
 #endif
 
         // Add new attributes before this line
