@@ -223,6 +223,7 @@ public:
     void wceCommands(uint command);
     void wceRefresh();
     bool wceEmitSignals(QList<QWceMenuAction*> actions, uint command);
+
 #endif
 };
 #endif

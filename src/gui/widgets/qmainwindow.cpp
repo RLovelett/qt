@@ -910,7 +910,6 @@ void QMainWindow::showApplicationContextMenu(){
     static QAction *quitAction = 0;
 
 
-     qDebug() << "ADD aCTION\n";
 
     //Hides submenues. GlobalMenu will be destroyed as soons
     //as QMenu::exec() terminates
@@ -938,7 +937,6 @@ void QMainWindow::showApplicationContextMenu(){
     QList<QAction*> actionList = menuBar()->actions();
     //Filling the App context menu
     if (!actionList.isEmpty()){
-
         //Trying to get the quitAction from the file menu
         QMenu *fileMenu = actionList[0]->menu();
         if (!quitAction && fileMenu){

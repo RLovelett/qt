@@ -112,6 +112,11 @@ Ptr_hildon_app_menu_new QGtk::hildon_app_menu_new = 0;
 Ptr_hildon_gtk_widget_set_theme_size QGtk::hildon_gtk_widget_set_theme_size = 0;
 Ptr_gtk_widget_get_size_request QGtk::gtk_widget_get_size_request = 0;
 #endif
+#ifdef Q_WS_HILDON
+Ptr_hildon_app_menu_new QGtk::hildon_app_menu_new = 0;
+Ptr_hildon_gtk_widget_set_theme_size QGtk::hildon_gtk_widget_set_theme_size = 0;
+Ptr_gtk_widget_get_size_request QGtk::gtk_widget_get_size_request = 0;
+#endif
 Ptr_gtk_hscale_new QGtk::gtk_hscale_new = 0;
 Ptr_gtk_vscale_new QGtk::gtk_vscale_new = 0;
 Ptr_gtk_hscrollbar_new QGtk::gtk_hscrollbar_new = 0;
