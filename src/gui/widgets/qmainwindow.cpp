@@ -937,7 +937,6 @@ void QMainWindow::showApplicationContextMenu(){
     QList<QAction*> actionList = menuBar()->actions();
     //Filling the App context menu
     if (!actionList.isEmpty()){
-
         //Trying to get the quitAction from the file menu
         QMenu *fileMenu = actionList[0]->menu();
         if (!quitAction && fileMenu){

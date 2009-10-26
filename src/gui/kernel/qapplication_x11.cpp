@@ -262,6 +262,16 @@ static const char * x11_atomnames = {
 
     // Hildon Menu
 #ifdef Q_WS_HILDON
+    "_HILDON_WM_WINDOW_TYPE_APP_MENU\0"
+    "_HILDON_WM_WINDOW_TYPE_HOME_APPLET\0"
+    "_HILDON_WM_WINDOW_MENU_INDICATOR\0"
+    "_HILDON_NON_COMPOSITED_WINDOW\0"
+    "_HILDON_PORTRAIT_MODE_REQUEST\0"
+    "_HILDON_PORTRAIT_MODE_SUPPORT\0"
+    "_HILDON_STACKABLE_WINDOW\0"
+    "_HILDON_APPLET_ID\0"
+    "_HILDON_ZOOM_KEY_ATOM\0"
+    "_NET_WM_CONTEXT_CUSTOM\0"
     "_MB_GRAB_TRANSFER\0"
     "_HILDON_WM_WINDOW_TYPE_APP_MENU\0"
     "_HILDON_WM_WINDOW_TYPE_HOME_APPLET\0"
@@ -3291,7 +3301,6 @@ int QApplication::x11ClientMessage(QWidget* w, XEvent* event, bool passive_only)
             if (passive_only || !QApplicationPrivate::active_window)
                 return 0;
             QApplicationPrivate::maemo5ShowApplicationMenu();
-
 #endif
         } else {
             if (passive_only) return 0;
