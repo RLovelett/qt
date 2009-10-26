@@ -1371,6 +1371,11 @@ void QMenuBarPrivate::handleReparent()
             newWindow->installEventFilter(q);
     }
 
+#ifdef Q_WS_HILDON
+    maemoResetApplicationMenuAtom(oldParent);
+    maemoResetApplicationMenuAtom(newParent);
+#endif
+
     oldParent = newParent;
     oldWindow = newWindow;
 
