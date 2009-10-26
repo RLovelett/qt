@@ -57,12 +57,17 @@ void qt_egl_set_format(QEglProperties& props, int deviceType, const QGLFormat& f
     // Set the pixel format to that contained in the QGLFormat
     // if the system hasn't already chosen a fixed format to
     // match the pixmap, widget, etc.
+    
+    // Update: SGX returns an invalid config if pixel values dont really match
+    // the available ones. Table 3.4 of the EGL 1.4 standard says that the 
+    // requested pixel value should be <= than the actual value. 
+    // This doesn't seem to be the case on SGX other than the alpha channel.
     if (props.value(EGL_RED_SIZE) == EGL_DONT_CARE || f.redBufferSize() != -1)
-        props.setValue(EGL_RED_SIZE, f.redBufferSize() == -1 ? 1 : f.redBufferSize());
+        props.setValue(EGL_RED_SIZE, f.redBufferSize() == -1 ? EGL_DONT_CARE : f.redBufferSize());
     if (props.value(EGL_GREEN_SIZE) == EGL_DONT_CARE || f.greenBufferSize() != -1)
-        props.setValue(EGL_GREEN_SIZE, f.greenBufferSize() == -1 ? 1 : f.greenBufferSize());
+        props.setValue(EGL_GREEN_SIZE, f.greenBufferSize() == -1 ? EGL_DONT_CARE : f.greenBufferSize());
     if (props.value(EGL_BLUE_SIZE) == EGL_DONT_CARE || f.blueBufferSize() != -1)
-        props.setValue(EGL_BLUE_SIZE, f.blueBufferSize() == -1 ? 1 : f.blueBufferSize());
+        props.setValue(EGL_BLUE_SIZE, f.blueBufferSize() == -1 ? EGL_DONT_CARE : f.blueBufferSize());
     if (f.alpha()) {
         if (props.value(EGL_ALPHA_SIZE) == EGL_DONT_CARE || f.alphaBufferSize() != -1)
             props.setValue(EGL_ALPHA_SIZE, f.alphaBufferSize() == -1 ? 1 : f.alphaBufferSize());

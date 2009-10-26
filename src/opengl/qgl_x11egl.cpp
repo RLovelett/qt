@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include <QtDebug>
 #include "qgl.h"
 #include <private/qt_x11_p.h>
 #include <private/qgl_p.h>
@@ -273,6 +274,31 @@ void QGLWidget::setContext(QGLContext *context, const QGLContext* shareContext, 
         qWarning("Error: Couldn't get a matching X visual for format");
         return;
     }
+    bool useArgb = context->format().alpha() && !context->deviceIsPixmap();
+#ifndef QT_NO_XRENDER
+    if(useArgb) {
+        int nvi;
+        XVisualInfo tmp;
+        tmp.screen  = x11Info().screen();
+        tmp.depth   = 32;
+        tmp.c_class = TrueColor;
+        XVisualInfo *xvi = XGetVisualInfo(X11->display, VisualScreenMask |
+                                          VisualDepthMask |
+                                          VisualClassMask, &tmp, &nvi);
+        int idx;
+        for (idx = 0; idx < nvi; ++idx) {
+            XRenderPictFormat *format = XRenderFindVisualFormat(X11->display,
+                                                        xvi[idx].visual);
+            // printf("ALPHA: %d", value);
+            if (format->type == PictTypeDirect && format->direct.alphaMask) {
+                printf("got render visual\n");
+                vi = xvi[idx];
+                break;
+            }
+        }
+        XFree(xvi);
+    }
+#endif
 
     XSetWindowAttributes a;
 
@@ -283,10 +309,16 @@ void QGLWidget::setContext(QGLContext *context, const QGLContext* shareContext, 
     QColormap colmap = QColormap::instance(vi.screen);
     a.background_pixel = colmap.pixel(palette().color(backgroundRole()));
     a.border_pixel = colmap.pixel(Qt::black);
-
+    unsigned int ui32Mask = CWBackPixel|CWBorderPixel;
+#ifndef QT_NO_XRENDER
+    if(useArgb) {
+        a.colormap = XCreateColormap(X11->display, p, vi.visual, AllocNone );
+        ui32Mask |= CWColormap;
+    }
+#endif
     Window w = XCreateWindow(X11->display, p, x(), y(), width(), height(),
-                              0, vi.depth, InputOutput, vi.visual,
-                              CWBackPixel|CWBorderPixel, &a);
+                             0, vi.depth, InputOutput, vi.visual,
+                             ui32Mask, &a);
 
     if (deleteOldContext)
         delete oldcx;

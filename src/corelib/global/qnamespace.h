@@ -264,9 +264,7 @@ public:
         SplashScreen = 0x0000000e | Window,
         Desktop = 0x00000010 | Window,
         SubWindow =  0x00000012,
-#ifdef Q_OS_FREMANTLE
-        HildonAppMenu = 0x0000014 | Window,
-#endif		
+
 	WindowType_Mask = 0x000000ff,
         MSWindowsFixedSizeDialogHint = 0x00000100,
         MSWindowsOwnDC = 0x00000200,
@@ -482,10 +480,12 @@ public:
         WA_X11NetWmWindowTypeDND = 116,
 
         WA_MacFrameworkScaled  = 117,
-
+#ifdef Q_WS_HILDON
         WA_SetWindowModality = 118,
         WA_WState_WindowOpacitySet = 119, // internal
         WA_TranslucentBackground = 120,
+        WA_Maemo5ApplicationMenu = 125,
+#endif
 
         // Add new attributes before this line
         WA_AttributeCount

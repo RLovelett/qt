@@ -7429,6 +7429,8 @@ void qt_painter_removePaintDevice(QPaintDevice *dev)
     }
 }
 
+#define STRING_SEPARATOR 0x9c
+
 void qt_format_text(const QFont &fnt, const QRectF &_r,
                     int tf, const QString& str, QRectF *brect,
                     int tabstops, int *ta, int tabarraylen,
@@ -7494,10 +7496,13 @@ void qt_format_text(const QFont &fnt, const QRectF &_r,
     QFontMetricsF fm(fnt);
 
     QString text = str;
+    int offset = 0;
+  start_over:
+    bool has_more = false;
     // compatible behaviour to the old implementation. Replace
     // tabs by spaces
-    QChar *chr = text.data();
-    const QChar *end = chr + str.length();
+    QChar *chr = text.data() + offset; // XXX This will immediately detach. should make this const and use [] for the write ops instead
+    const QChar *end = text.data() + text.length();
     bool has_tab = false;
     while (chr != end) {
         if (*chr == QLatin1Char('\r') || (singleline && *chr == QLatin1Char('\n'))) {
@@ -7508,12 +7513,16 @@ void qt_format_text(const QFont &fnt, const QRectF &_r,
             ++maxUnderlines;
         } else if (*chr == QLatin1Char('\t')) {
             has_tab = true;
+        } else if (*chr == QChar(STRING_SEPARATOR)) {
+            end = chr;
+            has_more = true;
+            break;
         }
         ++chr;
     }
     if (has_tab) {
         if (!expandtabs) {
-            chr = text.data();
+            chr = text.data() + offset;
             while (chr != end) {
                 if (*chr == QLatin1Char('\t'))
                     *chr = QLatin1Char(' ');
@@ -7527,9 +7536,9 @@ void qt_format_text(const QFont &fnt, const QRectF &_r,
     if (hidemnmemonic || showmnemonic) {
         if (maxUnderlines > 32)
             underlinePositions = new int[maxUnderlines];
-        QChar *cout = text.data();
+        QChar *cout = text.data() + offset;
         QChar *cin = cout;
-        int l = str.length();
+        int l = end - cout;
         while (l) {
             if (*cin == QLatin1Char('&')) {
                 ++cin;
@@ -7544,9 +7553,7 @@ void qt_format_text(const QFont &fnt, const QRectF &_r,
             ++cin;
             --l;
         }
-        int newlen = cout - text.unicode();
-        if (newlen != text.length())
-            text.resize(newlen);
+        end = cout;
     }
 
     // no need to do extra work for underlines if we don't paint
@@ -7557,7 +7564,9 @@ void qt_format_text(const QFont &fnt, const QRectF &_r,
     qreal height = 0;
     qreal width = 0;
 
-    QStackTextEngine engine(text, fnt);
+    QString finalText = text.mid(offset, end - (text.data() + offset));
+    QStackTextEngine engine(finalText, fnt);
+
     if (option) {
         engine.option = *option;
     }
@@ -7579,7 +7588,7 @@ void qt_format_text(const QFont &fnt, const QRectF &_r,
     textLayout.setCacheEnabled(true);
     textLayout.engine()->underlinePositions = underlinePositions;
 
-    if (text.isEmpty()) {
+    if (finalText.isEmpty()) {
         height = fm.height();
         width = 0;
         tf |= Qt::TextDontPrint;
@@ -7644,6 +7653,10 @@ void qt_format_text(const QFont &fnt, const QRectF &_r,
         }
     }
     QRectF bounds = QRectF(r.x() + xoff, r.y() + yoff, width, height);
+    if (has_more && !r.contains(bounds)) {
+        offset = end - text.data() + 1;
+        goto start_over;
+    }
     if (brect)
         *brect = bounds;
 

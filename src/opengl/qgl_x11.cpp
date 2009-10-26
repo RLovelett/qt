@@ -319,9 +319,66 @@ bool QGLContext::chooseContext(const QGLContext* shareContext)
 {
     Q_D(QGLContext);
     const QX11Info *xinfo = qt_x11Info(d->paintDevice);
-
+    
     Display* disp = xinfo->display();
-    d->vi = chooseVisual();
+    if(d->glFormat.alpha() && !deviceIsPixmap()) {
+        GLXFBConfig *fbconfigs, fbconfig;
+        XRenderPictFormat *pictFormat;
+        XVisualInfo *visinfo;
+        int nitems;
+        int attrib[] = {
+            GLX_DOUBLEBUFFER,  True,
+            GLX_RED_SIZE,      1,
+            GLX_GREEN_SIZE,    1,
+            GLX_BLUE_SIZE,     1,
+            GLX_ALPHA_SIZE,    1,
+            GLX_DEPTH_SIZE,    1,
+            GLX_RENDER_TYPE,   GLX_RGBA_BIT,
+            GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+            0
+        };
+        fbconfigs = glXChooseFBConfig(disp,
+                                      DefaultScreen(disp),
+                                      attrib,
+                                      &nitems);
+        if (NULL == fbconfigs) {
+            fprintf(stderr,"Error: couldn't get fbconfig\n");
+            return false;
+        }
+        
+        /* Find an FBConfig with a visual that has a RENDER picture format that
+         * has alpha */
+        int i;
+        for (i = 0; i < nitems; i++) {
+            visinfo = glXGetVisualFromFBConfig(disp, fbconfigs[i]);
+            
+            if(!visinfo)
+                continue;
+            
+            pictFormat = XRenderFindVisualFormat(disp, visinfo->visual);
+            
+            if(!pictFormat) {
+                XFree(visinfo);
+                continue;
+            }
+            
+            if(pictFormat->direct.alphaMask > 0) {
+                fbconfig = fbconfigs[i];
+                break;
+            }
+            
+            XFree(visinfo);
+        }
+        
+        if (i == nitems) {
+            qWarning("Warning: Couldn't find a visual with a picture format that alpha\n");
+        }
+        
+        XFree(fbconfigs);
+        d->vi = visinfo;
+        
+    } else
+        d->vi = chooseVisual();
     if (!d->vi)
         return false;
 
