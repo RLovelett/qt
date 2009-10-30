@@ -120,6 +120,7 @@ private slots:
     void sectionSize();
 
     void length();
+    void horizontalLength(); 
     void offset();
     void sectionSizeHint();
     void logicalIndex();
@@ -690,7 +691,17 @@ void tst_QHeaderView::length()
     view->show();
 
     //minimumSectionSize should be the size of the last section of the widget is not tall enough
+    //set bigger than section size
+    view->setMinimumSectionSize(45);
     int length = view->minimumSectionSize();
+    for (int i=0; i < view->count()-1; i++) {
+        length += view->sectionSize(i);
+    }
+    length = qMax(length, view->viewport()->height());
+    QCOMPARE(length, view->length());
+    //set default
+    view->setMinimumSectionSize(-1);
+    length = view->minimumSectionSize();
     for (int i=0; i < view->count()-1; i++) {
         length += view->sectionSize(i);
     }
@@ -712,6 +723,44 @@ void tst_QHeaderView::length()
     model.cleanup();
     QCOMPARE(model.rows, view->count());
     QVERIFY(oldLength != view->length());
+}
+
+void tst_QHeaderView::horizontalLength()
+{
+    //this test makes sense for headers with different section sizes
+    // it is typical for horizotal headers
+    protected_QHeaderView obj1(Qt::Horizontal);
+    QStandardItemModel* standardmodel = new QStandardItemModel();
+    standardmodel->setColumnCount(3);
+    standardmodel->setHeaderData(0, obj1.orientation(), "XXXXXXX", Qt::DisplayRole);
+    standardmodel->setHeaderData(1, obj1.orientation(), "YYYYYYYY", Qt::DisplayRole);
+    standardmodel->setHeaderData(2, obj1.orientation(), "ZZZZZZZZZ", Qt::DisplayRole);
+    obj1.setModel(standardmodel);
+
+    QVERIFY(obj1.count() == 3);
+    obj1.setStretchLastSection(true);
+    obj1.setResizeMode(QHeaderView::ResizeToContents);
+    obj1.show();
+
+    int hint = 0;
+    for (int c = obj1.count(); c-- > 0; ){
+    	hint += obj1.sectionSizeHint(c);
+    }
+    QRect newGeometry = obj1.geometry();
+    if (obj1.orientation() == Qt::Horizontal)
+    	newGeometry.setWidth(hint-5);
+    else
+    	newGeometry.setHeight(hint-5);
+    obj1.setGeometry(newGeometry);
+    QCOMPARE(obj1.length(), hint);
+    obj1.moveSection(0,2);
+    QCOMPARE(obj1.length(), hint);
+    obj1.moveSection(1,2);
+    QCOMPARE(obj1.length(), hint);
+    obj1.moveSection(1,2);
+    QCOMPARE(obj1.length(), hint);
+    obj1.moveSection(1,2);
+    QCOMPARE(obj1.length(), hint);
 }
 
 void tst_QHeaderView::offset()
