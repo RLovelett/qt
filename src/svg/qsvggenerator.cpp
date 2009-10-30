@@ -176,6 +176,7 @@ public:
     void drawTextItem(const QPointF &pt, const QTextItem &item);
     void drawImage(const QRectF &r, const QImage &pm, const QRectF &sr,
                    Qt::ImageConversionFlag = Qt::AutoColor);
+    void drawLines(const QLineF *lines, int lineCount);
 
     QPaintEngine::Type type() const { return QPaintEngine::SVG; }
 
@@ -1070,6 +1071,23 @@ void QSvgPaintEngine::drawTextItem(const QPointF &pt, const QTextItem &textItem)
                << Qt::escape(s)
                << "</text>"
                << endl;
+}
+
+void QSvgPaintEngine::drawLines(const QLineF *lines, int lineCount)
+{
+    for (int i=0; i<lineCount; ++i) {
+        QPointF pts[2] = { lines[i].p1(), lines[i].p2() };
+
+        if (pts[0] == pts[1]) {
+            if (state->pen().capStyle() != Qt::FlatCap)
+                drawPoints(pts, 1);
+            continue;
+        }
+        stream() << QString(QLatin1String("<line x1=\"%1\" y1=\"%2\" x2=\"%3\" y2=\"%4\" />"))
+                        .arg(lines[i].x1()).arg(lines[i].y1())
+                        .arg(lines[i].x2()).arg(lines[i].y2());
+        stream() << endl;
+    }
 }
 
 QT_END_NAMESPACE

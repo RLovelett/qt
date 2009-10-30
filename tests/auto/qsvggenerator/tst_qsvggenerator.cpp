@@ -78,6 +78,7 @@ private slots:
     void fractionalFontSize();
     void titleAndDescription();
     void gradientInterpolation();
+    void line();
 };
 
 tst_QSvgGenerator::tst_QSvgGenerator()
@@ -437,6 +438,26 @@ void tst_QSvgGenerator::gradientInterpolation()
     }
 
     QVERIFY(sqrImageDiff(image, refImage) < 2); // pixel error < 1.41 (L2-norm)
+}
+
+void tst_QSvgGenerator::line()
+{
+    QString fileName = "line.svg";
+    QFile::remove(fileName);
+
+    QSvgGenerator generator;
+    generator.setFileName(fileName);
+    QCOMPARE(generator.fileName(), fileName);
+
+    QPainter painter;
+    painter.begin(&generator);
+    QLineF lineF(1.58651,180.2488,1.6009,180.2539);
+    painter.drawLine(lineF);
+    QLine line(1,180,20,190);
+    painter.drawLine(line);
+    painter.end();
+
+    checkFile(fileName);
 }
 
 QTEST_MAIN(tst_QSvgGenerator)
