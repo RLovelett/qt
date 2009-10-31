@@ -53,13 +53,12 @@
 #include <qsocketnotifier.h>
 #include <qstringlist.h>
 #include <qmutex.h>
+#include <qlocale.h>
 
 
 #include <libpq-fe.h>
 #include <pg_config.h>
 
-#include <stdlib.h>
-#include <math.h>
 // below code taken from an example at http://www.gnu.org/software/hello/manual/autoconf/Function-Portability.html
 #ifndef isnan
     # define isnan(x) \
@@ -357,7 +356,7 @@ QVariant QPSQLResult::data(int i)
             }
             return QString::fromAscii(val);
         }
-        return strtod(val, 0);
+        return QLocale::c().toDouble(QString::fromLatin1(val), 0);
     case QVariant::Date:
         if (val[0] == '\0') {
             return QVariant(QDate());
