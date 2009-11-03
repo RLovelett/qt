@@ -237,6 +237,11 @@ void QHttpNetworkConnectionPrivate::prepareRequest(HttpMessagePair &messagePair)
         request.d->autoDecompress = false;
 #endif
     }
+    // set the accept-language header according to the system locale
+    // (but also include plain english as a fallback)
+    value = request.headerField("accept-language");
+    if (value.isEmpty())
+        request.setHeaderField("accept-language", qPrintable(QString::fromAscii("%1,en;q=0.8").arg(QLocale::system().name().replace(QChar::fromAscii('_'),QChar::fromAscii('-')))));
     // set the User Agent
     value = request.headerField("user-agent");
     if (value.isEmpty())
