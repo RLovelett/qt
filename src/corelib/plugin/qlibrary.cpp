@@ -52,6 +52,7 @@
 #include <qmap.h>
 #include <qsettings.h>
 #include <qdatetime.h>
+#include <qcoreapplication.h>
 #ifdef Q_OS_MAC
 #  include <private/qcore_mac_p.h>
 #endif
@@ -424,9 +425,7 @@ typedef QMap<QString, QLibraryPrivate*> LibraryMap;
 
 struct LibraryData {
     LibraryData() : settings(0) { }
-    ~LibraryData() {
-        delete settings;
-    }
+    ~LibraryData() { }
 
     QSettings *settings;
     LibraryMap libraryMap;
@@ -634,7 +633,7 @@ bool QLibraryPrivate::isPlugin(QSettings *settings)
     if (!settings) {
         settings = libraryData()->settings;
         if (!settings) {
-            settings = new QSettings(QSettings::UserScope, QLatin1String("Trolltech"));
+            settings = new QSettings(QSettings::UserScope, QLatin1String("Trolltech"), QString(), qApp);
             libraryData()->settings = settings;
         }
     }
