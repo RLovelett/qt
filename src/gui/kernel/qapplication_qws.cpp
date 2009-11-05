@@ -2681,6 +2681,10 @@ int QApplication::qwsProcessEvent(QWSEvent* event)
     QScopedLoopLevelCounter loopLevelCounter(d->threadData);
     int oldstate = -1;
     bool isMove = false;
+
+    if (qwsEventFilter(event))                        // send through app filter
+        return 1;
+
     if (event->type == QWSEvent::Mouse) {
         QWSMouseEvent::SimpleData &mouse = event->asMouse()->simpleData;
         isMove = mouse_x_root != mouse.x_root || mouse_y_root != mouse.y_root;
@@ -2692,9 +2696,6 @@ int QApplication::qwsProcessEvent(QWSEvent* event)
 
     long unused;
     if (filterEvent(event, &unused))                  // send through app filter
-        return 1;
-
-    if (qwsEventFilter(event))                        // send through app filter
         return 1;
 
 
