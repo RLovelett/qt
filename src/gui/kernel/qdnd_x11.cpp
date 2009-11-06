@@ -281,6 +281,7 @@ public:
                 | Qt::BypassGraphicsProxyWidget)
     {
         setAttribute(Qt::WA_X11NetWmWindowTypeDND);
+        setAttribute(Qt::WA_TranslucentBackground);
     }
 
     void setPixmap(const QPixmap &pm)
@@ -302,6 +303,7 @@ protected:
     void paintEvent(QPaintEvent*)
     {
         QPainter p(this);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
         p.drawPixmap(0, 0, pixmap);
     }
 };

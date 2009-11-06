@@ -4152,6 +4152,15 @@ QPixmap QAbstractItemViewPrivate::renderToPixmap(const QModelIndexList &indexes,
         const QModelIndex &current = paintPairs.at(j).second;
         delegateForIndex(current)->paint(&painter, option, current);
     }
+#ifndef Q_WS_MAC
+#ifdef Q_WS_X11
+    if (QX11Info::isCompositingManagerRunning())
+#endif
+    {
+        painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        painter.fillRect(pixmap.rect(), QColor(0, 0, 0, 128));
+    }
+#endif
     return pixmap;
 }
 
