@@ -1145,7 +1145,6 @@ QModelIndex QListView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
         rect.moveTop(rect.top() - d->viewport->height());
         if (rect.top() < rect.height())
             rect.moveTop(rect.height());
-    case MovePrevious:
     case MoveUp:
         while (intersectVector.isEmpty()) {
             rect.translate(0, -rect.height());
@@ -1171,7 +1170,6 @@ QModelIndex QListView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
         rect.moveTop(rect.top() + d->viewport->height());
         if (rect.bottom() > contents.height() - rect.height())
             rect.moveBottom(contents.height() - rect.height());
-    case MoveNext:
     case MoveDown:
         while (intersectVector.isEmpty()) {
             rect.translate(0, rect.height());
@@ -1194,6 +1192,16 @@ QModelIndex QListView::moveCursor(CursorAction cursorAction, Qt::KeyboardModifie
             d->removeCurrentAndDisabled(&intersectVector, current);
         }
         return d->closestIndex(initialRect, intersectVector);
+    case MovePrevious:
+        if (current.row() > 0)
+            return d->model->index(current.row() - 1, d->column, d->root);
+        else
+            return current;
+    case MoveNext:
+        if (current.row() + 1 < d->model->rowCount())
+            return d->model->index(current.row() + 1, d->column, d->root);
+        else
+            return current;
     case MoveHome:
         return d->model->index(0, d->column, d->root);
     case MoveEnd:
