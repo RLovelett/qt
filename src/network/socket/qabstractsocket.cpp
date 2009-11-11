@@ -1197,12 +1197,12 @@ void QAbstractSocketPrivate::fetchConnectionParameters()
 #endif
 }
 
-bool QAbstractSocketPrivate::notifyException()
+void QAbstractSocketPrivate::notifyException()
 {
-#if defined (Q_OS_SYMBIAN)
-	Q_Q(QAbstractSocket);
+    Q_Q(QAbstractSocket);
+    socketError = QAbstractSocket::SocketException;
+    q->setErrorString(QAbstractSocket::tr("Socket exception raised"));
     emit q->error(socketError);
-#endif
 }
 /*! \internal
 

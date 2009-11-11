@@ -87,7 +87,7 @@ public:
 
     bool canReadNotification();
     bool canWriteNotification();
-    bool notifyException();
+    void notifyException();
 
     // slots
     void _q_connectToNextAddress();

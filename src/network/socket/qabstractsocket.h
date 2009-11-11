@@ -95,6 +95,7 @@ public:
         ProxyConnectionTimeoutError,
         ProxyNotFoundError,
         ProxyProtocolError,
+        SocketException,
 
         UnknownSocketError = -1
     };
