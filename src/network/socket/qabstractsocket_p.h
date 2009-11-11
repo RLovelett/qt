@@ -76,7 +76,7 @@ public:
     // from QAbstractSocketEngineReceiver
     inline void readNotification() { canReadNotification(); }
     inline void writeNotification() { canWriteNotification(); }
-    inline void exceptionNotification() {}
+    inline void exceptionNotification() { notifyException(); }
     void connectionNotification();
 #ifndef QT_NO_NETWORKPROXY
     inline void proxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *authenticator) {
@@ -87,6 +87,7 @@ public:
 
     bool canReadNotification();
     bool canWriteNotification();
+    bool notifyException();
 
     // slots
     void _q_connectToNextAddress();
