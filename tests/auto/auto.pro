@@ -141,7 +141,6 @@ SUBDIRS += \
            qfontmetrics \
            qftp \
            qgetputenv \
-           qgl \
            qglobal \
            qgraphicseffect \
            qgraphicseffectsource \
@@ -403,8 +402,10 @@ SUBDIRS += \
            qrand \
            utf8 \
            gestures
-           
-!wince*:SUBDIRS += $$Q3SUBDIRS
+
+contains(QT_CONFIG,opengl):SUBDIRS += qgl
+
+contains(QT_CONFIG,qt3support):!wince*:SUBDIRS += $$Q3SUBDIRS
 
 contains(QT_CONFIG, OdfWriter):SUBDIRS += qzip qtextodfwriter
 mac: {
