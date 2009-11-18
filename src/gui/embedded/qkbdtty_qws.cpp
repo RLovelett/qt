@@ -54,7 +54,9 @@
 
 #if defined Q_OS_LINUX
 #  include <linux/kd.h>
+#  define new c_new // 2.6.32-rc7 linux/vt.h uses "new" as a struct member
 #  include <linux/vt.h> //TODO: move vt handling somewhere else (QLinuxFbScreen?)
+#  undef new
 
 #  include "qscreen_qws.h"
 #  include "qwindowsystem_qws.h"
