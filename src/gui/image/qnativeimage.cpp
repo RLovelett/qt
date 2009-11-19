@@ -176,9 +176,10 @@ QNativeImage::QNativeImage(int width, int height, QImage::Format format,bool /* 
                             IPC_CREAT | 0777);
     ok = xshminfo.shmid != -1;
     if (ok) {
-        shmctl(xshminfo.shmid, IPC_RMID, 0);
         xshmimg->data = (char*)shmat(xshminfo.shmid, 0, 0);
         xshminfo.shmaddr = xshmimg->data;
+        if (shmctl(xshminfo.shmid, IPC_RMID, 0) == -1)
+            qWarning() << "Error while marking the shared memory segment to be destroyed";
         ok = (xshminfo.shmaddr != (char*)-1);
         if (ok)
             image = QImage((uchar *)xshmimg->data, width, height, systemFormat());
