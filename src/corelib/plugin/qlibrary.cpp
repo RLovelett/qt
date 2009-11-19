@@ -464,6 +464,8 @@ QLibraryPrivate::~QLibraryPrivate()
         Q_ASSERT(this == that);
 	Q_UNUSED(that);
     }
+
+	unload();
 }
 
 void *QLibraryPrivate::resolve(const char *symbol)
