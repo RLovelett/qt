@@ -53,6 +53,7 @@
 #include <QtGui/QImage>
 #include <QtCore/QFile>
 #include <QtCore/QBuffer>
+#include <qvariant.h>
 // These next two structs represent how the icon information is stored
 // in an ICO file.
 typedef struct
@@ -766,6 +767,31 @@ QtIcoHandler::QtIcoHandler(QIODevice *device)
 QtIcoHandler::~QtIcoHandler()
 {
     delete m_pICOReader;
+}
+
+QVariant QtIcoHandler::option(ImageOption option) const
+{
+    if (option == Size){ 
+        QIODevice *device = QImageIOHandler::device();
+        ICONDIR iconDir;
+        qint64 oldPos = device->pos();
+        if (readIconDir(device, &iconDir)) {
+            if (readIconDirEntry(device, &iconDir.idEntries[m_currentIconIndex])) {
+                quint8 height = iconDir.idEntries[m_currentIconIndex].bHeight;
+                quint8 width = iconDir.idEntries[m_currentIconIndex].bWidth;
+                device->seek(oldPos);
+                return QSize(width, height);
+            }
+            if (!device->isSequential())
+                device->seek(oldPos);
+        }
+    }
+    return QVariant();
+}
+
+bool QtIcoHandler::supportsOption(ImageOption option) const
+{
+    return option == Size;
 }
 
 /*!
