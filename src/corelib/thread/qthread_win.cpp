@@ -40,7 +40,9 @@
 ****************************************************************************/
 
 //#define WINVER 0x0500
+#if !defined(_WIN32_WINNT)
 #define _WIN32_WINNT 0x0400
+#endif
 
 
 #include "qthread.h"

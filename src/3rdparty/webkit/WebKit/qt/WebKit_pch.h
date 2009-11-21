@@ -35,7 +35,9 @@
 
 #if defined(_WIN32) && !defined(_WIN32_WCE)
 #define _CRT_RAND_S
+#if !defined(_WIN32_WINNT)
 #define _WIN32_WINNT 0x0500
+#endif
 #include <windows.h>
 #endif
 
