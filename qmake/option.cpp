@@ -390,13 +390,13 @@ Option::init(int argc, char **argv)
     Option::js_ext = ".js";
     Option::ui_ext = ".ui";
     Option::h_ext << ".h" << ".hpp" << ".hh" << ".hxx";
-    Option::c_ext << ".c";
+    Option::c_ext << ".c" << ".m";
 #ifndef Q_OS_WIN
     Option::h_ext << ".H";
 #endif
     Option::cpp_moc_ext = ".moc";
     Option::h_moc_ext = ".cpp";
-    Option::cpp_ext << ".cpp" << ".cc" << ".cxx";
+    Option::cpp_ext << ".cpp" << ".cc" << ".cxx" << ".mm";
 #ifndef Q_OS_WIN
     Option::cpp_ext << ".C";
 #endif

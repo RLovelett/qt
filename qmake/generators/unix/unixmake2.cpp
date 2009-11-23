@@ -813,37 +813,43 @@ UnixMakefileGenerator::writeMakeParts(QTextStream &t)
         QStringList precomp_files;
         QString precomph_out_dir;
 
-        if(!project->isEmpty("PRECOMPILED_DIR"))
-            precomph_out_dir = project->first("PRECOMPILED_DIR");
-        precomph_out_dir += project->first("QMAKE_ORIG_TARGET") + project->first("QMAKE_PCH_OUTPUT_EXT");
-
-        if (project->isActiveConfig("icc_pch_style")) {
-            // icc style
-            QString pchBaseName = project->first("QMAKE_ORIG_TARGET");
-            QString pchOutput;
+        QStringList buildArchs = buildArchitectures();
+        foreach (QString arch, buildArchs) {
             if(!project->isEmpty("PRECOMPILED_DIR"))
-                pchOutput = project->first("PRECOMPILED_DIR");
-            pchOutput += pchBaseName + project->first("QMAKE_PCH_OUTPUT_EXT");
-            QString sourceFile = pchOutput + Option::cpp_ext.first();
-            QString objectFile = createObjectList(QStringList(sourceFile)).first();
+                precomph_out_dir = project->first("PRECOMPILED_DIR");
+            if (buildArchs.length() > 1)
+                precomph_out_dir += project->first("QMAKE_ORIG_TARGET") + "-" + arch + project->first("QMAKE_PCH_OUTPUT_EXT");
+            else
+                precomph_out_dir += project->first("QMAKE_ORIG_TARGET") + project->first("QMAKE_PCH_OUTPUT_EXT");
 
-            precomp_files << precomph_out_dir << sourceFile << objectFile;
-        } else {
-            // gcc style
-            precomph_out_dir += Option::dir_sep;
+            if (project->isActiveConfig("icc_pch_style")) {
+                // icc style
+                QString pchBaseName = project->first("QMAKE_ORIG_TARGET");
+                QString pchOutput;
+                if(!project->isEmpty("PRECOMPILED_DIR"))
+                    pchOutput = project->first("PRECOMPILED_DIR");
+                pchOutput += pchBaseName + project->first("QMAKE_PCH_OUTPUT_EXT");
+                QString sourceFile = pchOutput + Option::cpp_ext.first();
+                QString objectFile = createObjectList(QStringList(sourceFile)).first();
 
-            QString header_prefix = project->first("QMAKE_PRECOMP_PREFIX");
-            if(!project->isEmpty("QMAKE_CFLAGS_PRECOMPILE"))
-                precomp_files += precomph_out_dir + header_prefix + "c";
-            if(!project->isEmpty("QMAKE_CXXFLAGS_PRECOMPILE"))
-                precomp_files += precomph_out_dir + header_prefix + "c++";
-            if(project->isActiveConfig("objective_c")) {
-                if(!project->isEmpty("QMAKE_OBJCFLAGS_PRECOMPILE"))
-                    precomp_files += precomph_out_dir + header_prefix + "objective-c";
-                if(!project->isEmpty("QMAKE_OBJCXXFLAGS_PRECOMPILE"))
-                    precomp_files += precomph_out_dir + header_prefix + "objective-c++";
+                precomp_files << precomph_out_dir << sourceFile << objectFile;
+            } else {
+                // gcc style
+                precomph_out_dir += Option::dir_sep;
+
+                QString header_prefix = project->first("QMAKE_PRECOMP_PREFIX");
+                if(!project->isEmpty("QMAKE_CFLAGS_PRECOMPILE"))
+                    precomp_files += precomph_out_dir + header_prefix + "c";
+                if(!project->isEmpty("QMAKE_CXXFLAGS_PRECOMPILE"))
+                    precomp_files += precomph_out_dir + header_prefix + "c++";
+                if(project->isActiveConfig("objective_c")) {
+                    if(!project->isEmpty("QMAKE_OBJCFLAGS_PRECOMPILE"))
+                        precomp_files += precomph_out_dir + header_prefix + "objective-c";
+                    if(!project->isEmpty("QMAKE_OBJCXXFLAGS_PRECOMPILE"))
+                        precomp_files += precomph_out_dir + header_prefix + "objective-c++";
+                }
             }
-        }
+	}
         t << "-$(DEL_FILE) " << precomp_files.join(" ") << "\n\t";
     }
     if(!project->isEmpty("IMAGES"))
@@ -894,68 +900,92 @@ UnixMakefileGenerator::writeMakeParts(QTextStream &t)
         t << "###### Prefix headers" << endl;
         QString comps[] = { "C", "CXX", "OBJC", "OBJCXX", QString() };
         for(int i = 0; !comps[i].isNull(); i++) {
-            QString pchFlags = var("QMAKE_" + comps[i] + "FLAGS_PRECOMPILE");
-            if(pchFlags.isEmpty())
-                continue;
 
-            QString cflags;
-            if(comps[i] == "OBJC" || comps[i] == "OBJCXX")
-                cflags += " $(CFLAGS)";
-            else
-                cflags += " $(" + comps[i] + "FLAGS)";
-
-            QString pchBaseName = project->first("QMAKE_ORIG_TARGET");
-            QString pchOutput;
-            if(!project->isEmpty("PRECOMPILED_DIR"))
-                pchOutput = project->first("PRECOMPILED_DIR");
-            pchOutput += pchBaseName + project->first("QMAKE_PCH_OUTPUT_EXT");
-
-            if (project->isActiveConfig("icc_pch_style")) {
-                // icc style
-                QString sourceFile = pchOutput + Option::cpp_ext.first();
-                QString objectFile = createObjectList(QStringList(sourceFile)).first();
-                t << pchOutput << ": " << pchInput << " " << findDependencies(pchInput).join(" \\\n\t\t")
-                  << "\n\techo \"// Automatically generated, do not modify\" > " << sourceFile
-                  << "\n\trm -f " << pchOutput;
-
-                pchFlags = pchFlags.replace("${QMAKE_PCH_TEMP_SOURCE}", sourceFile)
-                           .replace("${QMAKE_PCH_TEMP_OBJECT}", objectFile);
-            } else {
-                // gcc style
-                QString header_prefix = project->first("QMAKE_PRECOMP_PREFIX");
-
-                pchOutput += Option::dir_sep;
-                QString pchOutputDir = pchOutput, pchOutputFile;
-
-                if(comps[i] == "C") {
-                    pchOutputFile = "c";
-                } else if(comps[i] == "CXX") {
-                    pchOutputFile = "c++";
-                } else if(project->isActiveConfig("objective_c")) {
-                    if(comps[i] == "OBJC")
-                        pchOutputFile = "objective-c";
-                    else if(comps[i] == "OBJCXX")
-                        pchOutputFile = "objective-c++";
-                }
-                if(pchOutputFile.isEmpty())
+            QStringList buildArchs = buildArchitectures();
+            foreach (QString arch, buildArchs) {
+                QString pchFlags = var("QMAKE_" + comps[i] + "FLAGS_PRECOMPILE");
+                if (pchFlags.isEmpty())
                     continue;
-                pchOutput += header_prefix + pchOutputFile;
 
-                t << pchOutput << ": " << pchInput << " " << findDependencies(pchInput).join(" \\\n\t\t")
-                  << "\n\t" << mkdir_p_asstring(pchOutputDir);
+                QString pchBaseName = project->first("QMAKE_ORIG_TARGET");
+                QString pchOutput;
+                if(!project->isEmpty("PRECOMPILED_DIR"))
+                    pchOutput = project->first("PRECOMPILED_DIR");
+                if (buildArchs.length() > 1)
+                    pchOutput += pchBaseName + "-" + arch + project->first("QMAKE_PCH_OUTPUT_EXT");
+                else
+                    pchOutput += pchBaseName + project->first("QMAKE_PCH_OUTPUT_EXT");
+
+                if (project->isActiveConfig("icc_pch_style")) {
+                    // icc style
+                    QString sourceFile = pchOutput + Option::cpp_ext.first();
+                    QString objectFile = createObjectList(QStringList(sourceFile)).first();
+                    t << pchOutput << ": " << pchInput << " " << findDependencies(pchInput).join(" \\\n\t\t")
+                      << "\n\techo \"// Automatically generated, do not modify\" > " << sourceFile
+                      << "\n\trm -f " << pchOutput;
+
+                    pchFlags = pchFlags.replace("${QMAKE_PCH_TEMP_SOURCE}", sourceFile)
+                               .replace("${QMAKE_PCH_TEMP_OBJECT}", objectFile);
+                } else {
+                    // gcc style
+                    QString header_prefix = project->first("QMAKE_PRECOMP_PREFIX");
+
+                    pchOutput += Option::dir_sep;
+                    QString pchOutputDir = pchOutput, pchOutputFile;
+
+                    if(comps[i] == "C") {
+                        pchOutputFile = "c";
+                    } else if(comps[i] == "CXX") {
+                        pchOutputFile = "c++";
+                    } else if(project->isActiveConfig("objective_c")) {
+                        if(comps[i] == "OBJC")
+                            pchOutputFile = "objective-c";
+                        else if(comps[i] == "OBJCXX")
+                            pchOutputFile = "objective-c++";
+                    }
+                    if(pchOutputFile.isEmpty())
+                        continue;
+                    pchOutput += header_prefix + pchOutputFile;
+
+                    t << pchOutput << ": " << pchInput << " " << findDependencies(pchInput).join(" \\\n\t\t")
+                      << "\n\t" << mkdir_p_asstring(pchOutputDir);
+                }
+                pchFlags = pchFlags.replace("${QMAKE_PCH_INPUT}", pchInput)
+                           .replace("${QMAKE_PCH_OUTPUT_BASE}", pchBaseName)
+                           .replace("${QMAKE_PCH_OUTPUT}", pchOutput);
+
+                QString cflags;
+                if(comps[i] == "OBJC" || comps[i] == "OBJCXX")
+                    cflags = " $(CFLAGS)";
+                else
+                    cflags = " $(" + comps[i] + "FLAGS)";
+
+                if (buildArchs.length() > 1) {
+                    QStringList excludeArchs;
+                    foreach (QString str, buildArchs) {
+                        if (str != arch)
+                            excludeArchs << str;
+                    }
+
+                    QString newflags;
+                    foreach (QString exclude, excludeArchs) {
+                        if (newflags.isEmpty())
+                            newflags = " $(subst -arch " + exclude + ",," + cflags + ")";
+                        else
+                            newflags += " $(subst -arch " + exclude + ",," + newflags + ")";
+                    }
+                    cflags = newflags;
+                }
+
+                QString compiler;
+                if(comps[i] == "C" || comps[i] == "OBJC" || comps[i] == "OBJCXX")
+                    compiler = "$(CC)";
+                else
+                    compiler = "$(CXX)";
+
+                // compile command
+                t << "\n\t" << compiler << cflags << " $(INCPATH) " << pchFlags << endl << endl;
             }
-            pchFlags = pchFlags.replace("${QMAKE_PCH_INPUT}", pchInput)
-                       .replace("${QMAKE_PCH_OUTPUT_BASE}", pchBaseName)
-                       .replace("${QMAKE_PCH_OUTPUT}", pchOutput);
-
-            QString compiler;
-            if(comps[i] == "C" || comps[i] == "OBJC" || comps[i] == "OBJCXX")
-                compiler = "$(CC)";
-            else
-                compiler = "$(CXX)";
-
-            // compile command
-            t << "\n\t" << compiler << cflags << " $(INCPATH) " << pchFlags << endl << endl;
         }
     }
 

@@ -57,6 +57,7 @@ class UnixMakefileGenerator : public MakefileGenerator
     QString pkgConfigFixPath(QString) const;
     void writePkgConfigFile();   // for pkg-config
     void writePrlFile(QTextStream &);
+    QStringList buildArchitectures() const;
 
 public:
     UnixMakefileGenerator();

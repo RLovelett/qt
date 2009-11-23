@@ -2911,22 +2911,6 @@ QMAKE_CONF_COMPILER=`getQMakeConf "$XQMAKESPEC" | grep "^QMAKE_CXX[^_A-Z0-9]" | 
 TEST_COMPILER="$CC"
 [ -z "$TEST_COMPILER" ] && TEST_COMPILER=$QMAKE_CONF_COMPILER
 
-# auto-detect precompiled header support
-if [ "$CFG_PRECOMPILE" = "auto" ]; then
-    if [ `echo "$CFG_MAC_ARCHS" | wc -w` -gt 1 ]; then
-       CFG_PRECOMPILE=no
-    elif "$unixtests/precomp.test" "$TEST_COMPILER" "$OPT_VERBOSE"; then
-       CFG_PRECOMPILE=no
-    else
-       CFG_PRECOMPILE=yes
-    fi
-elif [ "$CFG_PRECOMPILE" = "yes" ] && [ `echo "$CFG_MAC_ARCHS" | wc -w` -gt 1 ]; then
-    echo
-    echo "WARNING: Using universal binaries disables precompiled headers."
-    echo
-    CFG_PRECOMPILE=no
-fi
-
 #auto-detect DWARF2 on the mac
 if [ "$PLATFORM_MAC" = "yes" ] && [ "$CFG_MAC_DWARF2" = "auto" ]; then
     if "$mactests/dwarf2.test" "$TEST_COMPILER" "$OPT_VERBOSE" "$mactests" ; then
@@ -2943,6 +2927,20 @@ if [ "$PLATFORM_MAC" = "yes" ] && [ "$CFG_MAC_XARCH" = "auto" ]; then
     else
         CFG_MAC_XARCH=yes
     fi
+fi
+
+# auto-detect precompiled header support
+if [ "$CFG_PRECOMPILE" = "auto" ]; then
+    if "$unixtests/precomp.test" "$TEST_COMPILER" "$OPT_VERBOSE"; then
+       CFG_PRECOMPILE=no
+    else
+       CFG_PRECOMPILE=yes
+    fi
+elif [ "$CFG_PRECOMPILE" = "yes" ] && [ `echo "$CFG_MAC_ARCHS" | wc -w` -gt 1 ] && [ "$CFG_MAC_XARCH" != "yes" ]; then
+    echo
+    echo "WARNING: Using precompiled headers with universal binaries requires -Xarch support in GCC. (This requires gcc 4.2 or greater)"
+    echo
+    CFG_PRECOMPILE=no
 fi
 
 # don't autodetect support for separate debug info on objcopy when
