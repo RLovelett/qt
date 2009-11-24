@@ -344,13 +344,14 @@ public:
     inline void toFront() { i = c->begin(); n = c->end(); }
     inline void toBack() { i = c->end(); n = i; }
     inline bool hasNext() const { return c->constEnd() != i; }
-    inline const T &next() { n = i++; return *n; }
-    inline const T &peekNext() const { return *i; }
+    inline T &next() { n = i++; return *n; }
+    inline T &peekNext() const { return *i; }
     inline bool hasPrevious() const { return c->constBegin() != i; }
-    inline const T &previous() { n = --i; return *n; }
-    inline const T &peekPrevious() const { iterator p = i; return *--p; }
+    inline T &previous() { n = --i; return *n; }
+    inline T &peekPrevious() const { iterator p = i; return *--p; }
     inline void remove()
     { if (c->constEnd() != n) { i = c->erase(n); n = c->end(); } }
+	inline T &value() { Q_ASSERT(item_exists()); return *n; }
     inline const T &value() const { Q_ASSERT(item_exists()); return *n; }
     inline bool findNext(const T &t)
     { while (c->constEnd() != (n = i)) if (*i++ == t) return true; return false; }
