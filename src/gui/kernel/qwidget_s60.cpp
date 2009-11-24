@@ -54,6 +54,7 @@
 
 #ifdef Q_WS_S60
 #include <aknappui.h>
+#include "qs60mainappui.h"
 #endif
 
 // This is necessary in order to be able to perform delayed invokation on slots
@@ -1036,28 +1037,35 @@ QPoint QWidget::mapFromGlobal(const QPoint &pos) const
 void QWidget::setWindowState(Qt::WindowStates newstate)
 {
     Q_D(QWidget);
-
+    	
     Qt::WindowStates oldstate = windowState();
     if (oldstate == newstate)
         return;
 
     if (isWindow()) {
 #ifdef Q_WS_S60
-        // Change window decoration visibility if switching to or from fullsccreen
+        // Change window decoration visibility if switching to or from fullscreen
+        // Decoration is also changed if window is minimized
         // In addition decoration visibility is changed when the initial has been
         // WindowNoState.
         // The window decoration visibility has to be changed before doing actual
         // window state change since in that order the availableGeometry will return
         // directly the right size and we will avoid unnecessarty redraws
         if ((oldstate & Qt::WindowFullScreen) != (newstate & Qt::WindowFullScreen) ||
-            oldstate == Qt::WindowNoState) {
+            oldstate == Qt::WindowNoState || (oldstate & Qt::WindowMinimized) !=
+            (newstate & Qt::WindowMinimized)) {
             CEikStatusPane* statusPane = S60->statusPane();
             CEikButtonGroupContainer* buttonGroup = S60->buttonGroupContainer();
-            if (newstate & Qt::WindowFullScreen) {
+            if (newstate & Qt::WindowFullScreen || newstate & Qt::WindowMinimized) {
                 if (statusPane)
                     statusPane->MakeVisible(false);
                 if (buttonGroup)
                     buttonGroup->MakeVisible(false);
+            } else if (newstate == Qt::WindowMaximized) {
+                if (statusPane)
+                    statusPane->MakeVisible(false);
+                if (buttonGroup)
+                    buttonGroup->MakeVisible(true);
             } else {
                 if (statusPane)
                     statusPane->MakeVisible(true);
@@ -1117,6 +1125,9 @@ void QWidget::setWindowState(Qt::WindowStates newstate)
                     if (id->IsFocused()) // Avoid unnecessary calls to FocusChanged()
                         id->setFocusSafely(false);
                     id->MakeVisible(false);
+                    /* Symbian does not have a minimize feature so we send the application
+                    into background instead*/
+                    static_cast<QS60MainAppUi *>(S60->appUi())->SendToBackground();
                 }
             } else {
                 if (isVisible()) {

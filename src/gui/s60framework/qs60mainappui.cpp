@@ -251,4 +251,10 @@ void QS60MainAppUi::RestoreMenuL(CCoeControl* menuWindow, TInt resourceId, TMenu
     }
 }
 
+void QS60MainAppUi::SendToBackground()
+{
+ TApaTask task(iEikonEnv->WsSession());
+ task.SetWgId(CEikonEnv::Static()->RootWin().Identifier());
+ task.SendToBackground();
+}
 QT_END_NAMESPACE

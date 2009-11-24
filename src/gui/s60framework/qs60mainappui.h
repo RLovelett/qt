@@ -72,6 +72,8 @@ public:
     virtual void HandleResourceChangeL(TInt type);
 
     virtual void HandleStatusPaneSizeChange();
+    
+    void SendToBackground();
 
 protected:
     virtual void HandleWsEventL(const TWsEvent& event, CCoeControl* destination);
