@@ -70,6 +70,10 @@
 #include "qwidget_p.h"
 #include "qcursor_p.h"
 
+#ifndef QT_NO_XCURSOR
+#  include <X11/Xcursor/Xcursor.h>
+#endif // QT_NO_XCURSOR
+
 QT_BEGIN_NAMESPACE
 
 // #define DND_DEBUG
@@ -1339,10 +1343,30 @@ void QDragManager::updateCursor()
 {
     if (!noDropCursor) {
 #ifndef QT_NO_CURSOR
+#ifndef QT_NO_XCURSOR
+        if (X11->ptrXcursorLibraryLoadCursor) {
+            Cursor hcurs;
+            Display *dpy = X11->display;
+
+            hcurs = X11->ptrXcursorLibraryLoadCursor(dpy, "dnd-move");
+            if (hcurs)
+                moveCursor = new QCursor(hcurs);
+            hcurs = X11->ptrXcursorLibraryLoadCursor(dpy, "dnd-copy");
+            if (hcurs)
+                copyCursor = new QCursor(hcurs);
+            hcurs = X11->ptrXcursorLibraryLoadCursor(dpy, "dnd-link");
+            if (hcurs)
+                linkCursor = new QCursor(hcurs);
+        }
+#endif // QT_NO_XCURSOR
+
         noDropCursor = new QCursor(Qt::ForbiddenCursor);
-        moveCursor = new QCursor(dragCursor(Qt::MoveAction), 0,0);
-        copyCursor = new QCursor(dragCursor(Qt::CopyAction), 0,0);
-        linkCursor = new QCursor(dragCursor(Qt::LinkAction), 0,0);
+        if (!moveCursor)
+            moveCursor = new QCursor(dragCursor(Qt::MoveAction), 0,0);
+        if (!copyCursor)
+            copyCursor = new QCursor(dragCursor(Qt::CopyAction), 0,0);
+        if (!linkCursor)
+            linkCursor = new QCursor(dragCursor(Qt::LinkAction), 0,0);
 #endif
     }
 
