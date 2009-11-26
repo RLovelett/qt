@@ -267,6 +267,7 @@ public:
         if (needSortTopLevelItems) {
             qSort(topLevelItems.begin(), topLevelItems.end(), qt_notclosestLeaf);
             needSortTopLevelItems = false;
+            topLevelSequentialOrdering = false;
         }
     }
 
