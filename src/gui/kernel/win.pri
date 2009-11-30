@@ -1,4 +1,4 @@
 # Qt/Windows only configuration file
 # --------------------------------------------------------------------
 
-        INCLUDEPATH += ../3rdparty/wintab
+        contains(QT_CONFIG, wintab):INCLUDEPATH += ../3rdparty/wintab

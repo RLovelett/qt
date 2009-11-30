@@ -251,6 +251,7 @@ Configure::Configure( int& argc, char** argv )
     dictionary[ "WEBKIT" ]          = "auto";
     dictionary[ "DECLARATIVE" ]     = "auto";
     dictionary[ "PLUGIN_MANIFESTS" ] = "yes";
+    dictionary[ "WINTAB" ]          = "yes";
 
     QString version;
     QFile qglobal_h(sourcePath + "/src/corelib/global/qglobal.h");
@@ -919,6 +920,10 @@ void Configure::parseCmdLine()
             dictionary[ "PLUGIN_MANIFESTS" ] = "no";
         } else if( configCmdLine.at(i) == "-plugin-manifests" ) {
             dictionary[ "PLUGIN_MANIFESTS" ] = "yes";
+        } else if( configCmdLine.at(i) == "-no-wintab" ) {
+            dictionary[ "WINTAB" ] = "no";
+        } else if( configCmdLine.at(i) == "-wintab" ) {
+            dictionary[ "WINTAB" ] = "yes";
         }
 
         // Work around compiler nesting limitation
@@ -1421,6 +1426,7 @@ void Configure::applySpecSpecifics()
         dictionary[ "CE_CRT" ]              = "yes";
         dictionary[ "WEBKIT" ]              = "no";
         dictionary[ "PHONON" ]              = "yes";
+        dictionary[ "WINTAB" ]              = "yes";
         dictionary[ "DIRECTSHOW" ]          = "no";
         // We only apply MMX/IWMMXT for mkspecs we know they work
         if (dictionary[ "XQMAKESPEC" ].startsWith("wincewm")) {
@@ -1568,7 +1574,8 @@ bool Configure::displayHelp()
                     "[-qtnamespace <namespace>] [-qtlibinfix <infix>] [-no-phonon]\n"
                     "[-phonon] [-no-phonon-backend] [-phonon-backend]\n"
                     "[-no-multimedia] [-multimedia] [-no-webkit] [-webkit]\n"
-                    "[-no-script] [-script] [-no-scripttools] [-scripttools]\n"
+                    "[-no-wintab] [-wintab] [-no-script] [-script]\n"
+                    "[-no-scripttools] [-scripttools]\n"
                     "[-graphicssystem raster|opengl|openvg]\n\n", 0, 7);
 
         desc("Installation options:\n\n");
@@ -1719,6 +1726,9 @@ bool Configure::displayHelp()
 
         desc("PLUGIN_MANIFESTS", "no", "-no-plugin-manifests", "Do not embed manifests in plugins.");
         desc("PLUGIN_MANIFESTS", "yes", "-plugin-manifests",   "Embed manifests in plugins.\n");
+
+        desc("WINTAB", "no",    "-no-wintab",           "Do not compile in the Wintab module.");
+        desc("WINTAB", "yes",   "-wintab",              "Compile in the Wintab module.\n");
 
 #if !defined(EVAL)
         desc("BUILD_QMAKE", "no", "-no-qmake",          "Do not compile qmake.");
@@ -2539,6 +2549,9 @@ void Configure::generateOutputVars()
     if( dictionary[ "NATIVE_GESTURES" ] == "yes" )
         qtConfig += "native-gestures";
 
+    if (dictionary["WINTAB"] == "yes")
+        qtConfig += "wintab";
+
     // We currently have no switch for QtSvg, so add it unconditionally.
     qtConfig += "svg";
 
@@ -2910,6 +2923,7 @@ void Configure::generateConfigfiles()
         if(dictionary["DECLARATIVE"] == "no")       qconfigList += "QT_NO_DECLARATIVE";
         if(dictionary["PHONON"] == "no")            qconfigList += "QT_NO_PHONON";
         if(dictionary["MULTIMEDIA"] == "no")        qconfigList += "QT_NO_MULTIMEDIA";
+        if(dictionary["WINTAB"] == "no")            qconfigList += "QT_NO_WINTAB";
         if(dictionary["XMLPATTERNS"] == "no")       qconfigList += "QT_NO_XMLPATTERNS";
         if(dictionary["SCRIPT"] == "no")            qconfigList += "QT_NO_SCRIPT";
         if(dictionary["SCRIPTTOOLS"] == "no")       qconfigList += "QT_NO_SCRIPTTOOLS";
@@ -3209,6 +3223,7 @@ void Configure::displayConfig()
     cout << "WebKit support.............." << dictionary[ "WEBKIT" ] << endl;
     cout << "Declarative support........." << dictionary[ "DECLARATIVE" ] << endl;
     cout << "QtScript support............" << dictionary[ "SCRIPT" ] << endl;
+    cout << "Wintab support.............." << dictionary[ "WINTAB" ] << endl;
     cout << "QtScriptTools support......." << dictionary[ "SCRIPTTOOLS" ] << endl;
     cout << "Graphics System............." << dictionary[ "GRAPHICS_SYSTEM" ] << endl;
     cout << "Qt3 compatibility..........." << dictionary[ "QT3SUPPORT" ] << endl << endl;
