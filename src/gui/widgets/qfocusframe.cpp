@@ -227,6 +227,7 @@ QFocusFrame::eventFilter(QObject *o, QEvent *e)
         case QEvent::Move:
         case QEvent::Resize:
             d->updateSize();
+            show();
             break;
         case QEvent::Hide:
         case QEvent::StyleChange:
