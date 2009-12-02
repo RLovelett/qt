@@ -5656,7 +5656,7 @@ if [ "$PLATFORM_QWS" = "yes" ]; then
 
     # auto-detect OpenGL support (es1 = OpenGL ES 1.x Common, es2 = OpenGL ES 2.x)
     if [ "$CFG_GUI" = "no" ]; then
-        if [ "$CFG_OPENGL" = "auto"]; then
+        if [ "$CFG_OPENGL" = "auto" ]; then
             CFG_OPENGL=no
         fi
         if [ "$CFG_OPENGL" != "no" ]; then
