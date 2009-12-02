@@ -2112,6 +2112,17 @@ void QFileDialogPrivate::init(const QString &directory, const QString &nameFilte
     q->restoreState(settings.value(QLatin1String("filedialog")).toByteArray());
 #endif
 
+    //Fix to get focusframe work with itemview
+#if defined(Q_OS_SYMBIAN) && defined(QT_KEYPAD_NAVIGATION)
+    int vmargin = q->style()->pixelMetric(QStyle::PM_FocusFrameVMargin);
+    int hmargin = q->style()->pixelMetric(QStyle::PM_FocusFrameHMargin);
+    QMargins focusMargins(hmargin,vmargin,hmargin,vmargin);
+    if (q->viewMode() == QFileDialog::List) //listView
+        qFileDialogUi->vboxLayout2->setContentsMargins(focusMargins);
+    else if (q->viewMode() == QFileDialog::Detail) //treeView
+        qFileDialogUi->vboxLayout3->setContentsMargins(focusMargins);
+#endif
+
 #if defined(Q_EMBEDDED_SMALLSCREEN)
     qFileDialogUi->lookInLabel->setVisible(false);
     qFileDialogUi->fileNameLabel->setVisible(false);
