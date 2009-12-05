@@ -534,7 +534,14 @@ extern "C" {
             qWarning("QWidget::repaint: Recursive repaint detected");
 
         const QRect qrect = QRect(aRect.origin.x, aRect.origin.y, aRect.size.width, aRect.size.height);
-        QRegion qrgn(qrect);
+        const NSRect *allRects;
+        NSInteger rectCount;
+        [self getRectsBeingDrawn:&allRects count:&rectCount];
+        QRegion qrgn;
+        for (int i = 0; i < rectCount; ++i) {
+            const NSRect &nsrect = allRects[i];
+            qrgn += QRect(nsrect.origin.x, nsrect.origin.y, nsrect.size.width, nsrect.size.height);
+        }
 
         if (!qwidget->isWindow() && !qobject_cast<QAbstractScrollArea *>(qwidget->parent())) {
             const QRegion &parentMask = qwidget->window()->mask();
@@ -565,7 +572,8 @@ extern "C" {
 
         if (qwidget->isWindow() && !qwidgetprivate->isOpaque
                 && !qwidget->testAttribute(Qt::WA_MacBrushedMetal)) {
-            CGContextClearRect(cg, NSRectToCGRect(aRect));
+            for (int i = 0; i < rectCount; ++i)
+                CGContextClearRect(cg, NSRectToCGRect(allRects[i]));
         }
 
         if (engine && !qwidget->testAttribute(Qt::WA_NoSystemBackground)
