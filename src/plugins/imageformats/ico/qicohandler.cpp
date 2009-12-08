@@ -771,21 +771,19 @@ QtIcoHandler::~QtIcoHandler()
 
 QVariant QtIcoHandler::option(ImageOption option) const
 {
-    if (option == Size){ 
+    if (option == Size) { 
         QIODevice *device = QImageIOHandler::device();
-        ICONDIR iconDir;
         qint64 oldPos = device->pos();
-        if (readIconDir(device, &iconDir)) {
-            if (readIconDirEntry(device, &iconDir.idEntries[m_currentIconIndex])) {
-                quint8 height = iconDir.idEntries[m_currentIconIndex].bHeight;
-                quint8 width = iconDir.idEntries[m_currentIconIndex].bWidth;
+        ICONDIRENTRY iconEntry;
+        if (device->seek(oldPos + ICONDIR_SIZE + (m_currentIconIndex * ICONDIRENTRY_SIZE))) {
+            if (readIconDirEntry(device, &iconEntry)) {
                 device->seek(oldPos);
-                return QSize(width, height);
-            }
+                return QSize(iconEntry.bWidth, iconEntry.bHeight);
+                }
+		    }
             if (!device->isSequential())
                 device->seek(oldPos);
         }
-    }
     return QVariant();
 }
 
