@@ -540,8 +540,10 @@ void QSymbianControl::HandlePointerEvent(const TPointerEvent& pEvent)
             events.append(Event(S60->mousePressTarget,mEvent));
         }
         //auto grab the mouse
+        if (!QApplication::activeModalWidget()) {
         widgetWithMouseGrab = S60->mousePressTarget = widgetUnderPointer;
         widgetWithMouseGrab->grabMouse();
+        }
     }
     if (widgetWithMouseGrab && widgetWithMouseGrab == S60->mousePressTarget && type == QEvent::MouseButtonRelease) {
         //release the auto grab - note this release event still goes to the autograb widget
@@ -1451,6 +1453,9 @@ void QApplicationPrivate::closePopup(QWidget *popup)
             aw->effectiveWinId()->SetPointerCapture(true);
         }
     }
+    QWidget* focusedWidget = QApplication::focusWidget();
+    if (focusedWidget)
+    	focusedWidget->effectiveWinId()->SetPointerCapture(true);
 }
 
 QWidget * QApplication::topLevelAt(QPoint const& point)
