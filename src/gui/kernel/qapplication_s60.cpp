@@ -1384,6 +1384,7 @@ void QApplicationPrivate::openPopup(QWidget *popup)
         Q_ASSERT(popup->testAttribute(Qt::WA_WState_Created));
         WId id = popup->effectiveWinId();
         id->SetPointerCapture(true);
+        id->ClaimPointerGrab(true);
     }
 
     // popups are not focus-handled by the window system (the first
