@@ -219,6 +219,7 @@ public:
     QDateTime();
     explicit QDateTime(const QDate &);
     QDateTime(const QDate &, const QTime &, Qt::TimeSpec spec = Qt::LocalTime);
+    QDateTime(const quint32 highFileTime, const quint32 lowFileTime); 
     QDateTime(const QDateTime &other);
     ~QDateTime();
 

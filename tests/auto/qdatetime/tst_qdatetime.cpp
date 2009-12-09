@@ -129,6 +129,8 @@ private slots:
     void printNegativeYear() const;
     void roundtripGermanLocale() const;
     void utcOffsetLessThan() const;
+    
+    void fromFiletime() const;
 
 private:
     bool europeanTimeZone;
@@ -1496,6 +1498,13 @@ void tst_QDateTime::utcOffsetLessThan() const
     QVERIFY(!(dt1 == dt2));
     QVERIFY(dt1 < dt2);
     QVERIFY(!(dt2 < dt1));
+}
+
+void tst_QDateTime::fromFiletime() const
+{
+    QDateTime dt1(QDate(2009, 11, 21), QTime(19, 57, 25, 624), Qt::UTC);
+    QDateTime dtFromFileTime(0x01CA6AE4, 0xD8D29780);
+    QVERIFY(dt1 == dtFromFileTime);
 }
 
 Q_DECLARE_METATYPE(Qt::DateFormat)

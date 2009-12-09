@@ -2243,6 +2243,38 @@ QDateTime::QDateTime(const QDate &date, const QTime &time, Qt::TimeSpec spec)
 }
 
 /*!
+    Constructs a datetime from two values which are assumed to be from
+    a Windows-style FILETIME structure.
+    
+    The \a highFiletime is the higher 32 bits, and the \a lowFiletime is the 
+    lower 32 bits, of a 64 bit number that specifies the number of 100ns units
+    since midnight, on the 1st January 1601, UTC.
+*/
+
+QDateTime::QDateTime(const quint32 highFiletime, const quint32 lowFiletime)
+    : d(new QDateTimePrivate)
+{
+    quint64 ft = highFiletime;
+    ft = ft << 32 | lowFiletime;
+    ft = ft / ( 10 * 1000 ); // now in milliseconds
+    int milliseconds = ft % 1000;
+    ft = ft / 1000; // now in seconds
+    int seconds = ft % 60;
+    ft = ft / 60; // now in minutes
+    int minutes = ft % 60;
+    ft = ft / 60; // now in hours
+    int hours = ft % 24;
+    ft = ft / 24; // now in days
+    
+    d->date = QDate(1601, 1, 1);
+    d->date = d->date.addDays(ft);
+    
+    d->time = QTime(hours, minutes, seconds, milliseconds);
+    
+    d->spec = QDateTimePrivate::UTC;
+}
+
+/*!
     Constructs a copy of the \a other datetime.
 */
 
