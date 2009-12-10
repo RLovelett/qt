@@ -140,7 +140,7 @@ QHistoryState::QHistoryState(QState *parent)
   Constructs a new history state of the given \a type, with the given \a
   parent state.
 */
-QHistoryState::QHistoryState(HistoryType type, QState *parent)
+QHistoryState::QHistoryState(QHistoryState::HistoryType type, QState *parent)
     : QAbstractState(*new QHistoryStatePrivate, parent)
 {
     Q_D(QHistoryState);
@@ -191,7 +191,7 @@ QHistoryState::HistoryType QHistoryState::historyType() const
 /*!
   Sets the \a type of history that this history state records.
 */
-void QHistoryState::setHistoryType(HistoryType type)
+void QHistoryState::setHistoryType(QHistoryState::HistoryType type)
 {
     Q_D(QHistoryState);
     d->historyType = type;

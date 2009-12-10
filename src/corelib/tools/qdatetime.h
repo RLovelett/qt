@@ -82,13 +82,13 @@ public:
 #endif
     // ### Qt 5: merge these functions.
     static QString shortMonthName(int month);
-    static QString shortMonthName(int month, MonthNameType type);
+    static QString shortMonthName(int month, QDate::MonthNameType type);
     static QString shortDayName(int weekday);
-    static QString shortDayName(int weekday, MonthNameType type);
+    static QString shortDayName(int weekday, QDate::MonthNameType type);
     static QString longMonthName(int month);
-    static QString longMonthName(int month, MonthNameType type);
+    static QString longMonthName(int month, QDate::MonthNameType type);
     static QString longDayName(int weekday);
-    static QString longDayName(int weekday, MonthNameType type);
+    static QString longDayName(int weekday, QDate::MonthNameType type);
 #endif // QT_NO_TEXTDATE
 #ifndef QT_NO_DATESTRING
     QString toString(Qt::DateFormat f = Qt::TextDate) const;

@@ -70,7 +70,7 @@ public:
     };
 
     QState(QState *parent = 0);
-    QState(ChildMode childMode, QState *parent = 0);
+    QState(QState::ChildMode childMode, QState *parent = 0);
     ~QState();
 
     QAbstractState *errorState() const;
@@ -84,8 +84,8 @@ public:
     QAbstractState *initialState() const;
     void setInitialState(QAbstractState *state);
 
-    ChildMode childMode() const;
-    void setChildMode(ChildMode mode);
+    QState::ChildMode childMode() const;
+    void setChildMode(QState::ChildMode mode);
 
 #ifndef QT_NO_PROPERTIES
     void assignProperty(QObject *object, const char *name,

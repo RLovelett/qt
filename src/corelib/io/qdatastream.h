@@ -125,15 +125,15 @@ public:
     inline QT3_SUPPORT bool eof() const { return atEnd(); }
 #endif
 
-    Status status() const;
-    void setStatus(Status status);
+    QDataStream::Status status() const;
+    void setStatus(QDataStream::Status status);
     void resetStatus();
 
-    FloatingPointPrecision floatingPointPrecision() const;
-    void setFloatingPointPrecision(FloatingPointPrecision precision);
+    QDataStream::FloatingPointPrecision floatingPointPrecision() const;
+    void setFloatingPointPrecision(QDataStream::FloatingPointPrecision precision);
 
-    ByteOrder byteOrder() const;
-    void setByteOrder(ByteOrder);
+    QDataStream::ByteOrder byteOrder() const;
+    void setByteOrder(QDataStream::ByteOrder);
 
     int version() const;
     void setVersion(int);
@@ -190,9 +190,9 @@ private:
     QIODevice *dev;
     bool owndev;
     bool noswap;
-    ByteOrder byteorder;
+    QDataStream::ByteOrder byteorder;
     int ver;
-    Status q_status;
+    QDataStream::Status q_status;
 };
 
 

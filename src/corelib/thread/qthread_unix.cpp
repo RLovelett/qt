@@ -432,7 +432,7 @@ void QThread::usleep(unsigned long usecs)
     thread_sleep(&ti);
 }
 
-void QThread::start(Priority priority)
+void QThread::start(QThread::Priority priority)
 {
     Q_D(QThread);
     QMutexLocker locker(&d->mutex);
@@ -644,7 +644,7 @@ void QThread::setTerminationEnabled(bool enabled)
 #endif
 }
 
-void QThread::setPriority(Priority priority)
+void QThread::setPriority(QThread::Priority priority)
 {
     Q_D(QThread);
     QMutexLocker locker(&d->mutex);

@@ -5876,7 +5876,7 @@ QString QString::number(double n, char f, int prec)
 
     \sa QStringList::join(), section()
 */
-QStringList QString::split(const QString &sep, SplitBehavior behavior, Qt::CaseSensitivity cs) const
+QStringList QString::split(const QString &sep, QString::SplitBehavior behavior, Qt::CaseSensitivity cs) const
 {
     QStringList list;
     int start = 0;
@@ -5896,7 +5896,7 @@ QStringList QString::split(const QString &sep, SplitBehavior behavior, Qt::CaseS
 /*!
     \overload
 */
-QStringList QString::split(const QChar &sep, SplitBehavior behavior, Qt::CaseSensitivity cs) const
+QStringList QString::split(const QChar &sep, QString::SplitBehavior behavior, Qt::CaseSensitivity cs) const
 {
     QStringList list;
     int start = 0;
@@ -5938,7 +5938,7 @@ QStringList QString::split(const QChar &sep, SplitBehavior behavior, Qt::CaseSen
 
     \sa QStringList::join(), section()
 */
-QStringList QString::split(const QRegExp &rx, SplitBehavior behavior) const
+QStringList QString::split(const QRegExp &rx, QString::SplitBehavior behavior) const
 {
     QRegExp rx2(rx);
     QStringList list;
@@ -5973,7 +5973,7 @@ QStringList QString::split(const QRegExp &rx, SplitBehavior behavior) const
 */
 
 /*!
-    \fn QString QString::normalized(NormalizationForm mode) const
+    \fn QString QString::normalized(QString::NormalizationForm mode) const
     Returns the string in the given Unicode normalization \a mode.
 */
 QString QString::normalized(QString::NormalizationForm mode) const
@@ -6033,7 +6033,7 @@ QString QString::repeated(int times) const
 void qt_string_normalize(QString *data, QString::NormalizationForm mode, QChar::UnicodeVersion version, int from);
 /*!
     \overload
-    \fn QString QString::normalized(NormalizationForm mode, QChar::UnicodeVersion version) const
+    \fn QString QString::normalized(QString::NormalizationForm mode, QChar::UnicodeVersion version) const
 
     Returns the string in the given Unicode normalization \a mode,
     according to the given \a version of the Unicode standard.

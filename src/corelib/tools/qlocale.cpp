@@ -2142,10 +2142,10 @@ static quint16 localePrivateIndex(const QLocalePrivate *p)
 
     The language and country codes are converted to their respective
     \c Language and \c Country enums. After this conversion is
-    performed the constructor behaves exactly like QLocale(Country,
+    performed the constructor behaves exactly like QLocale(QLocale::Country,
     Language).
 
-    This constructor is much slower than QLocale(Country, Language).
+    This constructor is much slower than QLocale(QLocale::Country, Language).
 
     \sa name()
 */
@@ -2191,7 +2191,7 @@ QLocale::QLocale()
     \sa setDefault() language() country()
 */
 
-QLocale::QLocale(Language language, Country country)
+QLocale::QLocale(QLocale::Language language, QLocale::Country country)
     : v(0)
 {
     const QLocalePrivate *d = findLocale(language, country);
@@ -2307,14 +2307,14 @@ QLocale::Country QLocale::country() const
 
 QString QLocale::name() const
 {
-    Language l = language();
+    QLocale::Language l = language();
 
     QString result = languageToCode(l);
 
     if (l == C)
         return result;
 
-    Country c = country();
+    QLocale::Country c = country();
     if (c == AnyCountry)
         return result;
 
@@ -2330,7 +2330,7 @@ QString QLocale::name() const
     \sa countryToString(), name()
 */
 
-QString QLocale::languageToString(Language language)
+QString QLocale::languageToString(QLocale::Language language)
 {
     if (uint(language) > uint(QLocale::LastLanguage))
         return QLatin1String("Unknown");
@@ -2343,7 +2343,7 @@ QString QLocale::languageToString(Language language)
     \sa country(), name()
 */
 
-QString QLocale::countryToString(Country country)
+QString QLocale::countryToString(QLocale::Country country)
 {
     if (uint(country) > uint(QLocale::LastCountry))
         return QLatin1String("Unknown");
@@ -2625,7 +2625,7 @@ QString QLocale::toString(const QDate &date, const QString &format) const
     to the specified \a format.
 */
 
-QString QLocale::toString(const QDate &date, FormatType format) const
+QString QLocale::toString(const QDate &date, QLocale::FormatType format) const
 {
     if (!date.isValid())
         return QString();
@@ -2720,7 +2720,7 @@ QString QLocale::toString(const QDateTime &dateTime, const QString &format) cons
     to the specified \a format.
 */
 
-QString QLocale::toString(const QDateTime &dateTime, FormatType format) const
+QString QLocale::toString(const QDateTime &dateTime, QLocale::FormatType format) const
 {
     if (!dateTime.isValid())
         return QString();
@@ -2746,7 +2746,7 @@ QString QLocale::toString(const QDateTime &dateTime, FormatType format) const
     specified \a format.
 */
 
-QString QLocale::toString(const QTime &time, FormatType format) const
+QString QLocale::toString(const QTime &time, QLocale::FormatType format) const
 {
     if (!time.isValid())
         return QString();
@@ -2776,7 +2776,7 @@ QString QLocale::toString(const QTime &time, FormatType format) const
     \sa QDate::toString(), QDate::fromString()
 */
 
-QString QLocale::dateFormat(FormatType format) const
+QString QLocale::dateFormat(QLocale::FormatType format) const
 {
 #ifndef QT_NO_SYSTEMLOCALE
     if (d() == systemPrivate()) {
@@ -2813,7 +2813,7 @@ QString QLocale::dateFormat(FormatType format) const
     \sa QTime::toString(), QTime::fromString()
 */
 
-QString QLocale::timeFormat(FormatType format) const
+QString QLocale::timeFormat(QLocale::FormatType format) const
 {
 #ifndef QT_NO_SYSTEMLOCALE
     if (d() == systemPrivate()) {
@@ -2850,7 +2850,7 @@ QString QLocale::timeFormat(FormatType format) const
     \sa QDateTime::toString(), QDateTime::fromString()
 */
 
-QString QLocale::dateTimeFormat(FormatType format) const
+QString QLocale::dateTimeFormat(QLocale::FormatType format) const
 {
 #ifndef QT_NO_SYSTEMLOCALE
     if (d() == systemPrivate()) {
@@ -2878,7 +2878,7 @@ QString QLocale::dateTimeFormat(FormatType format) const
     \sa timeFormat(), toDate(), toDateTime(), QTime::fromString()
 */
 #ifndef QT_NO_DATESTRING
-QTime QLocale::toTime(const QString &string, FormatType format) const
+QTime QLocale::toTime(const QString &string, QLocale::FormatType format) const
 {
     return toTime(string, timeFormat(format));
 }
@@ -2896,7 +2896,7 @@ QTime QLocale::toTime(const QString &string, FormatType format) const
     \sa dateFormat(), toTime(), toDateTime(), QDate::fromString()
 */
 #ifndef QT_NO_DATESTRING
-QDate QLocale::toDate(const QString &string, FormatType format) const
+QDate QLocale::toDate(const QString &string, QLocale::FormatType format) const
 {
     return toDate(string, dateFormat(format));
 }
@@ -2915,7 +2915,7 @@ QDate QLocale::toDate(const QString &string, FormatType format) const
 */
 
 #ifndef QT_NO_DATESTRING
-QDateTime QLocale::toDateTime(const QString &string, FormatType format) const
+QDateTime QLocale::toDateTime(const QString &string, QLocale::FormatType format) const
 {
     return toDateTime(string, dateFormat(format));
 }
@@ -3164,7 +3164,7 @@ QLocale QLocale::system()
     database. If the result is an empty list, then \a language is not represented in
     Qt's locale database.
 */
-QList<QLocale::Country> QLocale::countriesForLanguage(Language language)
+QList<QLocale::Country> QLocale::countriesForLanguage(QLocale::Language language)
 {
     QList<Country> result;
 
@@ -3194,7 +3194,7 @@ QList<QLocale::Country> QLocale::countriesForLanguage(Language language)
 
     \sa dayName(), standaloneMonthName()
 */
-QString QLocale::monthName(int month, FormatType type) const
+QString QLocale::monthName(int month, QLocale::FormatType type) const
 {
     if (month < 1 || month > 12)
         return QString();
@@ -3240,7 +3240,7 @@ QString QLocale::monthName(int month, FormatType type) const
 
     \sa monthName(), standaloneDayName()
 */
-QString QLocale::standaloneMonthName(int month, FormatType type) const
+QString QLocale::standaloneMonthName(int month, QLocale::FormatType type) const
 {
     if (month < 1 || month > 12)
         return QString();
@@ -3287,7 +3287,7 @@ QString QLocale::standaloneMonthName(int month, FormatType type) const
 
     \sa monthName(), standaloneDayName()
 */
-QString QLocale::dayName(int day, FormatType type) const
+QString QLocale::dayName(int day, QLocale::FormatType type) const
 {
     if (day < 1 || day > 7)
         return QString();
@@ -3336,7 +3336,7 @@ QString QLocale::dayName(int day, FormatType type) const
 
     \sa dayName(), standaloneMonthName()
 */
-QString QLocale::standaloneDayName(int day, FormatType type) const
+QString QLocale::standaloneDayName(int day, QLocale::FormatType type) const
 {
     if (day < 1 || day > 7)
         return QString();

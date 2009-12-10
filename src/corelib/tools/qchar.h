@@ -224,7 +224,7 @@ public:
     // ****** WHEN ADDING FUNCTIONS, CONSIDER ADDING TO QCharRef TOO
 
     Category category() const;
-    Direction direction() const;
+    QChar::Direction direction() const;
     Joining joining() const;
     bool hasMirrored() const;
     unsigned char combiningClass() const;
@@ -300,8 +300,8 @@ public:
 
     static Category QT_FASTCALL category(uint ucs4);
     static Category QT_FASTCALL category(ushort ucs2);
-    static Direction QT_FASTCALL direction(uint ucs4);
-    static Direction QT_FASTCALL direction(ushort ucs2);
+    static QChar::Direction QT_FASTCALL direction(uint ucs4);
+    static QChar::Direction QT_FASTCALL direction(ushort ucs2);
     static Joining QT_FASTCALL joining(uint ucs4);
     static Joining QT_FASTCALL joining(ushort ucs2);
     static unsigned char QT_FASTCALL combiningClass(uint ucs4);

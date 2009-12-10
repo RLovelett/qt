@@ -373,7 +373,7 @@ QTimeLine::Direction QTimeLine::direction() const
     Q_D(const QTimeLine);
     return d->direction;
 }
-void QTimeLine::setDirection(Direction direction)
+void QTimeLine::setDirection(QTimeLine::Direction direction)
 {
     Q_D(QTimeLine);
     d->direction = direction;
@@ -530,7 +530,7 @@ QTimeLine::CurveShape QTimeLine::curveShape() const
     return EaseInOutCurve;
 }
 
-void QTimeLine::setCurveShape(CurveShape shape)
+void QTimeLine::setCurveShape(QTimeLine::CurveShape shape)
 {
     switch (shape) {
     default:
@@ -648,7 +648,7 @@ int QTimeLine::frameForTime(int msec) const
     Reimplement this function to provide a custom curve shape for your
     timeline.
 
-    \sa CurveShape, frameForTime()
+    \sa QTimeLine::CurveShape, frameForTime()
 */
 qreal QTimeLine::valueForTime(int msec) const
 {

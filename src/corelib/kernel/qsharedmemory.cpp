@@ -276,7 +276,7 @@ QString QSharedMemory::key() const
 
   \sa error()
  */
-bool QSharedMemory::create(int size, AccessMode mode)
+bool QSharedMemory::create(int size, QSharedMemory::AccessMode mode)
 {
     Q_D(QSharedMemory);
 
@@ -347,7 +347,7 @@ int QSharedMemory::size() const
 
   \sa isAttached(), detach(), create()
  */
-bool QSharedMemory::attach(AccessMode mode)
+bool QSharedMemory::attach(QSharedMemory::AccessMode mode)
 {
     Q_D(QSharedMemory);
 

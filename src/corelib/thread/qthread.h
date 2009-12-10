@@ -81,8 +81,8 @@ public:
         InheritPriority
     };
 
-    void setPriority(Priority priority);
-    Priority priority() const;
+    void setPriority(QThread::Priority priority);
+    QThread::Priority priority() const;
 
     bool isFinished() const;
     bool isRunning() const;
@@ -93,7 +93,7 @@ public:
     void exit(int retcode = 0);
 
 public Q_SLOTS:
-    void start(Priority = InheritPriority);
+    void start(QThread::Priority = InheritPriority);
     void terminate();
     void quit();
 

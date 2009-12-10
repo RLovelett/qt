@@ -1341,7 +1341,7 @@ const QVariant::Handler *QVariant::handler = &qt_kernel_variant_handler;
 */
 
 /*!
-    \fn QVariant::QVariant(Type type)
+    \fn QVariant::QVariant(QVariant::Type type)
 
     Constructs a null variant of type \a type.
 */
@@ -1629,7 +1629,7 @@ QVariant::QVariant(const char *val)
   to the Qt GUI library.
  */
 
-QVariant::QVariant(Type type)
+QVariant::QVariant(QVariant::Type type)
 { create(type, 0); }
 QVariant::QVariant(int typeOrUserType, const void *copy)
 { create(typeOrUserType, copy); d.is_null = false; }
@@ -1832,7 +1832,7 @@ void QVariant::clear()
 
     Returns a null pointer if the type is QVariant::Invalid or doesn't exist.
 */
-const char *QVariant::typeToName(Type typ)
+const char *QVariant::typeToName(QVariant::Type typ)
 {
     if (typ == Invalid)
         return 0;
@@ -2520,11 +2520,11 @@ QVariantList QVariant::toList() const
     return qVariantToHelper<QVariantList>(d, List, handler);
 }
 
-/*! \fn QVariant::canCast(Type t) const
+/*! \fn QVariant::canCast(QVariant::Type t) const
     Use canConvert() instead.
 */
 
-/*! \fn QVariant::cast(Type t)
+/*! \fn QVariant::cast(QVariant::Type t)
     Use convert() instead.
 */
 
@@ -2643,7 +2643,7 @@ static const quint32 qCanConvertMatrix[QVariant::LastCoreType + 1] =
 
     \sa convert()
 */
-bool QVariant::canConvert(Type t) const
+bool QVariant::canConvert(QVariant::Type t) const
 {
     //we can treat floats as double
     //the reason for not doing it the "proper" way is that QMetaType::Float's value is 135,
@@ -2716,7 +2716,7 @@ bool QVariant::canConvert(Type t) const
     \sa canConvert(), clear()
 */
 
-bool QVariant::convert(Type t)
+bool QVariant::convert(QVariant::Type t)
 {
     if (d.type == uint(t))
         return true;
@@ -2832,7 +2832,7 @@ void* QVariant::data()
 #ifdef QT3_SUPPORT
 /*! \internal
  */
-void *QVariant::castOrDetach(Type t)
+void *QVariant::castOrDetach(QVariant::Type t)
 {
     if (d.type != uint(t)) {
         if (!convert(t))

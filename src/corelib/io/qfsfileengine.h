@@ -82,10 +82,10 @@ public:
     QStringList entryList(QDir::Filters filters, const QStringList &filterNames) const;
     FileFlags fileFlags(FileFlags type) const;
     bool setPermissions(uint perms);
-    QString fileName(FileName file) const;
-    uint ownerId(FileOwner) const;
-    QString owner(FileOwner) const;
-    QDateTime fileTime(FileTime time) const;
+    QString fileName(QAbstractFileEngine::FileName file) const;
+    uint ownerId(QAbstractFileEngine::FileOwner) const;
+    QString owner(QAbstractFileEngine::FileOwner) const;
+    QDateTime fileTime(QAbstractFileEngine::FileTime time) const;
     void setFileName(const QString &file);
     int handle() const;
 
@@ -96,8 +96,8 @@ public:
     qint64 readLine(char *data, qint64 maxlen);
     qint64 write(const char *data, qint64 len);
 
-    bool extension(Extension extension, const ExtensionOption *option = 0, ExtensionReturn *output = 0);
-    bool supportsExtension(Extension extension) const;
+    bool extension(QAbstractFileEngine::Extension extension, const ExtensionOption *option = 0, ExtensionReturn *output = 0);
+    bool supportsExtension(QAbstractFileEngine::Extension extension) const;
 
     //FS only!!
     bool open(QIODevice::OpenMode flags, int fd);

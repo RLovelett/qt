@@ -289,7 +289,7 @@ QThreadPrivate::~QThreadPrivate()
 */
 
 /*!
-    \fn void QThread::start(Priority priority)
+    \fn void QThread::start(QThread::Priority priority)
 
     Begins execution of the thread by calling run(), which should be
     reimplemented in a QThread subclass to contain your code. The
@@ -585,7 +585,7 @@ void QThread::cleanup()
     Use isRunning() instead.
 */
 
-/*! \fn void QThread::setPriority(Priority priority)
+/*! \fn void QThread::setPriority(QThread::Priority priority)
     \since 4.1
 
     This function sets the \a priority for a running thread. If the
@@ -602,7 +602,7 @@ void QThread::cleanup()
     (such as on Linux, see http://linux.die.net/man/2/sched_setscheduler
     for more details).
 
-    \sa Priority priority() start()
+    \sa QThread::Priority priority() start()
 */
 
 /*!
@@ -611,7 +611,7 @@ void QThread::cleanup()
     Returns the priority for a running thread.  If the thread is not
     running, this function returns \c InheritPriority.
 
-    \sa Priority setPriority() start()
+    \sa QThread::Priority setPriority() start()
 */
 QThread::Priority QThread::priority() const
 {

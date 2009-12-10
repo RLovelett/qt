@@ -1617,7 +1617,7 @@ QAbstractFileEngine::FileFlags QFSFileEngine::fileFlags(QAbstractFileEngine::Fil
     return ret;
 }
 
-QString QFSFileEngine::fileName(FileName file) const
+QString QFSFileEngine::fileName(QAbstractFileEngine::FileName file) const
 {
     Q_D(const QFSFileEngine);
     if (file == BaseName) {
@@ -1725,13 +1725,13 @@ bool QFSFileEngine::isRelativePath() const
         || (d->filePath.at(0) == QLatin1Char('/') && d->filePath.at(1) == QLatin1Char('/')))));
 }
 
-uint QFSFileEngine::ownerId(FileOwner /*own*/) const
+uint QFSFileEngine::ownerId(QAbstractFileEngine::FileOwner /*own*/) const
 {
     static const uint nobodyID = (uint) -2;
     return nobodyID;
 }
 
-QString QFSFileEngine::owner(FileOwner own) const
+QString QFSFileEngine::owner(QAbstractFileEngine::FileOwner own) const
 {
 #if !defined(QT_NO_LIBRARY)
     Q_D(const QFSFileEngine);
@@ -1860,7 +1860,7 @@ static inline QDateTime fileTimeToQDateTime(const FILETIME *time)
     return ret;
 }
 
-QDateTime QFSFileEngine::fileTime(FileTime time) const
+QDateTime QFSFileEngine::fileTime(QAbstractFileEngine::FileTime time) const
 {
     Q_D(const QFSFileEngine);
     QDateTime ret;

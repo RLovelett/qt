@@ -119,7 +119,7 @@ QT_BEGIN_NAMESPACE
 
     \sa lock(), unlock()
 */
-QMutex::QMutex(RecursionMode mode)
+QMutex::QMutex(QMutex::RecursionMode mode)
     : d(new QMutexPrivate(mode))
 { }
 
@@ -504,7 +504,7 @@ void QMutex::unlock()
 /*!
     \fn QMutex::QMutex(bool recursive)
 
-    Use the constructor that takes a RecursionMode parameter instead.
+    Use the constructor that takes a QMutex::RecursionMode parameter instead.
 */
 
 QT_END_NAMESPACE

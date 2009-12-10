@@ -72,7 +72,7 @@ public:
 
     QRegExp();
     explicit QRegExp(const QString &pattern, Qt::CaseSensitivity cs = Qt::CaseSensitive,
-		     PatternSyntax syntax = RegExp);
+		     QRegExp::PatternSyntax syntax = RegExp);
     QRegExp(const QRegExp &rx);
     ~QRegExp();
     QRegExp &operator=(const QRegExp &rx);
@@ -91,8 +91,8 @@ public:
     inline QT3_SUPPORT void setCaseSensitive(bool sensitive)
     { setCaseSensitivity(sensitive ? Qt::CaseSensitive : Qt::CaseInsensitive); }
 #endif
-    PatternSyntax patternSyntax() const;
-    void setPatternSyntax(PatternSyntax syntax);
+    QRegExp::PatternSyntax patternSyntax() const;
+    void setPatternSyntax(QRegExp::PatternSyntax syntax);
 #ifdef QT3_SUPPORT
     inline QT3_SUPPORT bool wildcard() const { return patternSyntax() == Wildcard; }
     inline QT3_SUPPORT void setWildcard(bool aWildcard)
@@ -107,14 +107,14 @@ public:
 
     bool exactMatch(const QString &str) const;
 
-    int indexIn(const QString &str, int offset = 0, CaretMode caretMode = CaretAtZero) const;
-    int lastIndexIn(const QString &str, int offset = -1, CaretMode caretMode = CaretAtZero) const;
+    int indexIn(const QString &str, int offset = 0, QRegExp::CaretMode caretMode = CaretAtZero) const;
+    int lastIndexIn(const QString &str, int offset = -1, QRegExp::CaretMode caretMode = CaretAtZero) const;
 #ifdef QT3_SUPPORT
     inline QT3_SUPPORT int search(const QString &str, int from = 0,
-                                CaretMode caretMode = CaretAtZero) const
+                                QRegExp::CaretMode caretMode = CaretAtZero) const
     { return indexIn(str, from, caretMode); }
     inline QT3_SUPPORT int searchRev(const QString &str, int from = -1,
-                                   CaretMode caretMode = CaretAtZero) const
+                                   QRegExp::CaretMode caretMode = CaretAtZero) const
     { return lastIndexIn(str, from, caretMode); }
 #endif
     int matchedLength() const;

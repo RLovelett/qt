@@ -85,7 +85,7 @@ public:
     explicit
 #endif
     QUrl(const QString &url);
-    QUrl(const QString &url, ParsingMode mode);
+    QUrl(const QString &url, QUrl::ParsingMode mode);
     // ### Qt 5: merge the two constructors, with mode = TolerantMode
     QUrl(const QUrl &copy);
     QUrl &operator =(const QUrl &copy);
@@ -95,10 +95,10 @@ public:
     ~QUrl();
 
     void setUrl(const QString &url);
-    void setUrl(const QString &url, ParsingMode mode);
+    void setUrl(const QString &url, QUrl::ParsingMode mode);
     // ### Qt 5: merge the two setUrl() functions, with mode = TolerantMode
     void setEncodedUrl(const QByteArray &url);
-    void setEncodedUrl(const QByteArray &url, ParsingMode mode);
+    void setEncodedUrl(const QByteArray &url, QUrl::ParsingMode mode);
     // ### Qt 5: merge the two setEncodedUrl() functions, with mode = TolerantMode
 
     bool isValid() const;
@@ -186,7 +186,7 @@ public:
 
     QByteArray toEncoded(FormattingOptions options = None) const;
     static QUrl fromEncoded(const QByteArray &url);
-    static QUrl fromEncoded(const QByteArray &url, ParsingMode mode);
+    static QUrl fromEncoded(const QByteArray &url, QUrl::ParsingMode mode);
     // ### Qt 5: merge the two fromEncoded() functions, with mode = TolerantMode
 
     static QUrl fromUserInput(const QString &userInput);

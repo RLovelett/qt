@@ -86,12 +86,12 @@ public:
     QAbstractAnimation(QObject *parent = 0);
     virtual ~QAbstractAnimation();
 
-    State state() const;
+    QAbstractAnimation::State state() const;
 
     QAnimationGroup *group() const;
 
-    Direction direction() const;
-    void setDirection(Direction direction);
+    QAbstractAnimation::Direction direction() const;
+    void setDirection(QAbstractAnimation::Direction direction);
 
     int loopCount() const;
     void setLoopCount(int loopCount);

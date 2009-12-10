@@ -61,7 +61,7 @@ public:
     enum RecursionMode { NonRecursive, Recursive };
 
     QReadWriteLock(); // ### Qt 5: merge with below
-    QReadWriteLock(RecursionMode recursionMode);
+    QReadWriteLock(QReadWriteLock::RecursionMode recursionMode);
     ~QReadWriteLock();
 
     void lockForRead();

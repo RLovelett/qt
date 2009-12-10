@@ -132,15 +132,15 @@ public:
     void start(const QString &program, const QStringList &arguments, OpenMode mode = ReadWrite);
     void start(const QString &program, OpenMode mode = ReadWrite);
 
-    ProcessChannelMode readChannelMode() const;
-    void setReadChannelMode(ProcessChannelMode mode);
-    ProcessChannelMode processChannelMode() const;
-    void setProcessChannelMode(ProcessChannelMode mode);
+    QProcess::ProcessChannelMode readChannelMode() const;
+    void setReadChannelMode(QProcess::ProcessChannelMode mode);
+    QProcess::ProcessChannelMode processChannelMode() const;
+    void setProcessChannelMode(QProcess::ProcessChannelMode mode);
 
-    ProcessChannel readChannel() const;
-    void setReadChannel(ProcessChannel channel);
+    QProcess::ProcessChannel readChannel() const;
+    void setReadChannel(QProcess::ProcessChannel channel);
 
-    void closeReadChannel(ProcessChannel channel);
+    void closeReadChannel(QProcess::ProcessChannel channel);
     void closeWriteChannel();
 
     void setStandardInputFile(const QString &fileName);
@@ -206,7 +206,7 @@ Q_SIGNALS:
     void readyReadStandardError();
 
 protected:
-    void setProcessState(ProcessState state);
+    void setProcessState(QProcess::ProcessState state);
 
     virtual void setupChildProcess();
 

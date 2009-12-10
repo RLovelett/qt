@@ -125,20 +125,20 @@ public:
 #ifndef QT_NO_QOBJECT
     explicit QSettings(const QString &organization,
                        const QString &application = QString(), QObject *parent = 0);
-    QSettings(Scope scope, const QString &organization,
+    QSettings(QSettings::Scope scope, const QString &organization,
               const QString &application = QString(), QObject *parent = 0);
-    QSettings(Format format, Scope scope, const QString &organization,
+    QSettings(QSettings::Format format, QSettings::Scope scope, const QString &organization,
 	      const QString &application = QString(), QObject *parent = 0);
-    QSettings(const QString &fileName, Format format, QObject *parent = 0);
+    QSettings(const QString &fileName, QSettings::Format format, QObject *parent = 0);
     explicit QSettings(QObject *parent = 0);
 #else
     explicit QSettings(const QString &organization,
                        const QString &application = QString());
-    QSettings(Scope scope, const QString &organization,
+    QSettings(QSettings::Scope scope, const QString &organization,
               const QString &application = QString());
-    QSettings(Format format, Scope scope, const QString &organization,
+    QSettings(QSettings::Format format, QSettings::Scope scope, const QString &organization,
               const QString &application = QString());
-    QSettings(const QString &fileName, Format format);
+    QSettings(const QString &fileName, QSettings::Format format);
 #endif
     ~QSettings();
 
@@ -170,8 +170,8 @@ public:
     bool fallbacksEnabled() const;
 
     QString fileName() const;
-    Format format() const;
-    Scope scope() const;
+    QSettings::Format format() const;
+    QSettings::Scope scope() const;
     QString organizationName() const;
     QString applicationName() const;
 
@@ -181,17 +181,17 @@ public:
     QTextCodec *iniCodec() const;
 #endif
 
-    static void setDefaultFormat(Format format);
-    static Format defaultFormat();
+    static void setDefaultFormat(QSettings::Format format);
+    static QSettings::Format defaultFormat();
     static void setSystemIniPath(const QString &dir); // ### remove in 5.0 (use setPath() instead)
     static void setUserIniPath(const QString &dir);   // ### remove in 5.0 (use setPath() instead)
-    static void setPath(Format format, Scope scope, const QString &path);
+    static void setPath(QSettings::Format format, QSettings::Scope scope, const QString &path);
 
     typedef QMap<QString, QVariant> SettingsMap;
     typedef bool (*ReadFunc)(QIODevice &device, SettingsMap &map);
     typedef bool (*WriteFunc)(QIODevice &device, const SettingsMap &map);
 
-    static Format registerFormat(const QString &extension, ReadFunc readFunc, WriteFunc writeFunc,
+    static QSettings::Format registerFormat(const QString &extension, ReadFunc readFunc, WriteFunc writeFunc,
                                  Qt::CaseSensitivity caseSensitivity = Qt::CaseSensitive);
 
 #ifdef QT3_SUPPORT
@@ -259,7 +259,7 @@ public:
     inline QT3_SUPPORT void removeSearchPath(System, const QString &) {}
 
     inline QT3_SUPPORT void setPath(const QString &organization, const QString &application,
-                                    Scope scope = Global)
+                                    QSettings::Scope scope = Global)
     {
         setPath_helper(scope == Global ? QSettings::SystemScope : QSettings::UserScope,
                        organization, application);
@@ -298,7 +298,7 @@ protected:
 
 private:
 #ifdef QT3_SUPPORT
-    void setPath_helper(Scope scope, const QString &organization, const QString &application);
+    void setPath_helper(QSettings::Scope scope, const QString &organization, const QString &application);
 #endif
 
     Q_DISABLE_COPY(QSettings)

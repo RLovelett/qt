@@ -547,13 +547,13 @@ public:
 
     QLocale();
     QLocale(const QString &name);
-    QLocale(Language language, Country country = AnyCountry);
+    QLocale(QLocale::Language language, QLocale::Country country = AnyCountry);
     QLocale(const QLocale &other);
 
     QLocale &operator=(const QLocale &other);
 
-    Language language() const;
-    Country country() const;
+    QLocale::Language language() const;
+    QLocale::Country country() const;
     QString name() const;
 
     short toShort(const QString &s, bool *ok = 0, int base = 0) const;
@@ -574,19 +574,19 @@ public:
     QString toString(double i, char f = 'g', int prec = 6) const;
     inline QString toString(float i, char f = 'g', int prec = 6) const;
     QString toString(const QDate &date, const QString &formatStr) const;
-    QString toString(const QDate &date, FormatType format = LongFormat) const;
+    QString toString(const QDate &date, QLocale::FormatType format = LongFormat) const;
     QString toString(const QTime &time, const QString &formatStr) const;
-    QString toString(const QTime &time, FormatType format = LongFormat) const;
-    QString toString(const QDateTime &dateTime, FormatType format = LongFormat) const;
+    QString toString(const QTime &time, QLocale::FormatType format = LongFormat) const;
+    QString toString(const QDateTime &dateTime, QLocale::FormatType format = LongFormat) const;
     QString toString(const QDateTime &dateTime, const QString &format) const;
 
-    QString dateFormat(FormatType format = LongFormat) const;
-    QString timeFormat(FormatType format = LongFormat) const;
-    QString dateTimeFormat(FormatType format = LongFormat) const;
+    QString dateFormat(QLocale::FormatType format = LongFormat) const;
+    QString timeFormat(QLocale::FormatType format = LongFormat) const;
+    QString dateTimeFormat(QLocale::FormatType format = LongFormat) const;
 #ifndef QT_NO_DATESTRING
-    QDate toDate(const QString &string, FormatType = LongFormat) const;
-    QTime toTime(const QString &string, FormatType = LongFormat) const;
-    QDateTime toDateTime(const QString &string, FormatType format = LongFormat) const;
+    QDate toDate(const QString &string, QLocale::FormatType = LongFormat) const;
+    QTime toTime(const QString &string, QLocale::FormatType = LongFormat) const;
+    QDateTime toDateTime(const QString &string, QLocale::FormatType format = LongFormat) const;
     QDate toDate(const QString &string, const QString &format) const;
     QTime toTime(const QString &string, const QString &format) const;
     QDateTime toDateTime(const QString &string, const QString &format) const;
@@ -602,10 +602,10 @@ public:
     QChar positiveSign() const;
     QChar exponential() const;
 
-    QString monthName(int, FormatType format = LongFormat) const;
-    QString standaloneMonthName(int, FormatType format = LongFormat) const;
-    QString dayName(int, FormatType format = LongFormat) const;
-    QString standaloneDayName(int, FormatType format = LongFormat) const;
+    QString monthName(int, QLocale::FormatType format = LongFormat) const;
+    QString standaloneMonthName(int, QLocale::FormatType format = LongFormat) const;
+    QString dayName(int, QLocale::FormatType format = LongFormat) const;
+    QString standaloneDayName(int, QLocale::FormatType format = LongFormat) const;
 
     QString amText() const;
     QString pmText() const;
@@ -615,14 +615,14 @@ public:
     inline bool operator==(const QLocale &other) const;
     inline bool operator!=(const QLocale &other) const;
 
-    static QString languageToString(Language language);
-    static QString countryToString(Country country);
+    static QString languageToString(QLocale::Language language);
+    static QString countryToString(QLocale::Country country);
     static void setDefault(const QLocale &locale);
 
     static QLocale c() { return QLocale(C); }
     static QLocale system();
 
-    static QList<Country> countriesForLanguage(Language lang);
+    static QList<Country> countriesForLanguage(QLocale::Language lang);
 
     void setNumberOptions(NumberOptions options);
     NumberOptions numberOptions() const;

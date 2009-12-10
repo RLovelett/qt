@@ -61,7 +61,7 @@ public:
         Sha1
     };
 
-    QCryptographicHash(Algorithm method);
+    QCryptographicHash(QCryptographicHash::Algorithm method);
     ~QCryptographicHash();
 
     void reset();
@@ -71,7 +71,7 @@ public:
 
     QByteArray result() const;
 
-    static QByteArray hash(const QByteArray &data, Algorithm method);
+    static QByteArray hash(const QByteArray &data, QCryptographicHash::Algorithm method);
 private:
     Q_DISABLE_COPY(QCryptographicHash)
     QCryptographicHashPrivate *d;

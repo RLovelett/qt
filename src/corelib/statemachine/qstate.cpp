@@ -157,7 +157,7 @@ QState::QState(QState *parent)
   Constructs a new state with the given \a childMode and the given \a parent
   state.
 */
-QState::QState(ChildMode childMode, QState *parent)
+QState::QState(QState::ChildMode childMode, QState *parent)
     : QAbstractState(*new QStatePrivate, parent)
 {
     Q_D(QState);
@@ -464,7 +464,7 @@ QState::ChildMode QState::childMode() const
 /*!
   Sets the child \a mode of this state.
 */
-void QState::setChildMode(ChildMode mode)
+void QState::setChildMode(QState::ChildMode mode)
 {
     Q_D(QState);
     d->childMode = mode;

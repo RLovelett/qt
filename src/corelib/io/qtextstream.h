@@ -128,7 +128,7 @@ public:
     QString *string() const;
 
     Status status() const;
-    void setStatus(Status status);
+    void setStatus(QTextStream::Status status);
     void resetStatus();
 
     bool atEnd() const;
@@ -143,8 +143,8 @@ public:
     QString readAll();
     QString read(qint64 maxlen);
 
-    void setFieldAlignment(FieldAlignment alignment);
-    FieldAlignment fieldAlignment() const;
+    void setFieldAlignment(QTextStream::FieldAlignment alignment);
+    QTextStream::FieldAlignment fieldAlignment() const;
 
     void setPadChar(QChar ch);
     QChar padChar() const;
@@ -158,8 +158,8 @@ public:
     void setIntegerBase(int base);
     int integerBase() const;
 
-    void setRealNumberNotation(RealNumberNotation notation);
-    RealNumberNotation realNumberNotation() const;
+    void setRealNumberNotation(QTextStream::RealNumberNotation notation);
+    QTextStream::RealNumberNotation realNumberNotation() const;
 
     void setRealNumberPrecision(int precision);
     int realNumberPrecision() const;
@@ -243,7 +243,7 @@ public:
 #ifndef QT_NO_TEXTCODEC
     enum Encoding { Locale, Latin1, Unicode, UnicodeNetworkOrder,
                     UnicodeReverse, RawUnicode, UnicodeUTF8 };
-    QT3_SUPPORT void setEncoding(Encoding encoding);
+    QT3_SUPPORT void setEncoding(QTextStream::Encoding encoding);
 #endif
     inline QT3_SUPPORT QString read() { return readAll(); }
     inline QT3_SUPPORT void unsetDevice() { setDevice(0); }

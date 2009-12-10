@@ -167,7 +167,7 @@ public:
         NoOptions = 0
     };
 
-    uchar *map(qint64 offset, qint64 size, MemoryMapFlags flags = NoOptions);
+    uchar *map(qint64 offset, qint64 size, QFile::MemoryMapFlags flags = NoOptions);
     bool unmap(uchar *address);
 
     virtual QAbstractFileEngine *fileEngine() const;

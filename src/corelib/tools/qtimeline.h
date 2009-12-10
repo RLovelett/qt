@@ -89,8 +89,8 @@ public:
     int loopCount() const;
     void setLoopCount(int count);
 
-    Direction direction() const;
-    void setDirection(Direction direction);
+    QTimeLine::Direction direction() const;
+    void setDirection(QTimeLine::Direction direction);
 
     int duration() const;
     void setDuration(int duration);
@@ -104,8 +104,8 @@ public:
     int updateInterval() const;
     void setUpdateInterval(int interval);
 
-    CurveShape curveShape() const;
-    void setCurveShape(CurveShape shape);
+    QTimeLine::CurveShape curveShape() const;
+    void setCurveShape(QTimeLine::CurveShape shape);
 
     QEasingCurve easingCurve() const;
     void setEasingCurve(const QEasingCurve &curve);

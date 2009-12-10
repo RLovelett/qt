@@ -102,16 +102,16 @@ public:
 
     virtual QString fileName(QAbstractFileEngine::FileName file) const;
 
-    virtual uint ownerId(FileOwner) const;
-    virtual QString owner(FileOwner) const;
+    virtual uint ownerId(QAbstractFileEngine::FileOwner) const;
+    virtual QString owner(QAbstractFileEngine::FileOwner) const;
 
-    virtual QDateTime fileTime(FileTime time) const;
+    virtual QDateTime fileTime(QAbstractFileEngine::FileTime time) const;
 
     virtual Iterator *beginEntryList(QDir::Filters filters, const QStringList &filterNames);
     virtual Iterator *endEntryList();
     
-    bool extension(Extension extension, const ExtensionOption *option = 0, ExtensionReturn *output = 0);
-    bool supportsExtension(Extension extension) const;
+    bool extension(QAbstractFileEngine::Extension extension, const QAbstractFileEngine::ExtensionOption *option = 0, QAbstractFileEngine::ExtensionReturn *output = 0);
+    bool supportsExtension(QAbstractFileEngine::Extension extension) const;
 };
 
 QT_END_NAMESPACE

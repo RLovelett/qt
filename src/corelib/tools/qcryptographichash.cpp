@@ -92,7 +92,7 @@ public:
 /*!
   Constructs an object that can be used to create a cryptographic hash from data using \a method.
 */
-QCryptographicHash::QCryptographicHash(Algorithm method)
+QCryptographicHash::QCryptographicHash(QCryptographicHash::Algorithm method)
     : d(new QCryptographicHashPrivate)
 {
     d->method = method;
@@ -190,7 +190,7 @@ QByteArray QCryptographicHash::result() const
 /*!
   Returns the hash of \a data using \a method.
 */
-QByteArray QCryptographicHash::hash(const QByteArray &data, Algorithm method)
+QByteArray QCryptographicHash::hash(const QByteArray &data, QCryptographicHash::Algorithm method)
 {
     QCryptographicHash hash(method);
     hash.addData(data);

@@ -2097,7 +2097,7 @@ void QXmlStreamReader::addExtraNamespaceDeclarations(const QXmlStreamNamespaceDe
 
   \since 4.6
  */
-QString QXmlStreamReader::readElementText(ReadElementTextBehaviour behaviour)
+QString QXmlStreamReader::readElementText(QXmlStreamReader::ReadElementTextBehaviour behaviour)
 {
     Q_D(QXmlStreamReader);
     if (isStartElement()) {

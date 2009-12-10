@@ -4083,7 +4083,7 @@ QUrl::QUrl(const QString &url) : d(new QUrlPrivate)
 
     \sa setUrl()
 */
-QUrl::QUrl(const QString &url, ParsingMode parsingMode) : d(new QUrlPrivate)
+QUrl::QUrl(const QString &url, QUrl::ParsingMode parsingMode) : d(new QUrlPrivate)
 {
     if (!url.isEmpty())
         setUrl(url, parsingMode);
@@ -4184,7 +4184,7 @@ void QUrl::setUrl(const QString &url)
 
     \sa setEncodedUrl()
 */
-void QUrl::setUrl(const QString &url, ParsingMode parsingMode)
+void QUrl::setUrl(const QString &url, QUrl::ParsingMode parsingMode)
 {
     // escape all reserved characters and delimiters
     // reserved      = gen-delims / sub-delims
@@ -4255,7 +4255,7 @@ static inline char toHex(quint8 c)
     Constructs a URL by parsing the contents of \a encodedUrl using
     the given \a parsingMode.
 */
-void QUrl::setEncodedUrl(const QByteArray &encodedUrl, ParsingMode parsingMode)
+void QUrl::setEncodedUrl(const QByteArray &encodedUrl, QUrl::ParsingMode parsingMode)
 {
     clear();
     QByteArray tmp = encodedUrl;
@@ -5548,7 +5548,7 @@ QUrl QUrl::fromEncoded(const QByteArray &input)
 
     \sa toEncoded(), setUrl()
 */
-QUrl QUrl::fromEncoded(const QByteArray &input, ParsingMode parsingMode)
+QUrl QUrl::fromEncoded(const QByteArray &input, QUrl::ParsingMode parsingMode)
 {
     QUrl tmp;
     tmp.setEncodedUrl(input, parsingMode);

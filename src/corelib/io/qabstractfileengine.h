@@ -134,10 +134,10 @@ public:
     virtual QStringList entryList(QDir::Filters filters, const QStringList &filterNames) const;
     virtual FileFlags fileFlags(FileFlags type=FileInfoAll) const;
     virtual bool setPermissions(uint perms);
-    virtual QString fileName(FileName file=DefaultName) const;
-    virtual uint ownerId(FileOwner) const;
-    virtual QString owner(FileOwner) const;
-    virtual QDateTime fileTime(FileTime time) const;
+    virtual QString fileName(QAbstractFileEngine::FileName file=DefaultName) const;
+    virtual uint ownerId(QAbstractFileEngine::FileOwner) const;
+    virtual QString owner(QAbstractFileEngine::FileOwner) const;
+    virtual QDateTime fileTime(QAbstractFileEngine::FileTime time) const;
     virtual void setFileName(const QString &file);
     virtual int handle() const;
     bool atEnd() const;
@@ -182,8 +182,8 @@ public:
         uchar *address;
     };
 
-    virtual bool extension(Extension extension, const ExtensionOption *option = 0, ExtensionReturn *output = 0);
-    virtual bool supportsExtension(Extension extension) const;
+    virtual bool extension(QAbstractFileEngine::Extension extension, const ExtensionOption *option = 0, ExtensionReturn *output = 0);
+    virtual bool supportsExtension(QAbstractFileEngine::Extension extension) const;
 
     // Factory
     static QAbstractFileEngine *create(const QString &fileName);

@@ -122,7 +122,7 @@ QReadWriteLock::QReadWriteLock()
 
     \sa lockForRead(), lockForWrite(), RecursionMode
 */
-QReadWriteLock::QReadWriteLock(RecursionMode recursionMode)
+QReadWriteLock::QReadWriteLock(QReadWriteLock::RecursionMode recursionMode)
     : d(new QReadWriteLockPrivate(recursionMode))
 { }
 

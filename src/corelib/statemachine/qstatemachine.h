@@ -144,7 +144,7 @@ public:
     QStateMachine::RestorePolicy globalRestorePolicy() const;
     void setGlobalRestorePolicy(QStateMachine::RestorePolicy restorePolicy);
 
-    void postEvent(QEvent *event, EventPriority priority = NormalPriority);
+    void postEvent(QEvent *event, QStateMachine::EventPriority priority = NormalPriority);
     int postDelayedEvent(QEvent *event, int delay);
     bool cancelDelayedEvent(int id);
 

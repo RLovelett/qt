@@ -86,10 +86,10 @@ public:
     void setKey(const QString &key);
     QString key() const;
 
-    bool create(int size, AccessMode mode = ReadWrite);
+    bool create(int size, QSharedMemory::AccessMode mode = ReadWrite);
     int size() const;
 
-    bool attach(AccessMode mode = ReadWrite);
+    bool attach(QSharedMemory::AccessMode mode = ReadWrite);
     bool isAttached() const;
     bool detach();
 

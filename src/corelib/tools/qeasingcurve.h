@@ -73,7 +73,7 @@ public:
         Custom, NCurveTypes
     };
 
-    QEasingCurve(Type type = Linear);
+    QEasingCurve(QEasingCurve::Type type = Linear);
     QEasingCurve(const QEasingCurve &other);
     ~QEasingCurve();
 
@@ -91,8 +91,8 @@ public:
     qreal overshoot() const;
     void setOvershoot(qreal overshoot);
 
-    Type type() const;
-    void setType(Type type);
+    QEasingCurve::Type type() const;
+    void setType(QEasingCurve::Type type);
     typedef qreal (*EasingFunction)(qreal progress);
     void setCustomType(EasingFunction func);
     EasingFunction customType() const;

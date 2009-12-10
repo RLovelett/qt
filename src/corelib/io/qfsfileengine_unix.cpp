@@ -832,7 +832,7 @@ QAbstractFileEngine::FileFlags QFSFileEngine::fileFlags(FileFlags type) const
 }
 
 #if defined(Q_OS_SYMBIAN)
-QString QFSFileEngine::fileName(FileName file) const
+QString QFSFileEngine::fileName(QAbstractFileEngine::FileName file) const
 {
     Q_D(const QFSFileEngine);
     const QLatin1Char slashChar('/');
@@ -957,7 +957,7 @@ QString QFSFileEngine::fileName(FileName file) const
 
 #else
 
-QString QFSFileEngine::fileName(FileName file) const
+QString QFSFileEngine::fileName(QAbstractFileEngine::FileName file) const
 {
     Q_D(const QFSFileEngine);
     if (file == BundleName) {
@@ -1106,7 +1106,7 @@ bool QFSFileEngine::isRelativePath() const
 #endif
 }
 
-uint QFSFileEngine::ownerId(FileOwner own) const
+uint QFSFileEngine::ownerId(QAbstractFileEngine::FileOwner own) const
 {
     Q_D(const QFSFileEngine);
     static const uint nobodyID = (uint) -2;
@@ -1119,7 +1119,7 @@ uint QFSFileEngine::ownerId(FileOwner own) const
     return nobodyID;
 }
 
-QString QFSFileEngine::owner(FileOwner own) const
+QString QFSFileEngine::owner(QAbstractFileEngine::FileOwner own) const
 {
 #if !defined(QT_NO_THREAD) && defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(Q_OS_OPENBSD)
     int size_max = sysconf(_SC_GETPW_R_SIZE_MAX);
@@ -1220,7 +1220,7 @@ bool QFSFileEngine::setSize(qint64 size)
     return ret;
 }
 
-QDateTime QFSFileEngine::fileTime(FileTime time) const
+QDateTime QFSFileEngine::fileTime(QAbstractFileEngine::FileTime time) const
 {
     Q_D(const QFSFileEngine);
     QDateTime ret;

@@ -1374,7 +1374,7 @@ QString *QTextStream::string() const
 
     \sa fieldAlignment(), setFieldWidth()
 */
-void QTextStream::setFieldAlignment(FieldAlignment mode)
+void QTextStream::setFieldAlignment(QTextStream::FieldAlignment mode)
 {
     Q_D(QTextStream);
     d->fieldAlignment = mode;
@@ -1513,7 +1513,7 @@ int QTextStream::integerBase() const
 
     \sa realNumberNotation(), setRealNumberPrecision(), setNumberFlags(), setIntegerBase()
 */
-void QTextStream::setRealNumberNotation(RealNumberNotation notation)
+void QTextStream::setRealNumberNotation(QTextStream::RealNumberNotation notation)
 {
     Q_D(QTextStream);
     d->realNumberNotation = notation;
@@ -1592,9 +1592,9 @@ void QTextStream::resetStatus()
 
     Sets the status of the text stream to the \a status given.
 
-    \sa Status status() resetStatus()
+    \sa QDataStream::Status status() resetStatus()
 */
-void QTextStream::setStatus(Status status)
+void QTextStream::setStatus(QTextStream::Status status)
 {
     Q_D(QTextStream);
     if (d->status == Ok)
@@ -3228,7 +3228,7 @@ int QTextStream::flagsInternal(int newFlags)
 /*!
     Use setCodec() and setAutoDetectUnicode() instead.
 */
-void QTextStream::setEncoding(Encoding encoding)
+void QTextStream::setEncoding(QTextStream::Encoding encoding)
 {
     Q_D(QTextStream);
     resetCodecConverterStateHelper(&d->readConverterState);

@@ -293,12 +293,12 @@ public:
 
     enum SplitBehavior { KeepEmptyParts, SkipEmptyParts };
 
-    QStringList split(const QString &sep, SplitBehavior behavior = KeepEmptyParts,
+    QStringList split(const QString &sep, QString::SplitBehavior behavior = KeepEmptyParts,
                       Qt::CaseSensitivity cs = Qt::CaseSensitive) const Q_REQUIRED_RESULT;
-    QStringList split(const QChar &sep, SplitBehavior behavior = KeepEmptyParts,
+    QStringList split(const QChar &sep, QString::SplitBehavior behavior = KeepEmptyParts,
                       Qt::CaseSensitivity cs = Qt::CaseSensitive) const Q_REQUIRED_RESULT;
 #ifndef QT_NO_REGEXP
-    QStringList split(const QRegExp &sep, SplitBehavior behavior = KeepEmptyParts) const Q_REQUIRED_RESULT;
+    QStringList split(const QRegExp &sep, QString::SplitBehavior behavior = KeepEmptyParts) const Q_REQUIRED_RESULT;
 #endif
 
     enum NormalizationForm {
@@ -307,8 +307,8 @@ public:
         NormalizationForm_KD,
         NormalizationForm_KC
     };
-    QString normalized(NormalizationForm mode) const Q_REQUIRED_RESULT;
-    QString normalized(NormalizationForm mode, QChar::UnicodeVersion version) const Q_REQUIRED_RESULT;
+    QString normalized(QString::NormalizationForm mode) const Q_REQUIRED_RESULT;
+    QString normalized(QString::NormalizationForm mode, QChar::UnicodeVersion version) const Q_REQUIRED_RESULT;
 
     QString repeated(int times) const;
 

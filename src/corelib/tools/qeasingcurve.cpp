@@ -590,7 +590,7 @@ static QEasingCurveFunction *curveToFunctionObject(QEasingCurve::Type type)
 /*!
     Constructs an easing curve of the given \a type.
  */
-QEasingCurve::QEasingCurve(Type type)
+QEasingCurve::QEasingCurve(QEasingCurve::Type type)
     : d_ptr(new QEasingCurvePrivate)
 {
     setType(type);

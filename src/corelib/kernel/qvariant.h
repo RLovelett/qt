@@ -172,7 +172,7 @@ class Q_CORE_EXPORT QVariant
 
     inline QVariant();
     ~QVariant();
-    QVariant(Type type);
+    QVariant(QVariant::Type type);
     QVariant(int typeOrUserType, const void *copy);
     QVariant(int typeOrUserType, const void *copy, uint flags);
     QVariant(const QVariant &other);
@@ -223,17 +223,17 @@ class Q_CORE_EXPORT QVariant
 
     QVariant& operator=(const QVariant &other);
 
-    Type type() const;
+    QVariant::Type type() const;
     int userType() const;
     const char *typeName() const;
 
-    bool canConvert(Type t) const;
-    bool convert(Type t);
+    bool canConvert(QVariant::Type t) const;
+    bool convert(QVariant::Type t);
 
 #ifdef QT3_SUPPORT
-    inline QT3_SUPPORT bool canCast(Type t) const
+    inline QT3_SUPPORT bool canCast(QVariant::Type t) const
     { return canConvert(t); }
-    inline QT3_SUPPORT bool cast(Type t)
+    inline QT3_SUPPORT bool cast(QVariant::Type t)
     { return convert(t); }
 #endif
 
@@ -306,8 +306,8 @@ class Q_CORE_EXPORT QVariant
     void load(QDataStream &ds);
     void save(QDataStream &ds) const;
 #endif
-    static const char *typeToName(Type type);
-    static Type nameToType(const char *name);
+    static const char *typeToName(QVariant::Type type);
+    static QVariant::Type nameToType(const char *name);
 
 #ifdef QT3_SUPPORT
     inline QT3_SUPPORT_CONSTRUCTOR QVariant(bool val, int) { create(Bool, &val); }
@@ -379,8 +379,8 @@ class Q_CORE_EXPORT QVariant
     typedef void (*f_save)(const Private *, QDataStream &);
 #endif
     typedef bool (*f_compare)(const Private *, const Private *);
-    typedef bool (*f_convert)(const QVariant::Private *d, Type t, void *, bool *);
-    typedef bool (*f_canConvert)(const QVariant::Private *d, Type t);
+    typedef bool (*f_convert)(const QVariant::Private *d, QVariant::Type t, void *, bool *);
+    typedef bool (*f_canConvert)(const QVariant::Private *d, QVariant::Type t);
     typedef void (*f_debugStream)(QDebug, const QVariant &);
     struct Handler {
         f_construct construct;
@@ -416,7 +416,7 @@ protected:
 
     void create(int type, const void *copy);
 #ifdef QT3_SUPPORT
-    void *castOrDetach(Type t);
+    void *castOrDetach(QVariant::Type t);
 #endif
     bool cmp(const QVariant &other) const;
 

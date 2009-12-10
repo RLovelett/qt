@@ -76,7 +76,7 @@ public:
         DemosPath,
         ExamplesPath
     };
-    static QString location(LibraryLocation); // ### Qt 5: consider renaming it to path()
+    static QString location(QLibraryInfo::LibraryLocation); // ### Qt 5: consider renaming it to path()
 
 private:
     QLibraryInfo();

@@ -3806,7 +3806,7 @@ QRegExp::QRegExp()
 
     \sa setPattern(), setCaseSensitivity(), setPatternSyntax()
 */
-QRegExp::QRegExp(const QString &pattern, Qt::CaseSensitivity cs, PatternSyntax syntax)
+QRegExp::QRegExp(const QString &pattern, Qt::CaseSensitivity cs, QRegExp::PatternSyntax syntax)
 {
     priv = new QRegExpPrivate(QRegExpEngineKey(pattern, syntax, cs));
 }
@@ -4000,7 +4000,7 @@ QRegExp::PatternSyntax QRegExp::patternSyntax() const
 
     \sa setPattern(), setCaseSensitivity(), escape()
 */
-void QRegExp::setPatternSyntax(PatternSyntax syntax)
+void QRegExp::setPatternSyntax(QRegExp::PatternSyntax syntax)
 {
     if (syntax != priv->engineKey.patternSyntax) {
         invalidateEngine(priv);
@@ -4104,7 +4104,7 @@ bool QRegExp::exactMatch(const QString &str) const
     \sa lastIndexIn(), exactMatch()
 */
 
-int QRegExp::indexIn(const QString &str, int offset, CaretMode caretMode) const
+int QRegExp::indexIn(const QString &str, int offset, QRegExp::CaretMode caretMode) const
 {
     prepareEngineForMatch(priv, str);
     if (offset < 0)
@@ -4135,7 +4135,7 @@ int QRegExp::indexIn(const QString &str, int offset, CaretMode caretMode) const
     \sa indexIn(), exactMatch()
 */
 
-int QRegExp::lastIndexIn(const QString &str, int offset, CaretMode caretMode) const
+int QRegExp::lastIndexIn(const QString &str, int offset, QRegExp::CaretMode caretMode) const
 {
     prepareEngineForMatch(priv, str);
     if (offset < 0)
@@ -4412,14 +4412,14 @@ QString QRegExp::escape(const QString &str)
 
 /*!
     \fn int QRegExp::search(const QString &str, int from = 0,
-                            CaretMode caretMode = CaretAtZero) const
+                            QRegExp::CaretMode caretMode = CaretAtZero) const
 
     Use \l indexIn() instead.
 */
 
 /*!
     \fn int QRegExp::searchRev(const QString &str, int from = -1, \
-                               CaretMode caretMode = CaretAtZero) const
+                               QRegExp::CaretMode caretMode = CaretAtZero) const
 
     Use \l lastIndexIn() instead.
 */

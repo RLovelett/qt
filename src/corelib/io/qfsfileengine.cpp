@@ -852,7 +852,7 @@ bool QFSFileEnginePrivate::isSequentialFdFh() const
 /*!
     \reimp
 */
-bool QFSFileEngine::extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output)
+bool QFSFileEngine::extension(QAbstractFileEngine::Extension extension, const QAbstractFileEngine::ExtensionOption *option, QAbstractFileEngine::ExtensionReturn *output)
 {
     Q_D(QFSFileEngine);
     if (extension == AtEndExtension && d->fh && isSequential())
@@ -875,7 +875,7 @@ bool QFSFileEngine::extension(Extension extension, const ExtensionOption *option
 /*!
     \reimp
 */
-bool QFSFileEngine::supportsExtension(Extension extension) const
+bool QFSFileEngine::supportsExtension(QAbstractFileEngine::Extension extension) const
 {
     Q_D(const QFSFileEngine);
     if (extension == AtEndExtension && d->fh && isSequential())
@@ -922,11 +922,11 @@ bool QFSFileEngine::supportsExtension(Extension extension) const
   For Unix, the list contains just the root path "/".
 */
 
-/*! \fn QString QFSFileEngine::fileName(FileName file) const
+/*! \fn QString QFSFileEngine::fileName(QAbstractFileEngine::FileName file) const
   \reimp
 */
 
-/*! \fn QDateTime QFSFileEngine::fileTime(FileTime time) const
+/*! \fn QDateTime QFSFileEngine::fileTime(QAbstractFileEngine::FileTime time) const
   \reimp
 */
 
@@ -952,7 +952,7 @@ bool QFSFileEngine::supportsExtension(Extension extension) const
   \reimp
 */
 
-/*! \fn uint QFSFileEngine::ownerId(FileOwner own) const
+/*! \fn uint QFSFileEngine::ownerId(QAbstractFileEngine::FileOwner own) const
   In Unix, if stat() is successful, the \c uid is returned if
   \a own is the owner. Otherwise the \c gid is returned. If stat()
   is unsuccessful, -2 is reuturned.
@@ -960,7 +960,7 @@ bool QFSFileEngine::supportsExtension(Extension extension) const
   For Windows, -2 is always returned.
 */
 
-/*! \fn QString QFSFileEngine::owner(FileOwner own) const
+/*! \fn QString QFSFileEngine::owner(QAbstractFileEngine::FileOwner own) const
   \reimp
 */
 

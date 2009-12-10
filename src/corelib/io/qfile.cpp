@@ -1179,7 +1179,7 @@ QFile::handle() const
 
     \sa unmap(), QAbstractFileEngine::supportsExtension()
  */
-uchar *QFile::map(qint64 offset, qint64 size, MemoryMapFlags flags)
+uchar *QFile::map(qint64 offset, qint64 size, QFile::MemoryMapFlags flags)
 {
     Q_D(QFile);
     QAbstractFileEngine *engine = fileEngine();

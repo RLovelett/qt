@@ -168,7 +168,7 @@ QT_BEGIN_NAMESPACE
     \sa setEnabled(), isEnabled()
 */
 
-QSocketNotifier::QSocketNotifier(int socket, Type type, QObject *parent)
+QSocketNotifier::QSocketNotifier(int socket, QSocketNotifier::Type type, QObject *parent)
     : QObject(parent)
 {
     if (socket < 0)
@@ -200,7 +200,7 @@ QSocketNotifier::QSocketNotifier(int socket, Type type, QObject *parent)
     \endcode
 */
 
-QSocketNotifier::QSocketNotifier(int socket, Type type, QObject *parent,
+QSocketNotifier::QSocketNotifier(int socket, QSocketNotifier::Type type, QObject *parent,
                                   const char *name)
     : QObject(parent)
 {
@@ -250,7 +250,7 @@ QSocketNotifier::~QSocketNotifier()
 */
 
 /*!
-    \fn Type QSocketNotifier::type() const
+    \fn QSocketNotifier::Type QSocketNotifier::type() const
 
     Returns the socket event type specified to the constructor.
 

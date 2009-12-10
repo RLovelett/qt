@@ -225,7 +225,7 @@ QLibraryInfo::buildDate()
 */
 
 QString
-QLibraryInfo::location(LibraryLocation loc)
+QLibraryInfo::location(QLibraryInfo::LibraryLocation loc)
 {
     QString ret;
     if(!QLibraryInfoPrivate::configuration()) {

@@ -644,7 +644,7 @@ bool QAbstractFileEngine::setPermissions(uint perms)
 
     \sa setFileName(), FileName
  */
-QString QAbstractFileEngine::fileName(FileName file) const
+QString QAbstractFileEngine::fileName(QAbstractFileEngine::FileName file) const
 {
     Q_UNUSED(file);
     return QString();
@@ -659,7 +659,7 @@ QString QAbstractFileEngine::fileName(FileName file) const
 
     \sa owner() setFileName(), FileOwner
  */
-uint QAbstractFileEngine::ownerId(FileOwner owner) const
+uint QAbstractFileEngine::ownerId(QAbstractFileEngine::FileOwner owner) const
 {
     Q_UNUSED(owner);
     return 0;
@@ -675,7 +675,7 @@ uint QAbstractFileEngine::ownerId(FileOwner owner) const
 
     \sa ownerId() setFileName(), FileOwner
  */
-QString QAbstractFileEngine::owner(FileOwner owner) const
+QString QAbstractFileEngine::owner(QAbstractFileEngine::FileOwner owner) const
 {
     Q_UNUSED(owner);
     return QString();
@@ -693,7 +693,7 @@ QString QAbstractFileEngine::owner(FileOwner owner) const
 
     \sa setFileName(), QDateTime, QDateTime::isValid(), FileTime
  */
-QDateTime QAbstractFileEngine::fileTime(FileTime time) const
+QDateTime QAbstractFileEngine::fileTime(QAbstractFileEngine::FileTime time) const
 {
     Q_UNUSED(time);
     return QDateTime();
@@ -1154,7 +1154,7 @@ qint64 QAbstractFileEngine::readLine(char *data, qint64 maxlen)
 
     \sa supportsExtension(), Extension
 */
-bool QAbstractFileEngine::extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output)
+bool QAbstractFileEngine::extension(QAbstractFileEngine::Extension extension, const QAbstractFileEngine::ExtensionOption *option, QAbstractFileEngine::ExtensionReturn *output)
 {
     Q_UNUSED(extension);
     Q_UNUSED(option);
@@ -1171,7 +1171,7 @@ bool QAbstractFileEngine::extension(Extension extension, const ExtensionOption *
 
     \sa extension()
 */
-bool QAbstractFileEngine::supportsExtension(Extension extension) const
+bool QAbstractFileEngine::supportsExtension(QAbstractFileEngine::Extension extension) const
 {
     Q_UNUSED(extension);
     return false;

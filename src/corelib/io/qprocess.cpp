@@ -1148,7 +1148,7 @@ QProcess::ProcessChannelMode QProcess::readChannelMode() const
 
     \sa setProcessChannelMode()
 */
-void QProcess::setReadChannelMode(ProcessChannelMode mode)
+void QProcess::setReadChannelMode(QProcess::ProcessChannelMode mode)
 {
     setProcessChannelMode(mode);
 }
@@ -1159,7 +1159,7 @@ void QProcess::setReadChannelMode(ProcessChannelMode mode)
     Returns the channel mode of the QProcess standard output and
     standard error channels.
 
-    \sa setProcessChannelMode(), ProcessChannelMode, setReadChannel()
+    \sa setProcessChannelMode(), QProcess::ProcessChannelMode, setReadChannel()
 */
 QProcess::ProcessChannelMode QProcess::processChannelMode() const
 {
@@ -1176,9 +1176,9 @@ QProcess::ProcessChannelMode QProcess::processChannelMode() const
 
     \snippet doc/src/snippets/code/src_corelib_io_qprocess.cpp 0
 
-    \sa processChannelMode(), ProcessChannelMode, setReadChannel()
+    \sa processChannelMode(), QProcess::ProcessChannelMode, setReadChannel()
 */
-void QProcess::setProcessChannelMode(ProcessChannelMode mode)
+void QProcess::setProcessChannelMode(QProcess::ProcessChannelMode mode)
 {
     Q_D(QProcess);
     d->processChannelMode = mode;
@@ -1203,7 +1203,7 @@ QProcess::ProcessChannel QProcess::readChannel() const
 
     \sa readChannel()
 */
-void QProcess::setReadChannel(ProcessChannel channel)
+void QProcess::setReadChannel(QProcess::ProcessChannel channel)
 {
     Q_D(QProcess);
     if (d->processChannel != channel) {
@@ -1229,7 +1229,7 @@ void QProcess::setReadChannel(ProcessChannel channel)
 
     \sa closeWriteChannel(), setReadChannel()
 */
-void QProcess::closeReadChannel(ProcessChannel channel)
+void QProcess::closeReadChannel(QProcess::ProcessChannel channel)
 {
     Q_D(QProcess);
 
@@ -1692,7 +1692,7 @@ bool QProcess::waitForFinished(int msecs)
 
     \sa state()
 */
-void QProcess::setProcessState(ProcessState state)
+void QProcess::setProcessState(QProcess::ProcessState state)
 {
     Q_D(QProcess);
     if (d->processState == state)
@@ -1821,7 +1821,7 @@ qint64 QProcess::writeData(const char *data, qint64 len)
 */
 QByteArray QProcess::readAllStandardOutput()
 {
-    ProcessChannel tmp = readChannel();
+    QProcess::ProcessChannel tmp = readChannel();
     setReadChannel(StandardOutput);
     QByteArray data = readAll();
     setReadChannel(tmp);
@@ -1837,7 +1837,7 @@ QByteArray QProcess::readAllStandardOutput()
 */
 QByteArray QProcess::readAllStandardError()
 {
-    ProcessChannel tmp = readChannel();
+    QProcess::ProcessChannel tmp = readChannel();
     setReadChannel(StandardError);
     QByteArray data = readAll();
     setReadChannel(tmp);

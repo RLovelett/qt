@@ -280,7 +280,7 @@ QT_BEGIN_NAMESPACE
 /*!
     Contructs an event object of type \a type.
 */
-QEvent::QEvent(Type type)
+QEvent::QEvent(QEvent::Type type)
     : d(0), t(type), posted(false), spont(false), m_accept(true)
 {}
 
@@ -466,7 +466,7 @@ QTimerEvent::~QTimerEvent()
 
     \sa child()
 */
-QChildEvent::QChildEvent(Type type, QObject *child)
+QChildEvent::QChildEvent(QEvent::Type type, QObject *child)
     : QEvent(type), c(child)
 {}
 

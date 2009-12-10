@@ -539,7 +539,7 @@ QAbstractAnimation::Direction QAbstractAnimation::direction() const
     Q_D(const QAbstractAnimation);
     return d->direction;
 }
-void QAbstractAnimation::setDirection(Direction direction)
+void QAbstractAnimation::setDirection(QAbstractAnimation::Direction direction)
 {
     Q_D(QAbstractAnimation);
     if (d->direction == direction)

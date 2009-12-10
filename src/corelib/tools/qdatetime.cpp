@@ -600,7 +600,7 @@ QString QDate::shortMonthName(int month)
     \sa toString(), shortMonthName(), shortDayName(), longDayName()
 */
 
-QString QDate::longMonthName(int month, MonthNameType type)
+QString QDate::longMonthName(int month, QDate::MonthNameType type)
 {
     if (month < 1 || month > 12) {
         month = 1;
@@ -655,7 +655,7 @@ QString QDate::longMonthName(int month)
     \sa toString(), shortMonthName(), longMonthName(), longDayName()
 */
 
-QString QDate::shortDayName(int weekday, MonthNameType type)
+QString QDate::shortDayName(int weekday, QDate::MonthNameType type)
 {
     if (weekday < 1 || weekday > 7) {
         weekday = 1;
@@ -710,7 +710,7 @@ QString QDate::shortDayName(int weekday)
     \sa toString(), shortDayName(), shortMonthName(), longMonthName()
 */
 
-QString QDate::longDayName(int weekday, MonthNameType type)
+QString QDate::longDayName(int weekday, QDate::MonthNameType type)
 {
     if (weekday < 1 || weekday > 7) {
         weekday = 1;

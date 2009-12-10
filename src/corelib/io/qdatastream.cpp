@@ -434,7 +434,7 @@ bool QDataStream::atEnd() const
 
     \since 4.6
 
-    \sa FloatingPointPrecision setFloatingPointPrecision()
+    \sa QDataStream::FloatingPointPrecision setFloatingPointPrecision()
 */
 QDataStream::FloatingPointPrecision QDataStream::floatingPointPrecision() const
 {
@@ -468,7 +468,7 @@ void QDataStream::setFloatingPointPrecision(QDataStream::FloatingPointPrecision 
 /*!
     Returns the status of the data stream.
 
-    \sa Status setStatus() resetStatus()
+    \sa QDataStream::Status setStatus() resetStatus()
 */
 
 QDataStream::Status QDataStream::status() const
@@ -479,7 +479,7 @@ QDataStream::Status QDataStream::status() const
 /*!
     Resets the status of the data stream.
 
-    \sa Status status() setStatus()
+    \sa QDataStream::Status status() setStatus()
 */
 void QDataStream::resetStatus()
 {
@@ -489,9 +489,9 @@ void QDataStream::resetStatus()
 /*!
     Sets the status of the data stream to the \a status given.
 
-    \sa Status status() resetStatus()
+    \sa QDataStream::Status status() resetStatus()
 */
-void QDataStream::setStatus(Status status)
+void QDataStream::setStatus(QDataStream::Status status)
 {
     if (q_status == Ok)
         q_status = status;
@@ -523,7 +523,7 @@ void QDataStream::setStatus(Status status)
     \sa byteOrder()
 */
 
-void QDataStream::setByteOrder(ByteOrder bo)
+void QDataStream::setByteOrder(QDataStream::ByteOrder bo)
 {
     byteorder = bo;
     if (QSysInfo::ByteOrder == QSysInfo::BigEndian)

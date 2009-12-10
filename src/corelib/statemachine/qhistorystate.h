@@ -66,14 +66,14 @@ public:
     };
 
     QHistoryState(QState *parent = 0);
-    QHistoryState(HistoryType type, QState *parent = 0);
+    QHistoryState(QHistoryState::HistoryType type, QState *parent = 0);
     ~QHistoryState();
 
     QAbstractState *defaultState() const;
     void setDefaultState(QAbstractState *state);
 
-    HistoryType historyType() const;
-    void setHistoryType(HistoryType type);
+    QHistoryState::HistoryType historyType() const;
+    void setHistoryType(QHistoryState::HistoryType type);
 
 protected:
     void onEntry(QEvent *event);

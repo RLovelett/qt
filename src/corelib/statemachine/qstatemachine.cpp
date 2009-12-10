@@ -1880,7 +1880,7 @@ void QStateMachine::stop()
 
   \sa postDelayedEvent()
 */
-void QStateMachine::postEvent(QEvent *event, EventPriority priority)
+void QStateMachine::postEvent(QEvent *event, QStateMachine::EventPriority priority)
 {
     Q_D(QStateMachine);
     if (d->state != QStateMachinePrivate::Running) {

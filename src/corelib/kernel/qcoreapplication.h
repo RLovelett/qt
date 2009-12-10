@@ -140,11 +140,11 @@ public:
     static QString translate(const char * context,
                              const char * key,
                              const char * disambiguation = 0,
-                             Encoding encoding = CodecForTr);
+                             QCoreApplication::Encoding encoding = CodecForTr);
     static QString translate(const char * context,
                              const char * key,
                              const char * disambiguation,
-                             Encoding encoding, int n);
+                             QCoreApplication::Encoding encoding, int n);
 
     static void flush();
 
@@ -222,7 +222,7 @@ inline void QCoreApplication::sendPostedEvents() { sendPostedEvents(0, 0); }
 #ifdef QT_NO_TRANSLATION
 // Simple versions
 inline QString QCoreApplication::translate(const char *, const char *sourceText,
-                                           const char *, Encoding encoding)
+                                           const char *, QCoreApplication::Encoding encoding)
 {
 #ifndef QT_NO_TEXTCODEC
     if (encoding == UnicodeUTF8)
@@ -235,7 +235,7 @@ inline QString QCoreApplication::translate(const char *, const char *sourceText,
 
 // Simple versions
 inline QString QCoreApplication::translate(const char *, const char *sourceText,
-                                           const char *, Encoding encoding, int)
+                                           const char *, QCoreApplication::Encoding encoding, int)
 {
 #ifndef QT_NO_TEXTCODEC
     if (encoding == UnicodeUTF8)

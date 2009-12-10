@@ -358,7 +358,7 @@ public:
         IncludeChildElements,
         SkipChildElements
     };
-    QString readElementText(ReadElementTextBehaviour behaviour);
+    QString readElementText(QXmlStreamReader::ReadElementTextBehaviour behaviour);
     QString readElementText();
 
     QStringRef name() const;

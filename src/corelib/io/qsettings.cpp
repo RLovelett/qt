@@ -2596,7 +2596,7 @@ QSettings::QSettings(const QString &organization, const QString &application, QO
 
     \sa setDefaultFormat()
 */
-QSettings::QSettings(Scope scope, const QString &organization, const QString &application,
+QSettings::QSettings(QSettings::Scope scope, const QString &organization, const QString &application,
                      QObject *parent)
     : QObject(*QSettingsPrivate::create(NativeFormat, scope, organization, application), parent)
 {
@@ -2620,7 +2620,7 @@ QSettings::QSettings(Scope scope, const QString &organization, const QString &ap
     If no application name is given, the QSettings object will
     only access the organization-wide \l{Fallback Mechanism}{locations}.
 */
-QSettings::QSettings(Format format, Scope scope, const QString &organization,
+QSettings::QSettings(QSettings::Format format, QSettings::Scope scope, const QString &organization,
                      const QString &application, QObject *parent)
     : QObject(*QSettingsPrivate::create(format, scope, organization, application), parent)
 {
@@ -2656,7 +2656,7 @@ QSettings::QSettings(Format format, Scope scope, const QString &organization,
 
     \sa fileName()
 */
-QSettings::QSettings(const QString &fileName, Format format, QObject *parent)
+QSettings::QSettings(const QString &fileName, QSettings::Format format, QObject *parent)
     : QObject(*QSettingsPrivate::create(fileName, format), parent)
 {
 }
@@ -2718,20 +2718,20 @@ QSettings::QSettings(const QString &organization, const QString &application)
     d_ptr->q_ptr = this;
 }
 
-QSettings::QSettings(Scope scope, const QString &organization, const QString &application)
+QSettings::QSettings(QSettings::Scope scope, const QString &organization, const QString &application)
     : d_ptr(QSettingsPrivate::create(globalDefaultFormat, scope, organization, application))
 {
     d_ptr->q_ptr = this;
 }
 
-QSettings::QSettings(Format format, Scope scope, const QString &organization,
+QSettings::QSettings(QSettings::Format format, QSettings::Scope scope, const QString &organization,
                      const QString &application)
     : d_ptr(QSettingsPrivate::create(format, scope, organization, application))
 {
     d_ptr->q_ptr = this;
 }
 
-QSettings::QSettings(const QString &fileName, Format format)
+QSettings::QSettings(const QString &fileName, QSettings::Format format)
     : d_ptr(QSettingsPrivate::create(fileName, format))
 {
     d_ptr->q_ptr = this;
@@ -3365,7 +3365,7 @@ QVariant QSettings::value(const QString &key, const QVariant &defaultValue) cons
 
     \sa format()
 */
-void QSettings::setDefaultFormat(Format format)
+void QSettings::setDefaultFormat(QSettings::Format format)
 {
     globalDefaultFormat = format;
 }
@@ -3451,7 +3451,7 @@ void QSettings::setUserIniPath(const QString &dir)
 
     \sa registerFormat()
 */
-void QSettings::setPath(Format format, Scope scope, const QString &path)
+void QSettings::setPath(QSettings::Format format, QSettings::Scope scope, const QString &path)
 {
     QMutexLocker locker(globalMutex());
     PathHash *pathHash = pathHashFunc();
@@ -3552,7 +3552,7 @@ QSettings::Format QSettings::registerFormat(const QString &extension, ReadFunc r
 }
 
 #ifdef QT3_SUPPORT
-void QSettings::setPath_helper(Scope scope, const QString &organization, const QString &application)
+void QSettings::setPath_helper(QSettings::Scope scope, const QString &organization, const QString &application)
 {
     Q_D(QSettings);
     if (d->pendingChanges)
@@ -3745,7 +3745,7 @@ void QSettings::setPath_helper(Scope scope, const QString &organization, const Q
 */
 
 /*! \fn void QSettings::setPath(const QString &organization, const QString &application, \
-                                Scope scope)
+                                QSettings::Scope scope)
 
     Specifies the \a organization, \a application, and \a scope to
     use by the QSettings object.

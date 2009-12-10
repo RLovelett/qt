@@ -294,9 +294,9 @@ public:
         MaxUser = 65535                         // last user event id
     };
 
-    QEvent(Type type);
+    QEvent(QEvent::Type type);
     virtual ~QEvent();
-    inline Type type() const { return static_cast<Type>(t); }
+    inline QEvent::Type type() const { return static_cast<Type>(t); }
     inline bool spontaneous() const { return spont; }
 
     inline void setAccepted(bool accepted) { m_accept = accepted; }
@@ -346,7 +346,7 @@ class QObject;
 class Q_CORE_EXPORT QChildEvent : public QEvent
 {
 public:
-    QChildEvent( Type type, QObject *child );
+    QChildEvent( QEvent::Type type, QObject *child );
     ~QChildEvent();
     QObject *child() const { return c; }
     bool added() const { return type() == ChildAdded; }

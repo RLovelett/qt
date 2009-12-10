@@ -1397,7 +1397,7 @@ bool QResourceFileEngine::setPermissions(uint)
     return false;
 }
 
-QString QResourceFileEngine::fileName(FileName file) const
+QString QResourceFileEngine::fileName(QAbstractFileEngine::FileName file) const
 {
     Q_D(const QResourceFileEngine);
     if(file == BaseName) {
@@ -1427,18 +1427,18 @@ bool QResourceFileEngine::isRelativePath() const
     return false;
 }
 
-uint QResourceFileEngine::ownerId(FileOwner) const
+uint QResourceFileEngine::ownerId(QAbstractFileEngine::FileOwner) const
 {
     static const uint nobodyID = (uint) -2;
     return nobodyID;
 }
 
-QString QResourceFileEngine::owner(FileOwner) const
+QString QResourceFileEngine::owner(QAbstractFileEngine::FileOwner) const
 {
     return QString();
 }
 
-QDateTime QResourceFileEngine::fileTime(FileTime) const
+QDateTime QResourceFileEngine::fileTime(QAbstractFileEngine::FileTime) const
 {
     return QDateTime();
 }
@@ -1460,7 +1460,7 @@ QAbstractFileEngine::Iterator *QResourceFileEngine::endEntryList()
     return 0;
 }
 
-bool QResourceFileEngine::extension(Extension extension, const ExtensionOption *option, ExtensionReturn *output)
+bool QResourceFileEngine::extension(QAbstractFileEngine::Extension extension, const ExtensionOption *option, ExtensionReturn *output)
 {
     Q_D(QResourceFileEngine);
     if (extension == MapExtension) {
@@ -1476,7 +1476,7 @@ bool QResourceFileEngine::extension(Extension extension, const ExtensionOption *
     return false;
 }
 
-bool QResourceFileEngine::supportsExtension(Extension extension) const
+bool QResourceFileEngine::supportsExtension(QAbstractFileEngine::Extension extension) const
 {
     return (extension == UnMapExtension || extension == MapExtension);
 }
