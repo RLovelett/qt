@@ -126,6 +126,10 @@ public:
     qint64 bytesAvailableNextBlock() const;
     QByteArray readAny();
 
+    void setReadBufferMaxSize(qint64 size);
+    qint64 readBufferMaxSize() const;
+    void setReadBufferBytesPending(qint64 bytes);
+
     bool isFinished() const;
 
     bool isPipeliningUsed() const;
@@ -147,6 +151,7 @@ Q_SIGNALS:
     void headerChanged();
     void dataReadProgress(int done, int total);
     void dataSendProgress(qint64 done, qint64 total);
+    void readBufferChanged();
 
 private:
     Q_DECLARE_PRIVATE(QHttpNetworkReply)
@@ -172,7 +177,7 @@ public:
     void clear();
 
     qint64 readReplyBodyRaw(QIODevice *in, QByteDataBuffer *out, qint64 size);
-    qint64 readReplyBodyChunked(QIODevice *in, QByteDataBuffer *out);
+    qint64 readReplyBodyChunked(QIODevice *in, QByteDataBuffer *out, qint64 maxSize);
     qint64 getChunkSize(QIODevice *in, qint64 *chunkSize);
 
     void appendUncompressedReplyData(QByteArray &qba);
@@ -216,6 +221,8 @@ public:
     bool forceConnectionCloseEnabled;
     qint64 currentChunkSize;
     qint64 currentChunkRead;
+    qint64 readBufferMaxSize;
+    qint64 readBufferBytesPending;
     QPointer<QHttpNetworkConnection> connection;
     bool initInflate;
     bool streamEnd;

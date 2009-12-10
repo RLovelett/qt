@@ -130,6 +130,7 @@ void QNetworkReplyImplPrivate::_q_copyReadyRead()
     }
 
     lastBytesDownloaded = bytesDownloaded;
+    backend->setReadBufferBytesPending(q->bytesAvailable());
     QVariant totalSize = cookedHeaders.value(QNetworkRequest::ContentLengthHeader);
     pauseNotificationHandling();
     emit q->downloadProgress(bytesDownloaded,
@@ -264,6 +265,8 @@ void QNetworkReplyImplPrivate::backendNotify(InternalNotifications notification)
 
 void QNetworkReplyImplPrivate::handleNotifications()
 {
+    Q_Q(QNetworkReplyImpl);
+
     if (notificationHandlingPaused)
         return;
 
@@ -281,6 +284,7 @@ void QNetworkReplyImplPrivate::handleNotifications()
                 _q_copyReadyRead();
             else
                 backend->downstreamReadyWrite();
+            backend->setReadBufferBytesPending(q->bytesAvailable());
             break;
 
         case NotifyCloseDownstreamChannel:
@@ -444,6 +448,7 @@ void QNetworkReplyImplPrivate::appendDownstreamData(QByteDataBuffer &data)
 
     bytesDownloaded += bytesWritten;
     lastBytesDownloaded = bytesDownloaded;
+    backend->setReadBufferBytesPending(q->bytesAvailable());
 
     QPointer<QNetworkReplyImpl> qq = q;
 
@@ -641,6 +646,8 @@ void QNetworkReplyImpl::setReadBufferSize(qint64 size)
     if (size > d->readBufferMaxSize &&
         size > d->readBuffer.byteAmount())
         d->backendNotify(QNetworkReplyImplPrivate::NotifyDownstreamReadyWrite);
+
+    d->backend->setReadBufferMaxSize(size);
 
     QNetworkReply::setReadBufferSize(size);
 }

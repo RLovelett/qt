@@ -782,7 +782,6 @@ void QSslSocket::setReadBufferSize(qint64 size)
     d->readBufferMaxSize = size;
 
     // set the plain socket's buffer size to 1k if we have a limit
-    // see also the same logic in QSslSocketPrivate::createPlainSocket
     if (d->plainSocket) {
         if (d->mode == UnencryptedMode)
             d->plainSocket->setReadBufferSize(size);

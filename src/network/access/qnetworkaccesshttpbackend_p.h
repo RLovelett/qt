@@ -81,6 +81,9 @@ public:
     virtual void closeDownstreamChannel();
     virtual bool waitForDownstreamReadyRead(int msecs);
 
+    virtual void setReadBufferMaxSize(qint64 size);
+    virtual void setReadBufferBytesPending(qint64 bytes);
+
     virtual void downstreamReadyWrite();
     virtual void copyFinished(QIODevice *);
 #ifndef QT_NO_OPENSSL

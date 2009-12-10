@@ -113,6 +113,8 @@ public:
     virtual void open() = 0;
     virtual void closeDownstreamChannel() = 0;
     virtual bool waitForDownstreamReadyRead(int msecs) = 0;
+    virtual void setReadBufferMaxSize(qint64 size); // TODO: make pure virtual once implemented in all backends?
+    virtual void setReadBufferBytesPending(qint64 bytes);
 
     // slot-like:
     virtual void downstreamReadyWrite();
@@ -189,6 +191,7 @@ private:
     friend class QNetworkAccessManager;
     friend class QNetworkAccessManagerPrivate;
     friend class QNetworkAccessBackendUploadIODevice;
+    friend class QNetworkAccessHttpBackend; // for reply
     QNetworkAccessManagerPrivate *manager;
     QNetworkReplyImplPrivate *reply;
 };

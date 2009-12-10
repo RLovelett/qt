@@ -582,7 +582,8 @@ void QSslSocketBackendPrivate::transmit()
         }
 
         // Check if we've got any data to be read from the socket.
-        if (!connectionEncrypted || !readBufferMaxSize || readBuffer.size() < readBufferMaxSize)
+        if (!connectionEncrypted || !readBufferMaxSize || readBuffer.size() < readBufferMaxSize
+            || plainSocket->state() != QAbstractSocket::ConnectedState) // with a buffer max size: flush after disconnection
             while ((pendingBytes = plainSocket->bytesAvailable()) > 0) {
                 // Read encrypted data from the socket into a buffer.
                 data.resize(pendingBytes);
@@ -895,6 +896,7 @@ void QSslSocketBackendPrivate::disconnectFromHost()
 void QSslSocketBackendPrivate::disconnected()
 {
     if (ssl) {
+        transmit(); // flush the remaining bytes; useful when readBufferMaxSize is set
         q_SSL_free(ssl);
         ssl = 0;
     }

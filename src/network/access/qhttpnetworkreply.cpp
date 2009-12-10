@@ -187,6 +187,27 @@ bool QHttpNetworkReply::isFinished() const
     return d_func()->state == QHttpNetworkReplyPrivate::AllDoneState;
 }
 
+void QHttpNetworkReply::setReadBufferMaxSize(qint64 size)
+{
+    d_func()->readBufferMaxSize = size;
+}
+
+qint64 QHttpNetworkReply::readBufferMaxSize() const
+{
+    return d_func()->readBufferMaxSize;
+}
+
+void QHttpNetworkReply::setReadBufferBytesPending(qint64 bytes)
+{
+    d_func()->readBufferBytesPending = bytes;
+
+    // reading freed up space in responseData, so (when the buffer is given a max size)
+    // we can read more from the socket now
+    if (readBufferMaxSize()) {
+        QMetaObject::invokeMethod(this, "readBufferChanged", Qt::QueuedConnection);
+    }
+}
+
 bool QHttpNetworkReply::isPipeliningUsed() const
 {
     return d_func()->pipeliningUsed;
@@ -199,7 +220,9 @@ QHttpNetworkReplyPrivate::QHttpNetworkReplyPrivate(const QUrl &newUrl)
       chunkedTransferEncoding(false),
       connectionCloseEnabled(true),
       forceConnectionCloseEnabled(false),
-      currentChunkSize(0), currentChunkRead(0), connection(0), initInflate(false),
+      currentChunkSize(0), currentChunkRead(0),
+      readBufferMaxSize(0), readBufferBytesPending(0),
+      connection(0), initInflate(false),
       autoDecompress(false), responseData(), requestIsPrepared(false)
       ,pipeliningUsed(false)
 {
@@ -595,15 +618,39 @@ qint64 QHttpNetworkReplyPrivate::readBodyFast(QAbstractSocket *socket, QByteData
 
 qint64 QHttpNetworkReplyPrivate::readBody(QAbstractSocket *socket, QByteDataBuffer *out)
 {
+    qint64 readBufferMaxSize = this->readBufferMaxSize;
+    if (autoDecompress && readBufferMaxSize > 0) {
+        // make it at least CHUNK otherwise expand() won't have enough data
+        readBufferMaxSize = qMax<qint64>(CHUNK, readBufferMaxSize);
+    }
+    socket->setReadBufferSize(readBufferMaxSize);
+
+    qint64 maxSize = 0;
+    if (readBufferMaxSize > 0 && socket->state() == QAbstractSocket::ConnectedState) {
+        // Our buffer is limited to readBufferMaxSize
+        // In addition we need to subtract the bytes the app hasn't read yet.
+        // Note: if the socket has already disconnected, we skip this and flush all remaining data.
+        maxSize = qMax(0LL, readBufferMaxSize - readBufferBytesPending);
+        if (maxSize == 0) {
+            return 0; // no room for reading data, we'll have to do it later
+        }
+    }
+
     qint64 bytes = 0;
     if (isChunked()) {
-        bytes += readReplyBodyChunked(socket, out); // chunked transfer encoding (rfc 2616, sec 3.6)
+        bytes += readReplyBodyChunked(socket, out, maxSize); // chunked transfer encoding (rfc 2616, sec 3.6)
     } else if (bodyLength > 0) { // we have a Content-Length
-        bytes += readReplyBodyRaw(socket, out, bodyLength - contentRead);
+        qint64 size = bodyLength - contentRead;
+        if (maxSize)
+            size = qMin(size, maxSize);
+        bytes += readReplyBodyRaw(socket, out, size);
         if (contentRead + bytes == bodyLength)
             state = AllDoneState;
     } else {
-        bytes += readReplyBodyRaw(socket, out, socket->bytesAvailable());
+        qint64 size = socket->bytesAvailable();
+        if (maxSize)
+            size = qMin(size, maxSize);
+        bytes += readReplyBodyRaw(socket, out, size);
     }
     contentRead += bytes;
     return bytes;
@@ -637,10 +684,10 @@ qint64 QHttpNetworkReplyPrivate::readReplyBodyRaw(QIODevice *in, QByteDataBuffer
 
 }
 
-qint64 QHttpNetworkReplyPrivate::readReplyBodyChunked(QIODevice *in, QByteDataBuffer *out)
+qint64 QHttpNetworkReplyPrivate::readReplyBodyChunked(QIODevice *in, QByteDataBuffer *out, qint64 maxSize)
 {
     qint64 bytes = 0;
-    while (in->bytesAvailable()) { // while we can read from input
+    while ((maxSize == 0 || bytes < maxSize) && in->bytesAvailable()) { // while we can read from input
         // if we are done with the current chunk, get the size of the new chunk
         if (currentChunkRead >= currentChunkSize) {
             currentChunkSize = 0;
@@ -660,7 +707,10 @@ qint64 QHttpNetworkReplyPrivate::readReplyBodyChunked(QIODevice *in, QByteDataBu
         }
 
         // otherwise, try to read what is missing for this chunk
-        qint64 haveRead = readReplyBodyRaw (in, out, currentChunkSize - currentChunkRead);
+        qint64 readSize = currentChunkSize - currentChunkRead;
+        if (maxSize > 0)
+            readSize = qMin(readSize, maxSize);
+        qint64 haveRead = readReplyBodyRaw(in, out, readSize);
         currentChunkRead += haveRead;
         bytes += haveRead;
 

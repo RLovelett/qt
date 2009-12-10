@@ -139,6 +139,7 @@ bool QHttpNetworkConnectionChannel::sendRequest()
             reply->d_func()->connection = connection;
             reply->d_func()->autoDecompress = request.d->autoDecompress;
             reply->d_func()->pipeliningUsed = false;
+            connect(reply, SIGNAL(readBufferChanged()), this, SLOT(_q_readyRead()), Qt::UniqueConnection);
         }
         state = QHttpNetworkConnectionChannel::WritingState;
         pendingEncrypt = false;
@@ -349,7 +350,7 @@ void QHttpNetworkConnectionChannel::receiveReply()
             break;
         case QHttpNetworkReplyPrivate::ReadingDataState: {
             if (!reply->d_func()->isChunked() && !reply->d_func()->autoDecompress
-                && reply->d_func()->bodyLength > 0) {
+                && reply->d_func()->bodyLength > 0 && reply->readBufferMaxSize() == 0) {
                 // bulk files like images should fulfill these properties and
                 // we can therefore save on memory copying
                 bytes = reply->d_func()->readBodyFast(socket, &reply->d_func()->responseData);
@@ -399,6 +400,9 @@ void QHttpNetworkConnectionChannel::receiveReply()
                         return; // ### expand failed
                     }
 #endif
+                } else {
+                    // Can't read now, will come back later
+                    return;
                 }
             }
             if (reply->d_func()->state == QHttpNetworkReplyPrivate::ReadingDataState)
@@ -559,6 +563,8 @@ void QHttpNetworkConnectionChannel::allDone()
             reply = messagePair.second;
             state = QHttpNetworkConnectionChannel::ReadingState;
             resendCurrent = false;
+
+            connect(reply, SIGNAL(readBufferChanged()), this, SLOT(_q_readyRead()), Qt::UniqueConnection);
 
             written = 0; // message body, excluding the header, irrelevant here
             bytesTotal = 0; // message body total, excluding the header, irrelevant here
@@ -736,7 +742,7 @@ bool QHttpNetworkConnectionChannel::isSocketReading() const
 //private slots
 void QHttpNetworkConnectionChannel::_q_readyRead()
 {
-    if (isSocketWaiting() || isSocketReading()) {
+    if (isSocketWaiting() || isSocketReading() || socket->bytesAvailable() > 0) {
         state = QHttpNetworkConnectionChannel::ReadingState;
         if (reply)
             receiveReply();

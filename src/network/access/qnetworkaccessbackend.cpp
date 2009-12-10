@@ -187,6 +187,16 @@ void QNetworkAccessBackend::setSslConfiguration(const QSslConfiguration &)
     // do nothing
 }
 
+void QNetworkAccessBackend::setReadBufferMaxSize(qint64)
+{
+    // do nothing
+}
+
+void QNetworkAccessBackend::setReadBufferBytesPending(qint64)
+{
+    // do nothing
+}
+
 QNetworkCacheMetaData QNetworkAccessBackend::fetchCacheMetaData(const QNetworkCacheMetaData &) const
 {
     return QNetworkCacheMetaData();

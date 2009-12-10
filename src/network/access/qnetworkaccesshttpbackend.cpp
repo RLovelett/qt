@@ -528,12 +528,25 @@ void QNetworkAccessHttpBackend::postRequest()
         httpReply->ignoreSslErrors();
     httpReply->ignoreSslErrors(pendingIgnoreSslErrorsList);
 #endif
+    httpReply->setReadBufferMaxSize(reply->readBufferMaxSize);
 
     connect(httpReply, SIGNAL(readyRead()), SLOT(replyReadyRead()));
     connect(httpReply, SIGNAL(finished()), SLOT(replyFinished()));
     connect(httpReply, SIGNAL(finishedWithError(QNetworkReply::NetworkError,QString)),
             SLOT(httpError(QNetworkReply::NetworkError,QString)));
     connect(httpReply, SIGNAL(headerChanged()), SLOT(replyHeaderChanged()));
+}
+
+void QNetworkAccessHttpBackend::setReadBufferMaxSize(qint64 size)
+{
+    if (httpReply)
+        httpReply->setReadBufferMaxSize(size);
+}
+
+void QNetworkAccessHttpBackend::setReadBufferBytesPending(qint64 bytes)
+{
+    if (httpReply)
+        httpReply->setReadBufferBytesPending(bytes);
 }
 
 void QNetworkAccessHttpBackend::invalidateCache()
