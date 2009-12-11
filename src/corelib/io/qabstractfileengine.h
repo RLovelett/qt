@@ -182,7 +182,7 @@ public:
         uchar *address;
     };
 
-    virtual bool extension(QAbstractFileEngine::Extension extension, const ExtensionOption *option = 0, ExtensionReturn *output = 0);
+    virtual bool extension(QAbstractFileEngine::Extension extension, const QAbstractFileEngine::ExtensionOption *option = 0, QAbstractFileEngine::ExtensionReturn *output = 0);
     virtual bool supportsExtension(QAbstractFileEngine::Extension extension) const;
 
     // Factory

@@ -1460,7 +1460,7 @@ QAbstractFileEngine::Iterator *QResourceFileEngine::endEntryList()
     return 0;
 }
 
-bool QResourceFileEngine::extension(QAbstractFileEngine::Extension extension, const ExtensionOption *option, ExtensionReturn *output)
+bool QResourceFileEngine::extension(QAbstractFileEngine::Extension extension, const QAbstractFileEngine::ExtensionOption *option, QAbstractFileEngine::ExtensionReturn *output)
 {
     Q_D(QResourceFileEngine);
     if (extension == MapExtension) {

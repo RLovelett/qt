@@ -76,10 +76,10 @@ public:
         UnknownError
     };
 
-    QSystemSemaphore(const QString &key, int initialValue = 0, AccessMode mode = Open);
+    QSystemSemaphore(const QString &key, int initialValue = 0, QSystemSemaphore::AccessMode mode = Open);
     ~QSystemSemaphore();
 
-    void setKey(const QString &key, int initialValue = 0, AccessMode mode = Open);
+    void setKey(const QString &key, int initialValue = 0, QSystemSemaphore::AccessMode mode = Open);
     QString key() const;
 
     bool acquire();

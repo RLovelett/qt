@@ -168,7 +168,7 @@ QT_BEGIN_NAMESPACE
 
   \sa acquire(), key()
  */
-QSystemSemaphore::QSystemSemaphore(const QString &key, int initialValue, AccessMode mode)
+QSystemSemaphore::QSystemSemaphore(const QString &key, int initialValue, QSystemSemaphore::AccessMode mode)
     : d(new QSystemSemaphorePrivate)
 {
     setKey(key, initialValue, mode);
@@ -228,7 +228,7 @@ QSystemSemaphore::~QSystemSemaphore()
 
   \sa QSystemSemaphore(), key()
  */
-void QSystemSemaphore::setKey(const QString &key, int initialValue, AccessMode mode)
+void QSystemSemaphore::setKey(const QString &key, int initialValue, QSystemSemaphore::AccessMode mode)
 {
     if (key == d->key && mode == Open)
         return;

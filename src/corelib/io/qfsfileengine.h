@@ -96,7 +96,7 @@ public:
     qint64 readLine(char *data, qint64 maxlen);
     qint64 write(const char *data, qint64 len);
 
-    bool extension(QAbstractFileEngine::Extension extension, const ExtensionOption *option = 0, ExtensionReturn *output = 0);
+    bool extension(QAbstractFileEngine::Extension extension, const QAbstractFileEngine::ExtensionOption *option = 0, QAbstractFileEngine::ExtensionReturn *output = 0);
     bool supportsExtension(QAbstractFileEngine::Extension extension) const;
 
     //FS only!!
