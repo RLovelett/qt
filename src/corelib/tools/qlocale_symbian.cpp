@@ -814,7 +814,7 @@ QLocale QSystemLocale::fallbackLocale() const
 
     \sa QSystemLocale::QueryType
 */
-QVariant QSystemLocale::query(QueryType type, QVariant in = QVariant()) const
+QVariant QSystemLocale::query(QSystemLocale::QueryType type, QVariant in = QVariant()) const
 {
     switch(type) {
         case DecimalPoint:

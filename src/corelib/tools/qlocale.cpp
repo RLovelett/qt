@@ -645,7 +645,7 @@ QLocale QSystemLocale::fallbackLocale() const
     return QLocale(QString::fromLatin1(getWinLocaleName()));
 }
 
-QVariant QSystemLocale::query(QueryType type, QVariant in = QVariant()) const
+QVariant QSystemLocale::query(QSystemLocale::QueryType type, QVariant in = QVariant()) const
 {
     LCTYPE locale_info = 0;
     bool format_string = false;
@@ -1172,7 +1172,7 @@ QLocale QSystemLocale::fallbackLocale() const
     return QLocale(QString::fromUtf8(getMacLocaleName().constData()));
 }
 
-QVariant QSystemLocale::query(QueryType type, QVariant in = QVariant()) const
+QVariant QSystemLocale::query(QSystemLocale::QueryType type, QVariant in = QVariant()) const
 {
     switch(type) {
 //     case Name:
@@ -1272,7 +1272,7 @@ QLocale QSystemLocale::fallbackLocale() const
 /*!
     \internal
 */
-QVariant QSystemLocale::query(QueryType type, QVariant /* in */) const
+QVariant QSystemLocale::query(QSystemLocale::QueryType type, QVariant /* in */) const
 {
     if (type == MeasurementSystem) {
         return QVariant(unixGetSystemMeasurementSystem());
@@ -1303,7 +1303,7 @@ QLocale QSystemLocale::fallbackLocale() const
 
     \sa QSystemLocale::QueryType
 */
-QVariant QSystemLocale::query(QueryType /* type */, QVariant /* in */) const
+QVariant QSystemLocale::query(QSystemLocale::QueryType /* type */, QVariant /* in */) const
 {
     return QVariant();
 }
