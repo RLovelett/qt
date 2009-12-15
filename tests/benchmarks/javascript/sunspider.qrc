@@ -1,0 +1,30 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>sunspider/3d_cube.js</file>
+    <file>sunspider/3d_morph.js</file>
+    <file>sunspider/3d_raytrace.js</file>
+    <file>sunspider/access_binary_trees.js</file>
+    <file>sunspider/access_fannkuch.js</file>
+    <file>sunspider/access_nbody.js</file>
+    <file>sunspider/access_nsieve.js</file>
+    <file>sunspider/bitops_3bit_bits_in_byte.js</file>
+    <file>sunspider/bitops_bits_in_byte.js</file>
+    <file>sunspider/bitops_bitwise_and.js</file>
+    <file>sunspider/bitops_nsieve_bits.js</file>
+    <file>sunspider/controlflow_recursive.js</file>
+    <file>sunspider/crypto_aes.js</file>
+    <file>sunspider/crypto_md5.js</file>
+    <file>sunspider/crypto_sha1.js</file>
+    <file>sunspider/date_format_tofte.js</file>
+    <file>sunspider/date_format_xparb.js</file>
+    <file>sunspider/math_cordic.js</file>
+    <file>sunspider/math_partial_sums.js</file>
+    <file>sunspider/math_spectral_norm.js</file>
+    <file>sunspider/regexp_dna.js</file>
+    <file>sunspider/string_base64.js</file>
+    <file>sunspider/string_fasta.js</file>
+    <file>sunspider/string_tagcloud.js</file>
+    <file>sunspider/string_unpack_code.js</file>
+    <file>sunspider/string_validate_input.js</file>
+</qresource>
+</RCC>
