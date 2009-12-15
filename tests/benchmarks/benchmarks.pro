@@ -1,25 +1,26 @@
 TEMPLATE = subdirs
 SUBDIRS = containers-associative \
-	containers-sequential \
+        containers-sequential \
+        javascript \
         qanimation \
-	qbytearray \
+        qbytearray \
         qfileinfo \
         qfile_vs_qnetworkaccessmanager \
-	qpainter \
-	qtestlib-simple	events \
-	qiodevice \
-	qpixmap \
-	blendbench \
-	qstring \
-    	qstringlist \
+        qpainter \
+        qtestlib-simple	events \
+        qiodevice \
+        qpixmap \
+        blendbench \
+        qstring \
+        qstringlist \
         qmatrix4x4 \
         qnetworkreply \
-	qobject \
+        qobject \
         qrect \
-	qregexp	\
+        qregexp	\
         qregion \
         qvariant \
-	qwidget	\
-	qtwidgets
+        qwidget	\
+        qtwidgets
 
 contains(QT_CONFIG, opengl): SUBDIRS += opengl
