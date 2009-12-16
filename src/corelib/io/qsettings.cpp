@@ -2465,14 +2465,22 @@ void QConfFileSettingsPrivate::ensureSectionParsed(QConfFile *confFile,
 
     This enum type specifies the storage format used by QSettings.
 
-    \value NativeFormat  Store the settings using the most
-                         appropriate storage format for the platform.
-                         On Windows, this means the system registry;
-                         on Mac OS X, this means the CFPreferences
-                         API; on Unix, this means textual
-                         configuration files in INI format.
-    \value IniFormat  Store the settings in INI files.
-    \value InvalidFormat Special value returned by registerFormat().
+    \value NativeFormat   Store the settings using the most
+                          appropriate storage format for the platform.
+                          On Windows, this means the system registry;
+                          on Mac OS X, this means the CFPreferences
+                          API; on Unix, this means textual
+                          configuration files in INI format.
+    \value NativeFormat32 Windows only: Explicitly access the 32-bit system registry
+                          from a 64-bit application running on 64-bit Windows.
+                          On 32-bit Windows or from a 32-bit application on 64-bit Windows,
+                          this works the same as specifying NativeFormat.
+    \value NativeFormat64 Windows only: Explicitly access the 64-bit system registry
+                          from a 32-bit application running on 64-bit Windows.
+                          On 32-bit Windows or from a 64-bit application on 64-bit Windows,
+                          this works the same as specifying NativeFormat.
+    \value IniFormat      Store the settings in INI files.
+    \value InvalidFormat  Special value returned by registerFormat().
     \omitvalue CustomFormat1
     \omitvalue CustomFormat2
     \omitvalue CustomFormat3
