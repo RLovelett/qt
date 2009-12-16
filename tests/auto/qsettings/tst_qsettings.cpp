@@ -117,6 +117,7 @@ private slots:
     void testEmptyData();
     void testResourceFiles();
     void testRegistryShortRootNames();
+    void testRegistry32And64Bit();
     void fileName();
     void isWritable_data();
     void isWritable();
@@ -1947,6 +1948,37 @@ void tst_QSettings::testRegistryShortRootNames()
     QVERIFY(QSettings("HKEY_LOCAL_MACHINE", QSettings::NativeFormat).childGroups() == QSettings("HKLM", QSettings::NativeFormat).childGroups());
     QVERIFY(QSettings("HKEY_CLASSES_ROOT", QSettings::NativeFormat).childGroups() == QSettings("HKCR", QSettings::NativeFormat).childGroups());
     QVERIFY(QSettings("HKEY_USERS", QSettings::NativeFormat).childGroups() == QSettings("HKU", QSettings::NativeFormat).childGroups());
+#endif
+}
+
+void tst_QSettings::testRegistry32And64Bit()
+{
+#ifndef Q_OS_WIN
+    QSKIP("This test is specific to the Windows registry only.", SkipAll);
+#else
+
+#ifdef Q_OS_WIN64
+    // This branch is taken at compile time if targetting 64-bit; it does not necessarily mean that the OS running the test is 64-bit (it could be e.g. 128-bit).
+    QVERIFY(QSettings("HKEY_LOCAL_MACHINE\\Software", QSettings::Registry64Format).childGroups() == QSettings("HKEY_LOCAL_MACHINE\\Software", QSettings::NativeFormat).childGroups());
+
+    // If we are not on 32-bit Windows, these should never be the same, because the 64-bit registry as a "Wow6432Node" key.
+    QVERIFY(QSettings("HKEY_LOCAL_MACHINE\\Software", QSettings::Registry32Format).childGroups() != QSettings("HKEY_LOCAL_MACHINE\\Software", QSettings::Registry64Format).childGroups());
+#elif defined(Q_OS_WIN32)
+    // This branch is taken at compile time if targetting 32-bit; it does not necessarily mean that the OS running the test is 32-bit (it could be e.g. 64-bit).
+    QVERIFY(QSettings("HKEY_LOCAL_MACHINE\\Software", QSettings::Registry32Format).childGroups() == QSettings("HKEY_LOCAL_MACHINE\\Software", QSettings::NativeFormat).childGroups());
+
+    // Detect whether we are running unter 64-bit Windows.
+    typedef BOOL (*IsWow64ProcessPtr)(HANDLE hProcess, PBOOL Wow64Process);
+    IsWow64ProcessPtr IsWow64Process = (IsWow64ProcessPtr)QLibrary::resolve("kernel32.dll", "IsWow64Process");
+    if (IsWow64Process) {
+        BOOL IsWow64 = FALSE;
+        if (IsWow64Process(GetCurrentProcess(), &IsWow64) && IsWow64) {
+            // If we are not on 32-bit Windows, these should never be the same, because the 64-bit registry as a "Wow6432Node" key.
+            QVERIFY(QSettings("HKEY_LOCAL_MACHINE\\Software", QSettings::Registry32Format).childGroups() != QSettings("HKEY_LOCAL_MACHINE\\Software", QSettings::Registry64Format).childGroups());
+        }
+    }
+#endif
+
 #endif
 }
 
