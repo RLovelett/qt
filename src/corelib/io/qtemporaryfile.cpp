@@ -772,7 +772,7 @@ QAbstractFileEngine *QTemporaryFile::fileEngine() const
     get the unique name later by calling fileName(). The file is guaranteed to
     have been created by this function (i.e., it has never existed before).
 */
-bool QTemporaryFile::open(OpenMode flags)
+bool QTemporaryFile::open(QIODevice::OpenMode flags)
 {
     Q_D(QTemporaryFile);
     if (!d->fileName.isEmpty()) {

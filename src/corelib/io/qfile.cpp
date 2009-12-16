@@ -973,7 +973,7 @@ bool QFile::isSequential() const
 
     \sa QIODevice::OpenMode, setFileName()
 */
-bool QFile::open(OpenMode mode)
+bool QFile::open(QIODevice::OpenMode mode)
 {
     Q_D(QFile);
     if (isOpen()) {
@@ -1001,9 +1001,9 @@ bool QFile::open(OpenMode mode)
     return false;
 }
 
-/*! \fn QFile::open(OpenMode, FILE*)
+/*! \fn QFile::open(QIODevice::OpenMode, FILE*)
 
-    Use open(FILE *, OpenMode) instead.
+    Use open(FILE *, QIODevice::OpenMode) instead.
 */
 
 /*!
@@ -1045,7 +1045,7 @@ bool QFile::open(OpenMode mode)
 
     \snippet doc/src/snippets/code/src_corelib_io_qfile.cpp 4
 */
-bool QFile::open(FILE *fh, OpenMode mode)
+bool QFile::open(FILE *fh, QIODevice::OpenMode mode)
 {
     Q_D(QFile);
     if (isOpen()) {
@@ -1073,9 +1073,9 @@ bool QFile::open(FILE *fh, OpenMode mode)
     return false;
 }
 
-/*! \fn QFile::open(OpenMode, int)
+/*! \fn QFile::open(QIODevice::OpenMode, int)
 
-    Use open(int, OpenMode) instead.
+    Use open(int, QIODevice::OpenMode) instead.
 */
 
 /*!
@@ -1104,7 +1104,7 @@ bool QFile::open(FILE *fh, OpenMode mode)
 
     \sa close()
 */
-bool QFile::open(int fd, OpenMode mode)
+bool QFile::open(int fd, QIODevice::OpenMode mode)
 {
     Q_D(QFile);
     if (isOpen()) {
@@ -1307,7 +1307,7 @@ QFile::permissions(const QString &fileName)
 */
 
 bool
-QFile::setPermissions(Permissions permissions)
+QFile::setPermissions(QFile::Permissions permissions)
 {
     Q_D(QFile);
     if(fileEngine()->setPermissions(permissions)) {
@@ -1325,7 +1325,7 @@ QFile::setPermissions(Permissions permissions)
 */
 
 bool
-QFile::setPermissions(const QString &fileName, Permissions permissions)
+QFile::setPermissions(const QString &fileName, QFile::Permissions permissions)
 {
     return QFile(fileName).setPermissions(permissions);
 }

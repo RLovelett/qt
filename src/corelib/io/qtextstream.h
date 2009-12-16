@@ -152,8 +152,8 @@ public:
     void setFieldWidth(int width);
     int fieldWidth() const;
 
-    void setNumberFlags(NumberFlags flags);
-    NumberFlags numberFlags() const;
+    void setNumberFlags(QTextStream::NumberFlags flags);
+    QTextStream::NumberFlags numberFlags() const;
 
     void setIntegerBase(int base);
     int integerBase() const;

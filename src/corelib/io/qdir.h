@@ -122,7 +122,7 @@ public:
     QDir(const QDir &);
     QDir(const QString &path = QString());
     QDir(const QString &path, const QString &nameFilter,
-         SortFlags sort = SortFlags(Name | IgnoreCase), Filters filter = AllEntries);
+         QDir::SortFlags sort = SortFlags(Name | IgnoreCase), QDir::Filters filter = AllEntries);
     ~QDir();
 
     QDir &operator=(const QDir &);
@@ -156,23 +156,23 @@ public:
     QStringList nameFilters() const;
     void setNameFilters(const QStringList &nameFilters);
 
-    Filters filter() const;
-    void setFilter(Filters filter);
-    SortFlags sorting() const;
-    void setSorting(SortFlags sort);
+    QDir::Filters filter() const;
+    void setFilter(QDir::Filters filter);
+    QDir::SortFlags sorting() const;
+    void setSorting(QDir::SortFlags sort);
 
     uint count() const;
     QString operator[](int) const;
 
     static QStringList nameFiltersFromString(const QString &nameFilter);
 
-    QStringList entryList(Filters filters = NoFilter, SortFlags sort = NoSort) const;
-    QStringList entryList(const QStringList &nameFilters, Filters filters = NoFilter,
-                          SortFlags sort = NoSort) const;
+    QStringList entryList(QDir::Filters filters = NoFilter, QDir::SortFlags sort = NoSort) const;
+    QStringList entryList(const QStringList &nameFilters, QDir::Filters filters = NoFilter,
+                          QDir::SortFlags sort = NoSort) const;
 
-    QFileInfoList entryInfoList(Filters filters = NoFilter, SortFlags sort = NoSort) const;
-    QFileInfoList entryInfoList(const QStringList &nameFilters, Filters filters = NoFilter,
-                                SortFlags sort = NoSort) const;
+    QFileInfoList entryInfoList(QDir::Filters filters = NoFilter, QDir::SortFlags sort = NoSort) const;
+    QFileInfoList entryInfoList(const QStringList &nameFilters, QDir::Filters filters = NoFilter,
+                                QDir::SortFlags sort = NoSort) const;
 
     bool mkdir(const QString &dirName) const;
     bool rmdir(const QString &dirName) const;
@@ -225,12 +225,12 @@ public:
        { Q_UNUSED(acceptAbsPath); return absoluteFilePath(fileName); }
     QT3_SUPPORT bool matchAllDirs() const;
     QT3_SUPPORT void setMatchAllDirs(bool on);
-    inline QT3_SUPPORT QStringList entryList(const QString &nameFilter, Filters filters = NoFilter,
-                                           SortFlags sort = NoSort) const
+    inline QT3_SUPPORT QStringList entryList(const QString &nameFilter, QDir::Filters filters = NoFilter,
+                                           QDir::SortFlags sort = NoSort) const
     { return entryList(nameFiltersFromString(nameFilter), filters, sort); }
     inline QT3_SUPPORT QFileInfoList entryInfoList(const QString &nameFilter,
-                                                 Filters filters = NoFilter,
-                                                 SortFlags sort = NoSort) const
+                                                 QDir::Filters filters = NoFilter,
+                                                 QDir::SortFlags sort = NoSort) const
     { return entryInfoList(nameFiltersFromString(nameFilter), filters, sort); }
 
     QT3_SUPPORT QString nameFilter() const;

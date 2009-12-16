@@ -129,8 +129,8 @@ public:
     explicit QProcess(QObject *parent = 0);
     virtual ~QProcess();
 
-    void start(const QString &program, const QStringList &arguments, OpenMode mode = ReadWrite);
-    void start(const QString &program, OpenMode mode = ReadWrite);
+    void start(const QString &program, const QStringList &arguments, QIODevice::OpenMode mode = ReadWrite);
+    void start(const QString &program, QIODevice::OpenMode mode = ReadWrite);
 
     QProcess::ProcessChannelMode readChannelMode() const;
     void setReadChannelMode(QProcess::ProcessChannelMode mode);
@@ -144,8 +144,8 @@ public:
     void closeWriteChannel();
 
     void setStandardInputFile(const QString &fileName);
-    void setStandardOutputFile(const QString &fileName, OpenMode mode = Truncate);
-    void setStandardErrorFile(const QString &fileName, OpenMode mode = Truncate);
+    void setStandardOutputFile(const QString &fileName, QIODevice::OpenMode mode = Truncate);
+    void setStandardErrorFile(const QString &fileName, QIODevice::OpenMode mode = Truncate);
     void setStandardOutputProcess(QProcess *destination);
 
     QString workingDirectory() const;

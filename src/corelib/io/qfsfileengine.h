@@ -80,7 +80,7 @@ public:
     bool caseSensitive() const;
     bool isRelativePath() const;
     QStringList entryList(QDir::Filters filters, const QStringList &filterNames) const;
-    FileFlags fileFlags(FileFlags type) const;
+    QAbstractFileEngine::FileFlags fileFlags(QAbstractFileEngine::FileFlags type) const;
     bool setPermissions(uint perms);
     QString fileName(QAbstractFileEngine::FileName file) const;
     uint ownerId(QAbstractFileEngine::FileOwner) const;

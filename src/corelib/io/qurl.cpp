@@ -5470,7 +5470,7 @@ bool QUrl::isRelative() const
 
     \sa FormattingOptions, toEncoded()
 */
-QString QUrl::toString(FormattingOptions options) const
+QString QUrl::toString(QUrl::FormattingOptions options) const
 {
     if (!QURL_HASFLAG(d->stateFlags, QUrlPrivate::Parsed)) d->parse();
 
@@ -5521,7 +5521,7 @@ QString QUrl::toString(FormattingOptions options) const
     all non-ASCII characters are then percent encoded. The host name
     is encoded using Punycode.
 */
-QByteArray QUrl::toEncoded(FormattingOptions options) const
+QByteArray QUrl::toEncoded(QUrl::FormattingOptions options) const
 {
     return d->toEncoded(options);
 }

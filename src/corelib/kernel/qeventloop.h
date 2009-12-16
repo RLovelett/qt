@@ -79,10 +79,10 @@ public:
     };
     Q_DECLARE_FLAGS(ProcessEventsFlags, ProcessEventsFlag)
 
-    bool processEvents(ProcessEventsFlags flags = AllEvents);
-    void processEvents(ProcessEventsFlags flags, int maximumTime);
+    bool processEvents(QEventLoop::ProcessEventsFlags flags = AllEvents);
+    void processEvents(QEventLoop::ProcessEventsFlags flags, int maximumTime);
 
-    int exec(ProcessEventsFlags flags = AllEvents);
+    int exec(QEventLoop::ProcessEventsFlags flags = AllEvents);
     void exit(int returnCode = 0);
     bool isRunning() const;
 

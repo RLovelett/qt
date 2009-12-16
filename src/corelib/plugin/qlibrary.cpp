@@ -1166,7 +1166,7 @@ QString QLibrary::errorString() const
     lazy symbol resolution, and will not export external symbols for resolution
     in other dynamically-loaded libraries.
 */
-void QLibrary::setLoadHints(LoadHints hints)
+void QLibrary::setLoadHints(QLibrary::LoadHints hints)
 {
     if (!d) {
         d = QLibraryPrivate::findOrCreate(QString());   // ugly, but we need a d-ptr

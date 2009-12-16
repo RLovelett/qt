@@ -60,16 +60,16 @@ public:
     };
     Q_DECLARE_FLAGS(IteratorFlags, IteratorFlag)
 
-    QDirIterator(const QDir &dir, IteratorFlags flags = NoIteratorFlags);
+    QDirIterator(const QDir &dir, QDirIterator::IteratorFlags flags = NoIteratorFlags);
     QDirIterator(const QString &path,
-                 IteratorFlags flags = NoIteratorFlags);
+                 QDirIterator::IteratorFlags flags = NoIteratorFlags);
     QDirIterator(const QString &path,
                  QDir::Filters filter,
-                 IteratorFlags flags = NoIteratorFlags);
+                 QDirIterator::IteratorFlags flags = NoIteratorFlags);
     QDirIterator(const QString &path,
                  const QStringList &nameFilters,
                  QDir::Filters filters = QDir::NoFilter,
-                 IteratorFlags flags = NoIteratorFlags);
+                 QDirIterator::IteratorFlags flags = NoIteratorFlags);
 
     virtual ~QDirIterator();
 

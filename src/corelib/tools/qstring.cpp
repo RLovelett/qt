@@ -3037,7 +3037,7 @@ int QString::count(const QRegExp& rx) const
 */
 
 /*!
-    \fn QString QString::section(QChar sep, int start, int end = -1, SectionFlags flags) const
+    \fn QString QString::section(QChar sep, int start, int end = -1, QString::SectionFlags flags) const
 
     This function returns a section of the string.
 
@@ -3073,7 +3073,7 @@ int QString::count(const QRegExp& rx) const
     \sa split()
 */
 
-QString QString::section(const QString &sep, int start, int end, SectionFlags flags) const
+QString QString::section(const QString &sep, int start, int end, QString::SectionFlags flags) const
 {
     QStringList sections = split(sep, KeepEmptyParts,
                                  (flags & SectionCaseInsensitiveSeps) ? Qt::CaseInsensitive : Qt::CaseSensitive);
@@ -3141,7 +3141,7 @@ public:
 
     \sa split() simplified()
 */
-QString QString::section(const QRegExp &reg, int start, int end, SectionFlags flags) const
+QString QString::section(const QRegExp &reg, int start, int end, QString::SectionFlags flags) const
 {
     const QChar *uc = unicode();
     if(!uc)

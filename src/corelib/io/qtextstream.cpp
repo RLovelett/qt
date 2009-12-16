@@ -1460,7 +1460,7 @@ int QTextStream::fieldWidth() const
 
     \sa numberFlags(), setIntegerBase(), setRealNumberNotation()
 */
-void QTextStream::setNumberFlags(NumberFlags flags)
+void QTextStream::setNumberFlags(QTextStream::NumberFlags flags)
 {
     Q_D(QTextStream);
     d->numberFlags = flags;
@@ -2572,7 +2572,7 @@ QTextStream &QTextStream::operator<<(const void *ptr)
     Q_D(QTextStream);
     CHECK_VALID_STREAM(*this);
     int oldBase = d->integerBase;
-    NumberFlags oldFlags = d->numberFlags;
+    QTextStream::NumberFlags oldFlags = d->numberFlags;
     d->integerBase = 16;
     d->numberFlags |= ShowBase;
     d->putNumber(reinterpret_cast<quintptr>(ptr), false);

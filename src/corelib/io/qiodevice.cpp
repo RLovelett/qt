@@ -448,7 +448,7 @@ QIODevice::OpenMode QIODevice::openMode() const
 
     \sa openMode() OpenMode
 */
-void QIODevice::setOpenMode(OpenMode openMode)
+void QIODevice::setOpenMode(QIODevice::OpenMode openMode)
 {
 #if defined QIODEVICE_DEBUG
     printf("%p QIODevice::setOpenMode(0x%x)\n", this, int(openMode));
@@ -531,7 +531,7 @@ bool QIODevice::isWritable() const
 
     \sa openMode() OpenMode
 */
-bool QIODevice::open(OpenMode mode)
+bool QIODevice::open(QIODevice::OpenMode mode)
 {
     Q_D(QIODevice);
     d->openMode = mode;
@@ -1385,7 +1385,7 @@ bool QIODevicePrivate::putCharHelper(char c)
 bool QIODevice::getChar(char *c)
 {
     Q_D(QIODevice);
-    const OpenMode openMode = d->openMode;
+    const QIODevice::OpenMode openMode = d->openMode;
     if (!(openMode & ReadOnly)) {
         if (openMode == NotOpen)
             qWarning("QIODevice::getChar: Closed device");

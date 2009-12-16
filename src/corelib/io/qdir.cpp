@@ -550,7 +550,7 @@ QDir::QDir(const QString &path) : d_ptr(new QDirPrivate(this))
 */
 
 QDir::QDir(const QString &path, const QString &nameFilter,
-           SortFlags sort, Filters filters)  : d_ptr(new QDirPrivate(this))
+           QDir::SortFlags sort, QDir::Filters filters)  : d_ptr(new QDirPrivate(this))
 {
     Q_D(QDir);
     d->setPath(path.isEmpty() ? QString::fromLatin1(".") : path);
@@ -1171,7 +1171,7 @@ QDir::Filters QDir::filter() const
     \sa filter(), setNameFilters()
 */
 
-void QDir::setFilter(Filters filters)
+void QDir::setFilter(QDir::Filters filters)
 {
     Q_D(QDir);
 
@@ -1231,7 +1231,7 @@ QDir::SortFlags QDir::sorting() const
     \sa sorting() SortFlag
 */
 
-void QDir::setSorting(SortFlags sort)
+void QDir::setSorting(QDir::SortFlags sort)
 {
     Q_D(QDir);
 
@@ -1294,7 +1294,7 @@ QString QDir::operator[](int pos) const
     \sa entryInfoList(), setNameFilters(), setSorting(), setFilter()
 */
 
-QStringList QDir::entryList(Filters filters, SortFlags sort) const
+QStringList QDir::entryList(QDir::Filters filters, QDir::SortFlags sort) const
 {
     Q_D(const QDir);
 
@@ -1318,7 +1318,7 @@ QStringList QDir::entryList(Filters filters, SortFlags sort) const
 
     \sa entryList(), setNameFilters(), setSorting(), setFilter(), isReadable(), exists()
 */
-QFileInfoList QDir::entryInfoList(Filters filters, SortFlags sort) const
+QFileInfoList QDir::entryInfoList(QDir::Filters filters, QDir::SortFlags sort) const
 {
     Q_D(const QDir);
 
@@ -1342,8 +1342,8 @@ QFileInfoList QDir::entryInfoList(Filters filters, SortFlags sort) const
     \sa entryInfoList(), setNameFilters(), setSorting(), setFilter()
 */
 
-QStringList QDir::entryList(const QStringList &nameFilters, Filters filters,
-                            SortFlags sort) const
+QStringList QDir::entryList(const QStringList &nameFilters, QDir::Filters filters,
+                            QDir::SortFlags sort) const
 {
     Q_D(const QDir);
 
@@ -1387,8 +1387,8 @@ QStringList QDir::entryList(const QStringList &nameFilters, Filters filters,
     \sa entryList(), setNameFilters(), setSorting(), setFilter(), isReadable(), exists()
 */
 
-QFileInfoList QDir::entryInfoList(const QStringList &nameFilters, Filters filters,
-                                  SortFlags sort) const
+QFileInfoList QDir::entryInfoList(const QStringList &nameFilters, QDir::Filters filters,
+                                  QDir::SortFlags sort) const
 {
     Q_D(const QDir);
 
@@ -2380,8 +2380,8 @@ void QDir::setNameFilter(const QString &nameFilter)
 */
 
 /*!
-    \fn QStringList QDir::entryList(const QString &nameFilter, Filters filters,
-                                    SortFlags sort) const
+    \fn QStringList QDir::entryList(const QString &nameFilter, QDir::Filters filters,
+                                    QDir::SortFlags sort) const
     \overload
 
     Use the overload that takes a name filter string list as first
@@ -2389,8 +2389,8 @@ void QDir::setNameFilter(const QString &nameFilter)
 */
 
 /*!
-    \fn QFileInfoList QDir::entryInfoList(const QString &nameFilter, Filters filters,
-                                          SortFlags sort) const
+    \fn QFileInfoList QDir::entryInfoList(const QString &nameFilter, QDir::Filters filters,
+                                          QDir::SortFlags sort) const
     \overload
 
     Use the overload that takes a name filter string list as first

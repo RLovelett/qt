@@ -78,7 +78,7 @@ public:
     inline void setData(const char *data, int len);
     const QByteArray &data() const;
 
-    bool open(OpenMode openMode);
+    bool open(QIODevice::OpenMode openMode);
 
     void close();
     qint64 size() const;

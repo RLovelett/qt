@@ -1310,7 +1310,7 @@ void QProcess::setStandardInputFile(const QString &fileName)
     \sa setStandardInputFile(), setStandardErrorFile(),
         setStandardOutputProcess()
 */
-void QProcess::setStandardOutputFile(const QString &fileName, OpenMode mode)
+void QProcess::setStandardOutputFile(const QString &fileName, QIODevice::OpenMode mode)
 {
     Q_ASSERT(mode == Append || mode == Truncate);
     Q_D(QProcess);
@@ -1337,7 +1337,7 @@ void QProcess::setStandardOutputFile(const QString &fileName, OpenMode mode)
     \sa setStandardInputFile(), setStandardOutputFile(),
         setStandardOutputProcess()
 */
-void QProcess::setStandardErrorFile(const QString &fileName, OpenMode mode)
+void QProcess::setStandardErrorFile(const QString &fileName, QIODevice::OpenMode mode)
 {
     Q_ASSERT(mode == Append || mode == Truncate);
     Q_D(QProcess);
@@ -1867,7 +1867,7 @@ QByteArray QProcess::readAllStandardError()
 
     \sa pid(), started(), waitForStarted()
 */
-void QProcess::start(const QString &program, const QStringList &arguments, OpenMode mode)
+void QProcess::start(const QString &program, const QStringList &arguments, QIODevice::OpenMode mode)
 {
     Q_D(QProcess);
     if (d->processState != NotRunning) {
@@ -1974,7 +1974,7 @@ static QStringList parseCombinedArgString(const QString &program)
 
     The OpenMode is set to \a mode.
 */
-void QProcess::start(const QString &program, OpenMode mode)
+void QProcess::start(const QString &program, QIODevice::OpenMode mode)
 {
     QStringList args = parseCombinedArgString(program);
     if (args.isEmpty()) {

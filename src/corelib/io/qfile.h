@@ -142,9 +142,9 @@ public:
 
     bool isSequential() const;
 
-    bool open(OpenMode flags);
-    bool open(FILE *f, OpenMode flags);
-    bool open(int fd, OpenMode flags);
+    bool open(QIODevice::OpenMode flags);
+    bool open(FILE *f, QIODevice::OpenMode flags);
+    bool open(int fd, QIODevice::OpenMode flags);
     virtual void close();
 
     qint64 size() const;
@@ -156,10 +156,10 @@ public:
     bool resize(qint64 sz);
     static bool resize(const QString &filename, qint64 sz);
 
-    Permissions permissions() const;
-    static Permissions permissions(const QString &filename);
-    bool setPermissions(Permissions permissionSpec);
-    static bool setPermissions(const QString &filename, Permissions permissionSpec);
+    QFile::Permissions permissions() const;
+    static QFile::Permissions permissions(const QString &filename);
+    bool setPermissions(QFile::Permissions permissionSpec);
+    static bool setPermissions(const QString &filename, QFile::Permissions permissionSpec);
 
     int handle() const;
 
@@ -176,8 +176,8 @@ public:
     typedef Permission PermissionSpec;
     inline QT3_SUPPORT QString name() const { return fileName(); }
     inline QT3_SUPPORT void setName(const QString &aName) { setFileName(aName); }
-    inline QT3_SUPPORT bool open(OpenMode aFlags, FILE *f) { return open(f, aFlags); }
-    inline QT3_SUPPORT bool open(OpenMode aFlags, int fd) { return open(fd, aFlags); }
+    inline QT3_SUPPORT bool open(QIODevice::OpenMode aFlags, FILE *f) { return open(f, aFlags); }
+    inline QT3_SUPPORT bool open(QIODevice::OpenMode aFlags, int fd) { return open(fd, aFlags); }
 #endif
 
 protected:

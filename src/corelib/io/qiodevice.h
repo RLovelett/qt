@@ -90,7 +90,7 @@ public:
 #endif
     virtual ~QIODevice();
 
-    OpenMode openMode() const;
+    QIODevice::OpenMode openMode() const;
 
     void setTextModeEnabled(bool enabled);
     bool isTextModeEnabled() const;
@@ -100,7 +100,7 @@ public:
     bool isWritable() const;
     virtual bool isSequential() const;
 
-    virtual bool open(OpenMode mode);
+    virtual bool open(QIODevice::OpenMode mode);
     virtual void close();
 
     // ### Qt 5: pos() and seek() should not be virtual, and
@@ -156,7 +156,7 @@ protected:
     virtual qint64 readLineData(char *data, qint64 maxlen);
     virtual qint64 writeData(const char *data, qint64 len) = 0;
 
-    void setOpenMode(OpenMode openMode);
+    void setOpenMode(QIODevice::OpenMode openMode);
 
     void setErrorString(const QString &errorString);
 

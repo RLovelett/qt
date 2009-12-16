@@ -139,7 +139,7 @@ QEventLoop::~QEventLoop()
     QAbstractEventDispatcher::processEvents(). See the documentation
     for that function for details.
 */
-bool QEventLoop::processEvents(ProcessEventsFlags flags)
+bool QEventLoop::processEvents(QEventLoop::ProcessEventsFlags flags)
 {
     Q_D(QEventLoop);
     if (!d->threadData->eventDispatcher)
@@ -172,7 +172,7 @@ bool QEventLoop::processEvents(ProcessEventsFlags flags)
 
     \sa QApplication::quit(), exit(), processEvents()
 */
-int QEventLoop::exec(ProcessEventsFlags flags)
+int QEventLoop::exec(QEventLoop::ProcessEventsFlags flags)
 {
     Q_D(QEventLoop);
     if (d->threadData->quitNow)
@@ -241,7 +241,7 @@ int QEventLoop::exec(ProcessEventsFlags flags)
        and will be ignored.
     \endlist
 */
-void QEventLoop::processEvents(ProcessEventsFlags flags, int maxTime)
+void QEventLoop::processEvents(QEventLoop::ProcessEventsFlags flags, int maxTime)
 {
     Q_D(QEventLoop);
     if (!d->threadData->eventDispatcher)

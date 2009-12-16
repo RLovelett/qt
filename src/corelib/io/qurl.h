@@ -182,9 +182,9 @@ public:
     static QUrl fromLocalFile(const QString &localfile);
     QString toLocalFile() const;
 
-    QString toString(FormattingOptions options = None) const;
+    QString toString(QUrl::FormattingOptions options = None) const;
 
-    QByteArray toEncoded(FormattingOptions options = None) const;
+    QByteArray toEncoded(QUrl::FormattingOptions options = None) const;
     static QUrl fromEncoded(const QByteArray &url);
     static QUrl fromEncoded(const QByteArray &url, QUrl::ParsingMode mode);
     // ### Qt 5: merge the two fromEncoded() functions, with mode = TolerantMode

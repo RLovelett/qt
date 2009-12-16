@@ -609,7 +609,7 @@ QStringList QAbstractFileEngine::entryList(QDir::Filters filters, const QStringL
 
     \sa setFileName()
 */
-QAbstractFileEngine::FileFlags QAbstractFileEngine::fileFlags(FileFlags type) const
+QAbstractFileEngine::FileFlags QAbstractFileEngine::fileFlags(QAbstractFileEngine::FileFlags type) const
 {
     Q_UNUSED(type);
     return 0;

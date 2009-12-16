@@ -96,7 +96,7 @@ public:
 
     virtual bool caseSensitive() const;
 
-    virtual FileFlags fileFlags(FileFlags type) const;
+    virtual QAbstractFileEngine::FileFlags fileFlags(FileFlags type) const;
 
     virtual bool setPermissions(uint perms);
 

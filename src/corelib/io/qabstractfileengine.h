@@ -132,7 +132,7 @@ public:
     virtual bool caseSensitive() const;
     virtual bool isRelativePath() const;
     virtual QStringList entryList(QDir::Filters filters, const QStringList &filterNames) const;
-    virtual FileFlags fileFlags(FileFlags type=FileInfoAll) const;
+    virtual QAbstractFileEngine::FileFlags fileFlags(QAbstractFileEngine::FileFlags type=FileInfoAll) const;
     virtual bool setPermissions(uint perms);
     virtual QString fileName(QAbstractFileEngine::FileName file=DefaultName) const;
     virtual uint ownerId(QAbstractFileEngine::FileOwner) const;

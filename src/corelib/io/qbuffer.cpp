@@ -311,7 +311,7 @@ void QBuffer::setData(const QByteArray &data)
 /*!
    \reimp
 */
-bool QBuffer::open(OpenMode flags)
+bool QBuffer::open(QIODevice::OpenMode flags)
 {
     Q_D(QBuffer);
 

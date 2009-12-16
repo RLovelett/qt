@@ -97,8 +97,8 @@ public:
     void setFileNameAndVersion(const QString &fileName, const QString &version);
     QString errorString() const;
 
-    void setLoadHints(LoadHints hints);
-    LoadHints loadHints() const;
+    void setLoadHints(QLibrary::LoadHints hints);
+    QLibrary::LoadHints loadHints() const;
 #ifdef QT3_SUPPORT
     inline QT3_SUPPORT QString library() const { return fileName(); }
     inline QT3_SUPPORT void setAutoUnload( bool ) {}

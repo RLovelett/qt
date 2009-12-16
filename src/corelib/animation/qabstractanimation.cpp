@@ -735,7 +735,7 @@ void QAbstractAnimation::setCurrentTime(int msecs)
 
     \sa stop(), state()
 */
-void QAbstractAnimation::start(DeletionPolicy policy)
+void QAbstractAnimation::start(QAbstractAnimation::DeletionPolicy policy)
 {
     Q_D(QAbstractAnimation);
     if (d->state == Running)

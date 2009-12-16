@@ -92,7 +92,7 @@ public:
     virtual QAbstractFileEngine *fileEngine() const;
 
 protected:
-    bool open(OpenMode flags);
+    bool open(QIODevice::OpenMode flags);
 
 private:
     friend class QFile;

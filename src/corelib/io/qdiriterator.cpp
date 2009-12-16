@@ -368,7 +368,7 @@ bool QDirIteratorPrivate::matchesFilters(const QString &fileName, const QFileInf
 
     \sa hasNext(), next(), IteratorFlags
 */
-QDirIterator::QDirIterator(const QDir &dir, IteratorFlags flags)
+QDirIterator::QDirIterator(const QDir &dir, QDirIterator::IteratorFlags flags)
     : d(new QDirIteratorPrivate(dir.path(), dir.nameFilters(), dir.filter(), flags))
 {
     d->q = this;
@@ -390,7 +390,7 @@ QDirIterator::QDirIterator(const QDir &dir, IteratorFlags flags)
 
     \sa hasNext(), next(), IteratorFlags
 */
-QDirIterator::QDirIterator(const QString &path, QDir::Filters filters, IteratorFlags flags)
+QDirIterator::QDirIterator(const QString &path, QDir::Filters filters, QDirIterator::IteratorFlags flags)
     : d(new QDirIteratorPrivate(path, QStringList(), filters, flags))
 {
     d->q = this;
@@ -408,7 +408,7 @@ QDirIterator::QDirIterator(const QString &path, QDir::Filters filters, IteratorF
 
     \sa hasNext(), next(), IteratorFlags
 */
-QDirIterator::QDirIterator(const QString &path, IteratorFlags flags)
+QDirIterator::QDirIterator(const QString &path, QDirIterator::IteratorFlags flags)
     : d(new QDirIteratorPrivate(path, QStringList(), QDir::NoFilter, flags))
 {
     d->q = this;
@@ -431,7 +431,7 @@ QDirIterator::QDirIterator(const QString &path, IteratorFlags flags)
     \sa hasNext(), next(), IteratorFlags
 */
 QDirIterator::QDirIterator(const QString &path, const QStringList &nameFilters,
-                           QDir::Filters filters, IteratorFlags flags)
+                           QDir::Filters filters, QDirIterator::IteratorFlags flags)
     : d(new QDirIteratorPrivate(path, nameFilters, filters, flags))
 {
     d->q = this;

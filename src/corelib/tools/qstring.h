@@ -215,10 +215,10 @@ public:
     };
     Q_DECLARE_FLAGS(SectionFlags, SectionFlag)
 
-    QString section(QChar sep, int start, int end = -1, SectionFlags flags = SectionDefault) const;
-    QString section(const QString &in_sep, int start, int end = -1, SectionFlags flags = SectionDefault) const;
+    QString section(QChar sep, int start, int end = -1, QString::SectionFlags flags = SectionDefault) const;
+    QString section(const QString &in_sep, int start, int end = -1, QString::SectionFlags flags = SectionDefault) const;
 #ifndef QT_NO_REGEXP
-    QString section(const QRegExp &reg, int start, int end = -1, SectionFlags flags = SectionDefault) const;
+    QString section(const QRegExp &reg, int start, int end = -1, QString::SectionFlags flags = SectionDefault) const;
 #endif
 
     QString left(int n) const Q_REQUIRED_RESULT;
@@ -766,7 +766,7 @@ inline QString QString::arg(const QString &a1, const QString &a2, const QString 
                             const QString &a7, const QString &a8, const QString &a9) const
 { const QString *args[9] = { &a1, &a2, &a3, &a4, &a5, &a6,  &a7, &a8, &a9 }; return multiArg(9, args); }
 
-inline QString QString::section(QChar asep, int astart, int aend, SectionFlags aflags) const
+inline QString QString::section(QChar asep, int astart, int aend, QString::SectionFlags aflags) const
 { return section(QString(asep), astart, aend, aflags); }
 
 
