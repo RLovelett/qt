@@ -68,6 +68,7 @@
 #include "qtoolbutton.h"
 #include "qfocusframe.h"
 #include "qformlayout.h"
+#include "qdesktopwidget.h"
 
 #include "private/qtoolbarextension_p.h"
 #include "private/qcombobox_p.h"
@@ -2327,6 +2328,20 @@ QSize QS60Style::sizeFromContents(ContentsType ct, const QStyleOption *opt,
                 //Make itemview easier to use in touch devices
                 //QCommonStyle does not adjust height with horizontal margin, it only adjusts width
                 sz.setHeight(sz.height() + 2*pixelMetric(QStyle::PM_FocusFrameVMargin));
+            break;
+        case CT_ComboBox:
+            sz = QCommonStyle::sizeFromContents( ct, opt, csz, widget);
+            if (const QStyleOptionComboBox *cmb = qstyleoption_cast<const QStyleOptionComboBox *>(opt)) {
+                int maxScreenWidth = QApplication::desktop()->availableGeometry().size().width();
+                if (sz.width() > maxScreenWidth) {
+                    int fw = cmb->frame ? proxy()->pixelMetric(PM_ComboBoxFrameWidth, opt, widget) * 2 : 0;
+                    const int textMargins = 2*(proxy()->pixelMetric(PM_FocusFrameHMargin) + 1);
+                    // QItemDelegate::sizeHint expands the textMargins two times, thus the 2*textMargins...
+                    int other = qMax(23, 2*textMargins + proxy()->pixelMetric(QStyle::PM_ScrollBarExtent, opt, widget));
+                    maxScreenWidth = maxScreenWidth - (other + fw);
+                    sz.setWidth(maxScreenWidth);
+                }
+            }
             break;
         default:
             sz = QCommonStyle::sizeFromContents( ct, opt, csz, widget);
