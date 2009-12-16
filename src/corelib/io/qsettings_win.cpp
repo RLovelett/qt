@@ -436,30 +436,44 @@ QWinSettingsPrivate::QWinSettingsPrivate(QString rPath)
     if (rPath.startsWith(QLatin1Char('\\')))
         rPath = rPath.mid(1);
 
-    if (rPath.startsWith(QLatin1String("HKEY_CURRENT_USER"))) {
-        const int keyLength = 17;
+    int keyLength = 0;
+    HKEY keyName;
+
+    if (rPath.startsWith(QLatin1String("HKEY"))) {
+        if (rPath.startsWith(QLatin1String("HKEY_CURRENT_USER"))) {
+            keyLength = 17;
+            keyName = HKEY_CURRENT_USER;
+        } else if (rPath.startsWith(QLatin1String("HKEY_LOCAL_MACHINE"))) {
+            keyLength = 18;
+            keyName = HKEY_LOCAL_MACHINE;
+        } else if (rPath.startsWith(QLatin1String("HKEY_CLASSES_ROOT"))) {
+            keyLength = 17;
+            keyName = HKEY_CLASSES_ROOT;
+        } else if (rPath.startsWith(QLatin1String("HKEY_USERS"))) {
+            keyLength = 10;
+            keyName = HKEY_USERS;
+        }
+    } else {
+        if (rPath.startsWith(QLatin1String("HKCU"))) {
+            keyLength = 4;
+            keyName = HKEY_CURRENT_USER;
+        } else if (rPath.startsWith(QLatin1String("HKLM"))) {
+            keyLength = 4;
+            keyName = HKEY_LOCAL_MACHINE;
+        } else if (rPath.startsWith(QLatin1String("HKCR"))) {
+            keyLength = 4;
+            keyName = HKEY_CLASSES_ROOT;
+        } else if (rPath.startsWith(QLatin1String("HKU"))) {
+            keyLength = 3;
+            keyName = HKEY_USERS;
+        }
+    }
+
+    if (keyLength) {
         if (rPath.length() == keyLength)
-            regList.append(RegistryKey(HKEY_CURRENT_USER, QString(), false));
+            regList.append(RegistryKey(keyName, QString(), false));
         else if (rPath[keyLength] == QLatin1Char('\\'))
-            regList.append(RegistryKey(HKEY_CURRENT_USER, rPath.mid(keyLength + 1), false));
-    } else if (rPath.startsWith(QLatin1String("HKEY_LOCAL_MACHINE"))) {
-        const int keyLength = 18;
-        if (rPath.length() == keyLength)
-            regList.append(RegistryKey(HKEY_LOCAL_MACHINE, QString(), false));
-        else if (rPath[keyLength] == QLatin1Char('\\'))
-            regList.append(RegistryKey(HKEY_LOCAL_MACHINE, rPath.mid(keyLength + 1), false));
-    } else if (rPath.startsWith(QLatin1String("HKEY_CLASSES_ROOT"))) {
-        const int keyLength = 17;
-        if (rPath.length() == keyLength)
-            regList.append(RegistryKey(HKEY_CLASSES_ROOT, QString(), false));
-        else if (rPath[keyLength] == QLatin1Char('\\'))
-            regList.append(RegistryKey(HKEY_CLASSES_ROOT, rPath.mid(keyLength + 1), false));
-    } else if (rPath.startsWith(QLatin1String("HKEY_USERS"))) {
-        const int keyLength = 10;
-        if (rPath.length() == keyLength)
-            regList.append(RegistryKey(HKEY_USERS, QString(), false));
-        else if (rPath[keyLength] == QLatin1Char('\\'))
-            regList.append(RegistryKey(HKEY_USERS, rPath.mid(keyLength + 1), false));
+            regList.append(RegistryKey(keyName, rPath.mid(keyLength+1), false));
     }
 }
 
