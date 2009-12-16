@@ -111,6 +111,7 @@ private slots:
     void testNormalizedKey();
     void testEmptyData();
     void testResourceFiles();
+    void testShortRegistryRootNames();
     void fileName();
     void isWritable_data();
     void isWritable();
@@ -1931,6 +1932,18 @@ void tst_QSettings::testResourceFiles()
     settings.sync();
     QVERIFY(settings.status() == QSettings::AccessError);
     QCOMPARE(settings.value("Field 1/Bottom").toInt(), 90);
+}
+
+void tst_QSettings::testShortRegistryRootNames()
+{
+#ifndef Q_OS_WIN
+    QSKIP("This test is specific to the Windows registry only.", SkipAll);
+#else
+    QVERIFY( QSettings("HKEY_CURRENT_USER", QSettings::NativeFormat).childGroups() == QSettings("HKCU", QSettings::NativeFormat).childGroups() );
+    QVERIFY( QSettings("HKEY_LOCAL_MACHINE", QSettings::NativeFormat).childGroups() == QSettings("HKLM", QSettings::NativeFormat).childGroups() );
+    QVERIFY( QSettings("HKEY_CLASSES_ROOT", QSettings::NativeFormat).childGroups() == QSettings("HKCR", QSettings::NativeFormat).childGroups() );
+    QVERIFY( QSettings("HKEY_USERS", QSettings::NativeFormat).childGroups() == QSettings("HKU", QSettings::NativeFormat).childGroups() );
+#endif
 }
 
 void tst_QSettings::fromFile_data()
