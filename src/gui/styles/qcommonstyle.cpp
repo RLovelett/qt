@@ -1131,7 +1131,7 @@ void QCommonStylePrivate::viewItemLayout(const QStyleOptionViewItemV4 *opt,  QRe
 
     Uses the same computation than in QTabBar::tabSizeHint
  */
-void QCommonStylePrivate::tabLayout(const QStyleOptionTabV3 *opt, const QWidget *widget, QRect *textRect, QRect *iconRect) const
+void QCommonStylePrivate::tabLayout(const QStyleOptionTabV4 *opt, const QWidget *widget, QRect *textRect, QRect *iconRect) const
 {
     Q_ASSERT(textRect);
     Q_ASSERT(iconRect);
@@ -1851,12 +1851,12 @@ void QCommonStyle::drawControl(ControlElement element, const QStyleOption *opt,
         break;
     case CE_TabBarTabLabel:
         if (const QStyleOptionTab *tab = qstyleoption_cast<const QStyleOptionTab *>(opt)) {
-            QStyleOptionTabV3 tabV2(*tab);
-            QRect tr = tabV2.rect;
-            bool verticalTabs = tabV2.shape == QTabBar::RoundedEast
-                                || tabV2.shape == QTabBar::RoundedWest
-                                || tabV2.shape == QTabBar::TriangularEast
-                                || tabV2.shape == QTabBar::TriangularWest;
+            QStyleOptionTabV4 tabV4(*tab);
+            QRect tr = tabV4.rect;
+            bool verticalTabs = tabV4.shape == QTabBar::RoundedEast
+                                || tabV4.shape == QTabBar::RoundedWest
+                                || tabV4.shape == QTabBar::TriangularEast
+                                || tabV4.shape == QTabBar::TriangularWest;
 
             int alignment = Qt::AlignCenter | Qt::TextShowMnemonic;
             if (!proxy()->styleHint(SH_UnderlineShortcut, opt, widget))
@@ -1865,7 +1865,7 @@ void QCommonStyle::drawControl(ControlElement element, const QStyleOption *opt,
             if (verticalTabs) {
                 p->save();
                 int newX, newY, newRot;
-                if (tabV2.shape == QTabBar::RoundedEast || tabV2.shape == QTabBar::TriangularEast) {
+                if (tabV4.shape == QTabBar::RoundedEast || tabV4.shape == QTabBar::TriangularEast) {
                     newX = tr.width() + tr.x();
                     newY = tr.y();
                     newRot = 90;
@@ -1879,14 +1879,14 @@ void QCommonStyle::drawControl(ControlElement element, const QStyleOption *opt,
                 p->setTransform(m, true);
             }
             QRect iconRect;
-            d->tabLayout(&tabV2, widget, &tr, &iconRect);
+            d->tabLayout(&tabV4, widget, &tr, &iconRect);
             tr = proxy()->subElementRect(SE_TabBarTabText, opt, widget); //we compute tr twice because the style may override subElementRect
 
-            if (!tabV2.icon.isNull()) {
-                QPixmap tabIcon = tabV2.icon.pixmap(tabV2.iconSize,
-                                                    (tabV2.state & State_Enabled) ? QIcon::Normal
+            if (!tabV4.icon.isNull()) {
+                QPixmap tabIcon = tabV4.icon.pixmap(tabV4.iconSize,
+                                                    (tabV4.state & State_Enabled) ? QIcon::Normal
                                                                                   : QIcon::Disabled,
-                                                    (tabV2.state & State_Selected) ? QIcon::On
+                                                    (tabV4.state & State_Selected) ? QIcon::On
                                                                                    : QIcon::Off);
                 p->drawPixmap(iconRect.x(), iconRect.y(), tabIcon);
             }
@@ -1895,17 +1895,17 @@ void QCommonStyle::drawControl(ControlElement element, const QStyleOption *opt,
             if (verticalTabs)
                 p->restore();
 
-            if (tabV2.state & State_HasFocus) {
+            if (tabV4.state & State_HasFocus) {
                 const int OFFSET = 1 + pixelMetric(PM_DefaultFrameWidth);
 
                 int x1, x2;
-                x1 = tabV2.rect.left();
-                x2 = tabV2.rect.right() - 1;
+                x1 = tabV4.rect.left();
+                x2 = tabV4.rect.right() - 1;
 
                 QStyleOptionFocusRect fropt;
                 fropt.QStyleOption::operator=(*tab);
-                fropt.rect.setRect(x1 + 1 + OFFSET, tabV2.rect.y() + OFFSET,
-                                   x2 - x1 - 2*OFFSET, tabV2.rect.height() - 2*OFFSET);
+                fropt.rect.setRect(x1 + 1 + OFFSET, tabV4.rect.y() + OFFSET,
+                                   x2 - x1 - 2*OFFSET, tabV4.rect.height() - 2*OFFSET);
                 drawPrimitive(PE_FrameFocusRect, &fropt, p, widget);
             }
         }
@@ -2735,14 +2735,14 @@ QRect QCommonStyle::subElementRect(SubElement sr, const QStyleOption *opt,
         break;
     case SE_TabBarTabText:
         if (const QStyleOptionTab *tab = qstyleoption_cast<const QStyleOptionTab *>(opt)) {
-            QStyleOptionTabV3 tabV3(*tab);
+            QStyleOptionTabV4 tabV4(*tab);
             QRect dummyIconRect;
-            d->tabLayout(&tabV3, widget, &r, &dummyIconRect);
+            d->tabLayout(&tabV4, widget, &r, &dummyIconRect);
         }
         break;
     case SE_TabBarTabLeftButton:
     case SE_TabBarTabRightButton:
-        if (const QStyleOptionTabV3 *tab = qstyleoption_cast<const QStyleOptionTabV3 *>(opt)) {
+        if (const QStyleOptionTabV4 *tab = qstyleoption_cast<const QStyleOptionTabV4 *>(opt)) {
             bool selected = tab->state & State_Selected;
             int verticalShift = proxy()->pixelMetric(QStyle::PM_TabBarTabShiftVertical, tab, widget);
             int horizontalShift = proxy()->pixelMetric(QStyle::PM_TabBarTabShiftHorizontal, tab, widget);

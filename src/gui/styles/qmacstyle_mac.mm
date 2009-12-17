@@ -219,7 +219,7 @@ QRect rotateTabPainter(QPainter *p, QTabBar::Shape shape, QRect tabRect)
     return tabRect;
 }
 
-void drawTabShape(QPainter *p, const QStyleOptionTabV3 *tabOpt)
+void drawTabShape(QPainter *p, const QStyleOptionTabV4 *tabOpt)
 {
     QRect r = tabOpt->rect;
     p->translate(tabOpt->rect.x(), tabOpt->rect.y());
@@ -3733,7 +3733,7 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
         break;
     case CE_TabBarTabLabel:
         if (const QStyleOptionTab *tab = qstyleoption_cast<const QStyleOptionTab *>(opt)) {
-            QStyleOptionTabV3 myTab = *tab;
+            QStyleOptionTabV4 myTab = *tab;
             ThemeTabDirection ttd = getTabDirection(myTab.shape);
             bool verticalTabs = ttd == kThemeTabWest || ttd == kThemeTabEast;
 

@@ -1515,7 +1515,7 @@ void QS60Style::drawControl(ControlElement element, const QStyleOption *option, 
 #ifndef QT_NO_TABBAR
     case CE_TabBarTabShape:
         if (const QStyleOptionTabV3 *optionTab = qstyleoption_cast<const QStyleOptionTabV3 *>(option)) {
-            QStyleOptionTabV3 optionTabAdj = *optionTab;
+            QStyleOptionTabV4 optionTabAdj = *optionTab;
             const bool isSelected = optionTab->state & State_Selected;
             const bool directionMirrored = (optionTab->direction == Qt::RightToLeft);
             QS60StylePrivate::SkinElements skinElement;
@@ -1573,7 +1573,7 @@ void QS60Style::drawControl(ControlElement element, const QStyleOption *option, 
         break;
     case CE_TabBarTabLabel:
         if (const QStyleOptionTabV3 *tab = qstyleoption_cast<const QStyleOptionTabV3 *>(option)) {
-            QStyleOptionTabV3 optionTab = *tab;
+            QStyleOptionTabV4 optionTab = *tab;
             QRect tr = optionTab.rect;
             const bool directionMirrored = (optionTab.direction == Qt::RightToLeft);
             const int borderThickness = QS60StylePrivate::pixelMetric(PM_DefaultFrameWidth);

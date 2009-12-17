@@ -2243,6 +2243,85 @@ QStyleOptionTabV3 &QStyleOptionTabV3::operator=(const QStyleOptionTab &other)
     return *this;
 }
 
+/*!
+    \variable QStyleOptionTabV4::index
+    \brief the index of the tab.
+
+    The default value is -1, i.e. an invalid index.
+*/
+
+/*!
+    Constructs a QStyleOptionTabV4.
+*/
+QStyleOptionTabV4::QStyleOptionTabV4()
+    : QStyleOptionTabV3(Version)
+    , index(-1)
+{
+}
+
+/*!
+    \internal
+*/
+QStyleOptionTabV4::QStyleOptionTabV4(int version)
+    : QStyleOptionTabV3(version)
+    , index(-1)
+{
+}
+
+/*!
+    \fn QStyleOptionTabV4::QStyleOptionTabV4(const QStyleOptionTabV3 &other)
+
+    Constructs a copy of the \a other style option.
+*/
+
+/*!
+    \fn QStyleOptionTabV4::QStyleOptionTabV4(const QStyleOptionTabV2 &other)
+
+    Constructs a copy of the \a other style option.
+*/
+
+/*!
+    Constructs a QStyleOptionTabV4 copy of the \a other style option
+    which can be either of the QStyleOptionTabV4, QStyleOptionTabV3,
+    QStyleOptionTabV2 or QStyleOptionTab types.
+
+    If the other style option's version is 1 or 2 or 3, the new style option's
+    \c index is set to an invalid value.  If
+    its version is 4, its \c index value is simply copied to the new style
+    option.
+*/
+QStyleOptionTabV4::QStyleOptionTabV4(const QStyleOptionTab &other)
+    : QStyleOptionTabV3(Version)
+{
+    if (const QStyleOptionTabV4 *tab = qstyleoption_cast<const QStyleOptionTabV4 *>(&other)) {
+        *this = *tab;
+    } else {
+        *((QStyleOptionTabV3 *)this) = other;
+        version = Version;
+    }
+}
+
+/*!
+    Assigns the \a other style option to this QStyleOptionTabV4. The
+    \a other style option can be either of the QStyleOptionTabV4,
+    QStyleOptionTabV3, QStyleOptionTabV2 or QStyleOptionTab types.
+
+    If the other style option's version is 1 or 2 or 3, the new style option's
+    \c index is set to an invalid value. If its version is 4, its \c index
+    value is simply copied to the new style option.
+*/
+QStyleOptionTabV4 &QStyleOptionTabV4::operator=(const QStyleOptionTab &other)
+{
+    QStyleOptionTabV3::operator=(other);
+
+    if (const QStyleOptionTabV4 *tab = qstyleoption_cast<const QStyleOptionTabV4 *>(&other))
+        index = tab->index;
+    else
+        index = -1;
+    return *this;
+}
+
+
 #endif // QT_NO_TABBAR
 
 /*!

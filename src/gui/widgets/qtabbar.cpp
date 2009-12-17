@@ -105,9 +105,10 @@ void QTabBarPrivate::updateMacBorderMetrics()
 /*!
     Initialize \a option with the values from the tab at \a tabIndex. This method
     is useful for subclasses when they need a QStyleOptionTab, QStyleOptionTabV2,
-    or QStyleOptionTabV3 but don't want to fill in all the information themselves.
+    QStyleOptionTabV3 or QStyleOptionTabV4 but don't want to fill in all the
+    information themselves.
     This function will check the version of the QStyleOptionTab and fill in the
-    additional values for a QStyleOptionTabV2 and QStyleOptionTabV3.
+    additional values for a QStyleOptionTabV2 and higher.
 
     \sa QStyleOption::initFrom() QTabWidget::initStyleOption()
 */
@@ -152,6 +153,9 @@ void QTabBar::initStyleOption(QStyleOptionTab *option, int tabIndex) const
         optionV3->rightButtonSize = tab.rightWidget ? tab.rightWidget->size() : QSize();
         optionV3->documentMode = d->documentMode;
     }
+
+    if (QStyleOptionTabV4 *optionV4 = qstyleoption_cast<QStyleOptionTabV4 *>(option))
+        optionV4->index = tabIndex;
 
     if (tabIndex > 0 && tabIndex - 1 == d->currentIndex)
         option->selectedPosition = QStyleOptionTab::PreviousIsSelected;
@@ -554,7 +558,7 @@ void QTabBarPrivate::layoutTab(int index)
     if (!(tab.leftWidget || tab.rightWidget))
         return;
 
-    QStyleOptionTabV3 opt;
+    QStyleOptionTabV4 opt;
     q->initStyleOption(&opt, index);
     if (tab.leftWidget) {
         QRect rect = q->style()->subElementRect(QStyle::SE_TabBarTabLeftButton, &opt, q);
@@ -809,7 +813,7 @@ int QTabBar::insertTab(int index, const QIcon& icon, const QString &text)
         ++d->currentIndex;
 
     if (d->closeButtonOnTabs) {
-        QStyleOptionTabV3 opt;
+        QStyleOptionTabV4 opt;
         initStyleOption(&opt, index);
         ButtonPosition closeSide = (ButtonPosition)style()->styleHint(QStyle::SH_TabBar_CloseButtonPosition, 0, this);
         QAbstractButton *closeButton = new CloseButton(this);
@@ -1296,7 +1300,7 @@ QSize QTabBar::tabSizeHint(int index) const
     //Note: this must match with the computations in QCommonStylePrivate::tabLayout
     Q_D(const QTabBar);
     if (const QTabBarPrivate::Tab *tab = d->at(index)) {
-        QStyleOptionTabV3 opt;
+        QStyleOptionTabV4 opt;
         initStyleOption(&opt, index);
         opt.text = d->tabList.at(index).text;
         QSize iconSize = tab->icon.isNull() ? QSize(0, 0) : opt.iconSize;
@@ -1497,7 +1501,7 @@ void QTabBar::paintEvent(QPaintEvent *)
         p.drawPrimitive(QStyle::PE_FrameTabBarBase, optTabBase);
 
     for (int i = 0; i < d->tabList.count(); ++i) {
-        QStyleOptionTabV3 tab;
+        QStyleOptionTabV4 tab;
         initStyleOption(&tab, i);
         if (d->paintWithOffsets && d->tabList[i].dragOffset != 0) {
             if (vertical) {
@@ -1530,7 +1534,7 @@ void QTabBar::paintEvent(QPaintEvent *)
 
     // Draw the selected tab last to get it "on top"
     if (selected >= 0) {
-        QStyleOptionTabV3 tab;
+        QStyleOptionTabV4 tab;
         initStyleOption(&tab, selected);
         if (d->paintWithOffsets && d->tabList[selected].dragOffset != 0) {
             if (vertical)
@@ -1814,7 +1818,7 @@ void QTabBarPrivate::setupMovableTab()
     QStylePainter p(&grabImage, q);
     p.initFrom(q);
 
-    QStyleOptionTabV3 tab;
+    QStyleOptionTabV4 tab;
     q->initStyleOption(&tab, pressedIndex);
     tab.rect.moveTopLeft(QPoint(taboverlap, 0));
     p.drawControl(QStyle::CE_TabBarTab, tab);

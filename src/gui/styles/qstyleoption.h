@@ -361,6 +361,22 @@ protected:
     QStyleOptionTabV3(int version);
 };
 
+class Q_GUI_EXPORT QStyleOptionTabV4 : public QStyleOptionTabV3
+{
+public:
+    enum StyleOptionVersion { Version = 4 };
+    int index;
+    QStyleOptionTabV4();
+    QStyleOptionTabV4(const QStyleOptionTabV4 &other) : QStyleOptionTabV3(Version) { *this = other; }
+    QStyleOptionTabV4(const QStyleOptionTabV3 &other) : QStyleOptionTabV3(Version) { *this = other; }
+    QStyleOptionTabV4(const QStyleOptionTabV2 &other) : QStyleOptionTabV3(Version) { *this = other; }
+    QStyleOptionTabV4(const QStyleOptionTab &other);
+    QStyleOptionTabV4 &operator=(const QStyleOptionTab &other);
+
+protected:
+    QStyleOptionTabV4(int version);
+};
+
 #endif
 
 
