@@ -110,7 +110,7 @@ class CentralWidget : public QWidget
     Q_OBJECT
 
 public:
-    CentralWidget(QHelpEngine *engine, MainWindow *parent);
+    CentralWidget(MainWindow *parent);
     ~CentralWidget();
 
     void setupWidget();
@@ -135,7 +135,7 @@ public:
     int availableHelpViewer() const;
     bool enableTabCloseAction() const;
 
-    void closeTabs(const QList<int> &indices);
+    void closeOrReloadTabs(const QList<int> &indices, bool tryReload);
     void closeTabAt(int index);
     QMap<int, QString> currentSourceFileList() const;
 
@@ -201,13 +201,11 @@ private:
 
 private:
     int lastTabPage;
-    QString collectionFile;
     QList<QAction*> globalActionList;
 
     QWidget *findBar;
     QTabWidget *tabWidget;
     FindWidget *findWidget;
-    QHelpEngine *helpEngine;
     QPrinter *printer;
     bool usesDefaultCollection;
 

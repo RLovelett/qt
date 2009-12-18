@@ -2617,8 +2617,6 @@ void QWidget::destroy(bool destroyWindow, bool destroySubWindows)
             releaseMouse();
         if(mac_keyboard_grabber == this)
             releaseKeyboard();
-        if(acceptDrops())
-            setAcceptDrops(false);
 
         if(testAttribute(Qt::WA_ShowModal))          // just be sure we leave modal
             QApplicationPrivate::leaveModal(this);
@@ -3656,6 +3654,16 @@ void QWidgetPrivate::setFocus_sys()
     }
 }
 
+NSComparisonResult compareViews2Raise(id view1, id view2, void *context)
+{
+    id topView = reinterpret_cast<id>(context);
+    if (view1 == topView)
+        return NSOrderedDescending;
+    if (view2 == topView)
+        return NSOrderedAscending;
+    return NSOrderedSame;
+}
+
 void QWidgetPrivate::raise_sys()
 {
     Q_Q(QWidget);
@@ -3663,7 +3671,6 @@ void QWidgetPrivate::raise_sys()
         return;
 
 #if QT_MAC_USE_COCOA
-    QMacCocoaAutoReleasePool pool;
     if (isRealWindow()) {
         // Calling orderFront shows the window on Cocoa too.
         if (!q->testAttribute(Qt::WA_DontShowOnScreen) && q->isVisible()) {
@@ -3675,16 +3682,9 @@ void QWidgetPrivate::raise_sys()
             SetFrontProcessWithOptions(&psn, kSetFrontProcessFrontWindowOnly);
         }
     } else {
-        // Cocoa doesn't really have an idea of Z-ordering, but you can
-        // fake it by changing the order of it. But beware, removing an
-        // NSView will also remove it as the first responder. So we re-set
-        // the first responder just in case:
         NSView *view = qt_mac_nativeview_for(q);
         NSView *parentView = [view superview];
-        NSResponder *firstResponder = [[view window] firstResponder];
-        [view removeFromSuperview];
-        [parentView addSubview:view];
-        [[view window] makeFirstResponder:firstResponder];
+        [parentView sortSubviewsUsingFunction:compareViews2Raise context:reinterpret_cast<void *>(view)];
     }
 #else
     if(q->isWindow()) {
@@ -3702,47 +3702,29 @@ void QWidgetPrivate::raise_sys()
 #endif
 }
 
+NSComparisonResult compareViews2Lower(id view1, id view2, void *context)
+{
+    id topView = reinterpret_cast<id>(context);
+    if (view1 == topView)
+        return NSOrderedAscending;
+    if (view2 == topView)
+        return NSOrderedDescending;
+    return NSOrderedSame;
+}
+
 void QWidgetPrivate::lower_sys()
 {
     Q_Q(QWidget);
     if((q->windowType() == Qt::Desktop))
         return;
 #ifdef QT_MAC_USE_COCOA
-    QMacCocoaAutoReleasePool pool;
     if (isRealWindow()) {
         OSWindowRef window = qt_mac_window_for(q);
         [window orderBack:window];
     } else {
-        // Cocoa doesn't really have an idea of Z-ordering, but you can
-        // fake it by changing the order of it. In this case
-        // we put the item at the beginning of the list, but that means
-        // we must re-insert everything since we cannot modify the list directly.
-        NSView *myview = qt_mac_nativeview_for(q);
-        NSView *parentView = [myview superview];
-        NSArray *tmpViews = [parentView subviews];
-        NSMutableArray *subviews = [[NSMutableArray alloc] initWithCapacity:[tmpViews count]];
-        [subviews addObjectsFromArray:tmpViews];
-        NSResponder *firstResponder = [[myview window] firstResponder];
-        // Implicit assumption that myViewIndex is included in subviews, that's why I'm not checking
-        // myViewIndex.
-        NSUInteger index = 0;
-        NSUInteger myViewIndex = 0;
-        bool foundMyView = false;
-        for (NSView *subview in subviews) {
-            [subview removeFromSuperview];
-            if (subview == myview) {
-                foundMyView = true;
-                myViewIndex = index;
-            }
-            ++index;
-        }
-        [parentView addSubview:myview];
-        if (foundMyView)
-            [subviews removeObjectAtIndex:myViewIndex];
-        for (NSView *subview in subviews)
-            [parentView addSubview:subview];
-        [subviews release];
-        [[myview window] makeFirstResponder:firstResponder];
+        NSView *view = qt_mac_nativeview_for(q);
+        NSView *parentView = [view superview];
+        [parentView sortSubviewsUsingFunction:compareViews2Lower context:reinterpret_cast<void *>(view)];
     }
 #else
     if(q->isWindow()) {
@@ -3755,6 +3737,16 @@ void QWidgetPrivate::lower_sys()
 #endif
 }
 
+NSComparisonResult compareViews2StackUnder(id view1, id view2, void *context)
+{
+    const QHash<NSView *, int> &viewOrder = *reinterpret_cast<QHash<NSView *, int> *>(context);
+    if (viewOrder[view1] < viewOrder[view2])
+        return NSOrderedAscending;
+    if (viewOrder[view1] > viewOrder[view2])
+        return NSOrderedDescending;
+    return NSOrderedSame;
+}
+
 void QWidgetPrivate::stackUnder_sys(QWidget *w)
 {
     // stackUnder
@@ -3763,37 +3755,23 @@ void QWidgetPrivate::stackUnder_sys(QWidget *w)
         return;
 #ifdef QT_MAC_USE_COCOA
     // Do the same trick as lower_sys() and put this widget before the widget passed in.
-    QMacCocoaAutoReleasePool pool;
-    NSView *myview = qt_mac_nativeview_for(q);
+    NSView *myView = qt_mac_nativeview_for(q);
     NSView *wView = qt_mac_nativeview_for(w);
-    NSView *parentView = [myview superview];
-    NSArray *tmpViews = [parentView subviews];
-    NSMutableArray *subviews = [[NSMutableArray alloc] initWithCapacity:[tmpViews count]];
-    [subviews addObjectsFromArray:tmpViews];
-    // Implicit assumption that myViewIndex and wViewIndex is included in subviews,
-    // that's why I'm not checking myViewIndex.
-    NSUInteger index = 0;
-    NSUInteger myViewIndex = 0;
-    NSUInteger wViewIndex = 0;
-    for (NSView *subview in subviews) {
-        [subview removeFromSuperview];
-        if (subview == myview)
-            myViewIndex = index;
-        else if (subview == wView)
-            wViewIndex = index;
-        ++index;
-    }
 
-    index = 0;
+    QHash<NSView *, int> viewOrder;
+    NSView *parentView = [myView superview];
+    NSArray *subviews = [parentView subviews];
+    NSUInteger index = 1;
+    // make a hash of view->zorderindex and make sure z-value is always odd,
+    // so that when we modify the order we create a new (even) z-value which
+    // will not interfere with others.
     for (NSView *subview in subviews) {
-        if (index == myViewIndex)
-            continue;
-        if (index == wViewIndex)
-            [parentView addSubview:myview];
-        [parentView addSubview:subview];
+        viewOrder.insert(subview, index * 2);
         ++index;
     }
-    [subviews release];
+    viewOrder[myView] = viewOrder[wView] - 1;
+
+    [parentView sortSubviewsUsingFunction:compareViews2StackUnder context:reinterpret_cast<void *>(&viewOrder)];
 #else
     QWidget *p = q->parentWidget();
     if(!p || p != w->parentWidget())
@@ -4556,9 +4534,12 @@ void QWidgetPrivate::registerDropSite(bool on)
 #ifndef QT_MAC_USE_COCOA
     SetControlDragTrackingEnabled(qt_mac_nativeview_for(q), on);
 #else
-    NSView *view = qt_mac_nativeview_for(q);
-    if (on && [view isKindOfClass:[QT_MANGLE_NAMESPACE(QCocoaView) class]]) {
-        [static_cast<QT_MANGLE_NAMESPACE(QCocoaView) *>(view) registerDragTypes];
+    NSWindow *win = qt_mac_window_for(q);
+    if (on) {
+        if ([win isKindOfClass:[QT_MANGLE_NAMESPACE(QCocoaWindow) class]])
+            [static_cast<QT_MANGLE_NAMESPACE(QCocoaWindow) *>(win) registerDragTypes];
+        else if ([win isKindOfClass:[QT_MANGLE_NAMESPACE(QCocoaPanel) class]])
+            [static_cast<QT_MANGLE_NAMESPACE(QCocoaPanel) *>(win) registerDragTypes];
     }
 #endif
 }

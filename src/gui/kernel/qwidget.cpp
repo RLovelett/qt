@@ -366,7 +366,8 @@ bool QWidget::hasEditFocus() const
     normally; otherwise, Qt::Key_Up and Qt::Key_Down are used to
     change focus.
 
-    This feature is only available in Qt for Embedded Linux.
+    This feature is only available in Qt for Embedded Linux and Qt
+    for Symbian.
 
     \sa hasEditFocus(), QApplication::keypadNavigationEnabled()
 */
@@ -4605,7 +4606,7 @@ void QWidgetPrivate::updateFont(const QFont &font)
     if (!q->parentWidget() && extra && extra->proxyWidget) {
         QGraphicsProxyWidget *p = extra->proxyWidget;
         inheritedFontResolveMask = p->d_func()->inheritedFontResolveMask | p->font().resolve();
-    } else 
+    } else
 #endif //QT_NO_GRAPHICSVIEW
     if (q->isWindow() && !q->testAttribute(Qt::WA_WindowPropagation)) {
         inheritedFontResolveMask = 0;
@@ -4962,6 +4963,8 @@ QGraphicsEffect *QWidget::graphicsEffect() const
     If \a effect is the installed on a different widget, setGraphicsEffect() will remove
     the effect from the widget and install it on this widget.
 
+    QWidget takes ownership of \a effect.
+
     \note This function will apply the effect on itself and all its children.
 
     \since 4.6
@@ -4975,28 +4978,22 @@ void QWidget::setGraphicsEffect(QGraphicsEffect *effect)
     if (d->graphicsEffect == effect)
         return;
 
-    if (d->graphicsEffect && effect) {
+    if (d->graphicsEffect) {
+        d->invalidateBuffer(rect());
         delete d->graphicsEffect;
         d->graphicsEffect = 0;
     }
 
-    if (!effect) {
-        // Unset current effect.
-        QGraphicsEffectPrivate *oldEffectPrivate = d->graphicsEffect->d_func();
-        d->graphicsEffect = 0;
-        if (oldEffectPrivate) {
-            oldEffectPrivate->setGraphicsEffectSource(0); // deletes the current source.
-        }
-    } else {
+    if (effect) {
         // Set new effect.
         QGraphicsEffectSourcePrivate *sourced = new QWidgetEffectSourcePrivate(this);
         QGraphicsEffectSource *source = new QGraphicsEffectSource(*sourced);
         d->graphicsEffect = effect;
         effect->d_func()->setGraphicsEffectSource(source);
+        update();
     }
 
     d->updateIsOpaque();
-    update();
 }
 #endif //QT_NO_GRAPHICSEFFECT
 
@@ -6053,6 +6050,11 @@ bool QWidget::hasFocus() const
     (Nothing happens if the focus in and focus out widgets are the
     same.)
 
+    \note On embedded platforms, setFocus() will not cause an input panel
+    to be opened by the input method. If you want this to happen, you
+    have to send a QEvent::RequestSoftwareInputPanel event to the
+    widget yourself.
+
     setFocus() gives focus to a widget regardless of its focus policy,
     but does not clear any keyboard grab (see grabKeyboard()).
 
@@ -6065,7 +6067,7 @@ bool QWidget::hasFocus() const
 
     \sa hasFocus(), clearFocus(), focusInEvent(), focusOutEvent(),
     setFocusPolicy(), focusWidget(), QApplication::focusWidget(), grabKeyboard(),
-    grabMouse(), {Keyboard Focus}
+    grabMouse(), {Keyboard Focus}, QEvent::RequestSoftwareInputPanel
 */
 
 void QWidget::setFocus(Qt::FocusReason reason)
@@ -8382,9 +8384,10 @@ bool QWidget::event(QEvent *event)
     case QEvent::TouchUpdate:
     case QEvent::TouchEnd:
     {
+#ifndef Q_WS_MAC
         QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
         const QTouchEvent::TouchPoint &touchPoint = touchEvent->touchPoints().first();
-        if (touchPoint.isPrimary())
+        if (touchPoint.isPrimary() || touchEvent->deviceType() == QTouchEvent::TouchPad)
             break;
 
         // fake a mouse event!
@@ -8413,6 +8416,7 @@ bool QWidget::event(QEvent *event)
                                Qt::LeftButton,
                                touchEvent->modifiers());
         (void) QApplication::sendEvent(this, &mouseEvent);
+#endif // Q_WS_MAC
         break;
     }
     case QEvent::Gesture:
@@ -9905,13 +9909,13 @@ void QWidget::scroll(int dx, int dy)
     Q_D(QWidget);
 #ifndef QT_NO_GRAPHICSVIEW
     if (QGraphicsProxyWidget *proxy = QWidgetPrivate::nearestGraphicsProxyWidget(this)) {
-	// Graphics View maintains its own dirty region as a list of rects;
-	// until we can connect item updates directly to the view, we must
-	// separately add a translated dirty region.
-	if (!d->dirty.isEmpty()) {
-	    foreach (const QRect &rect, (d->dirty.translated(dx, dy)).rects())
-		proxy->update(rect);
-	}
+        // Graphics View maintains its own dirty region as a list of rects;
+        // until we can connect item updates directly to the view, we must
+        // separately add a translated dirty region.
+        if (!d->dirty.isEmpty()) {
+            foreach (const QRect &rect, (d->dirty.translated(dx, dy)).rects())
+                proxy->update(rect);
+        }
         proxy->scroll(dx, dy, proxy->subWidgetRect(this));
         return;
     }
@@ -9940,13 +9944,13 @@ void QWidget::scroll(int dx, int dy, const QRect &r)
     Q_D(QWidget);
 #ifndef QT_NO_GRAPHICSVIEW
     if (QGraphicsProxyWidget *proxy = QWidgetPrivate::nearestGraphicsProxyWidget(this)) {
-	// Graphics View maintains its own dirty region as a list of rects;
-	// until we can connect item updates directly to the view, we must
-	// separately add a translated dirty region.
-	if (!d->dirty.isEmpty()) {
-	    foreach (const QRect &rect, (d->dirty.translated(dx, dy) & r).rects())
-		proxy->update(rect);
-	}
+        // Graphics View maintains its own dirty region as a list of rects;
+        // until we can connect item updates directly to the view, we must
+        // separately add a translated dirty region.
+        if (!d->dirty.isEmpty()) {
+            foreach (const QRect &rect, (d->dirty.translated(dx, dy) & r).rects())
+                proxy->update(rect);
+        }
         proxy->scroll(dx, dy, r.translated(proxy->subWidgetRect(this).topLeft().toPoint()));
         return;
     }

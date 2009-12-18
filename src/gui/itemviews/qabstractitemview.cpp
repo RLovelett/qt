@@ -1625,7 +1625,7 @@ void QAbstractItemView::mousePressEvent(QMouseEvent *event)
     QPoint offset = d->offset();
     if ((command & QItemSelectionModel::Current) == 0)
         d->pressedPosition = pos + offset;
-    else if (!indexAt(d->pressedPosition).isValid())
+    else if (!indexAt(d->pressedPosition - offset).isValid())
         d->pressedPosition = visualRect(currentIndex()).center() + offset;
 
     if (edit(index, NoEditTriggers, event))
@@ -2195,7 +2195,7 @@ void QAbstractItemView::keyPressEvent(QKeyEvent *event)
             // note that we don't check if the new current index is enabled because moveCursor() makes sure it is
             if (command & QItemSelectionModel::Current) {
                 d->selectionModel->setCurrentIndex(newCurrent, QItemSelectionModel::NoUpdate);
-                if (!indexAt(d->pressedPosition).isValid())
+                if (!indexAt(d->pressedPosition - d->offset()).isValid())
                     d->pressedPosition = visualRect(oldCurrent).center() + d->offset();
                 QRect rect(d->pressedPosition - d->offset(), visualRect(newCurrent).center());
                 setSelection(rect, command);
@@ -2552,7 +2552,9 @@ void QAbstractItemView::verticalScrollbarValueChanged(int value)
     Q_D(QAbstractItemView);
     if (verticalScrollBar()->maximum() == value && d->model->canFetchMore(d->root))
         d->model->fetchMore(d->root);
-    d->checkMouseMove(viewport()->mapFromGlobal(QCursor::pos()));
+    QPoint posInVp = viewport()->mapFromGlobal(QCursor::pos());
+    if (viewport()->rect().contains(posInVp))
+        d->checkMouseMove(posInVp);
 }
 
 /*!
@@ -2563,7 +2565,9 @@ void QAbstractItemView::horizontalScrollbarValueChanged(int value)
     Q_D(QAbstractItemView);
     if (horizontalScrollBar()->maximum() == value && d->model->canFetchMore(d->root))
         d->model->fetchMore(d->root);
-    d->checkMouseMove(viewport()->mapFromGlobal(QCursor::pos()));
+    QPoint posInVp = viewport()->mapFromGlobal(QCursor::pos());
+    if (viewport()->rect().contains(posInVp))
+        d->checkMouseMove(posInVp);
 }
 
 /*!
@@ -2863,6 +2867,8 @@ int QAbstractItemView::sizeHintForRow(int row) const
     if (row < 0 || row >= d->model->rowCount() || !model())
         return -1;
 
+    ensurePolished();
+
     QStyleOptionViewItemV4 option = d->viewOptionsV4();
     int height = 0;
     int colCount = d->model->columnCount(d->root);
@@ -2891,6 +2897,8 @@ int QAbstractItemView::sizeHintForColumn(int column) const
 
     if (column < 0 || column >= d->model->columnCount() || !model())
         return -1;
+
+    ensurePolished();
 
     QStyleOptionViewItemV4 option = d->viewOptionsV4();
     int width = 0;

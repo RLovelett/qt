@@ -391,6 +391,7 @@ private slots:
 #endif
 
     void focusProxyAndInputMethods();
+    void scrollWithoutBackingStore();
 
 private:
     bool ensureScreenSize(int width, int height);
@@ -9548,6 +9549,22 @@ void tst_QWidget::setGraphicsEffect()
     delete widget;
     QVERIFY(!blurEffect);
     delete anotherWidget;
+
+    // Ensure the effect is uninstalled when deleting it
+    widget = new QWidget;
+    blurEffect = new QGraphicsBlurEffect;
+    widget->setGraphicsEffect(blurEffect);
+    delete blurEffect;
+    QVERIFY(!widget->graphicsEffect());
+
+    // Ensure the existing effect is uninstalled and deleted when setting a null effect
+    blurEffect = new QGraphicsBlurEffect;
+    widget->setGraphicsEffect(blurEffect);
+    widget->setGraphicsEffect(0);
+    QVERIFY(!widget->graphicsEffect());
+    QVERIFY(!blurEffect);
+
+    delete widget;
 }
 
 void tst_QWidget::activateWindow()
@@ -9701,6 +9718,43 @@ void tst_QWidget::focusProxyAndInputMethods()
     QCOMPARE(inputContext->focusWidget(), toplevel);
 
     delete toplevel;
+}
+
+class scrollWidgetWBS : public QWidget
+{
+public:
+    void deleteBackingStore()
+    {
+        if (static_cast<QWidgetPrivate*>(d_ptr.data())->maybeBackingStore()) {
+            delete static_cast<QWidgetPrivate*>(d_ptr.data())->topData()->backingStore;    
+            static_cast<QWidgetPrivate*>(d_ptr.data())->topData()->backingStore = 0;
+        }
+    }
+    void enableBackingStore()
+    {
+        if (!static_cast<QWidgetPrivate*>(d_ptr.data())->maybeBackingStore()) {
+            static_cast<QWidgetPrivate*>(d_ptr.data())->topData()->backingStore = new QWidgetBackingStore(this);
+            static_cast<QWidgetPrivate*>(d_ptr.data())->invalidateBuffer(this->rect());
+            repaint();
+        }
+    }
+};
+
+void tst_QWidget::scrollWithoutBackingStore()
+{
+    scrollWidgetWBS scrollable;
+    scrollable.resize(100,100);
+    QLabel child(QString("@"),&scrollable);
+    child.resize(50,50);
+    scrollable.show();
+    QTest::qWaitForWindowShown(&scrollable);
+    scrollable.scroll(50,50);
+    QCOMPARE(child.pos(),QPoint(50,50));
+    scrollable.deleteBackingStore();
+    scrollable.scroll(-25,-25);
+    QCOMPARE(child.pos(),QPoint(25,25));
+    scrollable.enableBackingStore();
+    QCOMPARE(child.pos(),QPoint(25,25));
 }
 
 QTEST_MAIN(tst_QWidget)
