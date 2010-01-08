@@ -91,11 +91,12 @@ class QTextFrame;
 class QTextFragmentData : public QFragment<>
 {
 public:
-    inline void initialize() {}
+    inline void initialize() { hidden = false; }
     inline void invalidate() const {}
     inline void free() {}
     int stringPosition;
     int format;
+    mutable bool hidden;
 };
 
 class QTextBlockData : public QFragment<3>

@@ -51,6 +51,7 @@
 
 #include <private/qtextengine_p.h>
 #include <qtextlayout.h>
+#include <QTextCursor>
 
 #include <qdebug.h>
 
@@ -120,6 +121,8 @@ private slots:
     void testLineBreakingAllSpaces();
     void lineWidthFromBOM();
 
+    //Fragment Visibility Tests
+    void testFragmentVisibility();
 
 private:
     QFont testFont;
@@ -1319,6 +1322,66 @@ void tst_QTextLayout::lineWidthFromBOM()
     // Don't spin into an infinite loop
  }
 
+void tst_QTextLayout::testFragmentVisibility()
+{
+    QTextDocument *doc1 = new QTextDocument();
+    QTextDocument *doc2 = new QTextDocument();
+
+    QTextCursor cursor1(doc1);
+    QTextCursor cursor2(doc2);
+    QTextCharFormat format;
+
+    cursor1.insertText("First");
+    cursor2.insertText("First");
+
+    cursor1.insertText("Second");
+
+    cursor1.insertText("Third");
+    cursor2.insertText("Third");
+
+    format.setFontWeight(QFont::Bold);
+    cursor1.setPosition(11);
+    cursor1.setPosition(8, QTextCursor::KeepAnchor);
+    cursor1.mergeCharFormat(format);
+
+    cursor1.setPosition(5);
+    cursor1.setPosition(11, QTextCursor::KeepAnchor);
+    cursor1.mergeCharFormat(format);
+
+    QTextBlock block1 = doc1->firstBlock();
+    QTextBlock block2 = doc2->firstBlock();
+    QTextBlock::iterator it = block1.begin();
+    it++;
+    it.fragment().setVisible(false);
+
+    QTextLayout *layout1 = block1.layout();
+    QTextLayout *layout2 = block2.layout();
+    layout1->beginLayout();
+    layout2->beginLayout();
+
+    QTextLine line1 = layout1->createLine();
+    QTextLine line2 = layout2->createLine();
+    line1.setLineWidth(70000);
+    line2.setLineWidth(70000);
+    QCOMPARE(line1.naturalTextWidth(), line2.naturalTextWidth()) ;
+    layout1->endLayout();
+    layout2->endLayout();
+	
+    cursor2.setPosition(5);
+    cursor2.insertText("Second",format);
+
+    it.fragment().setVisible(true);
+    layout1->beginLayout();
+    layout2->beginLayout();
+    line1 = layout1->createLine();
+    line2 = layout2->createLine();
+    line1.setLineWidth(70000);
+    line2.setLineWidth(70000);
+    QCOMPARE(line1.naturalTextWidth(), line2.naturalTextWidth()) ;
+
+    delete doc1;
+    delete doc2;
+}
 
 QTEST_MAIN(tst_QTextLayout)
 #include "tst_qtextlayout.moc"

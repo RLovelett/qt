@@ -409,6 +409,9 @@ inline void QScriptLine::operator+=(const QScriptLine &other)
 
 typedef QVector<QScriptLine> QScriptLineArray;
 
+class QTextFragmentData;
+typedef QVector<const QTextFragmentData *> FragmentList;
+
 class QFontPrivate;
 class QTextFormatCollection;
 
@@ -584,6 +587,8 @@ public:
 
     void shapeLine(const QScriptLine &line);
 
+    mutable FragmentList invisibleFragments;
+
 private:
     void setBoundary(int strPos) const;
     void addRequiredBoundaries() const;
@@ -598,6 +603,8 @@ private:
     void splitItem(int item, int pos) const;
 
     void resolveAdditionalFormats() const;
+
+    int fragmentPosition(int scriptItemPosition) const;
 };
 
 class QStackTextEngine : public QTextEngine {

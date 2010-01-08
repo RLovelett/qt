@@ -222,6 +222,7 @@ public:
     int charFormatIndex() const;
 
     QString text() const;
+    QString visibleText() const;
 
     const QTextDocument *document() const;
 
@@ -308,6 +309,9 @@ public:
     int position() const;
     int length() const;
     bool contains(int position) const;
+
+    bool isVisible() const;
+    void setVisible(bool visible);
 
     QTextCharFormat charFormat() const;
     int charFormatIndex() const;

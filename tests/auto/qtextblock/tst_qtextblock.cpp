@@ -75,6 +75,7 @@ private slots:
     void fragmentOverBlockBoundaries();
     void excludeParagraphSeparatorFragment();
     void backwardsBlockIterator();
+    void fragmentVisibility();
 
 private:
     QTextDocument *doc;
@@ -172,6 +173,36 @@ void tst_QTextBlock::backwardsBlockIterator()
     QCOMPARE(it.fragment().position(), 1);
     --it;
     QCOMPARE(it.fragment().position(), 0);
+}
+
+void tst_QTextBlock::fragmentVisibility()
+{
+    QTextDocument *doc = new QTextDocument();
+    QTextCursor cursor(doc);
+    QTextCharFormat format;
+
+    cursor.insertText("First");
+
+    format.setFontWeight(QFont::Bold);
+    cursor.insertText("Second",format);
+
+    format.setFontItalic(true);
+    cursor.insertText("Third", format);
+
+    QTextBlock block = doc->firstBlock();
+    QTextBlock::iterator it = block.begin();
+
+    QCOMPARE(block.visibleText(), QString("FirstSecondThird"));
+    it++;
+    it.fragment().setVisible(false);
+    QCOMPARE(it.fragment().isVisible(), false);
+    QCOMPARE(block.visibleText(), QString("FirstThird"));
+
+    it.fragment().setVisible(true);
+    QCOMPARE(it.fragment().isVisible(), true);
+    QCOMPARE(block.visibleText(), QString("FirstSecondThird"));
+
+    delete doc;
 }
 
 QTEST_MAIN(tst_QTextBlock)

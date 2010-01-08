@@ -1164,6 +1164,36 @@ QString QTextBlock::text() const
     return text;
 }
 
+/*!
+    \since 4.7
+
+    Returns the block's visible contents ( the contents of the visible fragments ) as plain text.
+
+    \sa length() charFormat() blockFormat()
+ */
+
+QString QTextBlock::visibleText() const
+{
+    if (!p || !n)
+        return QString();
+
+    const QString buffer = p->buffer();
+    QString text;
+    text.reserve(length());
+
+    const int pos = position();
+    QTextDocumentPrivate::FragmentIterator it = p->find(pos);
+    QTextDocumentPrivate::FragmentIterator end = p->find(pos + length() - 1); // -1 to omit the block separator char
+    for (; it != end; ++it) {
+        const QTextFragmentData * const frag = it.value();
+
+        if (!frag->hidden)
+            text += QString::fromRawData(buffer.constData() + frag->stringPosition, frag->size_array[0]);
+    }
+
+    return text;
+}
+
 
 /*!
     Returns the text document this text block belongs to, or 0 if the
@@ -1696,6 +1726,44 @@ QString QTextFragment::text() const
         f = p->fragmentMap().next(f);
     }
     return result;
+}
+
+/*!
+    \since 4.7
+
+    Returns true if the fragment is visible; otherwise returns false.
+
+    \sa setVisible()
+*/
+
+bool QTextFragment::isVisible() const
+{
+    if (!p || !n)
+        return true;
+
+    const QTextFragmentData *data = p->fragmentMap().fragment(n);
+    return !data->hidden;
+}
+
+/*!
+    \since 4.7
+
+    Sets the fragment's visibility to \a visible.
+
+    \sa isVisible()
+*/
+
+void QTextFragment::setVisible(bool visible)
+{
+    if (!p || !n)
+        return;
+
+    int f = n;
+    while (f != ne) {
+        const QTextFragmentData *data  = p->fragmentMap().fragment(f);
+        data->hidden = !visible;
+        f = p->fragmentMap().next(f);
+    }
 }
 
 QT_END_NAMESPACE
