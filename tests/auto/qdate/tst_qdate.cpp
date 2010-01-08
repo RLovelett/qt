@@ -99,6 +99,7 @@ private slots:
     void standaloneShortMonthName() const;
     void longMonthName() const;
     void standaloneLongMonthName() const;
+    void roundtrip() const;
 };
 
 Q_DECLARE_METATYPE(QDate)
@@ -668,17 +669,18 @@ void tst_QDate::toString_format()
 
 void tst_QDate::isLeapYear()
 {
-    QVERIFY(QDate::isLeapYear(-4444));
-    QVERIFY(!QDate::isLeapYear(-4443));
-    QVERIFY(QDate::isLeapYear(-8));
-    QVERIFY(!QDate::isLeapYear(-7));
-    QVERIFY(QDate::isLeapYear(-4));
+    QVERIFY(QDate::isLeapYear(-4445));
+    QVERIFY(!QDate::isLeapYear(-4444));
+    QVERIFY(!QDate::isLeapYear(-6));
+    QVERIFY(QDate::isLeapYear(-5));
+    QVERIFY(!QDate::isLeapYear(-4));
     QVERIFY(!QDate::isLeapYear(-3));
     QVERIFY(!QDate::isLeapYear(-2));
-    QVERIFY(!QDate::isLeapYear(-1));
+    QVERIFY(QDate::isLeapYear(-1));
+    QVERIFY(!QDate::isLeapYear(0)); // Doesn't exist
     QVERIFY(!QDate::isLeapYear(1));
-    QVERIFY(!QDate::isLeapYear(1));
-    QVERIFY(!QDate::isLeapYear(1));
+    QVERIFY(!QDate::isLeapYear(2));
+    QVERIFY(!QDate::isLeapYear(3));
     QVERIFY(QDate::isLeapYear(4));
     QVERIFY(!QDate::isLeapYear(7));
     QVERIFY(QDate::isLeapYear(8));
@@ -909,6 +911,18 @@ void tst_QDate::standaloneLongMonthName() const
         QCOMPARE(QDate::longMonthName(i, QDate::StandaloneFormat), locale.standaloneMonthName(i, QLocale::LongFormat));
     }
 }
+
+void tst_QDate::roundtrip() const
+{
+    QDate testDate;
+    QDate loopDate = QDate::fromJulianDay(1);
+    while ( loopDate.toJulianDay() <= 5373484 ) { // <= 9999-12-31
+        testDate.setDate( loopDate.year(), loopDate.month(), loopDate.day() );
+        QCOMPARE( loopDate.toJulianDay(), testDate.toJulianDay() );
+        loopDate = loopDate.addDays(1);
+    }
+}
+
 
 QTEST_APPLESS_MAIN(tst_QDate)
 #include "tst_qdate.moc"
