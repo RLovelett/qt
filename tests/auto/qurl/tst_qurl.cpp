@@ -2918,7 +2918,8 @@ void tst_QUrl::nameprep_testsuite_data()
         << QString() << 0 << 0;
 
     QTest::newRow("Self-reverting case folding U+01F0 and normalization")
-        << QString::fromUtf8("\xC7\xF0")
+//        << QString::fromUtf8("\xC7\xF0") ### typo in the original testsuite
+        << QString::fromUtf8("\xC7\xB0")
         << QString::fromUtf8("\xC7\xB0")
         << QString() << 0 << 0;
 
@@ -3120,8 +3121,6 @@ void tst_QUrl::nameprep_testsuite()
     QFETCH(QString, out);
     QFETCH(QString, profile);
 
-    QEXPECT_FAIL("Self-reverting case folding U+01F0 and normalization",
-                 "Investigate further", Continue);
     QEXPECT_FAIL("Left-to-right mark U+200E",
                  "Investigate further", Continue);
     QEXPECT_FAIL("Deprecated U+202A",
