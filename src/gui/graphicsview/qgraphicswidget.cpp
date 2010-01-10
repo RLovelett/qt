@@ -1068,7 +1068,7 @@ QVariant QGraphicsWidget::itemChange(GraphicsItemChange change, const QVariant &
         break;
     case ItemVisibleHasChanged:
         if (!value.toBool()) {
-            // Send Hide event after the item has been hidden.
+            // Send Hide eventj after the item has been hidden.
             QHideEvent event;
             QApplication::sendEvent(this, &event);
         }
@@ -1097,8 +1097,8 @@ QVariant QGraphicsWidget::itemChange(GraphicsItemChange change, const QVariant &
         QApplication::sendEvent(this, &event);
         break;
     }
-    case ItemCursorChange: {
-        // Deliver CursorChange.
+    case ItemCursorHasChanged: {
+        // Deliver CursorHasChanged.
         QEvent event(QEvent::CursorChange);
         QApplication::sendEvent(this, &event);
         break;
