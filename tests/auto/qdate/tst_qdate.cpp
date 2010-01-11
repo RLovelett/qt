@@ -914,15 +914,35 @@ void tst_QDate::standaloneLongMonthName() const
 
 void tst_QDate::roundtrip() const
 {
+    // Test round trip, this exercises setDate(), isValid(), isLeapYear(),
+    // year(), month(), day(), julianDayFromDate(), and getDateFromJulianDay()
+    // to ensure they are internally consistent (but doesn't guarantee correct)
+
+    // Test Julian round trip in both BC and AD
     QDate testDate;
-    QDate loopDate = QDate::fromJulianDay(1);
-    while ( loopDate.toJulianDay() <= 5373484 ) { // <= 9999-12-31
+    QDate loopDate = QDate::fromJulianDay(1684899); //  1 Jan 100 BC
+    while ( loopDate.toJulianDay() <= 1757948 ) {   // 31 Dec 100 AD
+        testDate.setDate( loopDate.year(), loopDate.month(), loopDate.day() );
+        QCOMPARE( loopDate.toJulianDay(), testDate.toJulianDay() );
+        loopDate = loopDate.addDays(1);
+    }
+
+    // Test Julian and Gregorian round trip during changeover period
+    loopDate = QDate::fromJulianDay(2298153);     //  1 Jan 1580 AD
+    while ( loopDate.toJulianDay() <= 2300334 ) { // 31 Dec 1585 AD
+        testDate.setDate( loopDate.year(), loopDate.month(), loopDate.day() );
+        QCOMPARE( loopDate.toJulianDay(), testDate.toJulianDay() );
+        loopDate = loopDate.addDays(1);
+    }
+
+    // Test Gregorian round trip during current useful period
+    loopDate = QDate::fromJulianDay(2378497);     //  1 Jan 1900 AD
+    while ( loopDate.toJulianDay() <= 2488433 ) { // 31 Dec 2100 AD
         testDate.setDate( loopDate.year(), loopDate.month(), loopDate.day() );
         QCOMPARE( loopDate.toJulianDay(), testDate.toJulianDay() );
         loopDate = loopDate.addDays(1);
     }
 }
-
 
 QTEST_APPLESS_MAIN(tst_QDate)
 #include "tst_qdate.moc"
