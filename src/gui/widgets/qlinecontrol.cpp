@@ -57,6 +57,8 @@
 #include "qgraphicssceneevent.h"
 #endif
 
+const int KSecureTimerTimeout = 1000;
+
 QT_BEGIN_NAMESPACE
 
 /*!
@@ -74,11 +76,17 @@ void QLineControl::updateDisplayText()
     else
         str = m_text;
 
-    if (m_echoMode == QLineEdit::Password || (m_echoMode == QLineEdit::PasswordEchoOnEdit
-                && !m_passwordEchoEditing))
+    if ((m_echoMode == QLineEdit::Password || (m_echoMode == QLineEdit::PasswordEchoOnEdit
+                && !m_passwordEchoEditing)) && str.length() ){
+        QChar lastChar = str[str.length()-1];
         str.fill(m_passwordCharacter);
-
-    // replace certain non-printable characters with spaces (to avoid
+        if (str.length() > orig.length()) {
+            str[str.length()-1] = lastChar;
+            m_timer->stop();
+            m_timer->start(KSecureTimerTimeout);          
+        }
+    }
+        // replace certain non-printable characters with spaces (to avoid
     // drawing boxes when using fonts that don't have glyphs for such
     // characters)
     QChar* uc = str.data();
@@ -288,6 +296,11 @@ void QLineControl::_q_deleteSelected()
 */
 void QLineControl::init(const QString &txt)
 {
+#ifdef Q_OS_SYMBIAN
+    m_timer = new QTimer(this);
+    m_timer->setSingleShot(true);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(updateDisplayText()));
+#endif
     m_text = txt;
     updateDisplayText();
     m_cursor = m_text.length();

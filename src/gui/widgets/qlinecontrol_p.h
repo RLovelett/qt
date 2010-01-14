@@ -65,6 +65,7 @@
 #include "QtGui/qclipboard.h"
 #include "QtCore/qpoint.h"
 #include "QtGui/qcompleter.h"
+#include <qtimer.h>
 
 QT_BEGIN_HEADER
 
@@ -239,7 +240,6 @@ private:
     void init(const QString &txt);
     void removeSelectedText();
     void internalSetText(const QString &txt, int pos = -1, bool edited = true);
-    void updateDisplayText();
 
     void internalInsert(const QString &s);
     void internalDelete(bool wasBackspace = false);
@@ -279,7 +279,9 @@ private:
     QPoint m_tripleClick;
     int m_tripleClickTimer;
     QString m_cancelText;
-
+#ifdef Q_OS_SYMBIAN    
+    QTimer* m_timer;
+#endif
     void emitCursorPositionChanged();
 
     bool finishChange(int validateFromState = -1, bool update = false, bool edited = true);
@@ -360,7 +362,7 @@ protected:
 private Q_SLOTS:
     void _q_clipboardChanged();
     void _q_deleteSelected();
-
+    void updateDisplayText(); 
 };
 
 inline int QLineControl::nextMaskBlank(int pos)
