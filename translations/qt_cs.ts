@@ -4,27 +4,23 @@
 <context>
     <name>AudioEqualizer</name>
     <message>
-        <location filename="../src/3rdparty/phonon/mmf/audioequalizer.cpp" line="+75"/>
         <source>Frequency band, %1 Hz</source>
-        <translation>Kmitočtové pásmo, %1 Hz</translation>
+        <translation type="obsolete">Kmitočtové pásmo, %1 Hz</translation>
     </message>
 </context>
 <context>
     <name>AudioOutput</name>
     <message>
-        <location filename="../src/3rdparty/phonon/phonon/audiooutput.cpp" line="+377"/>
         <source>&lt;html&gt;The audio playback device &lt;b&gt;%1&lt;/b&gt; does not work.&lt;br/&gt;Falling back to &lt;b&gt;%2&lt;/b&gt;.&lt;/html&gt;</source>
-        <translation>&lt;html&gt;Zařízení pro přehrávání zvuku &lt;b&gt;%1&lt;/b&gt; nepracuje.&lt;br/&gt;Místo něj &lt;b&gt;%2&lt;/b&gt; se používá.&lt;/html&gt;</translation>
+        <translation type="obsolete">&lt;html&gt;Zařízení pro přehrávání zvuku &lt;b&gt;%1&lt;/b&gt; nepracuje.&lt;br/&gt;Místo něj &lt;b&gt;%2&lt;/b&gt; se používá.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+16"/>
         <source>Revert back to device &apos;%1&apos;</source>
-        <translation>Přepnout zpět na zařízení &apos;%1&apos;</translation>
+        <translation type="obsolete">Přepnout zpět na zařízení &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="-3"/>
         <source>&lt;html&gt;Switching to the audio playback device &lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;which just became available and has higher preference.&lt;/html&gt;</source>
-        <translation>&lt;html&gt;Zařízení pro přehrávání zvuku &lt;b&gt;%1&lt;/b&gt; bylo spuštěno,&lt;br/&gt;protože je právě dostupné a má větší přednost.&lt;/html&gt;</translation>
+        <translation type="obsolete">&lt;html&gt;Zařízení pro přehrávání zvuku &lt;b&gt;%1&lt;/b&gt; bylo spuštěno,&lt;br/&gt;protože je právě dostupné a má větší přednost.&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -38,7 +34,7 @@
 <context>
     <name>FakeReply</name>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/tests/qwebframe/tst_qwebframe.cpp" line="+2191"/>
+        <location filename="../src/3rdparty/webkit/WebKit/qt/tests/qwebframe/tst_qwebframe.cpp" line="+2193"/>
         <source>Fake error !</source>
         <translation>Napodobená chyba!</translation>
     </message>
@@ -79,6 +75,24 @@
         <location line="-10"/>
         <source>Notifications</source>
         <translation>Oznámení</translation>
+    </message>
+</context>
+<context>
+    <name>Phonon::AudioOutput</name>
+    <message>
+        <location filename="../src/3rdparty/phonon/phonon/audiooutput.cpp" line="+377"/>
+        <source>&lt;html&gt;The audio playback device &lt;b&gt;%1&lt;/b&gt; does not work.&lt;br/&gt;Falling back to &lt;b&gt;%2&lt;/b&gt;.&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>&lt;html&gt;Switching to the audio playback device &lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;which just became available and has higher preference.&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Revert back to device &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -163,6 +177,14 @@ Ověřte, prosím, instalaci Gstreamer a ujistěte se,
     </message>
 </context>
 <context>
+    <name>Phonon::MMF::AudioEqualizer</name>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/audioequalizer.cpp" line="+75"/>
+        <source>Frequency band, %1 Hz</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Phonon::MMF::EffectFactory</name>
     <message>
         <location filename="../src/3rdparty/phonon/mmf/effectfactory.cpp" line="+65"/>
@@ -206,15 +228,22 @@ Ověřte, prosím, instalaci Gstreamer a ujistěte se,
     <message>
         <location filename="../src/3rdparty/phonon/phonon/volumeslider.cpp" line="+42"/>
         <location line="+18"/>
+        <location line="+129"/>
+        <location line="+15"/>
         <source>Volume: %1%</source>
         <translation>Hlasitost: %1%</translation>
     </message>
     <message>
-        <location line="-15"/>
+        <location line="-159"/>
         <location line="+18"/>
         <location line="+54"/>
         <source>Use this slider to adjust the volume. The leftmost position is 0%, the rightmost is %1%</source>
         <translation>Posuvník se používá k nastavení hlasitosti. Poloha nejvíce vlevo odpovídá 0%; poloha nejvíce vpravo odpovídá %1%</translation>
+    </message>
+    <message>
+        <location line="+67"/>
+        <source>Muted</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -997,7 +1026,7 @@ na
         <translation>Qt není slučitelná</translation>
     </message>
     <message>
-        <location filename="../src/gui/kernel/qapplication.cpp" line="+2298"/>
+        <location filename="../src/gui/kernel/qapplication.cpp" line="+2290"/>
         <source>QT_LAYOUT_DIRECTION</source>
         <comment>Translate this string to the string &apos;LTR&apos; in left-to-right languages or to &apos;RTL&apos; in right-to-left languages (such as Hebrew and Arabic) to get proper widget layout.</comment>
         <translation>LTR</translation>
@@ -2343,7 +2372,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QHttp</name>
     <message>
-        <location filename="../src/network/access/qhttp.cpp" line="+2631"/>
+        <location filename="../src/network/access/qhttp.cpp" line="+2636"/>
         <source>Connection refused (or timed out)</source>
         <translation>Spojení bylo odmítnuto (nebo byl překročen časový limit)</translation>
     </message>
@@ -2375,12 +2404,12 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Hostitelský počítač požaduje autentizaci</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qhttp.cpp" line="+304"/>
+        <location filename="../src/network/access/qhttp.cpp" line="+325"/>
         <source>Error writing response to device</source>
         <translation>Při psaní odpovědi výstupnímu zařízení se vyskytla chyba</translation>
     </message>
     <message>
-        <location line="-2573"/>
+        <location line="-2594"/>
         <source>HTTPS connection requested but SSL support not compiled in</source>
         <translation>Požadované HTTPS spojení nelze vytvořit, protože neexistuje žádná SSL podpora</translation>
     </message>
@@ -2396,7 +2425,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Spojení bylo odmítnuto</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qhttp.cpp" line="+2400"/>
+        <location filename="../src/network/access/qhttp.cpp" line="+2421"/>
         <source>Proxy authentication required</source>
         <translation>Požadována proxy autentizace</translation>
     </message>
@@ -2406,7 +2435,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Byl zadán neznámý protokol</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qhttp.cpp" line="-111"/>
+        <location filename="../src/network/access/qhttp.cpp" line="-132"/>
         <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="-12"/>
         <location line="+19"/>
         <location filename="../src/qt3support/network/q3http.cpp" line="+6"/>
@@ -2419,7 +2448,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Proxy server požaduje autentizaci</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qhttp.cpp" line="+115"/>
+        <location filename="../src/network/access/qhttp.cpp" line="+136"/>
         <source>Authentication required</source>
         <translation>Požadována autentizace</translation>
     </message>
@@ -2447,7 +2476,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Počítač %1 byl nalezen</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qhttp.cpp" line="-328"/>
+        <location filename="../src/network/access/qhttp.cpp" line="-349"/>
         <location filename="../src/qt3support/network/q3http.cpp" line="-498"/>
         <source>Wrong content length</source>
         <translation>Neplatný údaj o délce obsahu</translation>
@@ -2461,7 +2490,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Neznámá chyba</translation>
     </message>
     <message>
-        <location line="+330"/>
+        <location line="+351"/>
         <location filename="../src/qt3support/network/q3http.cpp" line="+184"/>
         <source>Invalid HTTP response header</source>
         <translation>Hlavička HTTP odpovědi není platná</translation>
@@ -2478,7 +2507,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Spojení ukončeno</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qhttp.cpp" line="-347"/>
+        <location filename="../src/network/access/qhttp.cpp" line="-368"/>
         <location filename="../src/qt3support/network/q3http.cpp" line="-574"/>
         <source>No server set to connect to</source>
         <translation>Pro spojení nebyl nastaven žádný počítač - server</translation>
@@ -3633,9 +3662,8 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Neplatný název pro hostitelský počítač</translation>
     </message>
     <message>
-        <location filename="../src/gui/util/qdesktopservices_mac.cpp" line="+166"/>
         <source>Home</source>
-        <translation>Home</translation>
+        <translation type="obsolete">Home</translation>
     </message>
     <message>
         <source>Protocol error: packet of size 0 received</source>
@@ -6325,7 +6353,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QWebFrame</name>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp" line="+723"/>
+        <location filename="../src/3rdparty/webkit/WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp" line="+730"/>
         <source>Request blocked</source>
         <translation>Požadavek byl odmítnut</translation>
     </message>
@@ -6415,7 +6443,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Provést prohlídku</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/Api/qwebpage.cpp" line="+2232"/>
+        <location filename="../src/3rdparty/webkit/WebKit/qt/Api/qwebpage.cpp" line="+2213"/>
         <source>Select to the start of the block</source>
         <translation>Vybrat až po začátek bloku</translation>
     </message>
@@ -6625,7 +6653,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Poslat</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp" line="+170"/>
+        <location filename="../src/3rdparty/webkit/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp" line="+167"/>
         <source>Web Inspector - %2</source>
         <translation>Web Inspektor - %2</translation>
     </message>
@@ -6651,7 +6679,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Nebyl vybrán žádný soubor</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebCore/platform/qt/Localizations.cpp" line="+41"/>
+        <location filename="../src/3rdparty/webkit/WebCore/platform/qt/Localizations.cpp" line="+42"/>
         <source>Submit</source>
         <comment>default label for Submit buttons in forms on web pages</comment>
         <translation>Poslat</translation>
@@ -6663,7 +6691,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Vrátit</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+11"/>
         <source>This is a searchable index. Enter search keywords: </source>
         <comment>text that appears at the start of nearly-obsolete web pages in the form of a &apos;searchable index&apos;</comment>
         <translation>Tento rejstřík má funkci hledání. Zadejte nějaký hledaný výraz:</translation>
@@ -7251,7 +7279,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Vybrat až po začátek řádku</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebCore/platform/qt/Localizations.cpp" line="-306"/>
+        <location filename="../src/3rdparty/webkit/WebCore/platform/qt/Localizations.cpp" line="-307"/>
         <source>Submit</source>
         <comment>Submit (input element) alt text for &lt;input&gt; elements with no alt, title, or value</comment>
         <translation>Poslat</translation>
@@ -7315,7 +7343,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Otevřít adresu odkazu</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebCore/platform/network/qt/QNetworkReplyHandler.cpp" line="+416"/>
+        <location filename="../src/3rdparty/webkit/WebCore/platform/network/qt/QNetworkReplyHandler.cpp" line="+406"/>
         <source>Bad HTTP request</source>
         <translation>Neplatný požadavek HTTP</translation>
     </message>
@@ -7423,7 +7451,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QWidget</name>
     <message>
-        <location filename="../src/gui/kernel/qwidget.cpp" line="+5666"/>
+        <location filename="../src/gui/kernel/qwidget.cpp" line="+5672"/>
         <source>*</source>
         <translation>*</translation>
     </message>
@@ -7922,9 +7950,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Časový údaj %1:%2:%3.%4 je neplatný.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qmaintainingreader.cpp" line="+184"/>
         <source>Attribute %1 cannot appear on the element %2. Only the standard attributes can appear.</source>
-        <translation>Prvek %2 může mít pouze obvyklé vlastnosti, ne však %1.</translation>
+        <translation type="obsolete">Prvek %2 může mít pouze obvyklé vlastnosti, ne však %1.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/data/qhexbinary.cpp" line="+91"/>
@@ -7962,9 +7989,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Časový limit síťové operace byl překročen.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/expr/qcastingplatform.cpp" line="+136"/>
         <source>No casting is possible with %1 as the target type.</source>
-        <translation>Nelze provádět žádné výběrové (&quot;cast&quot;) operace s typem %1.</translation>
+        <translation type="obsolete">Nelze provádět žádné výběrové (&quot;cast&quot;) operace s typem %1.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-1567"/>
@@ -8067,12 +8093,11 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Prvek %1 nemůže mít podprvky.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qmaintainingreader.cpp" line="+6"/>
         <source>Attribute %1 cannot appear on the element %2. Only %3 is allowed, and the standard attributes.</source>
-        <translation>Prvek %2 může mít jen vlastnost %3 nebo vlastnosti, které jsou obvyklé, ne však %1.</translation>
+        <translation type="obsolete">Prvek %2 může mít jen vlastnost %3 nebo vlastnosti, které jsou obvyklé, ne však %1.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qxslttokenizer.cpp" line="-497"/>
+        <location line="-497"/>
         <source>Only one %1-element can appear.</source>
         <translation>Může být jen jeden jediný %1-prvek.</translation>
     </message>
@@ -8112,9 +8137,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>%1 nelze určit</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/expr/qcastingplatform.cpp" line="+65"/>
         <source>It&apos;s not possible to cast the value %1 of type %2 to %3</source>
-        <translation>Nelze provést operaci předvedení hodnoty %1 typu %2 k %3</translation>
+        <translation type="obsolete">Nelze provést operaci předvedení hodnoty %1 typu %2 k %3</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/parser/qxslttokenizer.cpp" line="-20"/>
@@ -8161,9 +8185,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/expr/qevaluationcache.cpp" line="+117"/>
         <source>Circularity detected</source>
-        <translation>byla zjištěna cirkulární závislost</translation>
+        <translation type="obsolete">byla zjištěna cirkulární závislost</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+3971"/>
@@ -8176,9 +8199,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Předpona %1 nemůže být spojena. Ve výchozím nastavení je již spojena se jmenným prostorem %2.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/acceltree/qacceltreebuilder.cpp" line="+229"/>
         <source>An %1-attribute must have a valid %2 as value, which %3 isn&apos;t.</source>
-        <translation>Vlastnost s názvem %1 musí mít platnou %2-hodnotu. %3 není platnou hodnotou.</translation>
+        <translation type="obsolete">Vlastnost s názvem %1 musí mít platnou %2-hodnotu. %3 není platnou hodnotou.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/parser/qxslttokenizer.cpp" line="+389"/>
@@ -8201,9 +8223,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Vlastnost %1 nemůže být vydáván na pokračování, protože se objevuje na nejvyšší rovině.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/expr/qcomparisonplatform.cpp" line="+167"/>
         <source>No comparisons can be done involving the type %1.</source>
-        <translation>S typem %1 nemohou být prováděny žádné srovnávací operace.</translation>
+        <translation type="obsolete">S typem %1 nemohou být prováděny žádné srovnávací operace.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-160"/>
@@ -8286,9 +8307,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Jmenný prostor uživatelem stanovené funkce nesmí být prázdný (pro tento účel je předstanovená předpona %1)</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/data/qabstractfloatmathematician.cpp" line="+71"/>
         <source>The first operand in an integer division, %1, cannot be infinity (%2).</source>
-        <translation>První veličina, operand, celočíselného dělení %1 nesmí být nekonečno (%2).</translation>
+        <translation type="obsolete">První veličina, operand, celočíselného dělení %1 nesmí být nekonečno (%2).</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/data/qanyuri_p.h" line="+132"/>
@@ -8356,14 +8376,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>žádný nebo jeden</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/data/qabstractfloatmathematician.cpp" line="-7"/>
         <source>No operand in an integer division, %1, can be %2.</source>
-        <translation>U celočíselného dělení %1 nesmí být veličina, operand, %2.</translation>
+        <translation type="obsolete">U celočíselného dělení %1 nesmí být veličina, operand, %2.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qmaintainingreader.cpp" line="+50"/>
         <source>The element with local name %1 does not exist in XSL-T.</source>
-        <translation>V XSL-T neexistuje žádný prvek s místním názvem %1.</translation>
+        <translation type="obsolete">V XSL-T neexistuje žádný prvek s místním názvem %1.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-634"/>
@@ -8397,9 +8415,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Neexistuje žádná předloha s názvem %1.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qmaintainingreader.cpp" line="-8"/>
         <source>The attribute %1 must appear on element %2.</source>
-        <translation>Prvek %2 musí mít vlastnost %1.</translation>
+        <translation type="obsolete">Prvek %2 musí mít vlastnost %1.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+105"/>
@@ -8427,9 +8444,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Prázdné znaky jsou odstraněny v případě, že se neobjeví ve znakových třídách</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/expr/qcastingplatform.cpp" line="-23"/>
         <source>Casting to %1 is not possible because it is an abstract type, and can therefore never be instantiated.</source>
-        <translation>Nemohou se provádět žádné operace předvedení k typu %1, protože je to abstraktní typ ist a nelze je doložit příkladem.</translation>
+        <translation type="obsolete">Nemohou se provádět žádné operace předvedení k typu %1, protože je to abstraktní typ ist a nelze je doložit příkladem.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/expr/qarithmeticexpression.cpp" line="+207"/>
@@ -8543,9 +8559,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Parameter funkce nelze prohlásit za tunel.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qmaintainingreader.cpp" line="-12"/>
         <source>XSL-T attributes on XSL-T elements must be in the null namespace, not in the XSL-T namespace which %1 is.</source>
-        <translation>XSL-T vlastnosti XSL-T prvku musí být v nulovém jmenném prostoru, nikoli v XSL-T jmenném prostoru, jako %1.</translation>
+        <translation type="obsolete">XSL-T vlastnosti XSL-T prvku musí být v nulovém jmenném prostoru, nikoli v XSL-T jmenném prostoru, jako %1.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-2963"/>
@@ -8608,9 +8623,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>%1 se nemůže používat, protože tento procesor nepodporuje žádné schéma.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qmaintainingreader.cpp" line="-13"/>
         <source>Attribute %1 cannot appear on the element %2. Allowed is %3, and the standard attributes.</source>
-        <translation>Prvek %2 může mít jen %3 nebo obvyklé vlastnosti, ne však %1.</translation>
+        <translation type="obsolete">Prvek %2 může mít jen %3 nebo obvyklé vlastnosti, ne však %1.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/data/qatomicmathematicians.cpp" line="+129"/>
@@ -8643,12 +8657,11 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>%1 není atomárním typem. Operace představení se dají provádět pouze s atomárními typy.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/functions/qcomparingaggregator.cpp" line="+197"/>
         <source>The first argument to %1 cannot be of type %2.</source>
-        <translation>První argument %1 nemůže být typu %2.</translation>
+        <translation type="obsolete">První argument %1 nemůže být typu %2.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-554"/>
+        <location line="-554"/>
         <source>The namespace URI must be a constant and cannot use enclosed expressions.</source>
         <translation>Jmenný prostor-URI musí být konstantou a nesmí používat vložené výrazy.</translation>
     </message>
@@ -8744,9 +8757,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Prvek %1 musí stát jako poslední.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qmaintainingreader.cpp" line="-9"/>
         <source>Attribute %1 cannot appear on the element %2. Allowed is %3, %4, and the standard attributes.</source>
-        <translation>Prvek %2 může mít jen vlastnost %3, %4 nebo vlastnosti, které jsou obvyklé, ne však %1.</translation>
+        <translation type="obsolete">Prvek %2 může mít jen vlastnost %3, %4 nebo vlastnosti, které jsou obvyklé, ne však %1.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/expr/qqnameconstructor_p.h" line="-12"/>
@@ -8804,9 +8816,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Neexistuje žádné svázání jmenného prostoru pro předponu %1</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/acceltree/qacceltreebuilder.cpp" line="-13"/>
         <source>An %1-attribute with value %2 has already been declared.</source>
-        <translation>Prvek má již jednu vlastnost s názvem %1 s hodnotou %2.</translation>
+        <translation type="obsolete">Prvek má již jednu vlastnost s názvem %1 s hodnotou %2.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/data/qhexbinary.cpp" line="+19"/>
@@ -8845,9 +8856,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Nelze představit datum (Přetečení).</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/expr/qcomparisonplatform.cpp" line="+14"/>
         <source>Operator %1 is not available between atomic values of type %2 and %3.</source>
-        <translation>Operátor %1 se nemůže používat u atomárních hodnot typů %2 a %3.</translation>
+        <translation type="obsolete">Operátor %1 se nemůže používat u atomárních hodnot typů %2 a %3.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/functions/qtimezonefns.cpp" line="+87"/>
@@ -8870,14 +8880,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>%1 není celočíselným údajem o minutách.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/expr/qcastingplatform.cpp" line="+31"/>
         <source>Failure when casting from %1 to %2: %3</source>
-        <translation>Operace předvedení od %1 do %2 se nepodařila: %3</translation>
+        <translation type="obsolete">Operace předvedení od %1 do %2 se nepodařila: %3</translation>
     </message>
     <message>
-        <location line="-58"/>
         <source>It is not possible to cast from %1 to %2.</source>
-        <translation>Nelze provádět žádnou operaci předvedení od %1 do %2.</translation>
+        <translation type="obsolete">Nelze provádět žádnou operaci předvedení od %1 do %2.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-4204"/>
@@ -8890,12 +8898,11 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Jmenný prostor %1 lze spojit pouze s %2. Toto je stanoveno již dopředu.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/data/qabstractfloatmathematician.cpp" line="+13"/>
         <source>The second operand in a division, %1, cannot be zero (%2).</source>
-        <translation>Druhá veličina, operand, dělení %1 nesmí být nula (%2).</translation>
+        <translation type="obsolete">Druhá veličina, operand, dělení %1 nesmí být nula (%2).</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-6170"/>
+        <location line="-6170"/>
         <source>Only one %1 declaration can occur in the query prolog.</source>
         <translation>Předmluva k dotazu (prolog) smí obsahovat pouze jedno %1-prohlášení.</translation>
     </message>
@@ -10344,15 +10351,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>VolumeSlider</name>
     <message>
-        <location filename="../src/3rdparty/phonon/phonon/volumeslider.cpp" line="+67"/>
         <source>Muted</source>
-        <translation>Ztlumení</translation>
+        <translation type="obsolete">Ztlumení</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <location line="+15"/>
         <source>Volume: %1%</source>
-        <translation>Hlasitost: %1%</translation>
+        <translation type="obsolete">Hlasitost: %1%</translation>
     </message>
 </context>
 </TS>

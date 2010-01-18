@@ -32,33 +32,61 @@
 <context>
     <name>QHelpCollectionHandler</name>
     <message>
-        <location filename="../tools/assistant/lib/qhelpcollectionhandler.cpp" line="+79"/>
         <source>The collection file is not set up yet!</source>
-        <translation>Soubor se sbírkou ještě není zřízen!</translation>
+        <translation type="obsolete">Soubor se sbírkou ještě není zřízen!</translation>
     </message>
     <message>
-        <location line="+22"/>
+        <location filename="../tools/assistant/lib/qhelpcollectionhandler.cpp" line="+79"/>
+        <source>The collection file &apos;%1&apos; is not set up yet!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+23"/>
         <source>Cannot load sqlite database driver!</source>
         <translation>Databázový ovladač pro SQLite nelze nahrát!</translation>
     </message>
     <message>
         <location line="+11"/>
-        <location line="+48"/>
+        <location line="+49"/>
         <source>Cannot open collection file: %1</source>
         <translation>Nelze otevřít soubor se sbírkou: %1</translation>
     </message>
     <message>
-        <location line="-39"/>
+        <location line="-40"/>
         <source>Cannot create tables in file %1!</source>
         <translation>V souboru %1 nelze vytvořit žádné tabulky!</translation>
     </message>
     <message>
         <location line="+16"/>
-        <source>The specified collection file already exists!</source>
-        <translation>Zadaný soubor se sbírkou již existuje!</translation>
+        <source>The collection file &apos;%1&apos; already exists!</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+148"/>
+        <source>Unknown filter &apos;%1&apos;!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+105"/>
+        <source>Invalid documentation file &apos;%1&apos;!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+167"/>
+        <source>Cannot register namespace &apos;%1&apos;!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Cannot open database &apos;%1&apos; to optimize!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The specified collection file already exists!</source>
+        <translation type="obsolete">Zadaný soubor se sbírkou již existuje!</translation>
+    </message>
+    <message>
+        <location line="-438"/>
         <source>Cannot create directory: %1</source>
         <translation>Nelze vytvořit adresář: %1</translation>
     </message>
@@ -68,12 +96,11 @@
         <translation>Nelze kopírovat soubor se sbírkou: %1</translation>
     </message>
     <message>
-        <location line="+119"/>
         <source>Unknown filter!</source>
-        <translation>Neznámý filtr!</translation>
+        <translation type="obsolete">Neznámý filtr!</translation>
     </message>
     <message>
-        <location line="+55"/>
+        <location line="+174"/>
         <source>Cannot register filter %1!</source>
         <translation>Nelze zapsat filtr %1!</translation>
     </message>
@@ -83,12 +110,11 @@
         <translation>Nelze otevřít soubor s dokumentací: %1!</translation>
     </message>
     <message>
-        <location line="+6"/>
         <source>Invalid documentation file!</source>
-        <translation>Neplatný soubor s dokumentací!</translation>
+        <translation type="obsolete">Neplatný soubor s dokumentací!</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+40"/>
         <source>The namespace %1 was not registered!</source>
         <translation>Jmenný prostor %1 nebyl zapsán!</translation>
     </message>
@@ -98,14 +124,12 @@
         <translation>Jmenný prostor %1 již existuje!</translation>
     </message>
     <message>
-        <location line="+13"/>
         <source>Cannot register namespace!</source>
-        <translation>Jmenný prostor nelze zapsat!</translation>
+        <translation type="obsolete">Jmenný prostor nelze zapsat!</translation>
     </message>
     <message>
-        <location line="+24"/>
         <source>Cannot open database to optimize!</source>
-        <translation>Databázi nelze otevřít pro vyladění!</translation>
+        <translation type="obsolete">Databázi nelze otevřít pro vyladění!</translation>
     </message>
 </context>
 <context>

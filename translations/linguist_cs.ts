@@ -312,7 +312,7 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
 <context>
     <name>LRelease</name>
     <message numerus="yes">
-        <location filename="../tools/linguist/shared/qm.cpp" line="+747"/>
+        <location filename="../tools/linguist/shared/qm.cpp" line="+748"/>
         <source>Dropped %n message(s) which had no ID.</source>
         <translation>
             <numerusform>Byl smazán záznam bez identifikátoru.</numerusform>
@@ -530,14 +530,14 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
         <translation>Ctrl+S</translation>
     </message>
     <message>
+        <location/>
         <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-14"/>
         <location line="+11"/>
-        <location filename="../tools/linguist/linguist/mainwindow.ui"/>
         <source>Save &amp;As...</source>
         <translation>Uložit &amp;jako...</translation>
     </message>
     <message>
-        <location filename="../tools/linguist/linguist/mainwindow.ui"/>
+        <location/>
         <source>Save As...</source>
         <translation>Uložit jako...</translation>
     </message>
@@ -897,25 +897,25 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
         <translation>Nahradit překlad u všech záznamů, které odpovídají hledanému textu.</translation>
     </message>
     <message>
+        <location/>
         <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+21"/>
-        <location filename="../tools/linguist/linguist/mainwindow.ui"/>
         <source>&amp;Batch Translation...</source>
         <translation>&amp;Automatický překlad...</translation>
     </message>
     <message>
-        <location filename="../tools/linguist/linguist/mainwindow.ui"/>
+        <location/>
         <source>Batch translate all entries using the information in the phrase books.</source>
         <translation>Automaticky přeložit všechny záznamy s pomocí slovníků.</translation>
     </message>
     <message>
+        <location/>
         <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-34"/>
         <location line="+10"/>
-        <location filename="../tools/linguist/linguist/mainwindow.ui"/>
         <source>Release As...</source>
         <translation>Vydat jako...</translation>
     </message>
     <message>
-        <location line="-2004"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-2004"/>
         <source></source>
         <comment>This is the application&apos;s main window.</comment>
         <translation></translation>
@@ -1028,14 +1028,14 @@ Přeskočit nahrávání prve jmenovaného souboru?</translation>
         <translation>Soubor uložen.</translation>
     </message>
     <message>
-        <location line="+15"/>
-        <location line="+1165"/>
         <location filename="../tools/linguist/linguist/mainwindow.ui"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+15"/>
+        <location line="+1165"/>
         <source>Release</source>
         <translation>Vydat</translation>
     </message>
     <message>
-        <location line="-1164"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-1164"/>
         <source>Qt message files for released applications (*.qm)
 All files (*)</source>
         <translation>Qt soubory se zprávami pro vydané aplikace (*.qm)
@@ -1303,13 +1303,13 @@ Všechny soubory (*)</translation>
         <translation>Uložit vše</translation>
     </message>
     <message>
-        <location line="+1"/>
         <location filename="../tools/linguist/linguist/mainwindow.ui"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+1"/>
         <source>&amp;Release All</source>
         <translation>&amp;Vydat vše</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+1"/>
         <source>Close All</source>
         <translation>Zavřít vše</translation>
     </message>
@@ -1334,37 +1334,37 @@ Všechny soubory (*)</translation>
         <translation>Hledat a &amp;překládat...</translation>
     </message>
     <message>
-        <location line="+51"/>
         <location filename="../tools/linguist/linguist/mainwindow.ui"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+51"/>
         <source>File</source>
         <translation>Soubor</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../tools/linguist/linguist/mainwindow.ui"/>
+        <location/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+7"/>
         <source>Edit</source>
         <translation>Úpravy</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <location filename="../tools/linguist/linguist/mainwindow.ui"/>
+        <location/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+6"/>
         <source>Translation</source>
         <translation>Překlad</translation>
     </message>
     <message>
-        <location line="+6"/>
-        <location filename="../tools/linguist/linguist/mainwindow.ui"/>
+        <location/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+6"/>
         <source>Validation</source>
         <translation>Schválení</translation>
     </message>
     <message>
-        <location line="+7"/>
-        <location filename="../tools/linguist/linguist/mainwindow.ui"/>
+        <location/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+7"/>
         <source>Help</source>
         <translation>Nápověda</translation>
     </message>
     <message>
-        <location line="+84"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+84"/>
         <source>Cannot read from phrase book &apos;%1&apos;.</source>
         <translation>Nelze číst ze slovníku &apos;%1&apos;.</translation>
     </message>
@@ -1414,13 +1414,13 @@ Všechny soubory (*)</translation>
         <translation>F5</translation>
     </message>
     <message>
+        <location/>
         <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-536"/>
-        <location filename="../tools/linguist/linguist/mainwindow.ui"/>
         <source>Translation File &amp;Settings...</source>
         <translation>&amp;Nastavení souboru s překladem...</translation>
     </message>
     <message>
-        <location filename="../tools/linguist/linguist/mainwindow.ui"/>
+        <location/>
         <source>&amp;Add to Phrase Book</source>
         <translation>&amp;Přidat do slovníku</translation>
     </message>

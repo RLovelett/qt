@@ -5561,7 +5561,12 @@ Zvolte, prosím, jiný název.</translation>
 <context>
     <name>qdesigner_internal::ObjectInspector</name>
     <message>
-        <location filename="../tools/designer/src/components/objectinspector/objectinspector.cpp" line="+754"/>
+        <location filename="../tools/designer/src/components/objectinspector/objectinspector.cpp" line="+316"/>
+        <source>Change Current Page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+438"/>
         <source>&amp;Find in Text...</source>
         <translation>&amp;Najít v textu...</translation>
     </message>
@@ -5569,9 +5574,8 @@ Zvolte, prosím, jiný název.</translation>
 <context>
     <name>qdesigner_internal::ObjectInspector::ObjectInspectorPrivate</name>
     <message>
-        <location line="-438"/>
         <source>Change Current Page</source>
-        <translation>Změnit nynější stranu</translation>
+        <translation type="obsolete">Změnit nynější stranu</translation>
     </message>
 </context>
 <context>
@@ -5786,39 +5790,64 @@ Zvolte, prosím, jiný název.</translation>
         <source>Browse...</source>
         <translation>Procházet...</translation>
     </message>
-</context>
-<context>
-    <name>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate</name>
     <message>
         <location line="+118"/>
         <source>Load Custom Device Skin</source>
-        <translation>Nahrát uživatelsky stanovený vzhled zařízení</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
         <source>All QVFB Skins (*.%1)</source>
-        <translation>Všechny vzhledy QVFB (*.%1)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+16"/>
         <source>%1 - Duplicate Skin</source>
-        <translation>%1 - Vzhled již existuje</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The skin &apos;%1&apos; already exists.</source>
-        <translation>Vzhled &apos;%1&apos; již existuje.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+14"/>
         <source>%1 - Error</source>
-        <translation>%1 - Chyba</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1 is not a valid skin directory:
 %2</source>
-        <translation>%1 není platným adresářem vzhledu:
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate</name>
+    <message>
+        <source>Load Custom Device Skin</source>
+        <translation type="obsolete">Nahrát uživatelsky stanovený vzhled zařízení</translation>
+    </message>
+    <message>
+        <source>All QVFB Skins (*.%1)</source>
+        <translation type="obsolete">Všechny vzhledy QVFB (*.%1)</translation>
+    </message>
+    <message>
+        <source>%1 - Duplicate Skin</source>
+        <translation type="obsolete">%1 - Vzhled již existuje</translation>
+    </message>
+    <message>
+        <source>The skin &apos;%1&apos; already exists.</source>
+        <translation type="obsolete">Vzhled &apos;%1&apos; již existuje.</translation>
+    </message>
+    <message>
+        <source>%1 - Error</source>
+        <translation type="obsolete">%1 - Chyba</translation>
+    </message>
+    <message>
+        <source>%1 is not a valid skin directory:
+%2</source>
+        <translation type="obsolete">%1 není platným adresářem vzhledu:
 %2</translation>
     </message>
 </context>
