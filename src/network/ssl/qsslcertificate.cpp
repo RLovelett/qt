@@ -127,7 +127,7 @@
 QT_BEGIN_NAMESPACE
 
 // forward declaration
-static QMap<QString, QString> _q_mapFromOnelineName(char *name);
+static QMap<QString, QString> _q_mapFromOnelineName(const QString &name);
 
 /*!
     Constructs a QSslCertificate by reading \a format encoded data
@@ -271,16 +271,16 @@ QByteArray QSslCertificate::digest(QCryptographicHash::Algorithm algorithm) cons
     return QCryptographicHash::hash(toDer(), algorithm);
 }
 
-static QString _q_SubjectInfoToString(QSslCertificate::SubjectInfo info)
+static QByteArray _q_SubjectInfoToString(QSslCertificate::SubjectInfo info)
 {
-    QString str;
+    QByteArray str;
     switch (info) {
-    case QSslCertificate::Organization: str = QLatin1String("O"); break;
-    case QSslCertificate::CommonName: str = QLatin1String("CN"); break;
-    case QSslCertificate::LocalityName: str = QLatin1String("L"); break;
-    case QSslCertificate::OrganizationalUnitName: str = QLatin1String("OU"); break;
-    case QSslCertificate::CountryName: str = QLatin1String("C"); break;
-    case QSslCertificate::StateOrProvinceName: str = QLatin1String("ST"); break;
+    case QSslCertificate::Organization: str = "O"; break;
+    case QSslCertificate::CommonName: str = "CN"; break;
+    case QSslCertificate::LocalityName: str = "L"; break;
+    case QSslCertificate::OrganizationalUnitName: str = "OU"; break;
+    case QSslCertificate::CountryName: str = "C"; break;
+    case QSslCertificate::StateOrProvinceName: str = "ST"; break;
     }
     return str;
 }
@@ -296,11 +296,7 @@ static QString _q_SubjectInfoToString(QSslCertificate::SubjectInfo info)
 */
 QString QSslCertificate::issuerInfo(SubjectInfo info) const
 {
-    if (d->issuerInfo.isEmpty() && d->x509)
-        d->issuerInfo =
-                _q_mapFromOnelineName(q_X509_NAME_oneline(q_X509_get_issuer_name(d->x509), 0, 0));
-
-    return d->issuerInfo.value(_q_SubjectInfoToString(info));
+    return issuerInfo(_q_SubjectInfoToString(info));
 }
 
 /*!
@@ -312,6 +308,18 @@ QString QSslCertificate::issuerInfo(SubjectInfo info) const
 */
 QString QSslCertificate::issuerInfo(const QByteArray &tag) const
 {
+    if (d->issuerInfo.isEmpty() && d->x509)
+    {
+        BIO *bio = q_BIO_new(q_BIO_s_mem());
+        q_X509_NAME_print_ex(bio, q_X509_get_issuer_name(d->x509), 0,
+            ASN1_STRFLGS_UTF8_CONVERT | ASN1_STRFLGS_DUMP_UNKNOWN | ASN1_STRFLGS_DUMP_DER |
+            XN_FLAG_SEP_MULTILINE | XN_FLAG_DUMP_UNKNOWN_FIELDS | XN_FLAG_FN_SN);
+        char *data = NULL;
+        int len = q_BIO_get_mem_data(bio, &data);
+        d->issuerInfo = _q_mapFromOnelineName(QString::fromUtf8(data, len));
+        q_BIO_free(bio);
+    }
+
     // ### Use a QByteArray for the keys in the map
     return d->issuerInfo.value(QString::fromLatin1(tag));
 }
@@ -327,11 +335,7 @@ QString QSslCertificate::issuerInfo(const QByteArray &tag) const
 */
 QString QSslCertificate::subjectInfo(SubjectInfo info) const
 {
-    if (d->subjectInfo.isEmpty() && d->x509)
-        d->subjectInfo =
-                _q_mapFromOnelineName(q_X509_NAME_oneline(q_X509_get_subject_name(d->x509), 0, 0));
-
-    return d->subjectInfo.value(_q_SubjectInfoToString(info));
+    return subjectInfo(_q_SubjectInfoToString(info));
 }
 
 /*!
@@ -342,6 +346,18 @@ QString QSslCertificate::subjectInfo(SubjectInfo info) const
 */
 QString QSslCertificate::subjectInfo(const QByteArray &tag) const
 {
+    if (d->subjectInfo.isEmpty() && d->x509)
+    {
+        BIO *bio = q_BIO_new(q_BIO_s_mem());
+        q_X509_NAME_print_ex(bio, q_X509_get_subject_name(d->x509), 0,
+            ASN1_STRFLGS_UTF8_CONVERT | ASN1_STRFLGS_DUMP_UNKNOWN | ASN1_STRFLGS_DUMP_DER |
+            XN_FLAG_SEP_MULTILINE | XN_FLAG_DUMP_UNKNOWN_FIELDS | XN_FLAG_FN_SN);
+        char *data = NULL;
+        int len = q_BIO_get_mem_data(bio, &data);
+        d->subjectInfo = _q_mapFromOnelineName(QString::fromUtf8(data, len));
+        q_BIO_free(bio);
+    }
+
     // ### Use a QByteArray for the keys in the map
     return d->subjectInfo.value(QString::fromLatin1(tag));
 }
@@ -626,37 +642,13 @@ QByteArray QSslCertificatePrivate::QByteArray_from_X509(X509 *x509, QSsl::Encodi
     return BEGINCERTSTRING "\n" + tmp + ENDCERTSTRING "\n";
 }
 
-static QMap<QString, QString> _q_mapFromOnelineName(char *name)
+static QMap<QString, QString> _q_mapFromOnelineName(const QString &name)
 {
     QMap<QString, QString> info;
-    QString infoStr = QString::fromLocal8Bit(name);
-    q_CRYPTO_free(name);
-
-    // ### The right-hand encoding seems to allow hex (Regulierungsbeh\xC8orde)
-    //entry.replace(QLatin1String("\\x"), QLatin1String("%"));
-    //entry = QUrl::fromPercentEncoding(entry.toLatin1());
-    // ### See RFC-4630 for more details!
-
-    QRegExp rx(QLatin1String("/([A-Za-z]+)=(.+)"));
-
-    int pos = 0;
-    while ((pos = rx.indexIn(infoStr, pos)) != -1) {
-        const QString name = rx.cap(1);
-
-        QString value = rx.cap(2);
-        const int valuePos = rx.pos(2);
-
-        const int next = rx.indexIn(value);
-        if (next == -1) {
-            info.insert(name, value);
-            break;
-        }
-
-        value = value.left(next);
-        info.insert(name, value);
-        pos = valuePos + value.length();
+    foreach (const QString &item, name.split(QLatin1Char('\n'))) {
+        QStringList value = item.split(QLatin1Char('='));
+        info.insert(value.value(0), value.value(1));
     }
-
     return info;
 }
 

@@ -352,7 +352,7 @@ void *q_X509_get_ext_d2i(X509 *a, int b, int *c, int *d);
 X509_NAME *q_X509_get_issuer_name(X509 *a);
 X509_NAME *q_X509_get_subject_name(X509 *a);
 int q_X509_verify_cert(X509_STORE_CTX *ctx);
-char *q_X509_NAME_oneline(X509_NAME *a, char *b, int c);
+int q_X509_NAME_print_ex(BIO *a, X509_NAME *b, int c, unsigned long d);
 EVP_PKEY *q_X509_PUBKEY_get(X509_PUBKEY *a);
 void q_X509_STORE_free(X509_STORE *store);
 X509_STORE *q_X509_STORE_new();
