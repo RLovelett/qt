@@ -5563,7 +5563,7 @@ Zvolte, prosím, jiný název.</translation>
     <message>
         <location filename="../tools/designer/src/components/objectinspector/objectinspector.cpp" line="+316"/>
         <source>Change Current Page</source>
-        <translation type="unfinished"></translation>
+        <translation>Změnit nynější stranu</translation>
     </message>
     <message>
         <location line="+438"/>
@@ -5793,33 +5793,34 @@ Zvolte, prosím, jiný název.</translation>
     <message>
         <location line="+118"/>
         <source>Load Custom Device Skin</source>
-        <translation type="unfinished"></translation>
+        <translation>Nahrát uživatelsky stanovený vzhled zařízení</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>All QVFB Skins (*.%1)</source>
-        <translation type="unfinished"></translation>
+        <translation>Všechny vzhledy QVFB (*.%1)</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>%1 - Duplicate Skin</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - Zdvojit vzhled</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>The skin &apos;%1&apos; already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vzhled &apos;%1&apos; již existuje.</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>%1 - Error</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - Chyba</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>%1 is not a valid skin directory:
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 není platným adresářem pro vzhled:
+%2</translation>
     </message>
 </context>
 <context>

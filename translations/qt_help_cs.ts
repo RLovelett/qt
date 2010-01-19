@@ -38,7 +38,7 @@
     <message>
         <location filename="../tools/assistant/lib/qhelpcollectionhandler.cpp" line="+79"/>
         <source>The collection file &apos;%1&apos; is not set up yet!</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor se sbírkou &apos;%1&apos; ještě není zřízen!</translation>
     </message>
     <message>
         <location line="+23"/>
@@ -59,27 +59,27 @@
     <message>
         <location line="+16"/>
         <source>The collection file &apos;%1&apos; already exists!</source>
-        <translation type="unfinished"></translation>
+        <translation>Soubor se sbírkou &apos;%1&apos; již existuje!</translation>
     </message>
     <message>
         <location line="+148"/>
         <source>Unknown filter &apos;%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Neznámý filtr &apos;%1&apos;!</translation>
     </message>
     <message>
         <location line="+105"/>
         <source>Invalid documentation file &apos;%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Neplatný soubor s dokumentací &apos;%1&apos;!</translation>
     </message>
     <message>
         <location line="+167"/>
         <source>Cannot register namespace &apos;%1&apos;!</source>
-        <translation type="unfinished"></translation>
+        <translation>Nelze zapsat jmenný prostor %1!</translation>
     </message>
     <message>
         <location line="+24"/>
         <source>Cannot open database &apos;%1&apos; to optimize!</source>
-        <translation type="unfinished"></translation>
+        <translation>Databázi &apos;%1&apos; nelze otevřít pro vyladění!</translation>
     </message>
     <message>
         <source>The specified collection file already exists!</source>

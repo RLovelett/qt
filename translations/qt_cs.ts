@@ -82,17 +82,17 @@
     <message>
         <location filename="../src/3rdparty/phonon/phonon/audiooutput.cpp" line="+377"/>
         <source>&lt;html&gt;The audio playback device &lt;b&gt;%1&lt;/b&gt; does not work.&lt;br/&gt;Falling back to &lt;b&gt;%2&lt;/b&gt;.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Zařízení pro přehrávání zvuku &lt;b&gt;%1&lt;/b&gt; nepracuje.&lt;br/&gt;Místo něj &lt;b&gt;%2&lt;/b&gt; se používá.&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>&lt;html&gt;Switching to the audio playback device &lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;which just became available and has higher preference.&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;Zařízení pro přehrávání zvuku &lt;b&gt;%1&lt;/b&gt; bylo spuštěno,&lt;br/&gt;protože je právě dostupné a má větší přednost.&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Revert back to device &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Přepnout zpět na zařízení &apos;%1&apos;</translation>
     </message>
 </context>
 <context>
@@ -181,7 +181,7 @@ Ověřte, prosím, instalaci Gstreamer a ujistěte se,
     <message>
         <location filename="../src/3rdparty/phonon/mmf/audioequalizer.cpp" line="+75"/>
         <source>Frequency band, %1 Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>Kmitočtové pásmo, %1 Hz</translation>
     </message>
 </context>
 <context>
@@ -243,7 +243,7 @@ Ověřte, prosím, instalaci Gstreamer a ujistěte se,
     <message>
         <location line="+67"/>
         <source>Muted</source>
-        <translation type="unfinished"></translation>
+        <translation>Ztlumení</translation>
     </message>
 </context>
 <context>
