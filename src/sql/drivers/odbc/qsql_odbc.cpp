@@ -70,7 +70,7 @@ QT_BEGIN_NAMESPACE
 #endif
 
 // newer platform SDKs use SQLLEN instead of SQLINTEGER
-#if defined(WIN32) && (_MSC_VER < 1300)
+#if defined(WIN32) && (_MSC_VER < 1300)  && !defined(__MINGW64_VERSION_MAJOR)
 # define QSQLLEN SQLINTEGER
 # define QSQLULEN SQLUINTEGER
 #else
