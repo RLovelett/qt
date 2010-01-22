@@ -44,7 +44,8 @@ public:
     TextStream& operator<<(double);
     TextStream& operator<<(const char*);
     TextStream& operator<<(const String&);
-#if PLATFORM(WIN_OS) && PLATFORM(X86_64) && COMPILER(MSVC)
+#if PLATFORM(WIN_OS) && PLATFORM(X86_64) && COMPILER(MSVC) \
+    || (defined(__MINGW64_VERSION_MAJOR) && defined(_WIN64))
     TextStream& operator<<(unsigned __int64);
     TextStream& operator<<(__int64);
 #endif

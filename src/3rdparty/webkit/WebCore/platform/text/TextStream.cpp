@@ -101,7 +101,8 @@ String TextStream::release()
     return String::adopt(m_text);
 }
 
-#if PLATFORM(WIN_OS) && PLATFORM(X86_64) && COMPILER(MSVC)
+#if PLATFORM(WIN_OS) && PLATFORM(X86_64) && COMPILER(MSVC) \
+    || (defined(__MINGW64_VERSION_MAJOR) && defined(_WIN64))
 TextStream& TextStream::operator<<(__int64 i)
 {
     char buffer[printBufferSize];

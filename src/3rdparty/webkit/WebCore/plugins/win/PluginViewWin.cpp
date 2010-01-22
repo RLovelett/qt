@@ -997,7 +997,8 @@ bool PluginView::platformStart()
 
         // Calling SetWindowLongPtrA here makes the window proc ASCII, which is required by at least
         // the Shockwave Director plug-in.
-#if PLATFORM(WIN_OS) && PLATFORM(X86_64) && COMPILER(MSVC)
+#if PLATFORM(WIN_OS) && PLATFORM(X86_64) && COMPILER(MSVC) \
+     || defined(__MINGW64_VERSION_MAJOR) && defined(_WIN64)
         ::SetWindowLongPtrA(platformPluginWidget(), GWLP_WNDPROC, (LONG_PTR)DefWindowProcA);
 #elif PLATFORM(WINCE)
         ::SetWindowLong(platformPluginWidget(), GWL_WNDPROC, (LONG)DefWindowProc);
