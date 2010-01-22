@@ -6,7 +6,19 @@
 ------------------------------------------------------------------------------*/
 #ifndef _CL_HAVE_TCHAR_H
 #if defined(_UCS2)
-    #define TCHAR wchar_t
+    // Mingw-w64 defines wchar_t
+    #ifdef __MINGW64_VERSION_MAJOR
+        #ifdef __cplusplus
+            extern "C"
+            {
+        #endif
+            typedef wchar_t TCHAR;
+        #ifdef __cplusplus
+            }
+        #endif
+    #else
+        #define TCHAR wchar_t
+    #endif
     
     //note: descriptions with * in front have replacement functions
     
