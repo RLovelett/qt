@@ -77,7 +77,8 @@
 // #define QAX_SUPPORT_BORDERSPACE
 
 // missing interface from win32api
-#if defined(Q_CC_GNU)
+// Not missing from mingw-w64
+#if defined(Q_CC_GNU) && !defined(__MINGW64_VERSION_MAJOR)
 #   if !defined(IOleInPlaceObjectWindowless)
 #       undef INTERFACE
 #       define INTERFACE IOleInPlaceObjectWindowless

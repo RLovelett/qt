@@ -1353,7 +1353,8 @@ bool QAxBase::initializeFromFile(IUnknown** ptr)
 
 
 // There seams to be a naming problem in mingw headers
-#ifdef Q_CC_GNU
+// But not in mingw-w64
+#if defined(Q_CC_GNU) && !defined(__MINGW64_VERSION_MAJOR)
 #ifndef COAUTHIDENTITY
 #define COAUTHIDENTITY AUTH_IDENTITY
 #endif
