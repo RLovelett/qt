@@ -153,6 +153,11 @@ config.tests/unix/mmx/mmx
 config.tests/unix/sse/sse
 config.tests/unix/sse2/sse2
 
+# Eclipse CDT
+.project
+.cproject
+.externalToolBuilders
+
 
 
 # Directories to ignore

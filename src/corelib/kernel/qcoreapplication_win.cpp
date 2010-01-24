@@ -594,9 +594,12 @@ static const char* findWMstr(uint msg)
 };
 
 // Convenience function for converting flags and values into readable strings
+// Since we are going to store HWND values here, we need to use an
+// integer of the same size of a pointer.
+// Otherwise, gcc-4.4 issues a loss of precision error, which is pretty right.
 struct FLAG_STRING_STRUCT
 {
-    uint value;
+    quintptr value;
     const char* str;
 };
 
@@ -611,7 +614,7 @@ FLAG_STRING_STRUCT FLAG_STRING(int value = 0, const char *c = 0)
 // Returns an ORed (" | ") together string for the flags active in the actual
 // value. (...) must consist of FLAG_STRING, with a FLAG_STRING() as the last
 // value in the list passed to the function
-QString flagCheck(uint actual, ...)
+QString flagCheck(quintptr actual, ...)
 {
     va_list ap;
     va_start(ap, actual);
@@ -633,7 +636,7 @@ QString flagCheck(uint actual, ...)
 // Returns the string representation of the value in 'actual'. (...) must
 // consist of FLAG_STRING, with a FLAG_STRING() as the last value in the list
 // passed to the function
-QString valueCheck(uint actual, ...)
+QString valueCheck(quintptr actual, ...)
 {
     va_list ap;
     va_start(ap, actual);
@@ -1021,14 +1024,14 @@ QString decodeMSG(const MSG& msg)
                 LPWINDOWPOS winPos = (LPWINDOWPOS)lParam;
                 if (!winPos)
                     break;
-                QString hwndAfter = valueCheck((uint)winPos->hwndInsertAfter,
-                                          FLAG_STRING((uint)HWND_BOTTOM,    "HWND_BOTTOM"),
-                                          FLAG_STRING((int)HWND_NOTOPMOST, "HWND_NOTOPMOST"),
-                                          FLAG_STRING((uint)HWND_TOP,       "HWND_TOP"),
-                                          FLAG_STRING((int)HWND_TOPMOST,   "HWND_TOPMOST"),
+                QString hwndAfter = valueCheck((quintptr)winPos->hwndInsertAfter,
+                                          FLAG_STRING((quintptr)HWND_BOTTOM,   "HWND_BOTTOM"),
+                                          FLAG_STRING((qptrdiff)HWND_NOTOPMOST, "HWND_NOTOPMOST"),
+                                          FLAG_STRING((quintptr)HWND_TOP,      "HWND_TOP"),
+                                          FLAG_STRING((qptrdiff)HWND_TOPMOST,   "HWND_TOPMOST"),
                                           FLAG_STRING());
                 if (hwndAfter.size() == 0)
-                    hwndAfter = QString::number((uint)winPos->hwndInsertAfter, 16);
+                    hwndAfter = QString::number((quintptr)winPos->hwndInsertAfter, 16);
                 QString flags = flagCheck(winPos->flags,
                                           FLGSTR(SWP_DRAWFRAME),
                                           FLGSTR(SWP_FRAMECHANGED),
