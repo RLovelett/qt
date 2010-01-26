@@ -323,7 +323,6 @@ QDateTime &QFileInfoPrivate::getFileTime(QAbstractFileEngine::FileTime request) 
 
     \sa setFile()
 */
-
 QFileInfo::QFileInfo() : d_ptr(new QFileInfoPrivate())
 {
 }
@@ -334,7 +333,6 @@ QFileInfo::QFileInfo() : d_ptr(new QFileInfoPrivate())
 
     \sa setFile(), isRelative(), QDir::setCurrent(), QDir::isRelativePath()
 */
-
 QFileInfo::QFileInfo(const QString &file) : d_ptr(new QFileInfoPrivate())
 {
     d_ptr->initFileEngine(file);
@@ -349,7 +347,6 @@ QFileInfo::QFileInfo(const QString &file) : d_ptr(new QFileInfoPrivate())
 
     \sa isRelative()
 */
-
 QFileInfo::QFileInfo(const QFile &file) : d_ptr(new QFileInfoPrivate())
 {
     d_ptr->initFileEngine(file.fileName());
@@ -367,7 +364,6 @@ QFileInfo::QFileInfo(const QFile &file) : d_ptr(new QFileInfoPrivate())
 
     \sa isRelative()
 */
-
 QFileInfo::QFileInfo(const QDir &dir, const QString &file) : d_ptr(new QFileInfoPrivate())
 {
     d_ptr->initFileEngine(dir.filePath(file));
@@ -376,7 +372,6 @@ QFileInfo::QFileInfo(const QDir &dir, const QString &file) : d_ptr(new QFileInfo
 /*!
     Constructs a new QFileInfo that is a copy of the given \a fileinfo.
 */
-
 QFileInfo::QFileInfo(const QFileInfo &fileinfo) : d_ptr(new QFileInfoPrivate(&fileinfo))
 {
 
@@ -385,7 +380,6 @@ QFileInfo::QFileInfo(const QFileInfo &fileinfo) : d_ptr(new QFileInfoPrivate(&fi
 /*!
     Destroys the QFileInfo and frees its resources.
 */
-
 
 QFileInfo::~QFileInfo()
 {
@@ -459,7 +453,6 @@ bool QFileInfo::operator==(const QFileInfo &fileinfo)
 /*!
     Makes a copy of the given \a fileinfo and assigns it to this QFileInfo.
 */
-
 QFileInfo &QFileInfo::operator=(const QFileInfo &fileinfo)
 {
     Q_D(QFileInfo);
@@ -482,7 +475,6 @@ QFileInfo &QFileInfo::operator=(const QFileInfo &fileinfo)
 
     \sa isRelative(), QDir::setCurrent(), QDir::isRelativePath()
 */
-
 void QFileInfo::setFile(const QString &file)
 {
     *this = QFileInfo(file);
@@ -499,7 +491,6 @@ void QFileInfo::setFile(const QString &file)
 
     \sa isRelative()
 */
-
 void QFileInfo::setFile(const QFile &file)
 {
     *this = QFileInfo(file.fileName());
@@ -516,7 +507,6 @@ void QFileInfo::setFile(const QFile &file)
 
     \sa isRelative()
 */
-
 void QFileInfo::setFile(const QDir &dir, const QString &file)
 {
     *this = QFileInfo(dir.filePath(file));
@@ -552,15 +542,14 @@ QString QFileInfo::absoluteFilePath() const
 }
 
 /*!
-  Returns the canonical path including the file name, i.e. an absolute
-  path without symbolic links or redundant "." or ".." elements.
+    Returns the canonical path including the file name, i.e. an absolute
+    path without symbolic links or redundant "." or ".." elements.
 
-  If the file does not exist, canonicalFilePath() returns an empty
-  string.
+    If the file does not exist, canonicalFilePath() returns an empty
+    string.
 
-  \sa filePath(), absoluteFilePath(), dir()
+    \sa filePath(), absoluteFilePath(), dir()
 */
-
 QString QFileInfo::canonicalFilePath() const
 {
     Q_D(const QFileInfo);
@@ -587,7 +576,6 @@ QString QFileInfo::canonicalFilePath() const
 
     \sa absoluteFilePath(), path(), canonicalPath(), fileName(), isRelative()
 */
-
 QString QFileInfo::absolutePath() const
 {
     Q_D(const QFileInfo);
@@ -609,7 +597,6 @@ QString QFileInfo::absolutePath() const
 
     \sa path(), absolutePath()
 */
-
 QString QFileInfo::canonicalPath() const
 {
     Q_D(const QFileInfo);
@@ -617,7 +604,6 @@ QString QFileInfo::canonicalPath() const
         return QLatin1String("");
     return d->getFileName(QAbstractFileEngine::CanonicalPathName);
 }
-
 
 /*!
     Returns the file's path. This doesn't include the file name.
@@ -628,7 +614,6 @@ QString QFileInfo::canonicalPath() const
 
     \sa filePath(), absolutePath(), canonicalPath(), dir(), fileName(), isRelative()
 */
-
 QString QFileInfo::path() const
 {
     Q_D(const QFileInfo);
@@ -653,7 +638,6 @@ QString QFileInfo::path() const
 
     \sa isAbsolute()
 */
-
 bool QFileInfo::isRelative() const
 {
     Q_D(const QFileInfo);
@@ -662,7 +646,6 @@ bool QFileInfo::isRelative() const
     return d->data->fileEngine->isRelativePath();
 }
 
-
 /*!
     Converts the file's path to an absolute path if it is not already in that form.
     Returns true to indicate that the path was converted; otherwise returns false
@@ -670,7 +653,6 @@ bool QFileInfo::isRelative() const
 
     \sa filePath(), isRelative()
 */
-
 bool QFileInfo::makeAbsolute()
 {
     Q_D(QFileInfo);
@@ -687,7 +669,6 @@ bool QFileInfo::makeAbsolute()
     \note If the file is a symlink that points to a non existing
      file, false is returned.
 */
-
 bool QFileInfo::exists() const
 {
     Q_D(const QFileInfo);
@@ -703,7 +684,6 @@ bool QFileInfo::exists() const
    \note On Windows CE, there might be a delay for the file system driver
     to detect changes on the file.
 */
-
 void QFileInfo::refresh()
 {
     Q_D(QFileInfo);
@@ -716,7 +696,6 @@ void QFileInfo::refresh()
 
     \sa absoluteFilePath(), canonicalFilePath(), isRelative()
 */
-
 QString QFileInfo::filePath() const
 {
     Q_D(const QFileInfo);
@@ -736,7 +715,6 @@ QString QFileInfo::filePath() const
 
     \sa isRelative(), filePath(), baseName(), extension()
 */
-
 QString QFileInfo::fileName() const
 {
     Q_D(const QFileInfo);
@@ -757,7 +735,6 @@ QString QFileInfo::fileName() const
 
     \sa isBundle(), filePath(), baseName(), extension()
 */
-
 QString QFileInfo::bundleName() const
 {
     Q_D(const QFileInfo);
@@ -782,7 +759,6 @@ QString QFileInfo::bundleName() const
 
     \sa fileName(), suffix(), completeSuffix(), completeBaseName()
 */
-
 QString QFileInfo::baseName() const
 {
     Q_D(const QFileInfo);
@@ -802,7 +778,6 @@ QString QFileInfo::baseName() const
 
     \sa fileName(), suffix(), completeSuffix(), baseName()
 */
-
 QString QFileInfo::completeBaseName() const
 {
     Q_D(const QFileInfo);
@@ -824,7 +799,6 @@ QString QFileInfo::completeBaseName() const
 
     \sa fileName(), suffix(), baseName(), completeBaseName()
 */
-
 QString QFileInfo::completeSuffix() const
 {
     Q_D(const QFileInfo);
@@ -852,7 +826,6 @@ QString QFileInfo::completeSuffix() const
 
     \sa fileName(), completeSuffix(), baseName(), completeBaseName()
 */
-
 QString QFileInfo::suffix() const
 {
     Q_D(const QFileInfo);
@@ -867,24 +840,23 @@ QString QFileInfo::suffix() const
 
 
 /*!
-  Returns the path of the object's parent directory as a QDir object.
+    Returns the path of the object's parent directory as a QDir object.
 
-  \bold{Note:} The QDir returned always corresponds to the object's
-  parent directory, even if the QFileInfo represents a directory.
+    \bold{Note:} The QDir returned always corresponds to the object's
+    parent directory, even if the QFileInfo represents a directory.
 
-  For each of the follwing, dir() returns a QDir for
-  \c{"~/examples/191697"}.
+    For each of the follwing, dir() returns a QDir for
+    \c{"~/examples/191697"}.
 
-  \snippet doc/src/snippets/fileinfo/main.cpp 0
+    \snippet doc/src/snippets/fileinfo/main.cpp 0
 
-  For each of the follwing, dir() returns a QDir for
-  \c{"."}.
+    For each of the follwing, dir() returns a QDir for
+    \c{"."}.
 
-  \snippet doc/src/snippets/fileinfo/main.cpp 1
+    \snippet doc/src/snippets/fileinfo/main.cpp 1
 
-  \sa absolutePath(), filePath(), fileName(), isRelative(), absoluteDir()
+    \sa absolutePath(), filePath(), fileName(), isRelative(), absoluteDir()
 */
-
 QDir QFileInfo::dir() const
 {
     // ### Qt5: Maybe rename this to parentDirectory(), considering what it actually do?
@@ -896,7 +868,6 @@ QDir QFileInfo::dir() const
 
     \sa dir(), filePath(), fileName(), isRelative()
 */
-
 QDir QFileInfo::absoluteDir() const
 {
     return QDir(absolutePath());
@@ -920,7 +891,6 @@ QDir QFileInfo::dir(bool absPath) const
 
     \sa isWritable(), isExecutable(), permission()
 */
-
 bool QFileInfo::isReadable() const
 {
     Q_D(const QFileInfo);
@@ -934,7 +904,6 @@ bool QFileInfo::isReadable() const
 
     \sa isReadable(), isExecutable(), permission()
 */
-
 bool QFileInfo::isWritable() const
 {
     Q_D(const QFileInfo);
@@ -948,7 +917,6 @@ bool QFileInfo::isWritable() const
 
     \sa isReadable(), isWritable(), permission()
 */
-
 bool QFileInfo::isExecutable() const
 {
     Q_D(const QFileInfo);
@@ -978,7 +946,6 @@ bool QFileInfo::isHidden() const
 
     \sa isDir(), isSymLink(), isBundle()
 */
-
 bool QFileInfo::isFile() const
 {
     Q_D(const QFileInfo);
@@ -993,7 +960,6 @@ bool QFileInfo::isFile() const
 
     \sa isFile(), isSymLink(), isBundle()
 */
-
 bool QFileInfo::isDir() const
 {
     Q_D(const QFileInfo);
@@ -1010,7 +976,6 @@ bool QFileInfo::isDir() const
 
     \sa isDir(), isSymLink(), isFile()
 */
-
 bool QFileInfo::isBundle() const
 {
     Q_D(const QFileInfo);
@@ -1036,7 +1001,6 @@ bool QFileInfo::isBundle() const
 
     \sa isFile(), isDir(), symLinkTarget()
 */
-
 bool QFileInfo::isSymLink() const
 {
     Q_D(const QFileInfo);
@@ -1046,11 +1010,10 @@ bool QFileInfo::isSymLink() const
 }
 
 /*!
-  Returns true if the object points to a directory or to a symbolic
-  link to a directory, and that directory is the root directory; otherwise
-  returns false.
+    Returns true if the object points to a directory or to a symbolic
+    link to a directory, and that directory is the root directory; otherwise
+    returns false.
 */
-
 bool QFileInfo::isRoot() const
 {
     Q_D(const QFileInfo);
@@ -1097,7 +1060,6 @@ QString QFileInfo::readLink() const
 
     \sa ownerId(), group(), groupId()
 */
-
 QString QFileInfo::owner() const
 {
     Q_D(const QFileInfo);
@@ -1114,7 +1076,6 @@ QString QFileInfo::owner() const
 
     \sa owner(), group(), groupId()
 */
-
 uint QFileInfo::ownerId() const
 {
     Q_D(const QFileInfo);
@@ -1133,7 +1094,6 @@ uint QFileInfo::ownerId() const
 
     \sa groupId(), owner(), ownerId()
 */
-
 QString QFileInfo::group() const
 {
     Q_D(const QFileInfo);
@@ -1150,7 +1110,6 @@ QString QFileInfo::group() const
 
     \sa group(), owner(), ownerId()
 */
-
 uint QFileInfo::groupId() const
 {
     Q_D(const QFileInfo);
@@ -1172,7 +1131,6 @@ uint QFileInfo::groupId() const
 
     \sa isReadable(), isWritable(), isExecutable()
 */
-
 bool QFileInfo::permission(QFile::Permissions permissions) const
 {
     Q_D(const QFileInfo);
@@ -1185,7 +1143,6 @@ bool QFileInfo::permission(QFile::Permissions permissions) const
     Returns the complete OR-ed together combination of
     QFile::Permissions for the file.
 */
-
 QFile::Permissions QFileInfo::permissions() const
 {
     Q_D(const QFileInfo);
@@ -1201,7 +1158,6 @@ QFile::Permissions QFileInfo::permissions() const
 
     \sa exists()
 */
-
 qint64 QFileInfo::size() const
 {
     Q_D(const QFileInfo);
@@ -1227,7 +1183,6 @@ qint64 QFileInfo::size() const
 
     \sa lastModified() lastRead()
 */
-
 QDateTime QFileInfo::created() const
 {
     Q_D(const QFileInfo);
@@ -1241,7 +1196,6 @@ QDateTime QFileInfo::created() const
 
     \sa created() lastRead()
 */
-
 QDateTime QFileInfo::lastModified() const
 {
     Q_D(const QFileInfo);
@@ -1258,7 +1212,6 @@ QDateTime QFileInfo::lastModified() const
 
     \sa created() lastModified()
 */
-
 QDateTime QFileInfo::lastRead() const
 {
     Q_D(const QFileInfo);
@@ -1270,7 +1223,6 @@ QDateTime QFileInfo::lastRead() const
 /*! \internal
     Detaches all internal data.
 */
-
 void QFileInfo::detach()
 {
     Q_D(QFileInfo);
@@ -1282,7 +1234,6 @@ void QFileInfo::detach()
 
     \sa setCaching(), refresh()
 */
-
 bool QFileInfo::caching() const
 {
     Q_D(const QFileInfo);
@@ -1301,7 +1252,6 @@ bool QFileInfo::caching() const
 
     \sa refresh(), caching()
 */
-
 void QFileInfo::setCaching(bool enable)
 {
     Q_D(QFileInfo);
