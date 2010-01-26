@@ -3834,6 +3834,36 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
     case CE_FocusFrame: {
         int xOff = proxy()->pixelMetric(PM_FocusFrameHMargin, opt, w) + 1;
         int yOff = proxy()->pixelMetric(PM_FocusFrameVMargin, opt, w) + 1;
+
+#ifndef QT_MAC_USE_COCOA
+        if( w->parentWidget() != 0 )
+        {
+            QPixmap back( opt->rect.size() );
+            back.fill( Qt::red );
+            
+            QWidgetList widgets;
+            widgets.push_front( w->parentWidget() );
+            while( widgets.first()->parentWidget() != 0 )
+                widgets.push_front( widgets.first()->parentWidget() );
+            widgets += w->parentWidget()->findChildren< QWidget* >();
+
+            for( QWidgetList::const_iterator it = widgets.begin(); it != widgets.end(); ++it )
+            {
+                QWidget* const wid = *it;
+                const QPoint pos = w->mapFromGlobal( wid->mapToGlobal( QPoint() ) );
+                if( QRect( pos, wid->size() ).intersects( opt->rect ) && dynamic_cast< QFocusFrame* >( wid ) == 0 )
+                    wid->render( &back, pos, QRegion(), wid->parentWidget() ? static_cast< QWidget::RenderFlag >( 0 ) : QWidget::DrawWindowBackground );
+            }
+
+            const bool hadClipping = p->hasClipping();
+            const QRegion r = p->clipRegion();
+            p->setClipRegion( QRegion( opt->rect ).xored( opt->rect.adjusted( xOff, yOff, -xOff, -yOff ) ) );
+            p->drawPixmap( 0, 0, back );
+            p->setClipRegion( r );
+            p->setClipping( hadClipping );
+        }
+#endif
+
         HIRect hirect = CGRectMake(xOff+opt->rect.x(), yOff+opt->rect.y(), opt->rect.width() - 2 * xOff,
                                    opt->rect.height() - 2 * yOff);
         HIThemeDrawFocusRect(&hirect, true, QMacCGContext(p), kHIThemeOrientationNormal);
