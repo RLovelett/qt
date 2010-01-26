@@ -3839,7 +3839,7 @@ void QMacStyle::drawControl(ControlElement ce, const QStyleOption *opt, QPainter
         if( w->parentWidget() != 0 )
         {
             QPixmap back( opt->rect.size() );
-            back.fill( Qt::red );
+            back.fill( Qt::transparent );
             
             QWidgetList widgets;
             widgets.push_front( w->parentWidget() );
