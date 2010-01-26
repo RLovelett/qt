@@ -148,7 +148,7 @@ private:
     inline void setPath(const QString &p)
     {
         detach(false);
-        QString path = p;
+        QString path = p.isEmpty() ? QString::fromLatin1(".") : p;
         if ((path.endsWith(QLatin1Char('/')) || path.endsWith(QLatin1Char('\\')))
                 && path.length() > 1) {
 #if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
@@ -524,7 +524,7 @@ void QDirPrivate::detach(bool createFileEngine)
 QDir::QDir(const QString &path) : d_ptr(new QDirPrivate(this))
 {
     Q_D(QDir);
-    d->setPath(path.isEmpty() ? QString::fromLatin1(".") : path);
+    d->setPath(path);
     d->data->nameFilters = QStringList(QString::fromLatin1("*"));
     d->data->filters = AllEntries;
     d->data->sort = SortFlags(Name | IgnoreCase);
@@ -553,7 +553,7 @@ QDir::QDir(const QString &path, const QString &nameFilter,
            SortFlags sort, Filters filters)  : d_ptr(new QDirPrivate(this))
 {
     Q_D(QDir);
-    d->setPath(path.isEmpty() ? QString::fromLatin1(".") : path);
+    d->setPath(path);
     d->data->nameFilters = QDir::nameFiltersFromString(nameFilter);
     bool empty = d->data->nameFilters.isEmpty();
     if(!empty) {

@@ -219,9 +219,10 @@ void tst_QDir::setPath_data()
     QTest::addColumn<QString>("dir1");
     QTest::addColumn<QString>("dir2");
 
-    QTest::newRow("data0") << QString(".") << QString("..");
+    QTest::newRow("data0") << QString() << QString("");
+    QTest::newRow("data1") << QString(".") << QString("..");
 #if (defined(Q_WS_WIN) && !defined(Q_OS_WINCE)) || defined(Q_OS_SYMBIAN)
-    QTest::newRow("data1") << QString("c:/") << QDir::currentPath();
+    QTest::newRow("data2") << QString("c:/") << QDir::currentPath();
 #endif
 }
 
