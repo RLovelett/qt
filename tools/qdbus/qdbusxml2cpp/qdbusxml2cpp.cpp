@@ -385,16 +385,20 @@ static QString constRefArg(const QByteArray &arg)
         return QString( QLatin1String("const %1 &") ).arg( QLatin1String(arg) );
 }
 
-static QStringList makeArgNames(const QDBusIntrospection::Arguments &inputArgs,
+static QStringList makeArgNames(const QDBusIntrospection::Arguments &inOutArgs,
                                 const QDBusIntrospection::Arguments &outputArgs =
-                                QDBusIntrospection::Arguments())
+                                QDBusIntrospection::Arguments(), bool hasInputArgs = true)
 {
     QStringList retval;
-    for (int i = 0; i < inputArgs.count(); ++i) {
-        const QDBusIntrospection::Argument &arg = inputArgs.at(i);
+    for (int i = 0; i < inOutArgs.count(); ++i) {
+        const QDBusIntrospection::Argument &arg = inOutArgs.at(i);
         QString name = arg.name;
-        if (name.isEmpty())
-            name = QString( QLatin1String("in%1") ).arg(i);
+        if (name.isEmpty()) {
+            if(hasInputArgs) 
+                name = QString( QLatin1String("in%1") ).arg(i);
+            else
+                name = QString( QLatin1String("out%1") ).arg(i);
+        }  
         while (retval.contains(name))
             name += QLatin1String("_");
         retval << name;
@@ -413,19 +417,22 @@ static QStringList makeArgNames(const QDBusIntrospection::Arguments &inputArgs,
 
 static void writeArgList(QTextStream &ts, const QStringList &argNames,
                          const QDBusIntrospection::Annotations &annotations,
-                         const QDBusIntrospection::Arguments &inputArgs,
-                         const QDBusIntrospection::Arguments &outputArgs = QDBusIntrospection::Arguments())
+                         const QDBusIntrospection::Arguments &inOutArgs,
+                         const QDBusIntrospection::Arguments &outputArgs = QDBusIntrospection::Arguments(),
+                         bool hasInputArgs = true)
 {
     // input args:
     bool first = true;
     int argPos = 0;
-    for (int i = 0; i < inputArgs.count(); ++i) {
-        const QDBusIntrospection::Argument &arg = inputArgs.at(i);
-        QString type = constRefArg(qtTypeName(arg.type, annotations, i, "In"));
-
+    for (int i = 0; i < inOutArgs.count(); ++i) {
+        const QDBusIntrospection::Argument &arg = inOutArgs.at(i);
         if (!first)
             ts << ", ";
-        ts << type << argNames.at(argPos++);
+        if(hasInputArgs) 
+            ts << constRefArg(qtTypeName(arg.type, annotations, i, "In"));
+        else
+            ts << nonConstRefArg(qtTypeName(arg.type, annotations, i, "Out"));
+        ts << argNames.at(argPos++);
         first = false;
     }
 
@@ -730,9 +737,9 @@ static void writeProxy(const QString &filename, const QDBusIntrospection::Interf
                 hs << "Q_DECL_DEPRECATED ";
 
             hs << "void " << signal.name << "(";
-
-            QStringList argNames = makeArgNames(signal.outputArgs);
-            writeArgList(hs, argNames, signal.annotations, signal.outputArgs);
+            
+            QStringList argNames = makeArgNames(signal.outputArgs,  QDBusIntrospection::Arguments(), false);
+            writeArgList(hs, argNames, signal.annotations, signal.outputArgs,  QDBusIntrospection::Arguments(), false);
 
             hs << ");" << endl; // finished for header
         }
@@ -1074,8 +1081,9 @@ static void writeAdaptor(const QString &filename, const QDBusIntrospection::Inte
 
             hs << "void " << signal.name << "(";
 
-            QStringList argNames = makeArgNames(signal.outputArgs);
-            writeArgList(hs, argNames, signal.annotations, signal.outputArgs);
+            
+            QStringList argNames = makeArgNames(signal.outputArgs,  QDBusIntrospection::Arguments(), false);
+            writeArgList(hs, argNames, signal.annotations, signal.outputArgs,  QDBusIntrospection::Arguments(), false);
 
             hs << ");" << endl; // finished for header
         }
