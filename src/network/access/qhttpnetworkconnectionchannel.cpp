@@ -121,6 +121,12 @@ void QHttpNetworkConnectionChannel::close()
     state = QHttpNetworkConnectionChannel::IdleState;
 }
 
+void QHttpNetworkConnectionChannel::resetReadBuffer()
+{
+    QNonContiguousByteDevice* uploadByteDevice = request.uploadByteDevice();
+    if (uploadByteDevice)
+        uploadByteDevice->reset();
+}
 
 bool QHttpNetworkConnectionChannel::sendRequest()
 {

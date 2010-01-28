@@ -143,6 +143,7 @@ public:
     void init();
     void close();
 
+    void resetReadBuffer(); // must be called before resending to rewind the read buffers
     bool sendRequest();
 
     bool ensureConnection();
