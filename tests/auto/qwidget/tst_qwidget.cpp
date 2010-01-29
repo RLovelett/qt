@@ -47,6 +47,7 @@
 #include <qboxlayout.h>
 #include <qapplication.h>
 #include <qbitmap.h>
+#include <qcheckbox.h>
 #include <qdebug.h>
 #include <qeventloop.h>
 #include <qlabel.h>
@@ -57,6 +58,7 @@
 #include <qpainter.h>
 #include <qpoint.h>
 #include <qpushbutton.h>
+#include <qstackedwidget.h>
 #include <qstyle.h>
 #include <qwidget.h>
 #include <qwindowsstyle.h>
@@ -177,6 +179,7 @@ public slots:
     void init();
     void cleanup();
 private slots:
+    void nestedGridLayoutsJumpyShow();
     void getSetCheck();
     void fontPropagation();
     void fontPropagation2();
@@ -424,6 +427,177 @@ public:
     void reset() {}
     bool isComposing() const { return false; }
 };
+
+class Ui_jumpyWidget
+{
+public:
+    QGridLayout *gridLayout_4;
+    QStackedWidget *stackedWidget;
+    QWidget *page;
+    QGridLayout *gridLayout_3;
+    QGridLayout *gridLayout_2;
+    QLabel *label_2;
+    QCheckBox *checkBox;
+    QCheckBox *checkBox_3;
+    QCheckBox *checkBox_4;
+    QLabel *label_3;
+    QCheckBox *checkBox_6;
+    QCheckBox *checkBox_7;
+    QLabel *label_7;
+    QCheckBox *checkBox_9;
+    QCheckBox *checkBox_8;
+    QCheckBox *checkBox_10;
+    QWidget *page_2;
+
+    void setupUi(QWidget *jumpyWidget)
+    {
+        gridLayout_4 = new QGridLayout(jumpyWidget);
+        stackedWidget = new QStackedWidget(jumpyWidget);
+        page = new QWidget();
+        gridLayout_3 = new QGridLayout(page);
+        gridLayout_2 = new QGridLayout();
+        label_2 = new QLabel(page);
+
+        gridLayout_2->addWidget(label_2, 0, 0, 1, 1);
+
+        checkBox = new QCheckBox(page);
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(checkBox->sizePolicy().hasHeightForWidth());
+        checkBox->setSizePolicy(sizePolicy);
+
+        gridLayout_2->addWidget(checkBox, 0, 1, 1, 1);
+
+        checkBox_3 = new QCheckBox(page);
+        sizePolicy.setHeightForWidth(checkBox_3->sizePolicy().hasHeightForWidth());
+        checkBox_3->setSizePolicy(sizePolicy);
+
+        gridLayout_2->addWidget(checkBox_3, 0, 2, 1, 1);
+
+        checkBox_4 = new QCheckBox(page);
+        sizePolicy.setHeightForWidth(checkBox_4->sizePolicy().hasHeightForWidth());
+        checkBox_4->setSizePolicy(sizePolicy);
+
+        gridLayout_2->addWidget(checkBox_4, 0, 3, 1, 1);
+
+        label_3 = new QLabel(page);
+
+        gridLayout_2->addWidget(label_3, 1, 0, 1, 1);
+
+        checkBox_6 = new QCheckBox(page);
+        sizePolicy.setHeightForWidth(checkBox_6->sizePolicy().hasHeightForWidth());
+        checkBox_6->setSizePolicy(sizePolicy);
+
+        gridLayout_2->addWidget(checkBox_6, 1, 1, 1, 1);
+
+        checkBox_7 = new QCheckBox(page);
+        sizePolicy.setHeightForWidth(checkBox_7->sizePolicy().hasHeightForWidth());
+        checkBox_7->setSizePolicy(sizePolicy);
+
+        gridLayout_2->addWidget(checkBox_7, 1, 2, 1, 1);
+
+        label_7 = new QLabel(page);
+        QSizePolicy sizePolicy1(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        sizePolicy1.setHorizontalStretch(0);
+        sizePolicy1.setVerticalStretch(0);
+        sizePolicy1.setHeightForWidth(label_7->sizePolicy().hasHeightForWidth());
+        label_7->setSizePolicy(sizePolicy1);
+
+        gridLayout_2->addWidget(label_7, 2, 0, 1, 1);
+
+        checkBox_9 = new QCheckBox(page);
+        sizePolicy.setHeightForWidth(checkBox_9->sizePolicy().hasHeightForWidth());
+        checkBox_9->setSizePolicy(sizePolicy);
+
+        gridLayout_2->addWidget(checkBox_9, 2, 1, 1, 1);
+
+        checkBox_8 = new QCheckBox(page);
+        sizePolicy.setHeightForWidth(checkBox_8->sizePolicy().hasHeightForWidth());
+        checkBox_8->setSizePolicy(sizePolicy);
+
+        gridLayout_2->addWidget(checkBox_8, 2, 2, 1, 1);
+
+        checkBox_10 = new QCheckBox(page);
+        sizePolicy.setHeightForWidth(checkBox_10->sizePolicy().hasHeightForWidth());
+        checkBox_10->setSizePolicy(sizePolicy);
+
+        gridLayout_2->addWidget(checkBox_10, 2, 3, 1, 1);
+
+
+        gridLayout_3->addLayout(gridLayout_2, 0, 0, 1, 1);
+
+        stackedWidget->addWidget(page);
+        page_2 = new QWidget();
+        stackedWidget->addWidget(page_2);
+
+        gridLayout_4->addWidget(stackedWidget, 0, 0, 1, 1);
+
+
+    //    retranslateUi(jumpyWidget);
+
+        stackedWidget->setCurrentIndex(0);
+    } // setupUi
+
+    void retranslateUi(QWidget *jumpyWidget)
+    {
+        jumpyWidget->setWindowTitle(QApplication::translate("jumpyWidget", "Form", 0, QApplication::UnicodeUTF8));
+        label_2->setText(QApplication::translate("jumpyWidget", "TextLabel", 0, QApplication::UnicodeUTF8));
+        checkBox->setText(QApplication::translate("jumpyWidget", "CheckBox", 0, QApplication::UnicodeUTF8));
+        checkBox_3->setText(QApplication::translate("jumpyWidget", "CheckBox", 0, QApplication::UnicodeUTF8));
+        checkBox_4->setText(QApplication::translate("jumpyWidget", "CheckBox", 0, QApplication::UnicodeUTF8));
+        label_3->setText(QApplication::translate("jumpyWidget", "TextLabel", 0, QApplication::UnicodeUTF8));
+        checkBox_6->setText(QApplication::translate("jumpyWidget", "CheckBox", 0, QApplication::UnicodeUTF8));
+        checkBox_7->setText(QApplication::translate("jumpyWidget", "CheckBox", 0, QApplication::UnicodeUTF8));
+        label_7->setText(QApplication::translate("jumpyWidget", "TextLabel", 0, QApplication::UnicodeUTF8));
+        checkBox_9->setText(QApplication::translate("jumpyWidget", "CheckBox", 0, QApplication::UnicodeUTF8));
+        checkBox_8->setText(QApplication::translate("jumpyWidget", "CheckBox", 0, QApplication::UnicodeUTF8));
+        checkBox_10->setText(QApplication::translate("jumpyWidget", "CheckBox", 0, QApplication::UnicodeUTF8));
+    } // retranslateUi
+
+};
+
+class JumpyResizingTestWidget : public QWidget
+{
+public:
+    JumpyResizingTestWidget()
+        : gotInitialResize( false ),
+          gotInitialPaint( false )
+    {
+    }
+
+    void resizeEvent( QResizeEvent* event )
+    {
+        if( !event->oldSize().isValid() )
+            gotInitialResize = true;
+        QVERIFY(!gotInitialPaint); // the widget should not be resized after it has been shown
+    }
+
+    void paintEvent( QPaintEvent* )
+    {
+        QVERIFY(gotInitialResize); // no paint event before the initial resize
+        gotInitialPaint = true;
+    }
+
+    bool gotInitialResize;
+    bool gotInitialPaint;
+};
+
+
+
+void tst_QWidget::nestedGridLayoutsJumpyShow()
+{
+    JumpyResizingTestWidget w;
+    Ui_jumpyWidget ui;
+    ui.setupUi( &w );
+    w.layout()->setSizeConstraint(QLayout::SetFixedSize);
+    // the actual QVERIFY stuff is inside of the widget
+    w.show();
+
+    // processing events might trigger the second resize (after the widget was shown)
+    QTest::qWaitForWindowShown(&w);
+    QTest::qWait(50);
+}
 
 // Testing get/set functions
 void tst_QWidget::getSetCheck()
