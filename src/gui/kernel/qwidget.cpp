@@ -9588,6 +9588,38 @@ QWidget *QWidgetPrivate::childAt_helper(const QPoint &p, bool ignoreChildrenInDe
     return 0;
 }
 
+/*!
+    Returns the layouts containing \a widget within the \a parent layout. If \a parent is 0, the parent widget's
+    layout is being used.
+    \internal
+ */
+static QList< QLayout* > findLayoutsContaining( const QWidget* widget, QLayout* parent = 0 )
+{
+    if( parent == 0 && widget->parentWidget() != 0 )
+        parent = widget->parentWidget()->layout();
+
+    if( parent == 0 )
+        return QList< QLayout* >();
+
+    const int count = parent->count();
+    for( int i = 0; i < count; ++i )
+    {
+        QLayoutItem* const item = parent->itemAt( i );
+        if( item->widget() == widget )
+            return QList< QLayout* >() << parent;
+        
+        QLayout* const l = item->layout();
+        if( l == 0 )
+            continue;
+
+        QList< QLayout* > w = findLayoutsContaining( widget, l );
+        if( !w.isEmpty() )
+            return w << parent;
+    }
+
+    return QList< QLayout* >() << parent;
+}
+
 void QWidgetPrivate::updateGeometry_helper(bool forceUpdate)
 {
     Q_Q(QWidget);
@@ -9597,7 +9629,10 @@ void QWidgetPrivate::updateGeometry_helper(bool forceUpdate)
     if (forceUpdate || !extra || extra->minw != extra->maxw || extra->minh != extra->maxh) {
         if (!q->isWindow() && !q->isHidden() && (parent = q->parentWidget())) {
             if (parent->d_func()->layout)
-                parent->d_func()->layout->invalidate();
+            {
+                Q_FOREACH( QLayout* l, findLayoutsContaining( q, parent->d_func()->layout ) )
+                    l->invalidate();
+            }
             else if (parent->isVisible())
                 QApplication::postEvent(parent, new QEvent(QEvent::LayoutRequest));
         }
