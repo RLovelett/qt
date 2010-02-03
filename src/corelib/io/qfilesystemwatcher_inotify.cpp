@@ -273,6 +273,7 @@ QStringList QInotifyFileSystemWatcherEngine::addPaths(const QStringList &paths,
                                    (isDir
                                     ? (0
                                        | IN_ATTRIB
+                                       | IN_MODIFY
                                        | IN_MOVE
                                        | IN_CREATE
                                        | IN_DELETE
