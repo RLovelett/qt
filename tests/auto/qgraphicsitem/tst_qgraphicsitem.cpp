@@ -419,6 +419,7 @@ private slots:
     void QTBUG_4233_updateCachedWithSceneRect();
     void QTBUG_5418_textItemSetDefaultColor();
     void QTBUG_6738_missingUpdateWithSetParent();
+    void QTBUG_7863_cachedItemPartialUpdates();
 
 private:
     QList<QGraphicsItem *> paintedItems;
@@ -9953,6 +9954,79 @@ void tst_QGraphicsItem::QTBUG_6738_missingUpdateWithSetParent()
     child4->setVisible(false);
 
     QTRY_VERIFY(view.repaints == 1);
+}
+
+class ItemPaintsNonOpaque : public QGraphicsItem
+{
+public:
+    QRectF paintRect;
+
+    ItemPaintsNonOpaque()
+        : paintRect(2, 3, 10, 11)
+    {
+    }
+
+    QRectF boundingRect() const
+    {
+        return QRectF(0, 0, 100, 100);
+    }
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
+    {
+        painter->fillRect(option->exposedRect.intersect(paintRect), Qt::black);
+    }
+
+    void advanceFrame()
+    {
+        QRectF oldPaintRect = paintRect;
+        paintRect.translate(paintRect.width()*2, paintRect.height()*2);
+        update(oldPaintRect.united(paintRect));
+    }
+};
+
+void renderSceneToImage(QGraphicsScene& scene, QImage& image)
+{
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
+    scene.render(&painter);
+    painter.end();
+}
+
+void tst_QGraphicsItem::QTBUG_7863_cachedItemPartialUpdates()
+{
+    ItemPaintsNonOpaque *cachedItem = new ItemPaintsNonOpaque;
+    cachedItem->setCacheMode(QGraphicsItem::ItemCoordinateCache);
+    cachedItem->setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
+
+    QGraphicsScene cachedScene(0, 0, 100, 100);
+    cachedScene.addItem(cachedItem);
+
+    ItemPaintsNonOpaque *item = new ItemPaintsNonOpaque;
+    item->setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
+
+    QGraphicsScene scene(0, 0, 100, 100);
+    scene.addItem(item);
+
+    QImage cachedImage(100, 100, QImage::Format_ARGB32_Premultiplied);
+    renderSceneToImage(cachedScene, cachedImage);
+
+    QImage image(100, 100, QImage::Format_ARGB32_Premultiplied);
+    renderSceneToImage(scene, image);
+
+    QCOMPARE(cachedImage, image);
+
+    item->advanceFrame();
+    cachedItem->advanceFrame();
+
+    renderSceneToImage(cachedScene, cachedImage);
+    renderSceneToImage(scene, image);
+
+    // this tests the bug. The bug used
+    // QPainter::CompositionMode_SourceOver to compose partial updated
+    // pixmap on top of the cache pixmap. This caused the old frame to
+    // show through from the updated part of the cache
+    QCOMPARE(cachedImage, image);
 }
 
 QTEST_MAIN(tst_QGraphicsItem)

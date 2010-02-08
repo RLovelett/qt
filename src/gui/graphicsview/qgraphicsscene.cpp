@@ -4283,6 +4283,7 @@ static void _q_paintIntoCache(QPixmap *pix, QGraphicsItem *item, const QRegion &
         // Blit the subpixmap into the main pixmap.
         pixmapPainter.begin(pix);
         pixmapPainter.setClipRegion(pixmapExposed);
+        pixmapPainter.setCompositionMode(QPainter::CompositionMode_Source);
         pixmapPainter.drawPixmap(br.topLeft(), subPix);
         pixmapPainter.end();
     }
