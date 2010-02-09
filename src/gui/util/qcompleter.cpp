@@ -873,7 +873,7 @@ void QCompleterPrivate::showPopup(const QRect& rect)
     const QRect screen = QApplication::desktop()->availableGeometry(widget);
     Qt::LayoutDirection dir = widget->layoutDirection();
     QPoint pos;
-    int rw, rh, w;
+    int rh, w;
     int h = (popup->sizeHintForRow(0) * qMin(maxVisibleItems, popup->model()->rowCount()) + 3) + 3;
     QScrollBar *hsb = popup->horizontalScrollBar();
     if (hsb && hsb->isVisible())
@@ -881,16 +881,18 @@ void QCompleterPrivate::showPopup(const QRect& rect)
 
     if (rect.isValid()) {
         rh = rect.height();
-        w = rw = rect.width();
+        w = rect.width();
         pos = widget->mapToGlobal(dir == Qt::RightToLeft ? rect.bottomRight() : rect.bottomLeft());
     } else {
         rh = widget->height();
-        rw = widget->width();
-        pos = widget->mapToGlobal(QPoint(0, widget->height() - 2));
         w = widget->width();
+        pos = widget->mapToGlobal(QPoint(0, widget->height() - 2));
     }
 
-    if ((pos.x() + rw) > (screen.x() + screen.width()))
+    if (w < popup->minimumWidth())
+        w = popup->minimumWidth();
+
+    if ((pos.x() + w) > (screen.x() + screen.width()))
         pos.setX(screen.x() + screen.width() - w);
     if (pos.x() < screen.x())
         pos.setX(screen.x());
