@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -152,10 +152,8 @@ public:
         dirty(0),
         dirtyChildren(0),
         localCollisionHack(0),
-        dirtyClipPath(1),
-        emptyClipPath(0),
         inSetPosHelper(0),
-        needSortChildren(1), // ### can be 0 by default?
+        needSortChildren(0),
         allChildrenDirty(0),
         fullUpdatePending(0),
         flags(0),
@@ -180,6 +178,8 @@ public:
         sequentialOrdering(1),
         updateDueToGraphicsEffect(0),
         scenePosDescendants(0),
+        pendingPolish(0),
+        mayHaveChildWithGraphicsEffect(0),
         globalStackingOrder(-1),
         q_ptr(0)
     {
@@ -197,8 +197,10 @@ public:
         return item->d_ptr.data();
     }
 
+    void updateChildWithGraphicsEffectFlagRecursively();
     void updateAncestorFlag(QGraphicsItem::GraphicsItemFlag childFlag,
                             AncestorFlag flag = NoFlag, bool enabled = false, bool root = true);
+    void updateAncestorFlags();
     void setIsMemberOfGroup(bool enabled);
     void remapItemPos(QEvent *event, QGraphicsItem *item);
     QPointF genericMapFromScene(const QPointF &pos, const QWidget *viewport) const;
@@ -221,22 +223,29 @@ public:
     void appendGraphicsTransform(QGraphicsTransform *t);
     void setVisibleHelper(bool newVisible, bool explicitly, bool update = true);
     void setEnabledHelper(bool newEnabled, bool explicitly, bool update = true);
-    bool discardUpdateRequest(bool ignoreClipping = false, bool ignoreVisibleBit = false,
+    bool discardUpdateRequest(bool ignoreVisibleBit = false,
                               bool ignoreDirtyBit = false, bool ignoreOpacity = false) const;
     int depth() const;
 #ifndef QT_NO_GRAPHICSEFFECT
-    void invalidateGraphicsEffectsRecursively();
+    enum InvalidateReason {
+        OpacityChanged
+    };
+    void invalidateParentGraphicsEffectsRecursively();
+    void invalidateChildGraphicsEffectsRecursively(InvalidateReason reason);
 #endif //QT_NO_GRAPHICSEFFECT
     void invalidateDepthRecursively();
     void resolveDepth();
     void addChild(QGraphicsItem *child);
     void removeChild(QGraphicsItem *child);
-    void setParentItemHelper(QGraphicsItem *parent);
+    void setParentItemHelper(QGraphicsItem *parent, const QVariant *newParentVariant,
+                             const QVariant *thisPointerVariant);
     void childrenBoundingRectHelper(QTransform *x, QRectF *rect);
     void initStyleOption(QStyleOptionGraphicsItem *option, const QTransform &worldTransform,
                          const QRegion &exposedRegion, bool allItems = false) const;
     QRectF effectiveBoundingRect() const;
     QRectF sceneEffectiveBoundingRect() const;
+
+    QRectF effectiveBoundingRect(const QRectF &rect) const;
 
     virtual void resolveFont(uint inheritedMask)
     {
@@ -307,26 +316,6 @@ public:
     QGraphicsItemCache *extraItemCache() const;
     void removeExtraItemCache();
 
-    inline void setCachedClipPath(const QPainterPath &path)
-    {
-        cachedClipPath = path;
-        dirtyClipPath = 0;
-        emptyClipPath = 0;
-    }
-
-    inline void setEmptyCachedClipPath()
-    {
-        emptyClipPath = 1;
-        dirtyClipPath = 0;
-    }
-
-    void setEmptyCachedClipPathRecursively(const QRectF &emptyIfOutsideThisRect = QRectF());
-
-    inline void invalidateCachedClipPath()
-    { /*static int count = 0 ;qWarning("%i", ++count);*/ dirtyClipPath = 1; emptyClipPath = 0; }
-
-    void invalidateCachedClipPathRecursively(bool childrenOnly = false, const QRectF &emptyIfOutsideThisRect = QRectF());
-    void updateCachedClipPathFromSetPosHelper(const QPointF &newPos);
     void ensureSceneTransformRecursive(QGraphicsItem **topMostDirtyItem);
     inline void ensureSceneTransform()
     {
@@ -409,18 +398,15 @@ public:
         return true;
     }
 
-    inline bool isClippedAway() const
-    { return !dirtyClipPath && q_func()->isClipped() && (emptyClipPath || cachedClipPath.isEmpty()); }
-
     inline bool childrenClippedToShape() const
     { return (flags & QGraphicsItem::ItemClipsChildrenToShape) || children.isEmpty(); }
 
     inline bool isInvisible() const
     {
-        return !visible
-               || (childrenClippedToShape() && isClippedAway())
-               || (childrenCombineOpacity() && isFullyTransparent());
+        return !visible || (childrenCombineOpacity() && isFullyTransparent());
     }
+
+    inline void markParentDirty(bool updateBoundingRect = false);
 
     void setFocusHelper(Qt::FocusReason focusReason, bool climb);
     void setSubFocus(QGraphicsItem *rootItem = 0);
@@ -435,7 +421,6 @@ public:
     inline void sendScenePosChange();
     virtual void siblingOrderChange();
 
-    QPainterPath cachedClipPath;
     QRectF childrenBoundingRect;
     QRectF needsRepaint;
     QMap<QWidget *, QRect> paintedViewBoundingRects;
@@ -480,8 +465,6 @@ public:
     quint32 dirty : 1;
     quint32 dirtyChildren : 1;
     quint32 localCollisionHack : 1;
-    quint32 dirtyClipPath : 1;
-    quint32 emptyClipPath : 1;
     quint32 inSetPosHelper : 1;
     quint32 needSortChildren : 1;
     quint32 allChildrenDirty : 1;
@@ -512,6 +495,8 @@ public:
     quint32 sequentialOrdering : 1;
     quint32 updateDueToGraphicsEffect : 1;
     quint32 scenePosDescendants : 1;
+    quint32 pendingPolish : 1;
+    quint32 mayHaveChildWithGraphicsEffect : 1;
 
     // Optional stacking order
     int globalStackingOrder;
@@ -592,7 +577,10 @@ public:
     {}
 
     inline void detach()
-    { item->setGraphicsEffect(0); }
+    {
+        item->d_ptr->graphicsEffect = 0;
+        item->prepareGeometryChange();
+    }
 
     inline const QGraphicsItem *graphicsItem() const
     { return item; }
@@ -634,6 +622,7 @@ public:
     QPixmap pixmap(Qt::CoordinateSystem system,
                    QPoint *offset,
                    QGraphicsEffect::PixmapPadMode mode) const;
+    QRect paddedEffectRect(Qt::CoordinateSystem system, QGraphicsEffect::PixmapPadMode mode, const QRectF &sourceRect, bool *unpadded = 0) const;
 
     QGraphicsItem *item;
     QGraphicsItemPaintInfo *info;
@@ -745,11 +734,13 @@ inline QTransform QGraphicsItemPrivate::transformToParent() const
 inline void QGraphicsItemPrivate::ensureSortedChildren()
 {
     if (needSortChildren) {
-        qSort(children.begin(), children.end(), qt_notclosestLeaf);
         needSortChildren = 0;
         sequentialOrdering = 1;
+        if (children.isEmpty())
+            return;
+        qSort(children.begin(), children.end(), qt_notclosestLeaf);
         for (int i = 0; i < children.size(); ++i) {
-            if (children[i]->d_ptr->siblingIndex != i) {
+            if (children.at(i)->d_ptr->siblingIndex != i) {
                 sequentialOrdering = 0;
                 break;
             }
@@ -763,6 +754,37 @@ inline void QGraphicsItemPrivate::ensureSortedChildren()
 inline bool QGraphicsItemPrivate::insertionOrder(QGraphicsItem *a, QGraphicsItem *b)
 {
     return a->d_ptr->siblingIndex < b->d_ptr->siblingIndex;
+}
+
+/*!
+    \internal
+*/
+inline void QGraphicsItemPrivate::markParentDirty(bool updateBoundingRect)
+{
+    QGraphicsItemPrivate *parentp = this;
+    while (parentp->parent) {
+        parentp = parentp->parent->d_ptr.data();
+        parentp->dirtyChildren = 1;
+
+        if (updateBoundingRect) {
+            parentp->dirtyChildrenBoundingRect = 1;
+            // ### Only do this if the parent's effect applies to the entire subtree.
+            parentp->notifyBoundingRectChanged = 1;
+        }
+#ifndef QT_NO_GRAPHICSEFFECT
+        if (parentp->graphicsEffect) {
+            if (updateBoundingRect) {
+                parentp->notifyInvalidated = 1;
+                static_cast<QGraphicsItemEffectSourcePrivate *>(parentp->graphicsEffect->d_func()
+                                                                ->source->d_func())->invalidateCache();
+            }
+            if (parentp->graphicsEffect->isEnabled()) {
+                parentp->dirty = 1;
+                parentp->fullUpdatePending = 1;
+            }
+        }
+#endif
+    }
 }
 
 QT_END_NAMESPACE

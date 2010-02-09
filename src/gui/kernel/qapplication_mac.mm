@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -227,8 +227,29 @@ void onApplicationChangedActivation( bool activated );
 
 static void qt_mac_read_fontsmoothing_settings()
 {
-    NSInteger appleFontSmoothing = [[NSUserDefaults standardUserDefaults] integerForKey:@"AppleFontSmoothing"];
-    qt_applefontsmoothing_enabled = (appleFontSmoothing > 0);
+    qt_applefontsmoothing_enabled = true;
+    int w = 10, h = 10;
+    QImage image(w, h, QImage::Format_RGB32);
+    image.fill(0xffffffff);
+    QPainter p(&image);
+    p.drawText(0, h, "X\\");
+    p.end();
+
+    const int *bits = (const int *) ((const QImage &) image).bits();
+    int bpl = image.bytesPerLine() / 4;
+    for (int y=0; y<w; ++y) {
+        for (int x=0; x<h; ++x) {
+            int r = qRed(bits[x]);
+            int g = qGreen(bits[x]);
+            int b = qBlue(bits[x]);
+            if (r != g || r != b) {
+                qt_applefontsmoothing_enabled = true;
+                return;
+            }
+        }
+        bits += bpl;
+    }
+    qt_applefontsmoothing_enabled = false;
 }
 
 Q_GUI_EXPORT bool qt_mac_execute_apple_script(const char *script, long script_len, AEDesc *ret) {
@@ -772,11 +793,11 @@ static void qt_mac_update_intersected_gl_widgets(QWidget *widget)
             qt_post_window_change_event(glWidget);
             it->lastUpdateWidget = widget;
         } else if (it->lastUpdateWidget == widget) {
-            // Update the gl wigets that the widget intersected the last time around, 
-            // and that we are not intersecting now. This prevents paint errors when the 
+            // Update the gl wigets that the widget intersected the last time around,
+            // and that we are not intersecting now. This prevents paint errors when the
             // intersecting widget leaves a gl widget.
             qt_post_window_change_event(glWidget);
-            it->lastUpdateWidget = 0;            
+            it->lastUpdateWidget = 0;
         }
     }
 #else
@@ -808,8 +829,8 @@ Q_GUI_EXPORT void qt_event_request_window_change(QWidget *widget)
     // Post a kEventQtRequestWindowChange event. This event is semi-public,
     // don't remove this line!
     qt_event_request_window_change();
-    
-    // Post update request on gl widgets unconditionally. 
+
+    // Post update request on gl widgets unconditionally.
     if (qt_widget_private(widget)->isGLWidget == true) {
         qt_post_window_change_event(widget);
         return;
@@ -1214,8 +1235,6 @@ void qt_init(QApplicationPrivate *priv, int)
     if (QApplication::desktopSettingsAware())
         QApplicationPrivate::qt_mac_apply_settings();
 
-    qt_mac_read_fontsmoothing_settings();
-
     // Cocoa application delegate
 #ifdef QT_MAC_USE_COCOA
     NSApplication *cocoaApp = [NSApplication sharedApplication];
@@ -1239,10 +1258,6 @@ void qt_init(QApplicationPrivate *priv, int)
         [cocoaApp setMenu:[qtMenuLoader menu]];
         [newDelegate setMenuLoader:qtMenuLoader];
         [qtMenuLoader release];
-
-        NSAppleEventManager *eventManager = [NSAppleEventManager sharedAppleEventManager];
-        [eventManager setEventHandler:newDelegate andSelector:@selector(getUrl:withReplyEvent:)
-          forEventClass:kInternetEventClass andEventID:kAEGetURL];
     }
 #endif
     // Register for Carbon tablet proximity events on the event monitor target.
@@ -1253,6 +1268,7 @@ void qt_init(QApplicationPrivate *priv, int)
     }
    priv->native_modal_dialog_active = false;
 
+   qt_mac_read_fontsmoothing_settings();
 }
 
 void qt_release_apple_event_handler()
@@ -1341,12 +1357,39 @@ void QApplication::setMainWidget(QWidget *mainWidget)
 /*****************************************************************************
   QApplication cursor stack
  *****************************************************************************/
+#ifdef QT_MAC_USE_COCOA
+void QApplicationPrivate::disableUsageOfCursorRects(bool disable)
+{
+    // In Cocoa there are two competing ways of setting the cursor; either
+    // by using cursor rects (see qcocoaview_mac.mm), or by pushing/popping
+    // the cursor manually. When we use override cursors, it makes most sense
+    // to use the latter. But then we need to tell cocoa to stop using the
+    // first approach so it doesn't change the cursor back when hovering over
+    // a cursor rect:
+    QWidgetList topLevels = qApp->topLevelWidgets();
+    for (int i=0; i<topLevels.size(); ++i) {
+        if (NSWindow *window = qt_mac_window_for(topLevels.at(i)))
+            disable ? [window disableCursorRects] : [window enableCursorRects];
+    }
+}
+
+void QApplicationPrivate::updateOverrideCursor()
+{
+    // Sometimes Cocoa forgets that we have set a Cursor
+    // manually. In those cases, remind it again:
+    if (QCursor *override = qApp->overrideCursor())
+        [static_cast<NSCursor *>(qt_mac_nsCursorForQCursor(*override)) set];
+}
+#endif
+
 void QApplication::setOverrideCursor(const QCursor &cursor)
 {
     qApp->d_func()->cursor_list.prepend(cursor);
 
 #ifdef QT_MAC_USE_COCOA
     QMacCocoaAutoReleasePool pool;
+    if (qApp->d_func()->cursor_list.size() == 1)
+        qApp->d_func()->disableUsageOfCursorRects(true);
     [static_cast<NSCursor *>(qt_mac_nsCursorForQCursor(cursor)) push];
 #else
     if (qApp && qApp->activeWindow())
@@ -1363,6 +1406,8 @@ void QApplication::restoreOverrideCursor()
 #ifdef QT_MAC_USE_COCOA
     QMacCocoaAutoReleasePool pool;
     [NSCursor pop];
+    if (qApp->d_func()->cursor_list.isEmpty())
+        qApp->d_func()->disableUsageOfCursorRects(false);
 #else
     if (qApp && qApp->activeWindow()) {
         const QCursor def(Qt::ArrowCursor);
@@ -1687,7 +1732,10 @@ QApplicationPrivate::globalEventProcessor(EventHandlerCallRef er, EventRef event
             UInt32 mac_buttons = 0;
             GetEventParameter(event, kEventParamMouseChord, typeUInt32, 0,
                               sizeof(mac_buttons), 0, &mac_buttons);
-            buttons = qt_mac_get_buttons(mac_buttons);
+            if (ekind != kEventMouseWheelMoved)
+                buttons = qt_mac_get_buttons(mac_buttons);
+            else
+                buttons = QApplication::mouseButtons();
         }
 
         int wheel_deltaX = 0;
@@ -1702,7 +1750,7 @@ QApplicationPrivate::globalEventProcessor(EventHandlerCallRef er, EventRef event
             // kEventMouseWheelMoved events if we dont eat this event
             // (actually two events; one for horizontal and one for vertical).
             // As a results of this, and to make sure we dont't receive duplicate events,
-            // we try to detect when this happend by checking the 'compatibilityEvent'. 
+            // we try to detect when this happend by checking the 'compatibilityEvent'.
             SInt32 mdelt = 0;
             GetEventParameter(event, kEventParamMouseWheelSmoothHorizontalDelta, typeSInt32, 0,
                               sizeof(mdelt), 0, &mdelt);
@@ -2432,6 +2480,28 @@ QApplicationPrivate::globalEventProcessor(EventHandlerCallRef er, EventRef event
 #endif
 }
 
+#ifdef QT_MAC_USE_COCOA
+void QApplicationPrivate::qt_initAfterNSAppStarted()
+{
+    setupAppleEvents();
+    updateOverrideCursor();
+}
+
+void QApplicationPrivate::setupAppleEvents()
+{
+    // This function is called from the event dispatcher when NSApplication has
+    // finished initialization, which appears to be just after [NSApplication run] has
+    // started to execute. By setting up our apple events handlers this late, we override
+    // the ones set up by NSApplication.
+    QT_MANGLE_NAMESPACE(QCocoaApplicationDelegate) *newDelegate = [QT_MANGLE_NAMESPACE(QCocoaApplicationDelegate) sharedDelegate];
+    NSAppleEventManager *eventManager = [NSAppleEventManager sharedAppleEventManager];
+    [eventManager setEventHandler:newDelegate andSelector:@selector(appleEventQuit:withReplyEvent:)
+     forEventClass:kCoreEventClass andEventID:kAEQuitApplication];
+    [eventManager setEventHandler:newDelegate andSelector:@selector(getUrl:withReplyEvent:)
+      forEventClass:kInternetEventClass andEventID:kAEGetURL];
+}
+#endif
+
 // In Carbon this is your one stop for apple events.
 // In Cocoa, it ISN'T. This is the catch-all Apple Event handler that exists
 // for the time between instantiating the NSApplication, but before the
@@ -2573,7 +2643,7 @@ void QApplicationPrivate::closePopup(QWidget *popup)
     if (QApplicationPrivate::popupWidgets->isEmpty()) {  // this was the last popup
         delete QApplicationPrivate::popupWidgets;
         QApplicationPrivate::popupWidgets = 0;
-        
+
         // Special case for Tool windows: since they are activated and deactived together
         // with a normal window they never become the QApplicationPrivate::active_window.
         QWidget *appFocusWidget = QApplication::focusWidget();
@@ -2979,7 +3049,7 @@ void onApplicationWindowChangedActivation(QWidget *widget, bool activated)
     }
 
     QMenuBar::macUpdateMenuBar();
-
+    QApplicationPrivate::updateOverrideCursor();
 #else
     Q_UNUSED(widget);
     Q_UNUSED(activated);

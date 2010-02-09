@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+#include "qplatformdefs.h"
 #include "qscreen_qws.h"
 
 #include "qcolormap.h"
@@ -3150,6 +3151,7 @@ int QScreen::subScreenIndexAt(const QPoint &p) const
 
 #if 0
 #ifdef QT_LOADABLE_MODULES
+#include <dlfcn.h>
 
 // ### needs update after driver init changes
 
@@ -3222,13 +3224,13 @@ QScreen * qt_probe_bus()
         return qt_dodriver("unaccel.so",0,0);
     }
 
-    DIR * dirptr=opendir("/proc/bus/pci");
+    QT_DIR *dirptr = QT_OPENDIR("/proc/bus/pci");
     if(!dirptr)
         return qt_dodriver("unaccel.so",0,0);
-    DIR * dirptr2;
-    dirent * cards;
+    QT_DIR * dirptr2;
+    QT_DIRENT *cards;
 
-    dirent * busses=readdir(dirptr);
+    QT_DIRENT *busses = QT_READDIR(dirptr);
 
     while(busses) {
         if(busses->d_name[0]!='.') {
@@ -3236,9 +3238,9 @@ QScreen * qt_probe_bus()
             strcpy(buf,"/proc/bus/pci/");
             qstrcpy(buf+14,busses->d_name);
             int p=strlen(buf);
-            dirptr2=opendir(buf);
+            dirptr2 = QT_OPENDIR(buf);
             if(dirptr2) {
-                cards=readdir(dirptr2);
+                cards = QT_READDIR(dirptr2);
                 while(cards) {
                     if(cards->d_name[0]!='.') {
                         buf[p]='/';
@@ -3247,14 +3249,14 @@ QScreen * qt_probe_bus()
                         if(ret)
                             return ret;
                     }
-                    cards=readdir(dirptr2);
+                    cards = QT_READDIR(dirptr2);
                 }
-                closedir(dirptr2);
+                QT_CLOSEDIR(dirptr2);
             }
         }
-        busses=readdir(dirptr);
+        busses = QT_READDIR(dirptr);
     }
-    closedir(dirptr);
+    QT_CLOSEDIR(dirptr);
 
     return qt_dodriver("unaccel.so",0,0);
 }

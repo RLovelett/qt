@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -404,7 +404,17 @@ void QtPrivate::QStringList_replaceInStrings(QStringList *that, const QRegExp &r
 */
 QString QtPrivate::QStringList_join(const QStringList *that, const QString &sep)
 {
+    int totalLength = 0;
+    const int size = that->size();
+
+    for (int i = 0; i < size; ++i)
+        totalLength += that->at(i).size();
+
+    if(size > 0)
+        totalLength += sep.size() * (size - 1);
+
     QString res;
+    res.reserve(totalLength);
     for (int i = 0; i < that->size(); ++i) {
         if (i)
             res += sep;

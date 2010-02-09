@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -97,7 +97,7 @@ inline bool qCompare
     if (r1.unit == "msec") {
         variance = 0.1;
     }
-    else if (r1.unit == "instr. loads") {
+    else if (r1.unit == "instruction reads") {
         variance = 0.001;
     }
     else if (r1.unit == "ticks") {
@@ -182,12 +182,12 @@ void tst_Selftests::runSubTest_data()
 #endif
     QTest::newRow("benchlibeventcounter") << "benchlibeventcounter" << QStringList("-eventcounter");
     QTest::newRow("benchliboptions") << "benchliboptions" << QStringList("-eventcounter");
-    QTest::newRow("benchlibwalltime") << "benchlibwalltime" << QStringList();
 
-    //### This test is affected by the speed of the CPU and whether the tick counter is
-    //### monotonically increasing. It won't work on some machines so leave it off by default.
+    //### These tests are affected by timing and whether the CPU tick counter is
+    //### monotonically increasing. They won't work on some machines so leave them off by default.
     //### Feel free to uncomment for your own testing.
 #if 0
+    QTest::newRow("benchlibwalltime") << "benchlibwalltime" << QStringList();
     QTest::newRow("benchlibtickcounter") << "benchlibtickcounter" << QStringList("-tickcounter");
 #endif
 
@@ -248,7 +248,7 @@ void tst_Selftests::doRunSubTest(QString &subdir, QStringList &arguments )
             continue;
 
         const QString output(QString::fromLatin1(line));
-        const QString expected(QString::fromLatin1(exp.at(i)));
+        const QString expected(QString::fromLatin1(exp.at(i)).replace("<INSERT_QT_VERSION_HERE>", QT_VERSION_STR));
 
         if (line.contains("ASSERT") && output != expected)
             QEXPECT_FAIL("assert", "QTestLib prints out the absolute path.", Continue);
@@ -434,7 +434,7 @@ BenchmarkResult BenchmarkResult::parse(QString const& line, QString* error)
 
     /* This code avoids using a QRegExp because QRegExp might be broken. */
 
-    /* Sample format: 4,000 msec per iteration (total: 4000, iterations: 1) */
+    /* Sample format: 4,000 msec per iteration (total: 4,000, iterations: 1) */
 
     QString sFirstNumber;
     while (!remaining.isEmpty() && !remaining.at(0).isSpace()) {
@@ -468,7 +468,7 @@ BenchmarkResult BenchmarkResult::parse(QString const& line, QString* error)
 
     remaining = remaining.mid(sizeof(periterbit)-1);
 
-    /* Remaining: 4000, iterations: 1) */
+    /* Remaining: 4,000, iterations: 1) */
     static const char itersbit[] = ", iterations: ";
     QString sTotal;
     while (!remaining.startsWith(itersbit) && !remaining.isEmpty()) {
@@ -482,9 +482,12 @@ BenchmarkResult BenchmarkResult::parse(QString const& line, QString* error)
 
     remaining = remaining.mid(sizeof(itersbit)-1);
 
-    qint64 total = sTotal.toLongLong(&ok);
+    /* 4,000 -> 4000 */
+    sTotal.remove(',');
+
+    double total = sTotal.toDouble(&ok);
     if (!ok) {
-        if (error) *error = sTotal + " (total) is not a valid integer";
+        if (error) *error = sTotal + " (total) is not a valid number";
         return out;
     }
 

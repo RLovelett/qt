@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -247,6 +247,7 @@ Configure::Configure( int& argc, char** argv )
     dictionary[ "PHONON" ]          = "auto";
     dictionary[ "PHONON_BACKEND" ]  = "yes";
     dictionary[ "MULTIMEDIA" ]      = "yes";
+    dictionary[ "AUDIO_BACKEND" ]   = "yes";
     dictionary[ "DIRECTSHOW" ]      = "no";
     dictionary[ "WEBKIT" ]          = "auto";
     dictionary[ "DECLARATIVE" ]     = "auto";
@@ -317,6 +318,7 @@ Configure::Configure( int& argc, char** argv )
     dictionary[ "OPENSSL" ]         = "auto";
     dictionary[ "DBUS" ]            = "auto";
     dictionary[ "S60" ]             = "yes";
+    dictionary[ "SYMBIAN_DEFFILES" ] = "yes";
 
     dictionary[ "STYLE_WINDOWS" ]   = "yes";
     dictionary[ "STYLE_WINDOWSXP" ] = "auto";
@@ -482,6 +484,7 @@ void Configure::parseCmdLine()
             dictionary[ "BUILDNOKIA" ] = "yes";
             dictionary[ "BUILDDEV" ] = "yes";
             dictionary["LICENSE_CONFIRMED"] = "yes";
+            dictionary[ "SYMBIAN_DEFFILES" ] = "no";
         }
         else if( configCmdLine.at(i) == "-opensource" ) {
             dictionary[ "BUILDTYPE" ] = "opensource";
@@ -803,7 +806,7 @@ void Configure::parseCmdLine()
         else if( configCmdLine.at(i) == "-no-native-gestures" )
             dictionary[ "NATIVE_GESTURES" ] = "no";
 #if !defined(EVAL)
-        // Others ---------------------------------------------------
+        // Symbian Support -------------------------------------------
         else if (configCmdLine.at(i) == "-fpu" )
         {
             ++i;
@@ -812,12 +815,17 @@ void Configure::parseCmdLine()
             dictionary[ "ARM_FPU_TYPE" ] = configCmdLine.at(i);
         }
 
-        // S60 Support -------------------------------------------
         else if( configCmdLine.at(i) == "-s60" )
             dictionary[ "S60" ]    = "yes";
         else if( configCmdLine.at(i) == "-no-s60" )
             dictionary[ "S60" ]    = "no";
 
+        else if( configCmdLine.at(i) == "-usedeffiles" )
+            dictionary[ "SYMBIAN_DEFFILES" ] = "yes";
+        else if( configCmdLine.at(i) == "-no-usedeffiles" )
+            dictionary[ "SYMBIAN_DEFFILES" ] = "no";
+
+        // Others ---------------------------------------------------
         else if (configCmdLine.at(i) == "-fast" )
             dictionary[ "FAST" ] = "yes";
         else if (configCmdLine.at(i) == "-no-fast" )
@@ -898,6 +906,10 @@ void Configure::parseCmdLine()
             dictionary[ "MULTIMEDIA" ] = "no";
         } else if( configCmdLine.at(i) == "-multimedia" ) {
             dictionary[ "MULTIMEDIA" ] = "yes";
+        } else if( configCmdLine.at(i) == "-audio-backend" ) {
+            dictionary[ "AUDIO_BACKEND" ] = "yes";
+        } else if( configCmdLine.at(i) == "-no-audio-backend" ) {
+            dictionary[ "AUDIO_BACKEND" ] = "no";
         } else if( configCmdLine.at(i) == "-no-phonon" ) {
             dictionary[ "PHONON" ] = "no";
         } else if( configCmdLine.at(i) == "-phonon" ) {
@@ -1572,11 +1584,10 @@ bool Configure::displayHelp()
                     "[-no-iwmmxt] [-iwmmxt] [-openssl] [-openssl-linked]\n"
                     "[-no-openssl] [-no-dbus] [-dbus] [-dbus-linked] [-platform <spec>]\n"
                     "[-qtnamespace <namespace>] [-qtlibinfix <infix>] [-no-phonon]\n"
-                    "[-phonon] [-no-phonon-backend] [-phonon-backend]\n"
-                    "[-no-multimedia] [-multimedia] [-no-webkit] [-webkit]\n"
-                    "[-no-wintab] [-wintab] [-no-script] [-script]\n"
-                    "[-no-scripttools] [-scripttools]\n"
-                    "[-graphicssystem raster|opengl|openvg]\n\n", 0, 7);
+                    "[-phonon] [-no-phonon-backend] [-phonon-backend] [-no-wintab] [-wintab]\n"
+                    "[-no-multimedia] [-multimedia] [-no-audio-backend] [-audio-backend]\n"
+                    "[-no-script] [-script] [-no-scripttools] [-scripttools]\n"
+                    "[-no-webkit] [-webkit] [-graphicssystem raster|opengl|openvg]\n\n", 0, 7);
 
         desc("Installation options:\n\n");
 
@@ -1759,6 +1770,8 @@ bool Configure::displayHelp()
         desc("PHONON_BACKEND","yes","-phonon-backend",  "Compile in the platform-specific Phonon backend-plugin");
         desc("MULTIMEDIA", "no", "-no-multimedia",      "Do not compile the multimedia module");
         desc("MULTIMEDIA", "yes","-multimedia",         "Compile in multimedia module");
+        desc("AUDIO_BACKEND", "no","-no-audio-backend", "Do not compile in the platform audio backend into QtMultimedia");
+        desc("AUDIO_BACKEND", "yes","-audio-backend",   "Compile in the platform audio backend into QtMultimedia");
         desc("WEBKIT", "no",    "-no-webkit",           "Do not compile in the WebKit module");
         desc("WEBKIT", "yes",   "-webkit",              "Compile in the WebKit module (WebKit is built if a decent C++ compiler is used.)");
         desc("SCRIPT", "no",    "-no-script",           "Do not build the QtScript module.");
@@ -1825,7 +1838,9 @@ bool Configure::displayHelp()
         desc("FREETYPE", "yes",    "-qt-freetype",         "Use the libfreetype bundled with Qt.");
         desc(                      "-fpu <flags>",         "VFP type on ARM, supported options: softvfp(default) | vfpv2 | softvfp+vfpv2");
         desc("S60", "no",          "-no-s60",              "Do not compile in S60 support.");
-        desc("S60", "yes",         "-s60",                 "Compile with support for the S60 UI Framework\n");
+        desc("S60", "yes",         "-s60",                 "Compile with support for the S60 UI Framework");
+        desc("SYMBIAN_DEFFILES", "no",  "-no-usedeffiles",  "Disable the usage of DEF files.");
+        desc("SYMBIAN_DEFFILES", "yes", "-usedeffiles",     "Enable the usage of DEF files.\n");
         return true;
     }
     return false;
@@ -2537,8 +2552,11 @@ void Configure::generateOutputVars()
             qtConfig += "phonon-backend";
     }
 
-    if (dictionary["MULTIMEDIA"] == "yes")
+    if (dictionary["MULTIMEDIA"] == "yes") {
         qtConfig += "multimedia";
+        if (dictionary["AUDIO_BACKEND"] == "yes")
+            qtConfig += "audio-backend";
+    }
 
     if (dictionary["WEBKIT"] == "yes")
         qtConfig += "webkit";
@@ -2758,6 +2776,13 @@ void Configure::generateCachefile()
         if ( dictionary["PLUGIN_MANIFESTS"] == "no" )
             configStream << " no_plugin_manifest";
 
+        if ( dictionary.contains("SYMBIAN_DEFFILES") ) {
+            if(dictionary["SYMBIAN_DEFFILES"] == "yes" ) {
+                configStream << " def_files";
+            } else if ( dictionary["SYMBIAN_DEFFILES"] == "no" ) {
+                configStream << " def_files_disabled";
+            }
+        }
         configStream << endl;
         configStream << "QT_ARCH = " << dictionary[ "ARCHITECTURE" ] << endl;
         if (dictionary["QT_EDITION"].contains("OPENSOURCE"))
@@ -2784,8 +2809,9 @@ void Configure::generateCachefile()
         if (!dictionary["QT_LIBINFIX"].isEmpty())
             configStream << "QT_LIBINFIX = " << dictionary["QT_LIBINFIX"] << endl;
 
+        configStream << "#Qt for Symbian FPU settings" << endl;
         if(!dictionary["ARM_FPU_TYPE"].isEmpty()) {
-            configStream<<"QMAKE_CXXFLAGS.ARMCC += --fpu "<< dictionary["ARM_FPU_TYPE"];
+            configStream<<"MMP_RULES += \"ARMFPU "<< dictionary["ARM_FPU_TYPE"]<< "\"";
         }
 
         configStream.flush();
@@ -3281,6 +3307,14 @@ void Configure::displayConfig()
 
     if (dictionary.contains("XQMAKESPEC") && dictionary["XQMAKESPEC"].startsWith(QLatin1String("symbian"))) {
         cout << "Support for S60............." << dictionary[ "S60" ] << endl;
+    }
+
+    if (dictionary.contains("SYMBIAN_DEFFILES")) {
+        cout << "Symbian DEF files enabled..." << dictionary[ "SYMBIAN_DEFFILES" ] << endl;
+        if(dictionary["SYMBIAN_DEFFILES"] == "no") {
+            cout << "WARNING: Disabling DEF files will mean that Qt is NOT binary compatible with previous versions." << endl;
+            cout << "         This feature is only intended for use during development, NEVER for release builds." << endl;
+        }
     }
 
     if(dictionary["ASSISTANT_WEBKIT"] == "yes")

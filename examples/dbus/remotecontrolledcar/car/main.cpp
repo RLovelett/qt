@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "car.h"
-#include "car_adaptor_p.h"
+#include "car_adaptor.h"
 #include <QtGui/QApplication>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QGraphicsScene>
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     view.resize(400, 300);
     view.show();
 
-    new CarAdaptor(car);
+    new CarInterfaceAdaptor(car);
     QDBusConnection connection = QDBusConnection::sessionBus();
     connection.registerObject("/Car", car);
     connection.registerService("com.trolltech.CarExample");
