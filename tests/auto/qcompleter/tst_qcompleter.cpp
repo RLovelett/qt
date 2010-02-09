@@ -106,6 +106,7 @@ private slots:
 
     void multipleWidgets();
     void focusIn();
+    void respectSizeConstraints();
 
     void csMatchingOnCsSortedModel_data();
     void csMatchingOnCsSortedModel();
@@ -1084,6 +1085,52 @@ void tst_QCompleter::focusIn()
     QTRY_VERIFY(completer.widget() == comboBox);
     lineEdit2->setFocus();
     QTRY_VERIFY(completer.widget() == comboBox);
+}
+
+// Tests whether QCompleter respects the popup's size constraints (QTBUG-2726)
+void tst_QCompleter::respectSizeConstraints()
+{
+    QDialog d;
+    QVBoxLayout *l = new QVBoxLayout(&d);
+    QLineEdit *le = new QLineEdit;
+    le->setFixedWidth(100);  // set width smaller than completer's minimum width
+    l->addWidget(le);
+
+    QStringListModel *slm = new QStringListModel;
+    slm->setStringList(QStringList() << "one" << "two" << "three");
+
+    QCompleter *c = new QCompleter;
+    c->popup()->setMinimumSize(QSize(250, 50));
+    c->setModel(slm);
+    le->setCompleter(c);
+
+    d.resize(QSize(150, 40));
+    d.show();
+    QTest::qWaitForWindowShown(&d);
+
+    // test if popup's minimum width is respected
+    QTRY_VERIFY(!c->popup()->isVisible());
+    QTest::keyPress(le, 'o'); // trigger completer
+    QTRY_VERIFY(c->popup()->isVisible());
+    QTRY_VERIFY(c->popup()->width() >= c->popup()->minimumWidth());
+    QTRY_VERIFY(c->popup()->height() >= c->popup()->minimumHeight());
+
+    // test if popup's position is adjusted so that it is fully visible
+    const QRect screen = QApplication::desktop()->availableGeometry(&d);
+
+    // adjust to screen's right side
+    le->clear();
+    d.move(screen.right() - 50, d.y());
+    QTest::keyPress(le, 'o'); // trigger completer
+    QTRY_VERIFY(c->popup()->isVisible());
+    QTRY_VERIFY(c->popup()->geometry().right() <= screen.right());
+
+    // adjust to screen's left side
+    le->clear();
+    d.move(screen.left() - 50, d.y());
+    QTest::keyPress(le, 'o'); // trigger completer
+    QTRY_VERIFY(c->popup()->isVisible());
+    QTRY_VERIFY(c->popup()->geometry().left() >= screen.left());
 }
 
 void tst_QCompleter::dynamicSortOrder()
