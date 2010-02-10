@@ -158,13 +158,11 @@ typedef struct tagTOUCHINPUT
                      | PK_ORIENTATION | PK_CURSOR | PK_Z)
 #define PACKETMODE  0
 
-#ifndef QT_NO_WINTAB
 #include <wintab.h>
 #ifndef CSR_TYPE
 #define CSR_TYPE 20 // Some old Wacom wintab.h may not provide this constant.
 #endif
 #include <pktdef.h>
-#endif  // QT_NO_WINTAB
 
 #if defined(__CYGWIN32__)
 #define __INSIDE_CYGWIN32__
@@ -226,7 +224,6 @@ static void resolveAygLibs()
 Q_GUI_EXPORT bool qt_cleartype_enabled;
 Q_GUI_EXPORT bool qt_win_owndc_required; // CS_OWNDC is required if we use the GL graphicssystem as default
 
-#ifndef QT_NO_WINTAB
 typedef HCTX (API *PtrWTOpen)(HWND, LPLOGCONTEXT, BOOL);
 typedef BOOL (API *PtrWTClose)(HCTX);
 typedef UINT (API *PtrWTInfo)(UINT, UINT, LPVOID);
@@ -252,7 +249,6 @@ static void tabletInit(const quint64 uniqueId, const UINT csr_type, HCTX hTab);
 static void tabletUpdateCursor(QTabletDeviceData &tdd, const UINT currentCursor);
 static void initWinTabFunctions();        // resolve the WINTAB api functions
 #endif // QT_NO_TABLETEVENT
-#endif // QT_NO_WINTAB
 
 
 #ifndef QT_NO_ACCESSIBILITY
@@ -463,9 +459,7 @@ public:
     bool        translatePaintEvent(const MSG &msg);
     bool        translateConfigEvent(const MSG &msg);
     bool        translateCloseEvent(const MSG &msg);
-#ifndef QT_NO_WINTAB
     bool        translateTabletEvent(const MSG &msg, PACKET *localPacketBuf, int numPackets);
-#endif // QT_NO_WINTAB
     bool        translateGestureEvent(const MSG &msg, const GESTUREINFO &gi);
     void        repolishStyle(QStyle &style);
     inline void showChildren(bool spontaneous) { d_func()->showChildren(spontaneous); }
@@ -801,12 +795,9 @@ void qt_init(QApplicationPrivate *priv, int)
     if (QApplication::desktopSettingsAware())
         qt_set_windows_resources();
 
-#ifndef QT_NO_WINTAB
 #ifndef QT_NO_TABLETEVENT
     initWinTabFunctions();
 #endif // QT_NO_TABLETEVENT
-#endif // QT_NO_WINTAB
-
     QApplicationPrivate::inputContext = new QWinInputContext(0);
 
     // Read the initial cleartype settings...
@@ -1410,11 +1401,9 @@ LRESULT CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
     QEvent::Type evt_type = QEvent::None;
     QETWidget *widget = 0;
 
-#ifndef QT_NO_WINTAB
         // there is no need to process pakcets from tablet unless
         // it is actually on the tablet, a flag to let us know...
         int nPackets;        // the number of packets we get from the queue
-#endif // QT_NO_WINTAB
 
     long res = 0;
     if (!qApp)                                // unstable app state
@@ -1964,7 +1953,6 @@ LRESULT CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
             if ( QApplication::type() == QApplication::Tty )
                 break;
 
-#ifndef QT_NO_WINTAB
             if (ptrWTOverlap && ptrWTEnable) {
                 // cooperate with other tablet applications, but when
                 // we get focus, I want to use the tablet...
@@ -1973,8 +1961,6 @@ LRESULT CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
                         ptrWTOverlap(qt_tablet_context, true);
                 }
             }
-#endif // QT_NO_WINTAB
-
             if (QApplication::activePopupWidget() && LOWORD(wParam) == WA_INACTIVE &&
                 QWidget::find((HWND)lParam) == 0) {
                 // Another application was activated while our popups are open,
@@ -2337,7 +2323,6 @@ LRESULT CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
             result = false;
             break;
 #endif
-#ifndef QT_NO_WINTAB
         case WT_PACKET:
             if (ptrWTPacketsGet) {
                 if ((nPackets = ptrWTPacketsGet(qt_tablet_context, QT_TABLET_NPACKETQSIZE, &localPacketBuf))) {
@@ -2384,7 +2369,6 @@ LRESULT CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam
             #endif // QT_NO_TABLETEVENT
 
             break;
-#endif // QT_NO_WINTAB
 #ifdef Q_WS_WINCE_WM
         case WM_SETFOCUS: {
             HIMC hC;
@@ -3361,7 +3345,6 @@ bool QETWidget::translateWheelEvent(const MSG &msg)
 // The QTabletDeviceData is initialized with the data that do not change in time
 // (number of button, type of device, etc) but do not initialize the variable data
 // (e.g.: pen or eraser)
-#ifndef QT_NO_WINTAB
 #ifndef QT_NO_TABLETEVENT
 
 static void tabletInit(const quint64 uniqueId, const UINT csr_type, HCTX hTab)
@@ -3431,12 +3414,10 @@ static void tabletInit(const quint64 uniqueId, const UINT csr_type, HCTX hTab)
     tCursorInfo()->insert(uniqueId, tdd);
 }
 #endif // QT_NO_TABLETEVENT
-#endif // QT_NO_WINTAB
 
 // Update the "dynamic" informations of a cursor device (pen, airbrush, etc).
 // The dynamic information is the information of QTabletDeviceData that can change
 // in time (eraser or pen if a device is turned around).
-#ifndef QT_NO_WINTAB
 #ifndef QT_NO_TABLETEVENT
 
 static void tabletUpdateCursor(QTabletDeviceData &tdd, const UINT currentCursor)
@@ -3456,9 +3437,7 @@ static void tabletUpdateCursor(QTabletDeviceData &tdd, const UINT currentCursor)
     }
 }
 #endif // QT_NO_TABLETEVENT
-#endif // QT_NO_WINTAB
 
-#ifndef QT_NO_WINTAB
 bool QETWidget::translateTabletEvent(const MSG &msg, PACKET *localPacketBuf,
                                       int numPackets)
 {
@@ -3591,9 +3570,7 @@ bool QETWidget::translateTabletEvent(const MSG &msg, PACKET *localPacketBuf,
     }
     return sendEvent;
 }
-#endif // QT_NO_WINTAB
 
-#ifndef QT_NO_WINTAB
 extern bool qt_is_gui_used;
 
 
@@ -3618,7 +3595,6 @@ static void initWinTabFunctions()
 #endif // Q_OS_WINCE
 }
 #endif // QT_NO_TABLETEVENT
-#endif // QT_NO_WINTAB
 
 
 //

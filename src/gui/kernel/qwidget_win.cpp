@@ -103,15 +103,11 @@ static IDirectDrawSurface *qt_ddraw_primary;
 #define PACKETDATA  (PK_X | PK_Y | PK_BUTTONS | PK_NORMAL_PRESSURE | PK_TANGENT_PRESSURE \
                      | PK_ORIENTATION | PK_CURSOR | PK_Z)
 #define PACKETMODE  0
-
-#ifndef QT_NO_WINTAB
 #include <wintab.h>
 #include <pktdef.h>
-#endif // QT_NO_WINTAB
 
 QT_BEGIN_NAMESPACE
 
-#ifndef QT_NO_WINTAB
 typedef HCTX        (API *PtrWTOpen)(HWND, LPLOGCONTEXT, BOOL);
 typedef BOOL        (API *PtrWTClose)(HCTX);
 typedef UINT        (API *PtrWTInfo)(UINT, UINT, LPVOID);
@@ -132,7 +128,6 @@ static void qt_tablet_init();
 static void qt_tablet_cleanup();
 extern HCTX qt_tablet_context;
 extern bool qt_tablet_tilt_support;
-#endif // QT_NO_WINTAB
 
 static QWidget *qt_tablet_widget = 0;
 QWidget* qt_get_tablet_widget()
@@ -140,7 +135,6 @@ QWidget* qt_get_tablet_widget()
     return qt_tablet_widget;
 }
 
-#ifndef QT_NO_WINTAB
 extern bool qt_is_gui_used;
 static void init_wintab_functions()
 {
@@ -157,9 +151,7 @@ static void init_wintab_functions()
     ptrWTQueueSizeSet = (PtrWTQueueSizeSet)library.resolve("WTQueueSizeSet");
 #endif // Q_OS_WINCE
 }
-#endif // QT_NO_WINTAB
 
-#ifndef QT_NO_WINTAB
 static void qt_tablet_init()
 {
     static bool firstTime = true;
@@ -175,7 +167,6 @@ static void qt_tablet_init()
     LOGCONTEXT lcMine;
     qAddPostRoutine(qt_tablet_cleanup);
     struct tagAXIS tpOri[3];
-
     init_wintab_functions();
     if (ptrWTInfo && ptrWTOpen && ptrWTQueueSizeGet && ptrWTQueueSizeSet) {
         // make sure we have WinTab
@@ -228,9 +219,7 @@ static void qt_tablet_init()
         }
     }
 }
-#endif // QT_NO_WINTAB
 
-#ifndef QT_NO_WINTAB
 static void qt_tablet_cleanup()
 {
     if (ptrWTClose)
@@ -238,7 +227,6 @@ static void qt_tablet_cleanup()
     delete qt_tablet_widget;
     qt_tablet_widget = 0;
 }
-#endif // QT_NO_WINTAB
 
 const QString qt_reg_winclass(QWidget *w);                // defined in qapplication_win.cpp
 
@@ -524,10 +512,8 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
         DestroyWindow(destroyw);
     }
 
-#ifndef QT_NO_WINTAB
     if (q != qt_tablet_widget && QWidgetPrivate::mapper)
         qt_tablet_init();
-#endif // QT_NO_WINTAB
 
     if (q->testAttribute(Qt::WA_DropSiteRegistered))
         registerDropSite(true);

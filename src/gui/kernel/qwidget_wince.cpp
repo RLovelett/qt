@@ -48,7 +48,6 @@ QT_BEGIN_NAMESPACE
 const QString qt_reg_winclass(QWidget *w);                // defined in qapplication_win.cpp
 extern "C" LRESULT CALLBACK QtWndProc(HWND, UINT, WPARAM, LPARAM);
 
-#ifndef QT_NO_WINTAB
 //#define TABLET_DEBUG
 #define PACKETDATA  (PK_X | PK_Y | PK_BUTTONS | PK_NORMAL_PRESSURE | PK_TANGENT_PRESSURE \
                      | PK_ORIENTATION | PK_CURSOR | PK_Z)
@@ -66,9 +65,7 @@ typedef BOOL    (API *PtrWTQueueSizeSet)(HCTX, int);
 
 static void qt_tablet_init_wce();
 static void qt_tablet_cleanup_wce();
-#endif // QT_NO_WINTAB
 
-#ifndef QT_NO_WINTAB
 static void qt_tablet_init_wce() {
     static bool firstTime = true;
     if (!firstTime)
@@ -131,16 +128,13 @@ static void qt_tablet_init_wce() {
         }
     }
 }
-#endif // QT_NO_WINTAB
 
-#ifndef QT_NO_WINTAB
 static void qt_tablet_cleanup_wce() {
     if (ptrWTClose)
         ptrWTClose(qt_tablet_context);
     delete qt_tablet_widget;
     qt_tablet_widget = 0;
 }
-#endif // QT_NO_WINTAB
 
 
 // The internal qWinRequestConfig, defined in qapplication_win.cpp, stores move,
@@ -364,10 +358,8 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
         DestroyWindow(destroyw);
     }
 
-#ifndef QT_NO_WINTAB
     if (q != qt_tablet_widget && QWidgetPrivate::mapper)
         qt_tablet_init_wce();
-#endif // QT_NO_WINTAB
 
     if (q->testAttribute(Qt::WA_DropSiteRegistered))
         registerDropSite(true);
