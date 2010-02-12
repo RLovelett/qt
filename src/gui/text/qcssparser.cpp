@@ -120,6 +120,7 @@ static const QCssKnownValue properties[NumProperties - 1] = {
     { "image", QtImage },
     { "image-position", QtImageAlignment },
     { "left", Left },
+    { "line-height", LineHeight },
     { "list-style", ListStyle },
     { "list-style-type", ListStyleType },
     { "margin" , Margin },

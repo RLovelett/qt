@@ -178,6 +178,7 @@ enum Property {
     OutlineBottomRightRadius,
     FontVariant,
     TextTransform,
+    LineHeight,
     NumProperties
 };
 
