@@ -806,7 +806,7 @@ void QS60StylePrivate::setThemePaletteHash(QPalette *palette) const
     QPalette webPalette = *palette;
     webPalette.setColor(QPalette::WindowText, Qt::black);
     webPalette.setColor(QPalette::Text, Qt::black);
-    webPalette.setBrush(QPalette::Base,Qt::white);
+    webPalette.setBrush(QPalette::Base, Qt::white);
     
     QApplication::setPalette(webPalette, "QWebView");
     QApplication::setPalette(webPalette, "QGraphicsWebView");
