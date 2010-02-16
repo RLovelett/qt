@@ -3774,7 +3774,7 @@ void QUrlPrivate::parse(ParseOptions parseOptions) const
     if (ch == '#') {
         that->hasFragment = true;
         _fragment(ptr, &parseData);
-    } else if (isSchemeValid == false || ch != '\0') {
+    } else if (ch != '\0') {
         that->isValid = false;
         that->errorInfo.setParams(*ptr, QT_TRANSLATE_NOOP(QUrl, "expected end of URL"),
                                   0, ch);
