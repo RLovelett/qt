@@ -72,8 +72,6 @@
 
 QT_BEGIN_NAMESPACE
 
-extern int qt_printerRealNumCopies(QPaintEngine *);
-
 class QOptionTreeItem;
 class QPPDOptionsModel;
 
@@ -439,7 +437,7 @@ void QPrintDialogPrivate::applyPrinterProperties(QPrinter *p)
     case QPrinter::DuplexShortSide:
         options.duplexShort->setChecked(true); break;
     }
-    options.copies->setValue(qt_printerRealNumCopies(p->paintEngine()));
+    options.copies->setValue(p->actualNumCopies());
     options.collate->setChecked(p->collateCopies());
     options.reverse->setChecked(p->pageOrder() == QPrinter::LastPageFirst);
     top->d->applyPrinterProperties(p);

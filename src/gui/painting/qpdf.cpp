@@ -1512,6 +1512,9 @@ QVariant QPdfBaseEngine::property(PrintEnginePropertyKey key) const
 #endif
             ret = d->copies;
         break;
+    case PPK_RealNumberOfCopies:
+        ret = d->copies;
+        break;
     case PPK_Orientation:
         ret = d->orientation;
         break;

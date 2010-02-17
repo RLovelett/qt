@@ -158,7 +158,7 @@ QSizeF qt_printerPaperSize(QPrinter::Orientation orientation,
                   (qt_paperSizes[paperSize][height_index] * 72 / 25.4) / multiplier);
 }
 
-
+// TODO JPL: Not used anywhere now, assume BIC safe to delete???
 // returns the actual num copies set on a printer, not
 // the number that is documented in QPrinter::numCopies()
 int qt_printerRealNumCopies(QPaintEngine *engine)
@@ -168,12 +168,12 @@ int qt_printerRealNumCopies(QPaintEngine *engine)
         || engine->type() == QPaintEngine::Pdf)
     {
         QPdfBaseEngine *base = static_cast<QPdfBaseEngine *>(engine);
-        numCopies = base->d_func()->copies;
+        numCopies = base->property(QPrintEngine::PPK_RealNumberOfCopies).toInt();
     }
 #ifdef Q_WS_WIN
     else if (engine->type() == QPaintEngine::Windows) {
         QWin32PrintEngine *base = static_cast<QWin32PrintEngine *>(engine);
-        numCopies = base->d_func()->num_copies;
+        numCopies = base->property(QPrintEngine::PPK_RealNumberOfCopies).toInt();
     }
 #endif
     return numCopies;
@@ -761,7 +761,7 @@ void QPrinter::setOutputFormat(OutputFormat format)
             // PPK_NumberOfCopies need special treatmeant since it in most cases
             // will return 1, disregarding the actual value that was set
             if (key == QPrintEngine::PPK_NumberOfCopies)
-                prop = QVariant(qt_printerRealNumCopies(oldPaintEngine));
+                prop = oldPrintEngine->property(QPrintEngine::PPK_RealNumberOfCopies);
             else
                 prop = oldPrintEngine->property(key);
             if (prop.isValid())
@@ -1299,7 +1299,7 @@ int QPrinter::numCopies() const
 int QPrinter::actualNumCopies() const
 {
     Q_D(const QPrinter);
-    return qt_printerRealNumCopies(d->paintEngine);
+    return d->printEngine->property(QPrintEngine::PPK_RealNumberOfCopies).toInt();
 }
 
 

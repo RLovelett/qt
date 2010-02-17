@@ -787,6 +787,9 @@ QVariant QMacPrintEngine::property(PrintEnginePropertyKey key) const
     case PPK_NumberOfCopies:
         ret = 1;
         break;
+    case PPK_RealNumberOfCopies:
+        PMGetCopies(d->settings, &ret);
+        break;
     case PPK_Orientation:
         PMOrientation orientation;
         PMGetOrientation(d->format, &orientation);

@@ -1410,6 +1410,10 @@ QVariant QWin32PrintEngine::property(PrintEnginePropertyKey key) const
         value = 1;
         break;
 
+    case PPK_RealNumberOfCopies:
+        value = d->num_copies;
+        break;
+
     case PPK_Orientation:
         {
             if (!d->devMode) {

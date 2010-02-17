@@ -88,6 +88,8 @@ public:
         PPK_PageMargins,
         PPK_PaperSize = PPK_PageSize,
 
+        PPK_RealNumberOfCopies = 27,
+
         PPK_CustomBase = 0xff00
     };
 
