@@ -6080,7 +6080,7 @@ QStringList QString::split(const QRegExp &rx, SplitBehavior behavior) const
 */
 QString QString::normalized(QString::NormalizationForm mode) const
 {
-    return normalized(mode, CURRENT_VERSION);
+    return normalized(mode, UNICODE_DATA_VERSION);
 }
 
 /*!
@@ -6162,7 +6162,7 @@ void qt_string_normalize(QString *data, QString::NormalizationForm mode, QChar::
         return;
 
     QString &s = *data;
-    if (version != CURRENT_VERSION) {
+    if (version != UNICODE_DATA_VERSION) {
         for (int i = 0; i < NumNormalizationCorrections; ++i) {
             const NormalizationCorrection &n = uc_normalization_corrections[i];
             if (n.version > version) {
