@@ -95,6 +95,8 @@ public:
 
 void QSyntaxHighlighterPrivate::applyFormatChanges()
 {
+    bool formatsChanged = false;
+
     QTextLayout *layout = currentBlock.layout();
 
     QList<QTextLayout::FormatRange> ranges = layout->additionalFormats();
@@ -110,10 +112,12 @@ void QSyntaxHighlighterPrivate::applyFormatChanges()
                 ++it;
             } else {
                 it = ranges.erase(it);
+                formatsChanged = true;
             }
         }
-    } else {
+    } else if (!ranges.isEmpty()) {
         ranges.clear();
+        formatsChanged = true;
     }
 
     QTextCharFormat emptyFormat;
@@ -149,6 +153,7 @@ void QSyntaxHighlighterPrivate::applyFormatChanges()
         }
 
         ranges << r;
+        formatsChanged = true;
         r.start = -1;
     }
 
@@ -163,9 +168,13 @@ void QSyntaxHighlighterPrivate::applyFormatChanges()
         }
 
         ranges << r;
+        formatsChanged = true;
     }
 
-    layout->setAdditionalFormats(ranges);
+    if (formatsChanged) {
+        layout->setAdditionalFormats(ranges);
+        doc->markContentsDirty(currentBlock.position(), currentBlock.length());
+    }
 }
 
 void QSyntaxHighlighterPrivate::_q_reformatBlocks(int from, int charsRemoved, int charsAdded)
@@ -215,8 +224,6 @@ void QSyntaxHighlighterPrivate::reformatBlock(const QTextBlock &block)
     formatChanges.fill(QTextCharFormat(), block.length() - 1);
     q->highlightBlock(block.text());
     applyFormatChanges();
-
-    doc->markContentsDirty(block.position(), block.length());
 
     currentBlock = QTextBlock();
 }
