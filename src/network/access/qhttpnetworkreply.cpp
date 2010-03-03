@@ -451,9 +451,17 @@ qint64 QHttpNetworkReplyPrivate::readStatus(QAbstractSocket *socket)
             bool ok = parseStatus(fragment);
             state = ReadingHeaderState;
             fragment.clear();
-            if (!ok) {
+            if (!ok) 
                 return -1;
+
+            if (statusCode == 100) {
+                state = ReadingStatusState;
+                char s[2];
+                if (socket->peek(s, 2) == 2 && s[0] == '\r' && s[1] == '\n') {
+                    socket->read(s, 2); // consume the "\r\n"
+                }
             }
+
             break;
         } else {
             fragment.append(c);
