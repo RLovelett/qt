@@ -308,6 +308,9 @@ QVariant QtopiaPrintEngine::property(PrintEnginePropertyKey key) const
     case PPK_SupportedResolutions:
         ret = QList<QVariant>() << QT_QWS_PRINTER_DEFAULT_DPI;
         break;
+    case PPK_SupportsMultiplePageRanges:
+        ret = true;
+        break;
     default:
         break;
     }

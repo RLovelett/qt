@@ -79,6 +79,8 @@
 
 QT_BEGIN_NAMESPACE
 
+extern QList<int> qt_printerPageRangeToPageList(const QString &range, bool *ok);
+
 typedef void (*QPrintDialogCreator)(QPrintDialog *parent);
 Q_GUI_EXPORT QPrintDialogCreator _qt_print_dialog_creator;
 
@@ -108,6 +110,7 @@ public:
     QComboBox *rangeCombo;
     QSpinBox *firstPage;
     QSpinBox *lastPage;
+    QLineEdit *multiplePageRanges;
 
     QComboBox *pageOrderCombo;
     QPrinter::PageOrder pageOrder2;
@@ -127,6 +130,7 @@ public:
     void _q_setFirstPage(int);
     void _q_setLastPage(int);
     void _q_fileNameEditChanged(const QString &text);
+    void _q_multiplePageRangesEditChanged(const QString &text);
 
     void setupDestination();
     void setupPrinterSettings();
@@ -151,6 +155,40 @@ void QPrintDialogPrivate::_q_okClicked()
         if (confirm == QMessageBox::No)
             return;
     }
+
+    if (q->isOptionEnabled(QPrintDialog::PrintMultiplePageRanges)) {
+        QString userRange = multiplePageRanges->text().simplified();
+
+        if (userRange.isEmpty()) {
+            QMessageBox::warning(q, q->windowTitle(),
+                                    QPrintDialog::tr("No Pages entered.\nPlease enter the required Pages or choose a different Print Range"));
+            return;
+        }
+
+        if(userRange != "-") {
+            if(userRange.startsWith('-'))
+                userRange.prepend(QString::number(q->minPage()));
+            if(userRange.endsWith('-'))
+                userRange.append(QString::number(q->maxPage()));
+        }
+
+        bool valid;
+        QList<int> userList = qt_printerPageRangeToPageList(userRange, &valid);
+
+        if (!valid) {
+            QMessageBox::warning(q, q->windowTitle(),
+                                QPrintDialog::tr("Invalid Page Range entered.\nPlease enter a valid range, e.g. 1 or 1-3 or 1,3-7,11-13"));
+            return;
+        }
+
+        qSort(userList);
+        if (userList.first() < q->minPage() || userList.last() > q->maxPage()) {
+            QMessageBox::warning(q, q->windowTitle(),
+                                 QPrintDialog::tr("Invalid page number(s) entered.\nPage numbers must be between %1 and %2")
+                                 .arg(q->minPage()).arg(q->maxPage()));
+            return;
+        }
+    }
 #endif // QT_NO_MESSAGEBOX
 
     lastPage->interpretText();
@@ -169,18 +207,34 @@ void QPrintDialogPrivate::_q_okClicked()
     case (int)QPrintDialog::AllPages:
         q->setPrintRange(QPrintDialog::AllPages);
         q->setFromTo(0, 0);
+        printer->setPageRange(QString());
         break;
     case (int)QPrintDialog::Selection:
         q->setPrintRange(QPrintDialog::Selection);
         q->setFromTo(0, 0);
+        printer->setPageRange(QString());
         break;
     case (int)QPrintDialog::PageRange:
         q->setPrintRange(QPrintDialog::PageRange);
-        q->setFromTo(firstPage->value(), lastPage->value());
+        if (q->isOptionEnabled(QPrintDialog::PrintMultiplePageRanges)) {
+            QString userRange = multiplePageRanges->text().simplified();
+            if(userRange.startsWith('-'))
+                userRange.prepend(QString::number(q->minPage()));
+            if(userRange.endsWith('-'))
+                userRange.append(QString::number(q->maxPage()));
+            QList<int> sortList = qt_printerPageRangeToPageList(userRange, 0);
+            qSort(sortList);
+            q->setFromTo(sortList.first(), sortList.last());
+            printer->setPageRange(userRange);
+        } else {
+            q->setFromTo(firstPage->value(), lastPage->value());
+            printer->setPageRange(QString("%1-%2").arg(firstPage->value()).arg(lastPage->value()));
+        }
         break;
     case (int)QPrintDialog::CurrentPage:
         q->setPrintRange(QPrintDialog::CurrentPage);
         q->setFromTo(0, 0);
+        printer->setPageRange(QString());
         break;
     }
     q->accept();
@@ -260,6 +314,11 @@ void QPrintDialogPrivate::_q_setLastPage(int lp)
 }
 
 void QPrintDialogPrivate::_q_fileNameEditChanged(const QString &text)
+{
+    Q_UNUSED(text);
+}
+
+void QPrintDialogPrivate::_q_multiplePageRangesEditChanged(const QString &text)
 {
     Q_UNUSED(text);
 }
@@ -396,6 +455,11 @@ void QPrintDialogPrivate::setupOptions()
     QObject::connect(lastPage, SIGNAL(valueChanged(int)),
             q, SLOT(_q_setLastPage(int)));
 
+    // multiple page ranges
+    multiplePageRanges = q->findChild<QLineEdit *>("multiplePageRanges");
+    QObject::connect(multiplePageRanges, SIGNAL(editingFinished(QString)),
+                     q, SLOT(_q_multiplePageRangesEditChanged(QString)));
+
     // print order
     pageOrderCombo = q->findChild<QComboBox *>("pageOrderCombo");
     QObject::connect(pageOrderCombo, SIGNAL(activated(int)),
@@ -513,6 +577,17 @@ void QPrintDialogPrivate::setPrinter(QPrinter *p, bool pickUpSettings)
             rangeCombo->setCurrentIndex((int)(QPrintDialog::CurrentPage));
             break;
         }
+
+        if (q->isOptionEnabled(QPrintDialog::PrintMultiplePageRanges)) {
+            multiplePageRanges->setVisible(true);
+            firstPage->setVisible(false);
+            lastPage->setVisible(false);
+        } else {
+            multiplePageRanges->setVisible(false);
+            firstPage->setVisible(true);
+            lastPage->setVisible(true);
+        }
+
     }
 
     if (p && q->maxPage()) {
@@ -526,6 +601,9 @@ void QPrintDialogPrivate::setPrinter(QPrinter *p, bool pickUpSettings)
         lastPage->setRange(from, q->maxPage());
         firstPage->setValue(from);
         lastPage->setValue(to);
+        multiplePageRanges->setText(p->pageRange());
+        if (multiplePageRanges->text().isEmpty())
+            multiplePageRanges->setText(QString("%1-%2").arg(from).arg(to));
     }
 }
 

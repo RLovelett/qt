@@ -108,6 +108,7 @@ private slots:
 
     void testCopyCount();
     void testCurrentPage();
+    void testMultiplePageRanges();
 
     void taskQTBUG4497_reusePrinterOnDifferentFiles();
 
@@ -1025,7 +1026,141 @@ void tst_QPrinter::testCurrentPage()
     // Test enable Current Page option
     dialog.setOption(QPrintDialog::PrintCurrentPage);
     QCOMPARE(dialog.isOptionEnabled(QPrintDialog::PrintCurrentPage), true);
+}
 
+void tst_QPrinter::testMultiplePageRanges()
+{
+    QList<int> list;
+    QPrinter printer;
+    printer.setFromTo(1, 10);
+    QPrintDialog dialog(&printer);
+    dialog.setMinMax(1, 10);
+
+    // Test single page number
+    printer.setPageRange("5");
+    list.clear();
+    list << 5;
+    QCOMPARE(printer.pageRange(), QString("5"));
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test single page range
+    printer.setPageRange("1-3");
+    list.clear();
+    list << 1 << 2 << 3;
+    QCOMPARE(printer.pageRange(), QString("1-3"));
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test two page numbers
+    printer.setPageRange("3,7");
+    list.clear();
+    list << 3 << 7;
+    QCOMPARE(printer.pageRange(), QString("3,7"));
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test two page ranges
+    printer.setPageRange("1-3,6-9");
+    list.clear();
+    list << 1 << 2 << 3 << 6 << 7 << 8 << 9;
+    QCOMPARE(printer.pageRange(), QString("1-3,6-9"));
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test text is invalid
+    printer.setPageRange("invalid");
+    list.clear();
+    QCOMPARE(printer.pageRange(), QString());
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test mixed page numbers and page ranges
+    printer.setPageRange("1-3,5,7-9");
+    list.clear();
+    list << 1 << 2 << 3 << 5 << 7 << 8 << 9;
+    QCOMPARE(printer.pageRange(), QString("1-3,5,7-9"));
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test whitespace
+    printer.setPageRange(QString(" 1 , 2 - 5  ,  6  "));
+    list.clear();
+    list << 1 << 2 << 3 << 4 << 5 << 6;
+    QCOMPARE(printer.pageRange(), QString("1-6"));
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test extra commas
+    printer.setPageRange(QString(",1,,2,  ,3,"));
+    list.clear();
+    list << 1 << 2 << 3;
+    QCOMPARE(printer.pageRange(), QString("1-3"));
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test empty string
+    printer.setPageRange(QString());
+    list.clear();
+    QCOMPARE(printer.pageRange(), QString());
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test descending order
+    printer.setPageRange(QString("3-1"));
+    list.clear();
+    list << 3 << 2 << 1;
+    QCOMPARE(printer.pageRange(), QString("3-1"));
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test mixed order
+    printer.setPageRange(QString("3-1,1-3,3-1,2-4,3-1"));
+    list.clear();
+    list << 3 << 2 << 1 << 1 << 2 << 3 << 3 << 2 << 1 << 2 << 3 << 4 << 3 << 2 << 1;
+    QCOMPARE(printer.pageRange(), QString("3-1,1-3,3-1,2-4,3-1"));
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test - at end is invalid
+    printer.setPageRange(QString("8-"));
+    list.clear();
+    QCOMPARE(printer.pageRange(), QString());
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test - at start is invalid
+    printer.setPageRange(QString("-3"));
+    list.clear();
+    QCOMPARE(printer.pageRange(), QString());
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test - only invalid
+    printer.setPageRange(QString("-"));
+    list.clear();
+    QCOMPARE(printer.pageRange(), QString());
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test multiple - invalid
+    printer.setPageRange(QString("2-4-6"));
+    list.clear();
+    QCOMPARE(printer.pageRange(), QString());
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test multiple - invalid
+    printer.setPageRange(QString("2--6"));
+    list.clear();
+    QCOMPARE(printer.pageRange(), QString());
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test multiple , with no numbers invalid
+    printer.setPageRange(QString(",,,  ,,  ,,"));
+    list.clear();
+    QCOMPARE(printer.pageRange(), QString());
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test auto-remove of pages outside min/max range
+    dialog.setMinMax(2, 10);
+    printer.setPageRange("1,2,10,11");
+    list.clear();
+    list << 2 << 10;
+    QCOMPARE(printer.pageRange(), QString("2,10"));
+    QCOMPARE(printer.pageRangeAsList(), list);
+
+    // Test default Multiple Pages option to off
+    QCOMPARE(dialog.isOptionEnabled(QPrintDialog::PrintMultiplePageRanges), false);
+
+    // Test enable Multiple Pages option
+    dialog.setOption(QPrintDialog::PrintMultiplePageRanges);
+    QCOMPARE(dialog.isOptionEnabled(QPrintDialog::PrintMultiplePageRanges), true);
 }
 
 QTEST_MAIN(tst_QPrinter)

@@ -158,6 +158,145 @@ QSizeF qt_printerPaperSize(QPrinter::Orientation orientation,
                   (qt_paperSizes[paperSize][height_index] * 72 / 25.4) / multiplier);
 }
 
+// Converts a list of page numbers in any random order into the equivalent page
+// range string, e.g. (1,2,3,5,8,7,6) becomes "1-3,5,8-6".  Shared utility for
+// print dialog to use as well.
+QString qt_printerPageListToPageRange(QList<int> list)
+{
+    QString range, prev;
+    QChar sep, dir;
+
+    if (list.isEmpty())
+        return range;
+
+    prev.setNum(list.first());
+    range = prev;
+
+    for (int i = 1; i < list.length(); ++i) {
+
+        if (list.at(i) == prev.toInt() + 1) {
+            if (sep == ',' || dir == '-') {
+                range.append(sep);
+                range.append(prev);
+            }
+            if (dir == '-') {
+                sep = ',';
+                dir = '\0';
+            } else {
+                sep = '-';
+                dir = '+';
+            }
+            prev.setNum(list.at(i));
+
+        } else if (list.at(i) == prev.toInt() - 1) {
+
+            if (sep == ',' || dir == '+') {
+                range.append(sep);
+                range.append(prev);
+            }
+            if (dir == '+') {
+                sep = ',';
+                dir = '\0';
+            } else {
+                sep = '-';
+                dir = '-';
+            }
+            prev.setNum(list.at(i));
+
+        } else {
+
+            if (sep != '\0') {
+                range.append(sep);
+                range.append(prev);
+            }
+            sep = ',';
+            dir = '\0';
+            prev.setNum(list.at(i));
+        }
+
+    }
+
+    if (sep != '\0') {
+        range.append(sep);
+        range.append(prev);
+    }
+
+    return range;
+}
+
+// Converts a page range string in any random order into the equivalent list of
+// page numbers, e.g. "1-3,5,8-6" becomes (1,2,3,5,8,7,6).  Validates the page
+// range is well formed, accepts duplicate pages and descending page order and
+// will ignore unambiguous spaces and commas. Shared utility for print dialog
+// to use as well.
+QList<int> qt_printerPageRangeToPageList(const QString &fromRange, bool *ok)
+{
+    QList<int> list;
+    if (ok)
+        *ok = false;
+
+    QString range = fromRange.simplified();
+
+    QStringList ranges = range.split(',');
+
+    // Remove any empty or whitespace only sub-ranges,
+    // i.e. strip out any commas with no text/numbers between
+    for (int i = 0; i < ranges.count();) {
+        if (ranges.at(i).simplified().isEmpty())
+            ranges.removeAt(i);
+        else
+            ++i;
+    }
+
+    if(ranges.count() == 0)
+        return list;
+
+    int first, last;
+    foreach (QString subRange, ranges) {
+
+        QStringList pages = subRange.split('-');
+        first = pages.at(0).simplified().toInt(); // Sets to 0 if not a number
+
+        if (first == 0) {
+            list.clear();
+            return list;
+        }
+
+        if (pages.count() == 1) {
+
+            list.append(first);
+
+        } else if (pages.count() == 2) {
+
+            last = pages.at(1).simplified().toInt(); // Sets to 0 if not a number
+
+            if (last == 0) {
+                list.clear();
+                return list;
+            }
+
+            if (last == first) {
+                list.append(first);
+            } else if (last > first) {
+                for (int i = first; i <= last; ++i)
+                    list.append(i);
+            } else {
+                for (int i = first; i >= last; --i)
+                    list.append(i);
+            }
+
+        } else {
+            list.clear();
+            return list;
+        }
+
+    }
+
+    if (ok)
+        *ok = true;
+    return list;
+}
+
 void QPrinterPrivate::createDefaultEngines()
 {
     QPrinter::OutputFormat realOutputFormat = outputFormat;
@@ -2103,6 +2242,116 @@ QPrinter::PrintRange QPrinter::printRange() const
     return PrintRange(d->printRange);
 }
 
+
+/*!
+    \since 4.8
+
+    Sets the selected Page Range for multiple page range selection.
+
+    A Page Range is a string consisting of one or more page sub-ranges separated
+    by commas.  A sub-range may be either a single page number or two page
+    numbers separated by a dash, e.g "1,3,5-7".
+
+    \a fromPageRange can be passed a range of page numbers in any order and
+    with duplicate values.  Any application using this feature should be capable
+    of printing pages in any order, otherwise the standard From/To page range
+    should be used.
+
+    Setting the Page Range does not affect the From/To page numbers which
+    should be set using setFromTo().
+
+    \note Pages in a document are numbered according to the convention that
+    the first page is page 1.
+
+    This function is mostly used to set a default value that the user can
+    override in the print dialog when using the QPrintDialog::PrintMultiplePageRanges
+    option, or for no-dialog printing.
+
+    \sa pageRange(), pageRangeAsList(), setFromTo()
+*/
+
+void QPrinter::setPageRange(QString fromPageRange)
+{
+    //If not a well-formed range, will return an empty list, so no need to test for it explicitly
+    setPageRange(qt_printerPageRangeToPageList(fromPageRange, 0));
+}
+
+
+/*!
+    \since 4.8
+
+    Sets the selected Page Range for multiple page range selection from a
+    Page List.
+
+    This is a convenience function, see the main setPageRange() function for
+    details.
+
+    \sa setPageRange()
+*/
+
+void QPrinter::setPageRange(QList<int> fromPageList)
+{
+    Q_D(QPrinter);
+
+    // Remove any page numbers < minPage or > maxPage
+    if (d->minPage > 0 && d->maxPage > 0) {
+        for (int i = 0; i < fromPageList.size();) {
+            if (fromPageList.at(i) < d->minPage || fromPageList.at(i) > d->maxPage)
+                fromPageList.removeAt(i);
+            else
+                ++i;
+        }
+    }
+
+    d->pageRange = qt_printerPageListToPageRange(fromPageList);
+}
+
+
+/*!
+    \since 4.8
+
+    Returns the selected Page Range, e.g. "1-5,9-15,21".
+
+    The returned result may be in random order with duplicates. If your
+    application cannot support random page order then you should sort the
+    results before use.
+
+    This does NOT take into account any other options like Print Range or Page
+    Order, it is normally the value as originally set by calling setPageRange()
+    or as entered in the print dialog by the user.
+
+    \sa setPageRange()
+    */
+
+QString QPrinter::pageRange() const
+{
+    Q_D(const QPrinter);
+    return d->pageRange;
+}
+
+
+/*!
+    \since 4.8
+
+    Returns the selected Page Range as a Page List.
+
+    The returned result may be in random order with duplicates. If your
+    application cannot support random page order then you should sort the
+    results before use.
+
+    This does NOT take into account any other options like Print Range or Page
+    Order, it is normally the value as originally set by calling setPageRange()
+    or as entered in the print dialog by the user.
+
+    \sa setPageRange()
+    */
+
+QList<int> QPrinter::pageRangeAsList() const
+{
+    return qt_printerPageRangeToPageList(pageRange(), 0);
+}
+
+
 #if defined(QT3_SUPPORT)
 
 void QPrinter::setOutputToFile(bool f)
@@ -2355,6 +2604,9 @@ bool QPrinter::isOptionEnabled( PrinterOption option ) const
 
     \value PPK_SupportsMultipleCopies A boolean value indicating whether or not
     the printer supports printing multiple copies in one job.
+
+    \value PPK_SupportsMultiplePageRanges A boolean value indicating whether or not
+    the print system supports entering multiple pages ranges in the print dialog.
 
     \value PPK_CustomBase Basis for extension.
 */

@@ -1495,6 +1495,10 @@ QVariant QWin32PrintEngine::property(PrintEnginePropertyKey key) const
         value = d->queryResolutions();
         break;
 
+    case PPK_SupportsMultiplePageRanges:
+        value = true;
+        break;
+
     case PPK_WindowsPageSize:
         if (!d->devMode) {
             value = -1;

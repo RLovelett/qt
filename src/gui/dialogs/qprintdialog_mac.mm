@@ -152,6 +152,7 @@ QT_USE_NAMESPACE
         PMGetLastPage(d->ep->settings, &topage);
         topage = qMin(UInt32(INT_MAX), topage);
         dialog->setFromTo(frompage, topage);
+        dialog->printer()->setPageRange(QString("%1-%2").arg(frompage).arg(topage));
 
         // OK, I need to map these values back let's see
         // If from is 1 and to is INT_MAX, then print it all
@@ -159,12 +160,15 @@ QT_USE_NAMESPACE
         if (dialog->fromPage() == 1 && dialog->toPage() == INT_MAX) {
             dialog->setPrintRange(QPrintDialog::AllPages);
             dialog->setFromTo(0, 0);
+            dialog->printer()->setPageRange(QString());
         } else {
             dialog->setPrintRange(QPrintDialog::PageRange); // In a way a lie, but it shouldn't hurt.
             // Carbon hands us back a very large number here even for ALL, set it to max
             // in that case to follow the behavior of the other print dialogs.
-            if (dialog->maxPage() < dialog->toPage())
+            if (dialog->maxPage() < dialog->toPage()) {
                 dialog->setFromTo(dialog->fromPage(), dialog->maxPage());
+                dialog->printer()->setPageRange(QString("%1-%2").arg(dialog->fromPage()).arg(dialog->maxPage());
+            }
         }
         // Keep us in sync with file output
         PMDestinationType dest;
@@ -266,6 +270,7 @@ void QPrintDialogPrivate::closeCarbonPrintPanel()
         PMGetLastPage(ep->settings, &topage);
         topage = qMin(UInt32(INT_MAX), topage);
         q->setFromTo(frompage, topage);
+        q->printer()->setPageRange(QString("%1-%2").arg(frompage).arg(topage));
 
         // OK, I need to map these values back let's see
         // If from is 1 and to is INT_MAX, then print it all
@@ -274,12 +279,14 @@ void QPrintDialogPrivate::closeCarbonPrintPanel()
         if (q->fromPage() == 1 && q->toPage() == INT_MAX) {
             q->setPrintRange(QAbstractPrintDialog::AllPages);
             q->setFromTo(0,0);
+            q->printer()->setPageRange(QString());
         } else {
             q->setPrintRange(QAbstractPrintDialog::PageRange); // In a way a lie, but it shouldn't hurt.
             // Carbon hands us back a very large number here even for ALL, set it to max
             // in that case to follow the behavior of the other print dialogs.
             if (q->maxPage() < q->toPage())
                 q->setFromTo(q->fromPage(), q->maxPage());
+                q->printer()->setPageRange(QString("%1-%2").arg(q->fromPage()).arg(q->maxPage()));
         }
         // Keep us in sync with file output
         PMDestinationType dest;

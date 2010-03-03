@@ -88,6 +88,9 @@ public:
         PPK_PageMargins,
         PPK_CopyCount,
         PPK_SupportsMultipleCopies,
+
+        PPK_SupportsMultiplePageRanges,
+
         PPK_PaperSize = PPK_PageSize,
 
         PPK_CustomBase = 0xff00

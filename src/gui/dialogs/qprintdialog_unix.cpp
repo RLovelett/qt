@@ -72,6 +72,8 @@
 
 QT_BEGIN_NAMESPACE
 
+extern QList<int> qt_printerPageRangeToPageList(const QString &range, bool *ok);
+
 class QOptionTreeItem;
 class QPPDOptionsModel;
 
@@ -130,6 +132,7 @@ public:
 
     void setupPrinter();
     void updateWidgets();
+    bool checkFields();
 
     virtual void setTabs(const QList<QWidget*> &tabs);
 
@@ -477,7 +480,7 @@ void QPrintDialogPrivate::_q_collapseOrExpandDialog()
 void QPrintDialogPrivate::_q_checkFields()
 {
     Q_Q(QPrintDialog);
-    if (top->d->checkFields())
+    if (top->d->checkFields() && checkFields())
         q->accept();
 }
 #endif // QT_NO_MESSAGEBOX
@@ -502,15 +505,31 @@ void QPrintDialogPrivate::setupPrinter()
     if (options.printAll->isChecked()) {
         p->setPrintRange(QPrinter::AllPages);
         p->setFromTo(0,0);
+        p->setPageRange(QString());
     } else if (options.printSelection->isChecked()) {
         p->setPrintRange(QPrinter::Selection);
         p->setFromTo(0,0);
+        p->setPageRange(QString());
     } else if (options.printCurrentPage->isChecked()) {
         p->setPrintRange(QPrinter::CurrentPage);
         p->setFromTo(0,0);
+        p->setPageRange(QString());
     } else if (options.printRange->isChecked()) {
         p->setPrintRange(QPrinter::PageRange);
         p->setFromTo(options.from->value(), qMax(options.from->value(), options.to->value()));
+        p->setPageRange(QString("%1-%2").arg(options.from->value())
+                                        .arg(qMax(options.from->value(), options.to->value())));
+    } else if (options.printMultiplePageRanges->isChecked()) {
+        p->setPrintRange(QPrinter::PageRange);
+        QString userRange = options.multiplePageRanges->text().simplified();
+        if(userRange.startsWith('-'))
+            userRange.prepend(QString::number(options.from->minimum()));
+        if(userRange.endsWith('-'))
+            userRange.append(QString::number(options.from->maximum()));
+        QList<int> sortList = qt_printerPageRangeToPageList(userRange, 0);
+        qSort(sortList);
+        p->setFromTo(sortList.first(), sortList.last());
+        p->setPageRange(userRange);
     }
 
     // copies
@@ -524,10 +543,22 @@ void QPrintDialogPrivate::updateWidgets()
 {
     Q_Q(QPrintDialog);
     options.gbPrintRange->setVisible(q->isOptionEnabled(QPrintDialog::PrintPageRange) ||
+                                     q->isOptionEnabled(QPrintDialog::PrintMultiplePageRanges) ||
                                      q->isOptionEnabled(QPrintDialog::PrintSelection) ||
                                      q->isOptionEnabled(QPrintDialog::PrintCurrentPage));
 
-    options.printRange->setEnabled(q->isOptionEnabled(QPrintDialog::PrintPageRange));
+    if (q->isOptionEnabled(QPrintDialog::PrintMultiplePageRanges)) {
+        options.printRange->setVisible(false);
+        options.from->setVisible(false);
+        options.to->setVisible(false);
+        options.toLabel->setVisible(false);
+        options.printRangeSpacer->changeSize(0,0);
+        options.printRangeSpacer->invalidate();
+    } else if (q->isOptionEnabled(QPrintDialog::PrintPageRange)) {
+        options.printRange->setEnabled(true);
+        options.printMultiplePageRanges->setVisible(false);
+        options.multiplePageRanges->setVisible(false);
+    }
     options.printSelection->setVisible(q->isOptionEnabled(QPrintDialog::PrintSelection));
     options.printCurrentPage->setVisible(q->isOptionEnabled(QPrintDialog::PrintCurrentPage));
     options.collate->setVisible(q->isOptionEnabled(QPrintDialog::PrintCollateCopies));
@@ -559,7 +590,54 @@ void QPrintDialogPrivate::updateWidgets()
 
     options.from->setValue(q->fromPage());
     options.to->setValue(q->toPage());
+
+    options.multiplePageRanges->setText(q->printer()->pageRange());
+    if (options.multiplePageRanges->text().isEmpty())
+        options.multiplePageRanges->setText(QString("%1-%2").arg(options.from->value()).arg(options.to->value()));
+
     top->d->updateWidget();
+}
+
+bool QPrintDialogPrivate::checkFields()
+{
+    Q_Q(QPrintDialog);
+    if (options.printMultiplePageRanges->isChecked()) {
+        QString userRange = options.multiplePageRanges->text().simplified();
+
+        if (userRange.isEmpty()) {
+            QMessageBox::warning(q, q->windowTitle(),
+                                 QPrintDialog::tr("No Pages entered.\nPlease enter the required Pages or choose a different Print Range"));
+            return false;
+        }
+
+        const int minPage = options.from->minimum();
+        const int maxPage = options.from->maximum();
+
+        if(userRange != "-") {
+            if(userRange.startsWith('-'))
+                userRange.prepend(QString::number(minPage));
+            if(userRange.endsWith('-'))
+                userRange.append(QString::number(maxPage));
+        }
+
+        bool valid;
+        QList<int> userList = qt_printerPageRangeToPageList(userRange, &valid);
+
+        if (!valid) {
+            QMessageBox::warning(q, q->windowTitle(),
+                                 QPrintDialog::tr("Invalid Page Range entered.\nPlease enter a valid range, e.g. 1 or 1-3 or 1,3-7,11-13"));
+            return false;
+        }
+
+        qSort(userList);
+        if (userList.first() < minPage || userList.last() > maxPage) {
+            QMessageBox::warning(q, q->windowTitle(),
+                                 QPrintDialog::tr("Invalid page number(s) entered.\nPage numbers must be between %1 and %2").arg(minPage).arg(maxPage));
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void QPrintDialogPrivate::setTabs(const QList<QWidget*> &tabWidgets)

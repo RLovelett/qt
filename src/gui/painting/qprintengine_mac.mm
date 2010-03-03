@@ -878,6 +878,9 @@ QVariant QMacPrintEngine::property(PrintEnginePropertyKey key) const
     case PPK_SupportedResolutions:
         ret = d->supportedResolutions();
         break;
+    case PPK_SupportsMultiplePageRanges:
+        ret = false;
+        break;
     case PPK_CustomPaperSize:
         ret = d->customSize;
         break;

@@ -121,6 +121,7 @@ public:
     QAbstractPrintDialog::PrintDialogOptions options;
     QAbstractPrintDialog::PrintRange printRange;
     int minPage, maxPage, fromPage, toPage;
+    QString pageRange;
 
     uint use_default_engine : 1;
     uint had_default_engines : 1;

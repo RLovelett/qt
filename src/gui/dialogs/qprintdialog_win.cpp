@@ -61,6 +61,9 @@
 
 QT_BEGIN_NAMESPACE
 
+extern QString qt_printerPageListToPageRange(QList<int> list);
+extern QList<int> qt_printerPageRangeToPageList(const QString &range, bool *ok);
+
 extern void qt_win_eatMouseMove();
 
 class QPrintDialogPrivate : public QAbstractPrintDialogPrivate
@@ -68,7 +71,8 @@ class QPrintDialogPrivate : public QAbstractPrintDialogPrivate
     Q_DECLARE_PUBLIC(QPrintDialog)
 public:
     QPrintDialogPrivate()
-        : ep(0)
+        : maxPageRanges(1),
+          ep(0)
     {
     }
 
@@ -81,6 +85,7 @@ public:
     inline void _q_btnPropertiesClicked() {}
     int openWindowsPrintDialogModally();
 
+    int maxPageRanges;
     QWin32PrintEnginePrivate *ep;
 };
 
@@ -135,33 +140,77 @@ static void qt_win_setup_PRINTDLGEX(PRINTDLGEX *pd, QWidget *parent,
     // Default to showing the General tab first
     pd->nStartPage = START_PAGE_GENERAL;
 
-    // We don't support more than one page range in the QPrinter API yet.
-    pd->nPageRanges = 1;
-    pd->nMaxPageRanges = 1;
+    // If enabled, initialise and allow multiple page ranges
+    if (pdlg->isOptionEnabled(QPrintDialog::PrintMultiplePageRanges)
+    	&& !pdlg->printer()->pageRange().isEmpty()) {
+        QStringList pageRanges = pdlg->printer()->pageRange().split(',');
+        pd->nMaxPageRanges = d->maxPageRanges;
+        pd->nPageRanges = pageRanges.count();
+        for (int range = 0; range < pageRanges.count(); ++range) {
+            QStringList subRange = pageRanges.at(range).split('-');
+            if (subRange.count() == 1) {
+                pd->lpPageRanges[range].nFromPage = subRange.at(0).toInt();
+                pd->lpPageRanges[range].nToPage = subRange.at(0).toInt();
+            } else {
+                pd->lpPageRanges[range].nFromPage = subRange.at(0).toInt();
+                pd->lpPageRanges[range].nToPage = subRange.at(1).toInt();
+            }
+        }
+    } else if (pdlg->isOptionEnabled(QPrintDialog::PrintPageRange) ||
+               (pdlg->isOptionEnabled(QPrintDialog::PrintMultiplePageRanges)
+                && !pdlg->printer()->pageRange().isEmpty())) {
+        // else only initialise and allow a single page range
+        pd->nMaxPageRanges = d->maxPageRanges;
+        pd->nPageRanges = 1;
+        pd->lpPageRanges[0].nFromPage = qMax(pdlg->fromPage(), pdlg->minPage());
+        pd->lpPageRanges[0].nToPage   = (pdlg->toPage() > 0) ? qMin(pdlg->toPage(), pdlg->maxPage()) : 1;
+    } else {
+        // else no page ranges
+        pd->Flags |= PD_NOPAGENUMS;
+        pd->nMaxPageRanges = 0;
+        pd->nPageRanges = 0;
+    }
+
+    // Set number of copies
+    pd->nCopies = pdlg->printer()->copyCount();
 
     if (d->ep->printToFile)
         pd->Flags |= PD_PRINTTOFILE;
     Q_ASSERT(parent);
     pd->hwndOwner = parent->window()->winId();
-    pd->lpPageRanges[0].nFromPage = qMax(pdlg->fromPage(), pdlg->minPage());
-    pd->lpPageRanges[0].nToPage   = (pdlg->toPage() > 0) ? qMin(pdlg->toPage(), pdlg->maxPage()) : 1;
-    pd->nCopies = d->ep->num_copies;
 }
 
 static void qt_win_read_back_PRINTDLGEX(PRINTDLGEX *pd, QPrintDialog *pdlg, QPrintDialogPrivate *d)
 {
+    // Read back Print Range and Page Range(s)
     if (pd->Flags & PD_SELECTION) {
         pdlg->setPrintRange(QPrintDialog::Selection);
         pdlg->setFromTo(0, 0);
+        pdlg->printer()->setPageRange(QString());
     } else if (pd->Flags & PD_PAGENUMS) {
         pdlg->setPrintRange(QPrintDialog::PageRange);
-        pdlg->setFromTo(pd->lpPageRanges[0].nFromPage, pd->lpPageRanges[0].nToPage);
+        QString pageRange;
+        for (uint range = 0; range < pd->nPageRanges; ++range) {
+            if (range > 0)
+                pageRange.append(',');
+            if (pd->lpPageRanges[range].nFromPage == pd->lpPageRanges[range].nToPage)
+                pageRange.append(QString("%1").arg(pd->lpPageRanges[range].nFromPage));
+            else
+                pageRange.append(QString("%1-%2").arg(pd->lpPageRanges[range].nFromPage)
+                                                 .arg(pd->lpPageRanges[range].nToPage));
+        }
+        pdlg->printer()->setPageRange(pageRange);
+        QList<int> sortList = qt_printerPageRangeToPageList(pageRange, 0);
+        qSort(sortList);
+        pdlg->setFromTo(sortList.first(), sortList.last());
     } else if (pd->Flags & PD_CURRENTPAGE) {
         pdlg->setPrintRange(QPrintDialog::CurrentPage);
         pdlg->setFromTo(0, 0);
+        pdlg->printer()->setPageRange(QString());
     } else { // PD_ALLPAGES
         pdlg->setPrintRange(QPrintDialog::AllPages);
         pdlg->setFromTo(0, 0);
+        pdlg->printer()->setPageRange(QString());
     }
 
     d->ep->printToFile = (pd->Flags & PD_PRINTTOFILE) != 0;
@@ -240,11 +289,15 @@ int QPrintDialogPrivate::openWindowsPrintDialogModally()
     bool result;
     bool doPrinting;
 
-    PRINTPAGERANGE pageRange;
+    // If Multiple Page Ranges then set maximum ranges, default for single page range is already 1
+    if (q->isOptionEnabled(QPrintDialog::PrintMultiplePageRanges)) {
+        maxPageRanges = qMax(q->printer()->pageRange().split(',').count(), 100);
+    }
+    PRINTPAGERANGE pageRange[maxPageRanges];
     PRINTDLGEX pd;
     memset(&pd, 0, sizeof(PRINTDLGEX));
     pd.lStructSize = sizeof(PRINTDLGEX);
-    pd.lpPageRanges = &pageRange;
+    pd.lpPageRanges = &pageRange[0];
     qt_win_setup_PRINTDLGEX(&pd, parent, q, this, tempDevNames);
 
     do {
@@ -255,7 +308,8 @@ int QPrintDialogPrivate::openWindowsPrintDialogModally()
                        || pd.dwResultAction == PD_RESULT_APPLY))
         {
             doPrinting = (pd.dwResultAction == PD_RESULT_PRINT);
-            if ((pd.Flags & PD_PAGENUMS)
+            if (!q->isOptionEnabled(QPrintDialog::PrintMultiplePageRanges)
+                && (pd.Flags & PD_PAGENUMS)
                 && (pd.lpPageRanges[0].nFromPage > pd.lpPageRanges[0].nToPage))
             {
                 pd.lpPageRanges[0].nFromPage = 1;

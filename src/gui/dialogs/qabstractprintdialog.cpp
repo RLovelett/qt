@@ -93,6 +93,7 @@ class QPrintDialogPrivate : public QAbstractPrintDialogPrivate
     \value PrintShowPageSize  Show the page size + margins page only if this is enabled.
     \value PrintCollateCopies The collate copies option is enabled
     \value PrintCurrentPage The print current page option is enabled
+    \value PrintMultiplPageRanges The multiple page range selection option is enabled
 
     This value is obsolete and does nothing since Qt 4.5:
 

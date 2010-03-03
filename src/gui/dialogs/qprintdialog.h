@@ -161,6 +161,7 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_setFirstPage(int))
     Q_PRIVATE_SLOT(d_func(), void _q_setLastPage(int))
     Q_PRIVATE_SLOT(d_func(), void _q_fileNameEditChanged(const QString &text))
+    Q_PRIVATE_SLOT(d_func(), void _q_multiplePageRangesEditChanged(const QString &text))
 #endif // QTOPIA_PRINTDIALOG
     friend class QUnixPrintWidget;
 };

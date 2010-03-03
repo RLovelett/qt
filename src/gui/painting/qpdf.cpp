@@ -1551,6 +1551,9 @@ QVariant QPdfBaseEngine::property(PrintEnginePropertyKey key) const
     case PPK_SupportedResolutions:
         ret = QList<QVariant>() << 72;
         break;
+    case PPK_SupportsMultiplePageRanges:
+        ret = true;
+        break;
     case PPK_PaperRect:
         ret = d->paperRect();
         break;

@@ -256,6 +256,11 @@ public:
     void setPrintRange(PrintRange range);
     PrintRange printRange() const;
 
+    void setPageRange(QString fromPageRange);
+    void setPageRange(QList<int> fromPageList);
+    QString pageRange() const;
+    QList<int> pageRangeAsList() const;
+
     void setPageMargins(qreal left, qreal top, qreal right, qreal bottom, Unit unit);
     void getPageMargins(qreal *left, qreal *top, qreal *right, qreal *bottom, Unit unit) const;
 

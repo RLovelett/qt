@@ -77,7 +77,8 @@ public:
         PrintShowPageSize       = 0x0008,
         PrintCollateCopies      = 0x0010,
         DontUseSheet            = 0x0020,
-        PrintCurrentPage        = 0x0040
+        PrintCurrentPage        = 0x0040,
+        PrintMultiplePageRanges = 0x0080
     };
 
     Q_DECLARE_FLAGS(PrintDialogOptions, PrintDialogOption)
