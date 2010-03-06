@@ -1293,7 +1293,6 @@ static QString readLink(const QString &link)
 
     bool neededCoInit = false;
     IShellLink *psl;                            // pointer to IShellLink i/f
-    WIN32_FIND_DATA wfd;
     wchar_t szGotPath[MAX_PATH];
 
     // Get pointer to the IShellLink interface.
@@ -1313,7 +1312,7 @@ static QString readLink(const QString &link)
             //The original path of the link is retrieved. If the file/folder
             //was moved, the return value still have the old path.
             if (SUCCEEDED(hres)) {
-                if (psl->GetPath(szGotPath, MAX_PATH, &wfd, SLGP_UNCPRIORITY) == NOERROR)
+                if (psl->GetPath(szGotPath, MAX_PATH, 0, SLGP_UNCPRIORITY) == NOERROR)
                     ret = QString::fromWCharArray(szGotPath);
             }
             ppf->Release();
