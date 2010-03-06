@@ -353,9 +353,10 @@ static QString nativeAbsoluteFilePath(const QString &path)
         absPath = QString::fromWCharArray(buf.data(), retLen);
 #else
     if (path.startsWith(QLatin1Char('/')) || path.startsWith(QLatin1Char('\\')))
-        absPath = QDir::toNativeSeparators(path);
+        absPath = path;
     else
-        absPath = QDir::toNativeSeparators(QDir::cleanPath(qfsPrivateCurrentDir + QLatin1Char('/') + path));
+        absPath = QDir::cleanPath(qfsPrivateCurrentDir + QLatin1Char('/') + path);
+    absPath = QDir::toNativeSeparators(absPath);
 #endif
     // This is really ugly, but GetFullPathName strips off whitespace at the end.
     // If you for instance write ". " in the lineedit of QFileDialog,
@@ -1717,7 +1718,7 @@ QString QFSFileEngine::owner(FileOwner own) const
     QString name;
 #if !defined(Q_OS_WINCE)
     Q_D(const QFSFileEngine);
-    if((qt_ntfs_permission_lookup > 0) && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based)) {
+    if (qt_ntfs_permission_lookup > 0 && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based)) {
         QFSFileEnginePrivate::resolveLibs();
         if (ptrGetNamedSecurityInfoW && ptrLookupAccountSidW) {
             PSID pOwner = 0;
@@ -1732,16 +1733,16 @@ QString QFSFileEngine::owner(FileOwner own) const
                 QVarLengthArray<wchar_t, 64> domain(ldomain);
                 SID_NAME_USE use = SidTypeUnknown;
                 // First call, to determine size of the strings (with '\0').
-                if (!ptrLookupAccountSidW(NULL, pOwner, (LPWSTR)owner.data(), &lowner,
-                                          (LPWSTR)domain.data(), &ldomain, (SID_NAME_USE*)&use)) {
+                if (!ptrLookupAccountSidW(NULL, pOwner, (wchar_t *)owner.data(), &lowner,
+                                          (wchar_t *)domain.data(), &ldomain, (SID_NAME_USE*)&use)) {
                     if (GetLastError() == ERROR_INSUFFICIENT_BUFFER) {
                         if (lowner > (DWORD)owner.size())
                             owner.resize(lowner);
                         if (ldomain > (DWORD)domain.size())
                             domain.resize(ldomain);
                         // Second call, try on resized buf-s
-                        if (!ptrLookupAccountSidW(NULL, pOwner, (LPWSTR)owner.data(), &lowner,
-                                                  (LPWSTR)domain.data(), &ldomain, (SID_NAME_USE*)&use)) {
+                        if (!ptrLookupAccountSidW(NULL, pOwner, (wchar_t *)owner.data(), &lowner,
+                                                  (wchar_t *)domain.data(), &ldomain, (SID_NAME_USE*)&use)) {
                             lowner = 0;
                         }
                     } else {
