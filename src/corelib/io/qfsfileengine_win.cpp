@@ -1038,21 +1038,21 @@ QString QFSFileEngine::homePath()
         HANDLE token = 0;
         BOOL ok = ::OpenProcessToken(hnd, TOKEN_QUERY, &token);
         if (ok) {
-            DWORD dwBufferSize = 0;
+            QVarLengthArray<wchar_t, 256> userDirectory;
+            DWORD dwBufferSize = 256;
             // First call, to determine size of the strings (with '\0').
-            ok = ptrGetUserProfileDirectoryW(token, NULL, &dwBufferSize);
-            if (!ok && dwBufferSize != 0) {        // We got the required buffer size
-                wchar_t *userDirectory = new wchar_t[dwBufferSize];
-                // Second call, now we can fill the allocated buffer.
-                ok = ptrGetUserProfileDirectoryW(token, userDirectory, &dwBufferSize);
-                if (ok)
-                    ret = QString::fromWCharArray(userDirectory);
-
-                delete [] userDirectory;
+            ok = ptrGetUserProfileDirectoryW(token, userDirectory.data(), &dwBufferSize);
+            if (!ok && dwBufferSize > (DWORD)userDirectory.size()) {  // We got the required buffer size
+                userDirectory.resize(dwBufferSize);
+                // Second call, try on resized buffer.
+                ok = ptrGetUserProfileDirectoryW(token, userDirectory.data(), &dwBufferSize);
             }
+            if (ok)
+                ret = QString::fromWCharArray(userDirectory.data(), dwBufferSize);
+
             ::CloseHandle(token);
         }
-                }
+    }
 #endif
     if (ret.isEmpty() || !QFile::exists(ret)) {
         ret = QString::fromLocal8Bit(qgetenv("USERPROFILE").constData());
