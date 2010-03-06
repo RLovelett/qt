@@ -129,31 +129,25 @@ bool QFSFileEngineIterator::hasNext() const
         QString fileName = QFSFileEnginePrivate::longFileName(path);
         platform->findFileHandle = FindFirstFile((const wchar_t *)fileName.utf16(), &platform->findData);
 
-        if (platform->findFileHandle == INVALID_HANDLE_VALUE) {
+        platform->done = (platform->findFileHandle == INVALID_HANDLE_VALUE);
 #if !defined(Q_OS_WINCE)
+        if (platform->done) {
             if (path.startsWith(QLatin1String("//"))) {
                 path = this->path();
                 // UNC
                 QStringList parts = QDir::toNativeSeparators(path).split(QLatin1Char('\\'), QString::SkipEmptyParts);
-
-                if (parts.count() == 1 && QFSFileEnginePrivate::uncListSharesOnServer(QLatin1String("\\\\") + parts.at(0),
-                                                                                      &platform->uncShares)) {
-                    if (platform->uncShares.isEmpty()) {
-                        platform->done = true;
-                    } else {
+                if (parts.count() == 1
+                    && QFSFileEnginePrivate::uncListSharesOnServer(QLatin1String("\\\\") + parts.at(0),
+                                                                   &platform->uncShares)) {
+                    if (!platform->uncShares.isEmpty()) {
+                        platform->done = false;
                         platform->uncShareIndex = 1;
                     }
                     platform->uncFallback = true;
-                } else {
-                    platform->done = true;
                 }
-            } else {
-                platform->done = true;
             }
-#else
-            platform->done = true;
-#endif // !defined(Q_OS_WINCE)
         }
+#endif // !defined(Q_OS_WINCE)
 
         if (!platform->done && (!platform->uncFallback || !platform->uncShares.isEmpty()))
             platform->saveCurrentFileName();
