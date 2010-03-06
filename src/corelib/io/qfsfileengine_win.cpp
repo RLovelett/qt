@@ -213,6 +213,7 @@ void QFSFileEnginePrivate::resolveLibs()
 }
 
 
+QT_BEGIN_INCLUDE_NAMESPACE
 typedef DWORD (WINAPI *PtrNetShareEnum)(LPWSTR, DWORD, LPBYTE*, DWORD, LPDWORD, LPDWORD, LPDWORD);
 static PtrNetShareEnum ptrNetShareEnum = 0;
 typedef DWORD (WINAPI *PtrNetApiBufferFree)(LPVOID);
@@ -222,6 +223,7 @@ typedef struct _SHARE_INFO_1 {
     DWORD shi1_type;
     LPWSTR shi1_remark;
 } SHARE_INFO_1;
+QT_END_INCLUDE_NAMESPACE
 
 
 bool QFSFileEnginePrivate::resolveUNCLibs()
