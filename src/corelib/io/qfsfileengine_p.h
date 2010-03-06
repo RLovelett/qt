@@ -147,6 +147,7 @@ public:
 
 #if defined(Q_OS_WIN32) || defined(Q_OS_WINCE)
     static void resolveLibs();
+    static bool resolveMSILibs();
     static bool resolveUNCLibs();
     static bool uncListSharesOnServer(const QString &server, QStringList *list);
 #endif

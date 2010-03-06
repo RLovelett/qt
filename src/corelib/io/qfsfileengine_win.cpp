@@ -61,6 +61,10 @@
 #endif
 #include <objbase.h>
 #include <shlobj.h>
+#if defined(Q_CC_MSVC) && !defined(__IShellLinkDataList_INTERFACE_DEFINED__)
+// starting from Windows Vista IShellLinkDataList interface is declared in shobjidl.h
+#  include <shobjidl.h>
+#endif
 #include <initguid.h>
 #include <accctrl.h>
 #include <ctype.h>
@@ -124,6 +128,39 @@ typedef struct _REPARSE_DATA_BUFFER {
 #  ifndef FSCTL_GET_REPARSE_POINT
 #    define FSCTL_GET_REPARSE_POINT CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 42, METHOD_BUFFERED, FILE_ANY_ACCESS)
 #  endif
+
+// __IShellLinkDataList_INTERFACE_DEFINED__ guard is defined in sdk's shlobj.h or shobjidl.h
+#  if !defined(__IShellLinkDataList_INTERFACE_DEFINED__)
+extern const IID IID_IShellLinkDataList;
+
+struct IShellLinkDataList : public IUnknown
+{
+    virtual HRESULT __stdcall AddDataBlock(void *) = 0;
+    virtual HRESULT __stdcall CopyDataBlock(DWORD, void **) = 0;
+    virtual HRESULT __stdcall RemoveDataBlock(DWORD) = 0;
+    virtual HRESULT __stdcall GetFlags(DWORD *) = 0;
+    virtual HRESULT __stdcall SetFlags(DWORD) = 0;
+};
+
+typedef struct {
+    DWORD cbSize;
+    DWORD dwSignature;
+    CHAR szDarwinID[MAX_PATH];
+    WCHAR szwDarwinID[MAX_PATH];
+} EXP_DARWIN_LINK;
+
+#define EXP_DARWIN_ID_SIG       0xa0000006
+
+typedef enum {
+    SLDF_HAS_ID_LIST = 0x00000001,
+    SLDF_HAS_LINK_INFO = 0x00000002,
+    SLDF_HAS_NAME = 0x00000004,
+    SLDF_HAS_RELPATH = 0x00000008,
+    SLDF_HAS_DARWINID = 0x00001000,
+    SLDF_RESERVED = (int)0x80000000
+} SHELL_LINK_DATA_FLAGS;
+#  endif // !defined(__IShellLinkDataList_INTERFACE_DEFINED__)
+
 #endif // !defined(Q_OS_WINCE)
 
 QT_BEGIN_NAMESPACE
@@ -214,6 +251,72 @@ void QFSFileEnginePrivate::resolveLibs()
             ptrGetUserProfileDirectoryW = (PtrGetUserProfileDirectoryW)GetProcAddress(userenvHnd, "GetUserProfileDirectoryW");
 #endif
     }
+}
+
+QT_BEGIN_INCLUDE_NAMESPACE
+typedef UINT (WINAPI *PtrMsiProvideComponentW)(LPCWSTR, LPCWSTR, LPCWSTR, DWORD, LPWSTR, LPDWORD);
+static PtrMsiProvideComponentW ptrMsiProvideComponentW = 0;
+
+#define INSTALLMODE_NODETECTION -2
+QT_END_INCLUDE_NAMESPACE
+
+bool QFSFileEnginePrivate::resolveMSILibs()
+{
+    static bool triedResolve = false;
+    if (!triedResolve) {
+#ifndef QT_NO_THREAD
+        QMutexLocker locker(QMutexPool::globalInstanceGet(&triedResolve));
+        if (triedResolve)
+            return ptrMsiProvideComponentW;
+#endif
+        triedResolve = true;
+#if !defined(Q_OS_WINCE)
+        HINSTANCE hLib = LoadLibrary(L"msi");
+        if (hLib)
+            ptrMsiProvideComponentW = (PtrMsiProvideComponentW)GetProcAddress(hLib, "MsiProvideComponentW");
+#endif
+    }
+    return ptrMsiProvideComponentW;
+}
+
+static const unsigned char table_dec85[0x5f] = {
+         0x00,0xff,0xff,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0xff,
+    0x0c,0x0d,0x0e,0x0f,0x10,0x11,0x12,0x13,0x14,0x15,0xff,0xff,0xff,0x16,0xff,0x17,
+    0x18,0x19,0x1a,0x1b,0x1c,0x1d,0x1e,0x1f,0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,
+    0x28,0x29,0x2a,0x2b,0x2c,0x2d,0x2e,0x2f,0x30,0x31,0x32,0x33,0xff,0x34,0x35,0x36,
+    0x37,0x38,0x39,0x3a,0x3b,0x3c,0x3d,0x3e,0x3f,0x40,0x41,0x42,0x43,0x44,0x45,0x46,
+    0x47,0x48,0x49,0x4a,0x4b,0x4c,0x4d,0x4e,0x4f,0x50,0x51,0x52,0xff,0x53,0x54,0xff
+};
+
+// decodes first 20 bytes of Base85-encoded byte-array
+static bool base85_to_guid(const char *str, GUID *guid)
+{
+    DWORD *p = (DWORD*)guid;
+    DWORD de;
+    short ch;
+    for (uchar i = 0; i < 4; ++i) {
+        ch = *str++ - 0x21;
+        if (ch < 0 || ch >= 0x5f || (de = table_dec85[ch]) == 0xff)
+            return false;
+        p[i] = de;
+        ch = *str++ - 0x21;
+        if (ch < 0 || ch >= 0x5f || (de = table_dec85[ch]) == 0xff)
+            return false;
+        p[i] += de * 85;
+        ch = *str++ - 0x21;
+        if (ch < 0 || ch >= 0x5f || (de = table_dec85[ch]) == 0xff)
+            return false;
+        p[i] += de * 7225; // 85 * 85
+        ch = *str++ - 0x21;
+        if (ch < 0 || ch >= 0x5f || (de = table_dec85[ch]) == 0xff)
+            return false;
+        p[i] += de * 614125; // 85 * 85 * 85
+        ch = *str++ - 0x21;
+        if (ch < 0 || ch >= 0x5f || (de = table_dec85[ch]) == 0xff)
+            return false;
+        p[i] += de * 52200625; // 85 * 85 * 85 * 85
+    }
+    return true;
 }
 #endif // QT_NO_LIBRARY
 
@@ -1309,11 +1412,58 @@ static QString readLink(const QString &link)
         hres = psl->QueryInterface(IID_IPersistFile, (LPVOID *)&ppf);
         if (SUCCEEDED(hres))  {
             hres = ppf->Load((LPOLESTR)link.utf16(), STGM_READ);
-            //The original path of the link is retrieved. If the file/folder
-            //was moved, the return value still have the old path.
             if (SUCCEEDED(hres)) {
-                if (psl->GetPath(szGotPath, MAX_PATH, 0, SLGP_UNCPRIORITY) == NOERROR)
-                    ret = QString::fromWCharArray(szGotPath);
+                IShellLinkDataList *psldl;      // pointer to IShellLinkDataList i/f
+                hres = psl->QueryInterface(IID_IShellLinkDataList, (LPVOID *)&psldl);
+                if (SUCCEEDED(hres)) {
+                    DWORD dwFlags = 0;
+                    if (psldl->GetFlags(&dwFlags) == NOERROR) {
+                        if (dwFlags & SLDF_HAS_DARWINID) {
+                            EXP_DARWIN_LINK *edl = 0;
+                            hres = psldl->CopyDataBlock(EXP_DARWIN_ID_SIG, (LPVOID *)&edl);
+                            if (SUCCEEDED(hres)) {
+                                if (QFSFileEnginePrivate::resolveMSILibs()) {
+                                    QString product, component, feature;
+                                    GUID guid;
+                                    if (base85_to_guid(edl->szDarwinID, &guid)) {
+                                        wchar_t guidstr[40];
+                                        StringFromGUID2(guid, guidstr, 40);
+                                        product = QString::fromWCharArray(guidstr);
+
+                                        const char *feat, *comp;
+                                        comp = &edl->szDarwinID[20];
+                                        feat = strchr(comp, '>');
+                                        if (!feat)
+                                            feat = strchr(comp, '<');
+                                        if (feat)
+                                            component = QString::fromAscii(comp, feat - comp);
+
+                                        if (feat && feat[0] == '>' && base85_to_guid(&feat[1], &guid)) {
+                                            StringFromGUID2(guid, guidstr, 40);
+                                            feature = QString::fromWCharArray(guidstr);
+
+                                            DWORD bufsize = MAX_PATH;
+                                            UINT res = ptrMsiProvideComponentW((const wchar_t*)product.utf16(),
+                                                                               (const wchar_t*)component.utf16(),
+                                                                               (const wchar_t*)feature.utf16(),
+                                                                               INSTALLMODE_NODETECTION,
+                                                                               szGotPath, &bufsize);
+                                            if (res == NOERROR)
+                                                ret = QString::fromWCharArray(szGotPath);
+                                        }
+                                    }
+                                }
+                                LocalFree(edl);
+                            }
+                        } else {
+                            // The original path of the link is retrieved. If the file/folder
+                            // was moved, the return value still have the old path.
+                            if (psl->GetPath(szGotPath, MAX_PATH, 0, SLGP_UNCPRIORITY) == NOERROR)
+                                ret = QString::fromWCharArray(szGotPath);
+                        }
+                    }
+                    psldl->Release();
+                }
             }
             ppf->Release();
         }
