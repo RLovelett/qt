@@ -266,8 +266,8 @@ bool QFSFileEnginePrivate::uncListSharesOnServer(const QString &server, QStringL
                         list->append(QString::fromWCharArray(p->shi1_netname));
                     p++;
                 }
+                ptrNetApiBufferFree(BufPtr);
             }
-            ptrNetApiBufferFree(BufPtr);
         } while (res == ERROR_MORE_DATA);
         return res == ERROR_SUCCESS;
     }
