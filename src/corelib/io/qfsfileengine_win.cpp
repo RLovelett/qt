@@ -1455,7 +1455,8 @@ static QString readLink(const QString &link)
                                 }
                                 LocalFree(edl);
                             }
-                        } else {
+                        } else if (dwFlags & (SLDF_HAS_ID_LIST | SLDF_HAS_LINK_INFO
+                                              | SLDF_HAS_NAME | SLDF_HAS_RELPATH)) {
                             // The original path of the link is retrieved. If the file/folder
                             // was moved, the return value still have the old path.
                             if (psl->GetPath(szGotPath, MAX_PATH, 0, SLGP_UNCPRIORITY) == NOERROR)
