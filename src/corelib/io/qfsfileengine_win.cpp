@@ -1390,10 +1390,9 @@ static QString readSymLink(const QString &link)
 
 static QString readLink(const QString &link)
 {
+    QString ret;
 #if !defined(Q_OS_WINCE)
 #if !defined(QT_NO_LIBRARY) && !defined(Q_CC_MWERKS)
-    QString ret;
-
     bool neededCoInit = false;
     IShellLink *psl;                            // pointer to IShellLink i/f
     wchar_t szGotPath[MAX_PATH];
@@ -1410,8 +1409,8 @@ static QString readLink(const QString &link)
     if (SUCCEEDED(hres)) {    // Get pointer to the IPersistFile interface.
         IPersistFile *ppf;
         hres = psl->QueryInterface(IID_IPersistFile, (LPVOID *)&ppf);
-        if (SUCCEEDED(hres))  {
-            hres = ppf->Load((LPOLESTR)link.utf16(), STGM_READ);
+        if (SUCCEEDED(hres)) {
+            hres = ppf->Load((wchar_t*)link.utf16(), STGM_READ);
             if (SUCCEEDED(hres)) {
                 IShellLinkDataList *psldl;      // pointer to IShellLinkDataList i/f
                 hres = psl->QueryInterface(IID_IShellLinkDataList, (LPVOID *)&psldl);
@@ -1472,32 +1471,28 @@ static QString readLink(const QString &link)
     }
     if (neededCoInit)
         CoUninitialize();
-
-    return ret;
 #else
     Q_UNUSED(link);
-    return QString();
 #endif // QT_NO_LIBRARY
 #else
     wchar_t target[MAX_PATH];
-    QString result;
     if (SHGetShortcutTarget((wchar_t*)QFileInfo(link).absoluteFilePath().replace(QLatin1Char('/'),QLatin1Char('\\')).utf16(), target, MAX_PATH)) {
-        result = QString::fromWCharArray(target);
-        if (result.startsWith(QLatin1Char('"')))
-            result.remove(0,1);
-        if (result.endsWith(QLatin1Char('"')))
-            result.remove(result.size()-1,1);
+        ret = QString::fromWCharArray(target);
+        if (ret.startsWith(QLatin1Char('"')))
+            ret.remove(0, 1);
+        if (ret.endsWith(QLatin1Char('"')))
+            ret.remove(ret.size() - 1, 1);
+        // ### cut-off arguments
     }
-    return result;
 #endif // Q_OS_WINCE
+    return ret;
 }
 
 bool QFSFileEngine::link(const QString &newName)
 {
+    bool ret = false;
 #if !defined(Q_OS_WINCE)
 #if !defined(QT_NO_LIBRARY) && !defined(Q_CC_MWERKS)
-    bool ret = false;
-
     QString linkName = newName;
     //### assume that they add .lnk
 
@@ -1534,11 +1529,8 @@ bool QFSFileEngine::link(const QString &newName)
 
     if (neededCoInit)
         CoUninitialize();
-
-    return ret;
 #else
     Q_UNUSED(newName);
-    return false;
 #endif // QT_NO_LIBRARY
 #else
     QString linkName = newName;
@@ -1548,11 +1540,11 @@ bool QFSFileEngine::link(const QString &newName)
     // Need to append on our own
     orgName.prepend(QLatin1Char('"'));
     orgName.append(QLatin1Char('"'));
-    bool ret = SUCCEEDED(SHCreateShortcut((wchar_t*)linkName.utf16(), (wchar_t*)orgName.utf16()));
+    ret = SUCCEEDED(SHCreateShortcut((wchar_t*)linkName.utf16(), (wchar_t*)orgName.utf16()));
     if (!ret)
         setError(QFile::RenameError, qt_error_string());
-    return ret;
 #endif // Q_OS_WINCE
+    return ret;
 }
 
 /*!
