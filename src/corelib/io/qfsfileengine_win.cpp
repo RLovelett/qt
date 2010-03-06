@@ -134,12 +134,9 @@ Q_CORE_EXPORT int qt_ntfs_permission_lookup = 0;
 
 #if defined(Q_OS_WINCE)
 static QString qfsPrivateCurrentDir = QLatin1String("");
-// As none of the functions we try to resolve do exist on Windows CE
-// we use QT_NO_LIBRARY to shorten everything up a little bit.
-#define QT_NO_LIBRARY 1
 #endif
 
-#if !defined(QT_NO_LIBRARY)
+#if !defined(Q_OS_WINCE)
 QT_BEGIN_INCLUDE_NAMESPACE
 typedef DWORD (WINAPI *PtrGetNamedSecurityInfoW)(LPWSTR, SE_OBJECT_TYPE, SECURITY_INFORMATION, PSID*, PSID*, PACL*, PACL*, PSECURITY_DESCRIPTOR*);
 static PtrGetNamedSecurityInfoW ptrGetNamedSecurityInfoW = 0;
@@ -176,7 +173,7 @@ void QFSFileEnginePrivate::resolveLibs()
 #endif
 
         triedResolve = true;
-#if !defined(Q_OS_WINCE)
+
         HINSTANCE advapiHnd = LoadLibrary(L"advapi32");
         if (advapiHnd) {
             ptrGetNamedSecurityInfoW = (PtrGetNamedSecurityInfoW)GetProcAddress(advapiHnd, "GetNamedSecurityInfoW");
@@ -212,10 +209,9 @@ void QFSFileEnginePrivate::resolveLibs()
         HINSTANCE userenvHnd = LoadLibrary(L"userenv");
         if (userenvHnd)
             ptrGetUserProfileDirectoryW = (PtrGetUserProfileDirectoryW)GetProcAddress(userenvHnd, "GetUserProfileDirectoryW");
-#endif
     }
 }
-#endif // QT_NO_LIBRARY
+
 
 typedef DWORD (WINAPI *PtrNetShareEnum)(LPWSTR, DWORD, LPBYTE*, DWORD, LPDWORD, LPDWORD, LPDWORD);
 static PtrNetShareEnum ptrNetShareEnum = 0;
@@ -239,14 +235,14 @@ bool QFSFileEnginePrivate::resolveUNCLibs()
         }
 #endif
         triedResolve = true;
-#if !defined(Q_OS_WINCE)
+
         HINSTANCE hLib = LoadLibrary(L"netapi32");
         if (hLib) {
             ptrNetShareEnum = (PtrNetShareEnum)GetProcAddress(hLib, "NetShareEnum");
             if (ptrNetShareEnum)
                 ptrNetApiBufferFree = (PtrNetApiBufferFree)GetProcAddress(hLib, "NetApiBufferFree");
         }
-#endif
+
     }
     return ptrNetShareEnum && ptrNetApiBufferFree;
 }
@@ -273,6 +269,7 @@ bool QFSFileEnginePrivate::uncListSharesOnServer(const QString &server, QStringL
     }
     return false;
 }
+#endif // !defined(Q_OS_WINCE)
 
 static bool isUncRoot(const QString &server)
 {
@@ -316,6 +313,7 @@ static QString fixIfRelativeUncPath(const QString &path)
     return path;
 }
 
+#if !defined(Q_OS_WINCE)
 // can be //server or //server/share
 static bool uncShareExists(const QString &server)
 {
@@ -327,6 +325,7 @@ static bool uncShareExists(const QString &server)
     }
     return false;
 }
+#endif
 
 static inline bool isDriveRoot(const QString &path)
 {
@@ -1028,7 +1027,7 @@ QString QFSFileEngine::currentPath(const QString &fileName)
 QString QFSFileEngine::homePath()
 {
     QString ret;
-#if !defined(QT_NO_LIBRARY)
+#if !defined(Q_OS_WINCE)
     QFSFileEnginePrivate::resolveLibs();
     if (ptrGetUserProfileDirectoryW) {
         HANDLE hnd = ::GetCurrentProcess();
@@ -1191,8 +1190,8 @@ bool QFSFileEnginePrivate::doStat() const
                 }
             }
             could_stat = fileAttrib != INVALID_FILE_ATTRIBUTES;
-            if (!could_stat) {
 #if !defined(Q_OS_WINCE)
+            if (!could_stat) {
                 if (isDriveRoot(fname)) {
                     // a valid drive ??
                     DWORD drivesBitmask = ::GetLogicalDrives();
@@ -1202,7 +1201,6 @@ bool QFSFileEnginePrivate::doStat() const
                         could_stat = true;
                     }
                 } else {
-#endif
                     QString path = QDir::toNativeSeparators(fname);
                     bool is_dir = false;
                     if (path.startsWith(QLatin1String("\\\\"))) {
@@ -1233,10 +1231,9 @@ bool QFSFileEnginePrivate::doStat() const
                         fileAttrib = FILE_ATTRIBUTE_DIRECTORY;
                         could_stat = true;
                     }
-#if !defined(Q_OS_WINCE)
                 }
-#endif
             }
+#endif // !defined(Q_OS_WINCE)
         }
 
         SetErrorMode(oldmode);
@@ -1288,7 +1285,7 @@ static QString readSymLink(const QString &link)
 static QString readLink(const QString &link)
 {
 #if !defined(Q_OS_WINCE)
-#if !defined(QT_NO_LIBRARY) && !defined(Q_CC_MWERKS)
+#if !defined(Q_CC_MWERKS)
     QString ret;
 
     bool neededCoInit = false;
@@ -1327,7 +1324,7 @@ static QString readLink(const QString &link)
 #else
     Q_UNUSED(link);
     return QString();
-#endif // QT_NO_LIBRARY
+#endif // !defined(Q_CC_MWERKS)
 #else
     wchar_t target[MAX_PATH];
     QString result;
@@ -1345,7 +1342,7 @@ static QString readLink(const QString &link)
 bool QFSFileEngine::link(const QString &newName)
 {
 #if !defined(Q_OS_WINCE)
-#if !defined(QT_NO_LIBRARY) && !defined(Q_CC_MWERKS)
+#if !defined(Q_CC_MWERKS)
     bool ret = false;
 
     QString linkName = newName;
@@ -1389,7 +1386,7 @@ bool QFSFileEngine::link(const QString &newName)
 #else
     Q_UNUSED(newName);
     return false;
-#endif // QT_NO_LIBRARY
+#endif // !defined(Q_CC_MWERKS)
 #else
     QString linkName = newName;
     if (!linkName.endsWith(QLatin1String(".lnk")))
@@ -1412,7 +1409,7 @@ QAbstractFileEngine::FileFlags QFSFileEnginePrivate::getPermissions() const
 {
     QAbstractFileEngine::FileFlags ret = 0;
 
-#if !defined(QT_NO_LIBRARY)
+#if !defined(Q_OS_WINCE)
     if((qt_ntfs_permission_lookup > 0) && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based)) {
         resolveLibs();
         if(ptrGetNamedSecurityInfoW && ptrBuildTrusteeWithSidW && ptrGetEffectiveRightsFromAclW) {
@@ -1475,7 +1472,7 @@ QAbstractFileEngine::FileFlags QFSFileEnginePrivate::getPermissions() const
             }
         }
     } else
-#endif
+#endif // !defined(Q_OS_WINCE)
            {
         //### what to do with permissions if we don't use NTFS
         // for now just add all permissions and what about exe missions ??
@@ -1714,7 +1711,7 @@ uint QFSFileEngine::ownerId(FileOwner /*own*/) const
 QString QFSFileEngine::owner(FileOwner own) const
 {
     QString name;
-#if !defined(QT_NO_LIBRARY)
+#if !defined(Q_OS_WINCE)
     Q_D(const QFSFileEngine);
     if((qt_ntfs_permission_lookup > 0) && (QSysInfo::WindowsVersion & QSysInfo::WV_NT_based)) {
         QFSFileEnginePrivate::resolveLibs();
@@ -1755,7 +1752,7 @@ QString QFSFileEngine::owner(FileOwner own) const
     }
 #else
     Q_UNUSED(own);
-#endif
+#endif // !defined(Q_OS_WINCE)
     return name;
 }
 

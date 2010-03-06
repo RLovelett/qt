@@ -145,7 +145,7 @@ public:
     int sysOpen(const QString &, int flags);
 #endif
 
-#if defined(Q_OS_WIN32) || defined(Q_OS_WINCE)
+#if defined(Q_OS_WIN32)
     static void resolveLibs();
     static bool resolveUNCLibs();
     static bool uncListSharesOnServer(const QString &server, QStringList *list);

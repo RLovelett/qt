@@ -130,6 +130,7 @@ bool QFSFileEngineIterator::hasNext() const
         platform->findFileHandle = FindFirstFile((const wchar_t *)fileName.utf16(), &platform->findData);
 
         if (platform->findFileHandle == INVALID_HANDLE_VALUE) {
+#if !defined(Q_OS_WINCE)
             if (path.startsWith(QLatin1String("//"))) {
                 path = this->path();
                 // UNC
@@ -149,6 +150,9 @@ bool QFSFileEngineIterator::hasNext() const
             } else {
                 platform->done = true;
             }
+#else
+            platform->done = true;
+#endif // !defined(Q_OS_WINCE)
         }
 
         if (!platform->done && (!platform->uncFallback || !platform->uncShares.isEmpty()))
