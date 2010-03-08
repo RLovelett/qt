@@ -251,6 +251,8 @@ bool QFSFileEnginePrivate::resolveUNCLibs()
 
 bool QFSFileEnginePrivate::uncListSharesOnServer(const QString &server, QStringList *list)
 {
+    Q_ASSERT(list);
+
     if (resolveUNCLibs()) {
         SHARE_INFO_1 *BufPtr, *p;
         DWORD res;
@@ -260,7 +262,7 @@ bool QFSFileEnginePrivate::uncListSharesOnServer(const QString &server, QStringL
             if (res == ERROR_SUCCESS || res == ERROR_MORE_DATA) {
                 p = BufPtr;
                 for (i = 1; i <= er; ++i) {
-                    if (list && p->shi1_type == 0)
+                    if (p->shi1_type == 0)
                         list->append(QString::fromWCharArray(p->shi1_netname));
                     p++;
                 }
