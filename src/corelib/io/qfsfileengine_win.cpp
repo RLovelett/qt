@@ -1249,30 +1249,34 @@ static QString readSymLink(const QString &link)
 {
     QString result;
 #if !defined(Q_OS_WINCE)
-    HANDLE handle = CreateFile((wchar_t*)QFSFileEnginePrivate::longFileName(link).utf16(),
-                               FILE_READ_EA,
-                               FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-                               0,
-                               OPEN_EXISTING,
-                               FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,
-                               0);
-    if (handle != INVALID_HANDLE_VALUE) {
-        DWORD bufsize = MAXIMUM_REPARSE_DATA_BUFFER_SIZE;
-        REPARSE_DATA_BUFFER *rdb = (REPARSE_DATA_BUFFER*)qMalloc(bufsize);
-        DWORD retsize = 0;
-        if (::DeviceIoControl(handle, FSCTL_GET_REPARSE_POINT, 0, 0, rdb, bufsize, &retsize, 0)) {
-            if (rdb->ReparseTag == IO_REPARSE_TAG_SYMLINK) {
-                int length = rdb->SymbolicLinkReparseBuffer.SubstituteNameLength / sizeof(wchar_t);
-                int offset = rdb->SymbolicLinkReparseBuffer.SubstituteNameOffset / sizeof(wchar_t);
-                const wchar_t* PathBuffer = &rdb->SymbolicLinkReparseBuffer.PathBuffer[offset];
-                result = QString::fromWCharArray(PathBuffer, length);
+    if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA && QSysInfo::WindowsVersion < QSysInfo::WV_NT_based) {
+        HANDLE handle = CreateFile((wchar_t*)QFSFileEnginePrivate::longFileName(link).utf16(),
+                                   FILE_READ_EA,
+                                   FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                                   0,
+                                   OPEN_EXISTING,
+                                   FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,
+                                   0);
+        if (handle != INVALID_HANDLE_VALUE) {
+            DWORD bufsize = MAXIMUM_REPARSE_DATA_BUFFER_SIZE;
+            REPARSE_DATA_BUFFER *rdb = (REPARSE_DATA_BUFFER*)qMalloc(bufsize);
+            DWORD retsize = 0;
+            if (::DeviceIoControl(handle, FSCTL_GET_REPARSE_POINT, 0, 0, rdb, bufsize, &retsize, 0)) {
+                if (rdb->ReparseTag == IO_REPARSE_TAG_SYMLINK) {
+                    int length = rdb->SymbolicLinkReparseBuffer.SubstituteNameLength / sizeof(wchar_t);
+                    int offset = rdb->SymbolicLinkReparseBuffer.SubstituteNameOffset / sizeof(wchar_t);
+                    const wchar_t* PathBuffer = &rdb->SymbolicLinkReparseBuffer.PathBuffer[offset];
+                    result = QString::fromWCharArray(PathBuffer, length);
+                }
+                // cut-off "//?/" and "/??/"
+                if (result.size() > 4 && result.at(0) == QLatin1Char('\\')
+                    && result.at(2) == QLatin1Char('?') && result.at(3) == QLatin1Char('\\')) {
+                    result = result.mid(4);
+                }
             }
-            // cut-off "//?/" and "/??/"
-            if (result.size() > 4 && result.at(0) == QLatin1Char('\\') && result.at(2) == QLatin1Char('?') && result.at(3) == QLatin1Char('\\'))
-                result = result.mid(4);
+            qFree(rdb);
+            CloseHandle(handle);
         }
-        qFree(rdb);
-        CloseHandle(handle);
     }
 #else
     Q_UNUSED(link);
@@ -1509,20 +1513,22 @@ bool QFSFileEnginePrivate::isSymlink() const
         need_lstat = false;
         is_link = false;
 
-        if (fileAttrib & FILE_ATTRIBUTE_REPARSE_POINT) {
-            QString path = QDir::toNativeSeparators(filePath);
-            // path for the FindFirstFile should not end with a trailing slash
-            while (path.endsWith(QLatin1Char('\\')))
-                path.chop(1);
+        if (QSysInfo::WindowsVersion >= QSysInfo::WV_VISTA && QSysInfo::WindowsVersion < QSysInfo::WV_NT_based) {
+            if (fileAttrib & FILE_ATTRIBUTE_REPARSE_POINT) {
+                QString path = QDir::toNativeSeparators(filePath);
+                // path for the FindFirstFile should not end with a trailing slash
+                while (path.endsWith(QLatin1Char('\\')))
+                    path.chop(1);
 
-            WIN32_FIND_DATA findData;
-            HANDLE hFind = ::FindFirstFile((wchar_t*)QFSFileEnginePrivate::longFileName(path).utf16(),
-                                           &findData);
-            if (hFind != INVALID_HANDLE_VALUE) {
-                ::FindClose(hFind);
-                if ((findData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)
-                    && findData.dwReserved0 == IO_REPARSE_TAG_SYMLINK) {
-                    is_link = true;
+                WIN32_FIND_DATA findData;
+                HANDLE hFind = ::FindFirstFile((wchar_t*)QFSFileEnginePrivate::longFileName(path).utf16(),
+                                               &findData);
+                if (hFind != INVALID_HANDLE_VALUE) {
+                    ::FindClose(hFind);
+                    if ((findData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)
+                        && findData.dwReserved0 == IO_REPARSE_TAG_SYMLINK) {
+                        is_link = true;
+                    }
                 }
             }
         }
