@@ -417,6 +417,7 @@ void QLineControl::processInputMethodEvent(QInputMethodEvent *event)
         removeSelectedText();
     }
 
+    QString oldPreeditText = preeditAreaText();
 
     int c = m_cursor; // cursor position after insertion of commit string
     if (event->replacementStart() == 0)
@@ -477,6 +478,11 @@ void QLineControl::processInputMethodEvent(QInputMethodEvent *event)
     }
     m_textLayout.setAdditionalFormats(formats);
     updateDisplayText();
+
+    QString newPreeditText = preeditAreaText();
+    if (newPreeditText != oldPreeditText)
+        emit displayTextChanged(newPreeditText);
+
     if (cursorPositionChanged)
         emitCursorPositionChanged();
     if (isGettingInput)
