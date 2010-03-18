@@ -104,7 +104,9 @@ QAction *QSoftKeyManager::createAction(StandardSoftKey standardKey, QWidget *act
     QAction::SoftKeyRole softKeyRole = QAction::NoSoftKey;
     switch (standardKey) {
     case MenuSoftKey: // FALL-THROUGH
+#ifndef QT_NO_PROPERTIES
         action->setProperty(MENU_ACTION_PROPERTY, QVariant(true)); // TODO: can be refactored away to use _q_action_menubar
+#endif
     case OkSoftKey:
     case SelectSoftKey:
     case DoneSoftKey:
@@ -254,15 +256,19 @@ bool QSoftKeyManager::handleUpdateSoftKeys()
 
 void QSoftKeyManager::setForceEnabledInSoftkeys(QAction *action)
 {
+#ifndef QT_NO_PROPERTIES
     action->setProperty(FORCE_ENABLED_PROPERTY, QVariant(true));
+#endif
 }
 
 bool QSoftKeyManager::isForceEnabledInSofkeys(QAction *action)
 {
     bool ret = false;
+#ifndef QT_NO_PROPERTIES
     QVariant property = action->property(FORCE_ENABLED_PROPERTY);
     if (property.isValid() && property.toBool())
         ret = true;
+#endif
     return ret;
 }
 
