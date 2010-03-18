@@ -117,7 +117,7 @@
 
 QT_BEGIN_NAMESPACE
 
-#if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
                           (QImageIOHandlerFactoryInterface_iid, QLatin1String("/imageformats")))
 #endif
@@ -129,7 +129,7 @@ static QImageIOHandler *createWriteHandlerHelper(QIODevice *device,
     QByteArray suffix;
     QImageIOHandler *handler = 0;
 
-#if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
     // check if any plugins can write the image
     QFactoryLoader *l = loader();
     QStringList keys = l->keys();
@@ -142,7 +142,7 @@ static QImageIOHandler *createWriteHandlerHelper(QIODevice *device,
         // this allows plugins to override our built-in handlers.
         if (QFile *file = qobject_cast<QFile *>(device)) {
             if (!(suffix = QFileInfo(file->fileName()).suffix().toLower().toLatin1()).isEmpty()) {
-#if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
                 int index = keys.indexOf(QString::fromLatin1(suffix));
                 if (index != -1)
                     suffixPluginIndex = index;
@@ -153,7 +153,7 @@ static QImageIOHandler *createWriteHandlerHelper(QIODevice *device,
 
     QByteArray testFormat = !form.isEmpty() ? form : suffix;
 
-#if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
     if (suffixPluginIndex != -1) {
         // when format is missing, check if we can find a plugin for the
         // suffix.
@@ -161,7 +161,7 @@ static QImageIOHandler *createWriteHandlerHelper(QIODevice *device,
         if (plugin && (plugin->capabilities(device, suffix) & QImageIOPlugin::CanWrite))
             handler = plugin->create(device, suffix);
     }
-#endif // Q_NO_LIBRARY
+#endif // QT_NO_FACTORY_LOADER
 
     // check if any built-in handlers can write the image
     if (!handler && !testFormat.isEmpty()) {
@@ -192,7 +192,7 @@ static QImageIOHandler *createWriteHandlerHelper(QIODevice *device,
         }
     }
 
-#if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
     if (!testFormat.isEmpty()) {
         for (int i = 0; i < keys.size(); ++i) {
             QImageIOPlugin *plugin = qobject_cast<QImageIOPlugin *>(l->instance(keys.at(i)));
@@ -202,7 +202,7 @@ static QImageIOHandler *createWriteHandlerHelper(QIODevice *device,
             }
         }
     }
-#endif
+#endif // QT_NO_FACTORY_LOADER
 
     if (!handler)
         return 0;
@@ -669,7 +669,7 @@ QList<QByteArray> QImageWriter::supportedImageFormats()
     formats << "png";
 #endif
 
-#if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
     QFactoryLoader *l = loader();
     QStringList keys = l->keys();
     for (int i = 0; i < keys.count(); ++i) {
@@ -677,7 +677,7 @@ QList<QByteArray> QImageWriter::supportedImageFormats()
         if (plugin && (plugin->capabilities(0, keys.at(i).toLatin1()) & QImageIOPlugin::CanWrite) != 0)
             formats << keys.at(i).toLatin1();
     }
-#endif // QT_NO_LIBRARY
+#endif // QT_NO_FACTORY_LOADER
 
     QList<QByteArray> sortedFormats;
     for (QSet<QByteArray>::ConstIterator it = formats.constBegin(); it != formats.constEnd(); ++it)

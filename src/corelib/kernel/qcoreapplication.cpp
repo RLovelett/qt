@@ -513,7 +513,7 @@ QCoreApplication::QCoreApplication(int &argc, char **argv)
 {
     init();
     QCoreApplicationPrivate::eventDispatcher->startingUp();
-#if defined(Q_OS_SYMBIAN) && !defined(QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#if defined(Q_OS_SYMBIAN) && !defined(QT_NO_FACTORY_LOADER)
     // Refresh factoryloader, as text codecs are requested during lib path
     // resolving process and won't be therefore properly loaded.
     // Unknown if this is symbian specific issue.
@@ -2276,7 +2276,7 @@ QStringList QCoreApplication::libraryPaths()
  */
 void QCoreApplication::setLibraryPaths(const QStringList &paths)
 {
-#if !defined(QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
     QMutexLocker locker(libraryPathMutex());
     if (!coreappdata()->app_libpaths)
         coreappdata()->app_libpaths = new QStringList;
@@ -2303,7 +2303,7 @@ void QCoreApplication::setLibraryPaths(const QStringList &paths)
  */
 void QCoreApplication::addLibraryPath(const QString &path)
 {
-#if !defined(QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
     if (path.isEmpty())
         return;
 
@@ -2329,7 +2329,7 @@ void QCoreApplication::addLibraryPath(const QString &path)
 */
 void QCoreApplication::removeLibraryPath(const QString &path)
 {
-#if !defined(QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
     if (path.isEmpty())
         return;
 

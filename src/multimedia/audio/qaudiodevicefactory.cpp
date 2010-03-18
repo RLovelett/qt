@@ -63,9 +63,10 @@
 
 QT_BEGIN_NAMESPACE
 
+#ifndef QT_NO_FACTORY_LOADER
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
         (QAudioEngineFactoryInterface_iid, QLatin1String("/audio"), Qt::CaseInsensitive))
-
+#endif
 
 class QNullDeviceInfo : public QAbstractAudioDeviceInfo
 {
@@ -133,6 +134,7 @@ QList<QAudioDeviceInfo> QAudioDeviceFactory::availableDevices(QAudio::Mode mode)
         devices << QAudioDeviceInfo(QLatin1String("builtin"), handle, mode);
 #endif
 #endif
+#ifndef QT_NO_FACTORY_LOADER
     QFactoryLoader* l = loader();
 
     foreach (QString const& key, l->keys()) {
@@ -144,12 +146,13 @@ QList<QAudioDeviceInfo> QAudioDeviceFactory::availableDevices(QAudio::Mode mode)
 
         delete plugin;
     }
-
+#endif
     return devices;
 }
 
 QAudioDeviceInfo QAudioDeviceFactory::defaultInputDevice()
 {
+#ifndef QT_NO_FACTORY_LOADER
     QAudioEngineFactoryInterface* plugin = qobject_cast<QAudioEngineFactoryInterface*>(loader()->instance(QLatin1String("default")));
 
     if (plugin) {
@@ -162,11 +165,13 @@ QAudioDeviceInfo QAudioDeviceFactory::defaultInputDevice()
     return QAudioDeviceInfo(QLatin1String("builtin"), QAudioDeviceInfoInternal::defaultInputDevice(), QAudio::AudioInput);
 #endif
 #endif
+#endif // QT_NO_FACTORY_LOADER
     return QAudioDeviceInfo();
 }
 
 QAudioDeviceInfo QAudioDeviceFactory::defaultOutputDevice()
 {
+#ifndef QT_NO_FACTORY_LOADER
     QAudioEngineFactoryInterface* plugin = qobject_cast<QAudioEngineFactoryInterface*>(loader()->instance(QLatin1String("default")));
 
     if (plugin) {
@@ -179,6 +184,7 @@ QAudioDeviceInfo QAudioDeviceFactory::defaultOutputDevice()
     return QAudioDeviceInfo(QLatin1String("builtin"), QAudioDeviceInfoInternal::defaultOutputDevice(), QAudio::AudioOutput);
 #endif
 #endif
+#endif // QT_NO_FACTORY_LOADER
     return QAudioDeviceInfo();
 }
 
@@ -192,12 +198,13 @@ QAbstractAudioDeviceInfo* QAudioDeviceFactory::audioDeviceInfo(const QString &re
         return new QAudioDeviceInfoInternal(handle, mode);
 #endif
 #endif
+#ifndef QT_NO_FACTORY_LOADER
     QAudioEngineFactoryInterface* plugin =
         qobject_cast<QAudioEngineFactoryInterface*>(loader()->instance(realm));
 
     if (plugin)
         rc = plugin->createDeviceInfo(handle, mode);
-
+#endif
     return rc == 0 ? new QNullDeviceInfo() : rc;
 }
 
@@ -221,12 +228,13 @@ QAbstractAudioInput* QAudioDeviceFactory::createInputDevice(QAudioDeviceInfo con
         return new QAudioInputPrivate(deviceInfo.handle(), format);
 #endif
 #endif
+#ifndef QT_NO_FACTORY_LOADER
     QAudioEngineFactoryInterface* plugin =
         qobject_cast<QAudioEngineFactoryInterface*>(loader()->instance(deviceInfo.realm()));
 
     if (plugin)
         return plugin->createInput(deviceInfo.handle(), format);
-
+#endif
     return new QNullInputDevice();
 }
 
@@ -240,12 +248,13 @@ QAbstractAudioOutput* QAudioDeviceFactory::createOutputDevice(QAudioDeviceInfo c
         return new QAudioOutputPrivate(deviceInfo.handle(), format);
 #endif
 #endif
+#ifndef QT_NO_FACTORY_LOADER
     QAudioEngineFactoryInterface* plugin =
         qobject_cast<QAudioEngineFactoryInterface*>(loader()->instance(deviceInfo.realm()));
 
     if (plugin)
         return plugin->createOutput(deviceInfo.handle(), format);
-
+#endif
     return new QNullOutputDevice();
 }
 

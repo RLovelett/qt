@@ -1398,7 +1398,7 @@ QPictureHandler::QPictureHandler(const char *f, const char *h, const QByteArray&
 typedef QList<QPictureHandler *> QPHList;
 Q_GLOBAL_STATIC(QPHList, pictureHandlers)
 
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_FACTORY_LOADER
 Q_GLOBAL_STATIC(QMutex, mutex)
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, factoryLoader,
                           (QPictureFormatInterface_iid,
@@ -1406,7 +1406,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, factoryLoader,
 #endif
 void qt_init_picture_plugins()
 {
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_FACTORY_LOADER
     QMutexLocker locker(mutex());
     QFactoryLoader *loader = factoryLoader();
     QStringList keys = loader->keys();

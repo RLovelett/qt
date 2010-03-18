@@ -57,7 +57,7 @@
 #include "QtCore/qstringlist.h"
 #include "private/qlibrary_p.h"
 
-#if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
 
 QT_BEGIN_NAMESPACE
 
@@ -84,6 +84,6 @@ public:
 
 QT_END_NAMESPACE
 
-#endif // QT_NO_LIBRARY
+#endif // QT_NO_FACTORY_LOADER
 
 #endif // QFACTORYLOADER_P_H

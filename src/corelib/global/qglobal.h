@@ -1639,6 +1639,10 @@ Q_CORE_EXPORT void qErrnoWarning(const char *msg, ...);
 #define QT_NO_DEBUG_STREAM
 #endif
 
+#if (defined(QT_NO_QT_NO_LIBRARY) || defined(QT_NO_SETTINGS)) && !defined(QT_NO_FACTORY_LOADER)
+#define QT_NO_FACTORY_LOADER
+#endif
+
 /*
   Forward declarations only.
 

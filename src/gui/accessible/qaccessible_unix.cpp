@@ -53,7 +53,7 @@
 
 QT_BEGIN_NAMESPACE
 
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_FACTORY_LOADER
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     (QAccessibleBridgeFactoryInterface_iid, QLatin1String("/accessiblebridge")))
 #endif

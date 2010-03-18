@@ -56,7 +56,7 @@
 QT_BEGIN_NAMESPACE
 
 #if !defined(Q_OS_WIN32) || defined(QT_MAKEDLL)
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_FACTORY_LOADER
 
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     (QWSMouseHandlerFactoryInterface_iid,

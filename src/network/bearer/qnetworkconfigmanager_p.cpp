@@ -51,8 +51,10 @@
 
 QT_BEGIN_NAMESPACE
 
+#ifndef QT_NO_FACTORY_LOADER
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
                           (QBearerEngineFactoryInterface_iid, QLatin1String("/bearer")))
+#endif
 
 QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
 :   capFlags(0), mutex(QMutex::Recursive), pollTimer(0), forcedPolling(0), firstUpdate(true)
@@ -138,7 +140,9 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
 
         updating = false;
 
+#ifndef QT_NO_FACTORY_LOADER
         QFactoryLoader *l = loader();
+#endif
 
         QBearerEngine *generic = 0;
 
@@ -168,7 +172,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
                 engine->requestUpdate();
             }
         }
-
+#endif // QT_NO_FACTORY_LOADER
         if (generic)
             sessionEngines.append(generic);
     }

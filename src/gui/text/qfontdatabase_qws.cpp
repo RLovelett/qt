@@ -75,7 +75,7 @@
 
 QT_BEGIN_NAMESPACE
 
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_FACTORY_LOADER
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     (QFontEngineFactoryInterface_iid, QLatin1String("/fontengines"), Qt::CaseInsensitive))
 #endif
@@ -431,7 +431,7 @@ static void initializeDb()
     }
 #endif // QFONTDATABASE_DEBUG
 
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_FACTORY_LOADER
     QStringList pluginFoundries = loader()->keys();
 //    qDebug() << "plugin foundries:" << pluginFoundries;
     for (int i = 0; i < pluginFoundries.count(); ++i) {
@@ -600,7 +600,7 @@ QFontEngine *loadSingleEngine(int script, const QFontPrivate *fp,
 
         QScopedPointer<QFontEngine> engine;
 
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_FACTORY_LOADER
         QFontEngineFactoryInterface *factory = qobject_cast<QFontEngineFactoryInterface *>(loader()->instance(foundry->name));
         if (factory) {
             QFontEngineInfo info;

@@ -101,13 +101,13 @@ void QIconLoader::ensureInitialized()
         m_systemTheme = qt_guiPlatformPlugin()->systemIconThemeName();
         if (m_systemTheme.isEmpty())
             m_systemTheme = fallbackTheme();
-#ifndef QT_NO_LIBRARY
+#ifndef QT_NO_FACTORY_LOADER
         QFactoryLoader iconFactoryLoader(QIconEngineFactoryInterfaceV2_iid,
                                          QLatin1String("/iconengines"),
                                          Qt::CaseInsensitive);
         if (iconFactoryLoader.keys().contains(QLatin1String("svg")))
             m_supportsSvg = true;
-#endif //QT_NO_LIBRARY
+#endif //QT_NO_FACTORY_LOADER
     }
 }
 

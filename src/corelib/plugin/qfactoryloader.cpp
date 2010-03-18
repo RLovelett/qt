@@ -41,7 +41,8 @@
 
 #include "qfactoryloader_p.h"
 
-#if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
+
 #include "qfactoryinterface.h"
 #include "qmap.h"
 #include <qdir.h>
@@ -256,4 +257,4 @@ void QFactoryLoader::refreshAll()
 
 QT_END_NAMESPACE
 
-#endif // QT_NO_LIBRARY
+#endif // QT_NO_FACTORY_LOADER

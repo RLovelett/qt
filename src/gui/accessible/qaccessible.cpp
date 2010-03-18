@@ -389,7 +389,7 @@ QT_BEGIN_NAMESPACE
     \internal
 */
 
-#if !defined(QT_NO_LIBRARY) && (!defined(QT_NO_SETTINGS) || !defined(Q_OS_WIN))
+#if !defined(QT_NO_FACTORY_LOADER) && !defined(Q_OS_WIN)
 Q_GLOBAL_STATIC_WITH_ARGS(QFactoryLoader, loader,
     (QAccessibleFactoryInterface_iid, QLatin1String("/accessible")))
 #endif

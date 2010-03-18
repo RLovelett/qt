@@ -81,7 +81,7 @@ QGuiPlatformPlugin *qt_guiPlatformPlugin()
     static QGuiPlatformPlugin *plugin;
     if (!plugin)
     {
-#if !defined(QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
+#ifndef QT_NO_FACTORY_LOADER
 
         QString key = QString::fromLocal8Bit(qgetenv("QT_PLATFORM_PLUGIN"));
 #ifdef Q_WS_X11
@@ -101,7 +101,7 @@ QGuiPlatformPlugin *qt_guiPlatformPlugin()
             QFactoryLoader loader(QGuiPlatformPluginInterface_iid, QLatin1String("/gui_platform"));
             plugin = qobject_cast<QGuiPlatformPlugin *>(loader.instance(key));
         }
-#endif // QT_NO_LIBRARY
+#endif // QT_NO_FACTORY_LOADER
 
         if(!plugin) {
             static QGuiPlatformPlugin def;
