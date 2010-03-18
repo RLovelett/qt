@@ -714,6 +714,8 @@ QNetworkReply *QNetworkAccessManager::deleteResource(const QNetworkRequest &requ
     return d_func()->postProcess(createRequest(QNetworkAccessManager::DeleteOperation, request));
 }
 
+#ifndef QT_NO_BEARERMANAGEMENT
+
 /*!
     \since 4.7
 
@@ -818,6 +820,8 @@ bool QNetworkAccessManager::networkAccessEnabled() const
     return d->networkAccessEnabled;
 }
 
+#endif // QT_NO_BEARERMANAGEMENT
+
 /*!
     \since 4.7
 
@@ -875,11 +879,16 @@ QNetworkReply *QNetworkAccessManager::createRequest(QNetworkAccessManager::Opera
 
     // Return a disabled network reply if network access is disabled.
     // Except if the scheme is empty or file://.
-    if (!d->networkAccessEnabled && !(req.url().scheme() == QLatin1String("file") ||
+    if (
+#ifndef QT_NO_BEARERMANAGEMENT
+        !d->networkAccessEnabled &&
+#endif
+        !(req.url().scheme() == QLatin1String("file") ||
                                       req.url().scheme().isEmpty())) {
         return new QDisabledNetworkReply(this, req, op);
     }
 
+#ifndef QT_NO_BEARERMANAGEMENT
     if (!d->networkSession && (d->initializeSession || !d->networkConfiguration.isEmpty())) {
         QNetworkConfigurationManager manager;
         if (d->networkConfiguration.isEmpty())
@@ -888,9 +897,11 @@ QNetworkReply *QNetworkAccessManager::createRequest(QNetworkAccessManager::Opera
             d->createSession(manager.configurationFromIdentifier(d->networkConfiguration));
 
         d->initializeSession = false;
-    } else if (d->networkSession) {
+    } else
+    if (d->networkSession) {
         d->networkSession->setSessionProperty(QLatin1String("AutoCloseSessionTimeout"), -1);
     }
+#endif
 
     QNetworkRequest request = req;
     if (!request.header(QNetworkRequest::ContentLengthHeader).isValid() &&
@@ -949,8 +960,10 @@ void QNetworkAccessManagerPrivate::_q_replyFinished()
     if (reply)
         emit q->finished(reply);
 
+#ifndef QT_NO_BEARERMANAGEMENT
     if (networkSession && q->findChildren<QNetworkReply *>().count() == 1)
         networkSession->setSessionProperty(QLatin1String("AutoCloseSessionTimeout"), 120000);
+#endif
 }
 
 void QNetworkAccessManagerPrivate::_q_replySslErrors(const QList<QSslError> &errors)
@@ -1203,6 +1216,7 @@ QNetworkAccessManagerPrivate::~QNetworkAccessManagerPrivate()
 {
 }
 
+#ifndef QT_NO_BEARERMANAGEMENT
 void QNetworkAccessManagerPrivate::createSession(const QNetworkConfiguration &config)
 {
     Q_Q(QNetworkAccessManager);
@@ -1248,6 +1262,7 @@ void QNetworkAccessManagerPrivate::_q_networkSessionPreferredConfigurationChange
 {
     networkSession->migrate();
 }
+#endif // QT_NO_BEARERMANAGEMENT
 
 QT_END_NAMESPACE
 

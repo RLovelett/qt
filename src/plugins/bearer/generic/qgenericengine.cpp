@@ -63,6 +63,8 @@
 #include <unistd.h>
 #endif
 
+#ifndef QT_NO_BEARERMANAGEMENT
+
 QT_BEGIN_NAMESPACE
 
 static QString qGetInterfaceType(const QString &interface)
@@ -330,3 +332,4 @@ bool QGenericEngine::requiresPolling() const
 
 QT_END_NAMESPACE
 
+#endif // QT_NO_BEARERMANAGEMENT

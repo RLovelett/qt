@@ -46,6 +46,8 @@
 
 #include <QtCore/qstringlist.h>
 
+#ifndef QT_NO_BEARERMANAGEMENT
+
 QT_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QNetworkConfigurationManagerPrivate, connManager);
@@ -461,3 +463,4 @@ void QNetworkConfigurationManager::updateConfigurations()
 
 QT_END_NAMESPACE
 
+#endif // QT_NO_BEARERMANAGEMENT

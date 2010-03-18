@@ -84,6 +84,7 @@ void QNetworkReplyImplPrivate::_q_startOperation()
         return;
     }
 
+#ifndef QT_NO_BEARERMANAGEMENT
     if (!backend->start()) {
         // backend failed to start because the session state is not Connected.
         // QNetworkAccessManager will call reply->backend->start() again for us when the session
@@ -98,9 +99,9 @@ void QNetworkReplyImplPrivate::_q_startOperation()
         } else {
             qWarning("Backend is waiting for QNetworkSession to connect, but there is none!");
         }
-
         return;
     }
+#endif
 
     if (state != Finished) {
         if (operation == QNetworkAccessManager::GetOperation)
@@ -551,6 +552,7 @@ void QNetworkReplyImplPrivate::finished()
         totalSize = totalSize.toLongLong() + preMigrationDownloaded;
 
     if (!manager.isNull()) {
+#ifndef QT_NO_BEARERMANAGEMENT
         QNetworkSession *session = manager->d_func()->networkSession;
         if (session && session->state() == QNetworkSession::Roaming &&
             state == Working && errorCode != QNetworkReply::OperationCanceledError) {
@@ -570,6 +572,7 @@ void QNetworkReplyImplPrivate::finished()
                 }
             }
         }
+#endif
     }
     resumeNotificationHandling();
 
