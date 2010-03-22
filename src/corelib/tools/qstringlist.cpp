@@ -414,7 +414,8 @@ QString QtPrivate::QStringList_join(const QStringList *that, const QString &sep)
         totalLength += sep.size() * (size - 1);
 
     QString res;
-    res.reserve(totalLength);
+    if (totalLength > 0)
+        res.reserve(totalLength);
     for (int i = 0; i < that->size(); ++i) {
         if (i)
             res += sep;
