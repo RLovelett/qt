@@ -713,6 +713,14 @@ QFile::rename(const QString &newName)
             return true;
         }
 
+        if (fileEngine()->supportsExtension(QAbstractFileEngine::HasRenameExtension))
+        {
+            // Engine implements rename(), so the return indicates an error and block
+            // copy should not be attempted.
+            d->setError(QFile::RenameError, d->fileEngine->errorString());
+            return false;
+        }
+
         if (isSequential()) {
             d->setError(QFile::RenameError, tr("Will not rename sequential file using block copy"));
             return false;
@@ -863,6 +871,11 @@ QFile::copy(const QString &newName)
         if(fileEngine()->copy(newName)) {
             unsetError();
             return true;
+        } else if (fileEngine()->supportsExtension(QAbstractFileEngine::HasCopyExtension)) {
+            // Engine implements copy(), so the return indicates an error and block
+            // copy should not be attempted.
+            d->setError(QFile::CopyError, d->fileEngine->errorString());
+            return false;
         } else {
             bool error = false;
             if(!open(QFile::ReadOnly)) {

@@ -159,7 +159,9 @@ public:
         AtEndExtension,
         FastReadLineExtension,
         MapExtension,
-        UnMapExtension
+        UnMapExtension,
+        HasRenameExtension,
+        HasCopyExtension
     };
     class ExtensionOption
     {};

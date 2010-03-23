@@ -1116,6 +1116,16 @@ qint64 QAbstractFileEngine::readLine(char *data, qint64 maxlen)
 
    \value UnMapExtension Whether the file engine provides the ability to
    unmap memory that was previously mapped.
+
+   \value HasRenameExtension Whether the file engine implements rename() or
+   not. If supportsExtension() returns true for this extension, a return
+   value of false from rename() is interpreted as a definitive error, and no
+   fallback is attempted.
+
+   \value HasCopyExtension Whether the file engine implements copy() or not.
+   If supportsExtension() returns true for this extension, a return value of
+   false from copy() is interpreted as a definitive error, and no fallback is
+   attempted.
 */
 
 /*!

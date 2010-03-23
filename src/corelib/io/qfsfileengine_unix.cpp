@@ -428,10 +428,12 @@ bool QFSFileEngine::copy(const QString &newName)
     ) // End TRAP
     delete fm;
     // ### Add error reporting on failure
+    // Update supportsExtension() for HasCopyExtension when errors are reported
     return (err == KErrNone);
 #else
     Q_UNUSED(newName);
     // ### Add copy code for Unix here
+    // Be sure to update supportsExtension() for HasCopyExtension as well.
     setError(QFile::UnspecifiedError, QLatin1String("Not implemented!"));
     return false;
 #endif

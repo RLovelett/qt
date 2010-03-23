@@ -917,6 +917,12 @@ bool QFSFileEngine::supportsExtension(Extension extension) const
         return true;
     if (extension == UnMapExtension || extension == MapExtension)
         return true;
+    if (extension == HasRenameExtension)
+        return true;
+#if defined(Q_OS_WIN)
+    if (extension == HasCopyExtension)
+        return true;
+#endif
     return false;
 }
 
