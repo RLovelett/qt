@@ -875,6 +875,13 @@ Requires:
 Name: JPEG Image Format
 SeeAlso: ???
 
+Feature: IMAGEFORMAT_ICO
+Description: Supports the ICO image file format.
+Section: Images
+Requires:
+Name: ICO Image Format
+SeeAlso: ???
+
 Feature: IMAGE_HEURISTIC_MASK
 Description: Supports creating a 1-bpp heuristic mask for images.
 Section: Images

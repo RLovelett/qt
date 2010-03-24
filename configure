@@ -654,6 +654,7 @@ CFG_JPEG=auto
 CFG_LIBJPEG=auto
 CFG_MNG=auto
 CFG_LIBMNG=auto
+CFG_ICO=auto
 CFG_XCURSOR=runtime
 CFG_XRANDR=runtime
 CFG_XRENDER=auto
@@ -1692,6 +1693,14 @@ while [ "$#" -gt 0 ]; do
         [ "$VAL" = "yes" ] && VAL=qt
         if [ "$VAL" = "qt" ] || [ "$VAL" = "no" ] || [ "$VAL" = "system" ]; then
             CFG_LIBTIFF="$VAL"
+        else
+            UNKNOWN_OPT=yes
+        fi
+        ;;
+    ico)
+        [ "$VAL" = "qt" ] && VAL=yes
+        if [ "$VAL" = "yes" ] || [ "$VAL" = "no" ]; then
+            CFG_ICO="$VAL"
         else
             UNKNOWN_OPT=yes
         fi
@@ -3329,9 +3338,9 @@ Usage:  $relconf [-h] [-prefix <dir>] [-prefix-install] [-bindir <dir>] [-libdir
         [-platform] [-D <string>] [-I <string>] [-L <string>] [-help]
         [-qt-zlib] [-system-zlib] [-no-gif] [-qt-gif] [-no-libtiff] [-qt-libtiff] [-system-libtiff]
         [-no-libpng] [-qt-libpng] [-system-libpng] [-no-libmng] [-qt-libmng]
-        [-system-libmng] [-no-libjpeg] [-qt-libjpeg] [-system-libjpeg] [-make <part>]
-        [-nomake <part>] [-R <string>]  [-l <string>] [-no-rpath]  [-rpath] [-continue]
-        [-verbose] [-v] [-silent] [-no-nis] [-nis] [-no-cups] [-cups] [-no-iconv]
+        [-system-libmng] [-no-libjpeg] [-qt-libjpeg] [-system-libjpeg] [-no-ico] [-qt-ico]
+        [-make <part>] [-nomake <part>] [-R <string>]  [-l <string>] [-no-rpath]  [-rpath]
+        [-continue] [-verbose] [-v] [-silent] [-no-nis] [-nis] [-no-cups] [-cups] [-no-iconv]
         [-iconv] [-no-pch] [-pch] [-no-dbus] [-dbus] [-dbus-linked]
         [-no-separate-debug-info] [-no-mmx] [-no-3dnow] [-no-sse] [-no-sse2]
         [-qtnamespace <namespace>] [-qtlibinfix <infix>] [-separate-debug-info] [-armfpa]
@@ -3567,6 +3576,9 @@ Third Party Libraries:
     -qt-libjpeg ........ Use the libjpeg bundled with Qt.
  +  -system-libjpeg .... Use libjpeg from the operating system.
                          See http://www.ijg.org
+
+    -no-ico ............ Do not compile the plugin for ICO reading support.
+ *  -qt-ico ............ Compile the plugin for ICO reading support.
 
     -no-openssl ........ Do not compile support for OpenSSL.
  +  -openssl ........... Enable run-time OpenSSL support.
@@ -4678,6 +4690,15 @@ if [ "$CFG_LIBPNG" = "auto" ]; then
        CFG_LIBPNG=system
     else
        CFG_LIBPNG=qt
+    fi
+fi
+
+# detect how ico should be built
+if [ "$CFG_ICO" = "auto" ]; then
+    if [ "$CFG_SHARED" = "yes" ]; then
+        CFG_ICO=plugin
+    else
+        CFG_ICO=yes
     fi
 fi
 
@@ -6294,6 +6315,11 @@ if [ "$CFG_TIFF" = "no" ]; then
 elif [ "$CFG_TIFF" = "yes" ]; then
     QT_CONFIG="$QT_CONFIG tiff"
 fi
+if [ "$CFG_ICO" = "no" ]; then
+    QT_CONFIG="$QT_CONFIG no-ico"
+elif [ "$CFG_ICO" = "yes" ]; then
+    QT_CONFIG="$QT_CONFIG ico"
+fi
 if [ "$CFG_LIBFREETYPE" = "no" ]; then
     QT_CONFIG="$QT_CONFIG no-freetype"
 elif [ "$CFG_LIBFREETYPE" = "system" ]; then
@@ -6778,6 +6804,7 @@ esac
 #     system-zlib no-zlib zlib
 #     system-libtiff no-libtiff
 #     no-gif gif
+#     no-ico ico
 #     debug release
 #     dll staticlib
 #
@@ -7116,6 +7143,7 @@ QMakeVar set sql-plugins "$SQL_PLUGINS"
 [ "$CFG_PNG" != "yes" ]      && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_IMAGEFORMAT_PNG"
 [ "$CFG_JPEG" != "yes" ]     && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_IMAGEFORMAT_JPEG"
 [ "$CFG_MNG" != "yes" ]      && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_IMAGEFORMAT_MNG"
+[ "$CFG_ICO" != "yes" ]      && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_IMAGEFORMAT_ICO"
 [ "$CFG_ZLIB" != "yes" ]     && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_ZLIB"
 [ "$CFG_EXCEPTIONS" = "no" ] && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_EXCEPTIONS"
 [ "$CFG_IPV6" = "no" ]       && QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_IPV6"
@@ -7583,6 +7611,7 @@ if [ "$CFG_MNG" = "no" ]; then
 else
     echo "MNG support ............ $CFG_MNG ($CFG_LIBMNG)"
 fi
+echo "ICO support  ........... $CFG_ICO"
 echo "zlib support ........... $CFG_ZLIB"
 echo "Session management ..... $CFG_SM"
 if [ "$PLATFORM_QWS" = "yes" ]; then

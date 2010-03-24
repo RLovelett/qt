@@ -74,6 +74,9 @@
 #ifndef QT_NO_IMAGEFORMAT_PPM
 #  define QT_NO_IMAGEFORMAT_PPM
 #endif
+#ifndef QT_NO_IMAGEFORMAT_ICO
+#  define QT_NO_IMAGEFORMAT_ICO
+#endif
 #ifndef QT_NO_IMAGE_TEXT
 #  define QT_NO_IMAGE_TEXT
 #endif

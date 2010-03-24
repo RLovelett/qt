@@ -94,6 +94,9 @@
 // BMP Image Format
 //#define QT_NO_IMAGEFORMAT_BMP
 
+// ICO Image Format
+//#define QT_NO_IMAGEFORMAT_ICO
+
 // JPEG Image Format
 //#define QT_NO_IMAGEFORMAT_JPEG
 
