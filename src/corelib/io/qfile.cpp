@@ -695,7 +695,10 @@ QFile::rename(const QString &newName)
         qWarning("QFile::rename: Empty or null file name");
         return false;
     }
-    if (QFile(newName).exists()) {
+    QFileInfo newFileInfo(newName);
+    if (newFileInfo.exists() && (fileEngine()->caseSensitive()
+        || QString::compare(QFileInfo(*this).canonicalFilePath(), newFileInfo.canonicalFilePath(),
+        Qt::CaseInsensitive) != 0)) {
         // ### Race condition. If a file is moved in after this, it /will/ be
         // overwritten. On Unix, the proper solution is to use hardlinks:
         // return ::link(old, new) && ::remove(old);
