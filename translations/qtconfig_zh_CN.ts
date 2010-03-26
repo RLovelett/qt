@@ -126,7 +126,7 @@
     </message>
     <message>
         <location line="+0"/>
-        <source>Use OpenGL if avaiable</source>
+        <source>Use OpenGL if available</source>
         <translation>如果 OpenGL 可用，就使用它。</translation>
     </message>
     <message>

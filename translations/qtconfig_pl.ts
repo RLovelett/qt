@@ -61,7 +61,7 @@
     </message>
     <message>
         <location line="+0"/>
-        <source>Use OpenGL if avaiable</source>
+        <source>Use OpenGL if available</source>
         <translation>Użyj OpenGL jeśli dostępne</translation>
     </message>
     <message>
