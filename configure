@@ -1810,6 +1810,8 @@ while [ "$#" -gt 0 ]; do
             CFG_QS60STYLE="$VAL"
         else
             UNKNOWN_OPT=yes
+        fi
+        ;;
     gui)
         if [ "$VAL" = "yes" ] || [ "$VAL" = "auto" ]; then
             CFG_GUI="yes"
@@ -6865,13 +6867,13 @@ fi
 
 
 if [ "$CFG_DECLARATIVE" = "yes" ]; then
-    if [ "$CFG_SCRIPT" = "no" ]; then
-        echo "Error: QtDeclarative was requested, but it can't be built due to QtScript being disabled."
+    if [ "$CFG_SCRIPT" = "no" -o "$CFG_GUI" = "no" ]; then
+        echo "Error: QtDeclarative was requested, but it can't be built due to QtScript or QtGui being disabled."
         exit 1
     fi
 fi
 if [ "$CFG_DECLARATIVE" = "auto" ]; then
-    if [ "$CFG_SCRIPT" = "no" ]; then
+    if [ "$CFG_SCRIPT" = "no" -o "$CFG_GUI" = "no" ]; then
             CFG_DECLARATIVE=no
     else
             CFG_DECLARATIVE=yes
