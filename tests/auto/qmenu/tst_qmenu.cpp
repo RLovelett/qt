@@ -104,6 +104,8 @@ private slots:
     void setFixedWidth();
     void deleteActionInTriggered();
     void pushButtonPopulateOnAboutToShow();
+    void menuGeometry_data();
+    void menuGeometry();
 protected slots:
     void onActivated(QAction*);
     void onHighlighted(QAction*);
@@ -929,6 +931,49 @@ void tst_QMenu::pushButtonPopulateOnAboutToShow()
     QTest::mouseClick(&b, Qt::LeftButton, Qt::NoModifier, b.rect().center());
     QVERIFY(!lastMenu->geometry().intersects(b.geometry()));
 
+}
+
+void tst_QMenu::menuGeometry_data()
+{
+    QTest::addColumn<QRect>("screen");
+    QTest::addColumn<QPoint>("pos");
+    QTest::addColumn<QPoint>("expectedPos");
+
+    QMenu menu("Test Menu");
+    for (int i = 0; i < 5; ++i)
+        menu.addAction("Hello World!");
+
+    menu.adjustSize();
+
+    const int screenCount = QApplication::desktop()->screenCount();
+
+    for (int i = 0; i < screenCount; ++i) {
+        const QRect screen = QApplication::desktop()->screenGeometry(i);
+
+        QTest::newRow("topLeft") << screen << screen.topLeft() << screen.topLeft();
+        QTest::newRow("topRight") << screen << screen.topRight() << QPoint(screen.right() - menu.width() + 1, screen.top());
+        QTest::newRow("bottomLeft") << screen << screen.bottomLeft() << QPoint(screen.left(), screen.bottom() - menu.height() + 1);
+        QTest::newRow("bottomRight") << screen << screen.bottomRight() << QPoint(screen.right() - menu.width() + 1, screen.bottom() - menu.height() + 1);
+
+        const QPoint pos = QPoint(screen.right() - 20, screen.bottom() - 20);
+        QTest::newRow("position") << screen << pos << QPoint(screen.right() - menu.width() + 1, pos.y() - menu.height() + 1);
+    }
+}
+
+void tst_QMenu::menuGeometry()
+{
+    QFETCH(QRect, screen);
+    QFETCH(QPoint, pos);
+    QFETCH(QPoint, expectedPos);
+
+    QMenu menu("Test Menu");
+    for (int i = 0; i < 5; ++i)
+        menu.addAction("Hello World!");
+
+    menu.popup(pos);
+    QTest::qWaitForWindowShown(&menu);
+    QVERIFY(screen.contains(menu.geometry()));
+    QCOMPARE(menu.pos(), expectedPos);
 }
 
 
