@@ -90,7 +90,7 @@ public:
     QItemEditorFactory *itemEditorFactory() const;
     void setItemEditorFactory(QItemEditorFactory *factory);
 
-    virtual QString displayText(const QVariant &value, const QLocale &locale) const;
+    virtual QString displayText(const QVariant &value, const QLocale &locale, const QModelIndex &index) const;
 
 protected:
     virtual void initStyleOption(QStyleOptionViewItem *option,

@@ -258,14 +258,17 @@ QStyledItemDelegate::~QStyledItemDelegate()
 
 /*!
     This function returns the string that the delegate will use to display the
-    Qt::DisplayRole of the model in \a locale. \a value is the value of the Qt::DisplayRole
+    Qt::DisplayRole of the model in \a locale for the item specified by \a index.
+    \a value is the value of the Qt::DisplayRole
     provided by the model.
 
     The default implementation uses the QLocale::toString to convert \a value into
     a QString.
 */
-QString QStyledItemDelegate::displayText(const QVariant &value, const QLocale& locale) const
+QString QStyledItemDelegate::displayText(const QVariant &value, const QLocale& locale, const QModelIndex &index) const
 {
+    Q_UNUSED(index);
+
     QString text;
     switch (value.userType()) {
     case QMetaType::Float:
@@ -380,7 +383,7 @@ void QStyledItemDelegate::initStyleOption(QStyleOptionViewItem *option,
         value = index.data(Qt::DisplayRole);
         if (value.isValid() && !value.isNull()) {
             v4->features |= QStyleOptionViewItemV2::HasDisplay;
-            v4->text = displayText(value, v4->locale);
+            v4->text = displayText(value, v4->locale, index);
         }
 
         v4->backgroundBrush = qvariant_cast<QBrush>(index.data(Qt::BackgroundRole));
