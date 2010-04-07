@@ -1915,10 +1915,12 @@ void QMenu::popup(const QPoint &p, QAction *atAction)
                 pos.setX(screen.left() + desktopFrame);
         }
         if (pos.y() + size.height() - 1 > screen.bottom() - desktopFrame) {
-            if(snapToMouse)
-                pos.setY(qMin(mouse.y() - (size.height() + desktopFrame), screen.bottom()-desktopFrame-size.height()+1));
+            const int bestPos = (snapToMouse ? mouse.y() : p.y()) - desktopFrame - size.height() + 1;
+            const int fallbackPos = screen.bottom() - desktopFrame - size.height() + 1;
+            if (bestPos < screen.top() + desktopFrame)
+                pos.setY(qMax(bestPos, fallbackPos));
             else
-                pos.setY(qMax(p.y() - (size.height() + desktopFrame), screen.bottom()-desktopFrame-size.height()+1));
+                pos.setY(qMin(bestPos, fallbackPos));
         } else if (pos.y() < screen.top() + desktopFrame) {
             pos.setY(screen.top() + desktopFrame);
         }
