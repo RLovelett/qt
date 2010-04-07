@@ -5092,6 +5092,15 @@ if [ "$CFG_DBUS" != "no" ]; then
     fi
 fi
 
+if [ "$CFG_MULTIMEDIA" = "auto" ]; then
+    CFG_MULTIMEDIA="$CFG_GUI"
+fi
+
+if [ "$CFG_MULTIMEDIA" = "yes" ] && [ "$CFG_GUI" = "no" ]; then
+    echo "QtMultimedia requested, but it can't be built without QtGui"
+    exit 1
+fi
+
 # Generate a CRC of the namespace for using in constants for the Carbon port.
 # This should mean that you really *can* load two Qt's and have our custom
 # Carbon events work.
@@ -5164,6 +5173,8 @@ if [ "$PLATFORM_X11" = "yes" -o "$PLATFORM_QWS" = "yes" ]; then
             echo " You might need to either enable the GUI or disable Mediaservice"
             exit 1
         fi
+    elif [ "$CFG_MEDIASERVICE" = "auto" ]; then
+        CFG_MEDIASERVICE=yes
     fi
 
     # Auto-detect GStreamer support (needed for both Phonon & QtMultimedia)
@@ -6792,15 +6803,6 @@ if [ "$CFG_XMLPATTERNS" = "yes" ]; then
     QT_CONFIG="$QT_CONFIG xmlpatterns"
 else
     QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_XMLPATTERNS"
-fi
-
-if [ "$CFG_MULTIMEDIA" = "auto" ]; then
-    CFG_MULTIMEDIA="$CFG_GUI"
-fi
-
-if [ "$CFG_MULTIMEDIA" = "yes" ] && [ "$CFG_GUI" = "no" ]; then
-    echo "QtMultimedia requested, but it can't be built without QtGui"
-    exit 1
 fi
 
 if [ "$CFG_MULTIMEDIA" = "no" ]; then
