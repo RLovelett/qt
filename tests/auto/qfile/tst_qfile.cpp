@@ -2323,6 +2323,10 @@ void tst_QFile::rename_data()
 #endif
     QTest::newRow("renamefile -> renamedfile") << QString("renamefile") << QString("renamedfile") << true;
     QTest::newRow("renamefile -> ..") << QString("renamefile") << QString("..") << false;
+
+    // QTBUG-3570
+    if (!QFile(".").fileEngine()->caseSensitive())
+        QTest::newRow("renamefile -> RenameFile") << QString("renamefile") << QString("RenameFile") << true;
 }
 
 void tst_QFile::rename()

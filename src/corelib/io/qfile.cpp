@@ -696,13 +696,30 @@ QFile::rename(const QString &newName)
         qWarning("QFile::rename: Empty or null file name");
         return false;
     }
-    if (QFile(newName).exists()) {
-        // ### Race condition. If a file is moved in after this, it /will/ be
-        // overwritten. On Unix, the proper solution is to use hardlinks:
-        // return ::link(old, new) && ::remove(old);
-        d->setError(QFile::RenameError, tr("Destination file exists"));
-        return false;
+
+    {
+        QFile f(newName);
+        bool simpleRename = false;
+        if (!fileEngine()->caseSensitive()) {
+            // simple renaming (somefile -> SomeFile)
+            QString oldFile = fileEngine()->fileName(QAbstractFileEngine::CanonicalName);
+            QString newFile = f.fileEngine()->fileName(QAbstractFileEngine::CanonicalName);
+            if (oldFile.compare(newFile, Qt::CaseInsensitive) == 0) {
+                oldFile = fileEngine()->fileName(QAbstractFileEngine::BaseName);
+                newFile = f.fileEngine()->fileName(QAbstractFileEngine::BaseName);
+                if (oldFile != newFile)
+                    simpleRename = true;
+            }
+        }
+        if (!simpleRename && f.exists()) {
+            // ### Race condition. If a file is moved in after this, it /will/ be
+            // overwritten. On Unix, the proper solution is to use hardlinks:
+            // return ::link(old, new) && ::remove(old);
+            d->setError(QFile::RenameError, tr("Destination file exists"));
+            return false;
+        }
     }
+
     unsetError();
     close();
     if(error() == QFile::NoError) {
