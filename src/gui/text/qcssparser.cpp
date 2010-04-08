@@ -56,6 +56,8 @@ QT_BEGIN_NAMESPACE
 
 #include "qcssscanner.cpp"
 
+extern int qt_defaultDpiX();
+
 using namespace QCss;
 
 struct QCssKnownValue
@@ -379,6 +381,8 @@ LengthData ValueExtractor::lengthValue(const Value& v)
         data.unit = LengthData::Ex;
     else if (s.endsWith(QLatin1String("em"), Qt::CaseInsensitive))
         data.unit = LengthData::Em;
+    else if (s.endsWith(QLatin1String("pt"), Qt::CaseInsensitive))
+        data.unit = LengthData::Pt;
 
     if (data.unit != LengthData::None)
         s.chop(2);
@@ -393,6 +397,8 @@ static int lengthValueFromData(const LengthData& data, const QFont& f)
         return qRound(QFontMetrics(f).xHeight() * data.number);
     else if (data.unit == LengthData::Em)
         return qRound(QFontMetrics(f).height() * data.number);
+    else if (data.unit == LengthData::Pt)
+        return qRound(data.number * qt_defaultDpiX() / 72.0);
     return qRound(data.number);
 }
 

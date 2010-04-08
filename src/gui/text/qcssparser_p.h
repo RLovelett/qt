@@ -394,7 +394,7 @@ struct BackgroundData {
 
 struct LengthData {
     qreal number;
-    enum { None, Px, Ex, Em } unit;
+    enum { None, Px, Ex, Em, Pt } unit;
 };
 
 struct BorderData {
