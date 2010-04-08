@@ -1739,7 +1739,18 @@ template <> void qt_rectconvert(qrgb *dest, const quint16 *src,
 #endif // QT_QWS_DEPTH_GENERIC
 
 #define QT_MEMFILL_UINT(dest, length, color)            \
-    qt_memfill<quint32>(dest, color, length);
+    if (length < 7) { \
+        switch (length) { \
+        case 6: *dest++ = color; \
+        case 5: *dest++ = color; \
+        case 4: *dest++ = color; \
+        case 3: *dest++ = color; \
+        case 2: *dest++ = color; \
+        case 1: *dest   = color; \
+        } \
+	} else { qt_memfill<quint32>(dest, color, length); }
+  
+
 
 #define QT_MEMFILL_USHORT(dest, length, color) \
     qt_memfill<quint16>(dest, color, length);
