@@ -42,19 +42,15 @@
 #include <qconfig.h.test>
 #include <qfeatures.h>
 
-#ifdef QT_NO_PROPERTIES
-#error Needs property support
+#ifdef QT_NO_ACTION
+#error Needs QAction
 #endif
 
-#define DBUS_API_SUBJECT_TO_CHANGE
-#include <dbus/dbus.h>
-
-#if DBUS_MAJOR_PROTOCOL_VERSION < 1
-#error Needs at least dbus version 1
+#ifdef QT_NO_INPUTDIALOG
+#error Needs QInputDialog
 #endif
 
 int main(int, char **)
 {
-    dbus_shutdown();
     return 0;
 }

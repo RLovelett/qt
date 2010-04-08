@@ -163,6 +163,58 @@ linkerSupportsFlag()
     compilerSupportsFlag "$lflags" >/dev/null 2>&1
 }
 
+writeQConfigFromOption()
+{
+    qconfig_h="$1"
+    case "$CFG_QCONFIG" in
+    full)
+        echo "/* Everything */" >"$qconfig_h"
+        ;;
+    *)
+        echo "#ifndef QT_BOOTSTRAPPED" >"$qconfig_h"
+        cat "$relpath/src/corelib/global/qconfig-$CFG_QCONFIG.h" >>"$qconfig_h"
+        echo "#endif" >>"$qconfig_h"
+        ;;
+    esac
+}
+
+appendQConfigFlags()
+{
+    qconfig_h="$1"
+    for cfg in $QCONFIG_FLAGS; do
+        cfgd=`echo $cfg | sed 's/=.*$//'` # trim pushed 'Foo=Bar' defines
+        cfg=`echo $cfg | sed 's/=/ /'`    # turn first '=' into a space
+        # figure out define logic, so we can output the correct
+        # ifdefs to override the global defines in a project
+        cfgdNeg=
+        if [ true ] && echo "$cfgd" | grep 'QT_NO_' >/dev/null 2>&1; then
+            # QT_NO_option can be forcefully turned on by QT_option
+            cfgdNeg=`echo $cfgd | sed "s,QT_NO_,QT_,"`
+        elif [ true ] && echo "$cfgd" | grep 'QT_' >/dev/null 2>&1; then
+            # QT_option can be forcefully turned off by QT_NO_option
+            cfgdNeg=`echo $cfgd | sed "s,QT_,QT_NO_,"`
+        fi
+
+        if [ -z $cfgdNeg ]; then
+cat >>"$qconfig_h" << EOF
+#ifndef $cfgd
+# define $cfg
+#endif
+
+EOF
+        else
+cat >>"$qconfig_h" << EOF
+#if defined($cfgd) && defined($cfgdNeg)
+# undef $cfgd
+#elif !defined($cfgd) && !defined($cfgdNeg)
+# define $cfg
+#endif
+
+EOF
+        fi
+    done
+}
+
 #-------------------------------------------------------------------------------
 # operating system detection
 #-------------------------------------------------------------------------------
@@ -4212,9 +4264,16 @@ aix-*)
 esac
 
 #-------------------------------------------------------------------------------
-# generate qconfig.cpp
+# generate qconfig.h.test - a qconfig.h for config.tests
 #-------------------------------------------------------------------------------
 [ -d "$outpath/src/corelib/global" ] || mkdir -p "$outpath/src/corelib/global"
+
+writeQConfigFromOption "$outpath/src/corelib/global/qconfig.h.test"
+appendQConfigFlags "$outpath/src/corelib/global/qconfig.h.test"
+
+#-------------------------------------------------------------------------------
+# generate qconfig.cpp
+#-------------------------------------------------------------------------------
 
 LICENSE_USER_STR=`"$relpath/config.tests/unix/padstring" 268 "qt_lcnsuser=$Licensee"`
 LICENSE_PRODUCTS_STR=`"$relpath/config.tests/unix/padstring" 268 "qt_lcnsprod=$Edition"`
@@ -5055,7 +5114,7 @@ if [ "$CFG_DBUS" != "no" ]; then
         QT_CFLAGS_DBUS=`$PKG_CONFIG --cflags dbus-1 2>/dev/null`
         QT_LIBS_DBUS=`$PKG_CONFIG --libs dbus-1 2>/dev/null`
     fi
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/dbus "D-Bus" $L_FLAGS $I_FLAGS $l_FLAGS $QT_CFLAGS_DBUS $QT_LIBS_DBUS $MAC_CONFIG_TEST_COMMANDLINE; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/dbus "D-Bus" $L_FLAGS $I_FLAGS $l_FLAGS $QT_CFLAGS_DBUS $QT_LIBS_DBUS $MAC_CONFIG_TEST_COMMANDLINE -I$outpath/src/corelib/global -I$relpath/src/corelib/global; then
         [ "$CFG_DBUS" = "auto" ] && CFG_DBUS=yes
         QMakeVar set QT_CFLAGS_DBUS "$QT_CFLAGS_DBUS"
         QMakeVar set QT_LIBS_DBUS "$QT_LIBS_DBUS"
@@ -6584,6 +6643,7 @@ fi
 canBuildQtXmlPatterns="yes"
 canBuildWebKit="$HAVE_STL"
 canBuildQtConcurrent="yes"
+canBuildQtScriptTools="yes"
 
 # WebKit requires stdint.h
 "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/stdint "Stdint" $L_FLAGS $I_FLAGS $l_FLAGS
@@ -6694,6 +6754,16 @@ EOF
 	;;
 esac
 
+"$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/webkit "WebKit" $L_FLAGS $I_FLAGS $l_FLAGS $QT_CFLAGS_DBUS $QT_LIBS_DBUS $MAC_CONFIG_TEST_COMMANDLINE -I$outpath/src/corelib/global -I$relpath/src/corelib/global
+if [ $? != "0" ]; then
+    canBuildWebKit="no"
+fi
+
+"$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/scripttools "ScriptTools" $L_FLAGS $I_FLAGS $l_FLAGS $QT_CFLAGS_DBUS $QT_LIBS_DBUS $MAC_CONFIG_TEST_COMMANDLINE -I$outpath/src/corelib/global -I$relpath/src/corelib/global
+if [ $? != "0" ]; then
+    canBuildQtScriptTools="no"
+fi
+
 CFG_CONCURRENT="yes"
 if [ "$canBuildQtConcurrent" = "no" ]; then
     QCONFIG_FLAGS="$QCONFIG_FLAGS QT_NO_CONCURRENT"
@@ -6762,7 +6832,7 @@ if [ "$CFG_SCRIPTTOOLS" = "yes" -a "$CFG_SCRIPT" = "no" ]; then
     exit 1
 fi
 if [ "$CFG_SCRIPTTOOLS" = "auto" -a "$CFG_SCRIPT" != "no" ]; then
-    CFG_SCRIPTTOOLS="yes"
+    CFG_SCRIPTTOOLS=$canBuildQtScriptTools
 elif [ "$CFG_SCRIPT" = "no" ]; then
     CFG_SCRIPTTOOLS="no"
 fi
@@ -7028,17 +7098,7 @@ QT_BUILD_KEY_COMPAT=`echo $QT_BUILD_KEY_COMPAT | sed -e "s,  *, ,g" -e "s,^  *,,
 # part of configuration information goes into qconfig.h
 #-------------------------------------------------------------------------------
 
-case "$CFG_QCONFIG" in
-full)
-    echo "/* Everything */" >"$outpath/src/corelib/global/qconfig.h.new"
-    ;;
-*)
-    tmpconfig="$outpath/src/corelib/global/qconfig.h.new"
-    echo "#ifndef QT_BOOTSTRAPPED" >"$tmpconfig"
-    cat "$relpath/src/corelib/global/qconfig-$CFG_QCONFIG.h" >>"$tmpconfig"
-    echo "#endif" >>"$tmpconfig"
-    ;;
-esac
+writeQConfigFromOption "$outpath/src/corelib/global/qconfig.h.new"
 
 cat >>"$outpath/src/corelib/global/qconfig.h.new" <<EOF
 
@@ -7315,38 +7375,17 @@ then
 fi
 
 if [ -n "$QCONFIG_FLAGS" ]; then
-    for cfg in $QCONFIG_FLAGS; do
-        cfgd=`echo $cfg | sed 's/=.*$//'` # trim pushed 'Foo=Bar' defines
-        cfg=`echo $cfg | sed 's/=/ /'`    # turn first '=' into a space
-        # figure out define logic, so we can output the correct
-        # ifdefs to override the global defines in a project
-        cfgdNeg=
-        if [ true ] && echo "$cfgd" | grep 'QT_NO_' >/dev/null 2>&1; then
-            # QT_NO_option can be forcefully turned on by QT_option
-            cfgdNeg=`echo $cfgd | sed "s,QT_NO_,QT_,"`
-        elif [ true ] && echo "$cfgd" | grep 'QT_' >/dev/null 2>&1; then
-            # QT_option can be forcefully turned off by QT_NO_option
-            cfgdNeg=`echo $cfgd | sed "s,QT_,QT_NO_,"`
-        fi
-
-        if [ -z $cfgdNeg ]; then
 cat >>"$outpath/src/corelib/global/qconfig.h.new" << EOF
-#ifndef $cfgd
-# define $cfg
-#endif
+
+#ifndef QT_BOOTSTRAPPED
 
 EOF
-        else
+    appendQConfigFlags "$outpath/src/corelib/global/qconfig.h.new"
 cat >>"$outpath/src/corelib/global/qconfig.h.new" << EOF
-#if defined($cfgd) && defined($cfgdNeg)
-# undef $cfgd
-#elif !defined($cfgd) && !defined($cfgdNeg)
-# define $cfg
-#endif
+
+#endif // QT_BOOTSTRAPPED
 
 EOF
-        fi
-    done
 fi
 
 if [ "$CFG_REDUCE_EXPORTS" = "yes" ]; then
