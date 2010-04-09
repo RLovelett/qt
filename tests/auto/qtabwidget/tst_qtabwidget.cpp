@@ -260,10 +260,13 @@ void tst_QTabWidget::tabEnabled()
 
     tw->setTabEnabled(index, true);
     QVERIFY(tw->isTabEnabled(index) == true);
+    QVERIFY(tw->widget(index)->isEnabled() == true);
     tw->setTabEnabled(index, false);
     QVERIFY(tw->isTabEnabled(index) == false);
+    QVERIFY(tw->widget(index)->isEnabled() == false);
     tw->setTabEnabled(index, true);
     QVERIFY(tw->isTabEnabled(index) == true);
+    QVERIFY(tw->widget(index)->isEnabled() == true);
 
     removePage(index);
 }
