@@ -50,7 +50,7 @@
 #include "qpixmap.h"
 #include "qpointer.h"
 #include "qtimer.h"
-#include "qdebug.h"
+#include "qpropertyanimation.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -66,7 +66,6 @@ class QAlphaWidget: public QWidget, private QEffects
     Q_OBJECT
 public:
     QAlphaWidget(QWidget* w, Qt::WindowFlags f = 0);
-    ~QAlphaWidget();
 
     void run(int time);
 
@@ -109,15 +108,6 @@ QAlphaWidget::QAlphaWidget(QWidget* w, Qt::WindowFlags f)
     alpha = 0;
 }
 
-QAlphaWidget::~QAlphaWidget()
-{
-#if defined(Q_WS_WIN) && !defined(Q_WS_WINCE)
-    // Restore user-defined opacity value
-    if (widget)
-        widget->setWindowOpacity(1);
-#endif
-}
-
 /*
   \reimp
 */
@@ -145,13 +135,7 @@ void QAlphaWidget::run(int time)
     checkTime.start();
 
     showWidget = true;
-#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
-    qApp->installEventFilter(this);
-    widget->setWindowOpacity(0.0);
-    widget->show();
-    connect(&anim, SIGNAL(timeout()), this, SLOT(render()));
-    anim.start(1);
-#else
+
     //This is roughly equivalent to calling setVisible(true) without actually showing the widget
     widget->setAttribute(Qt::WA_WState_ExplicitShowHide, true);
     widget->setAttribute(Qt::WA_WState_Hidden, false);
@@ -178,7 +162,6 @@ void QAlphaWidget::run(int time)
        duration = 0;
        render();
     }
-#endif
 }
 
 /*
@@ -252,17 +235,6 @@ void QAlphaWidget::render()
     else
         alpha = 1;
 
-#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
-    if (alpha >= 1 || !showWidget) {
-        anim.stop();
-        qApp->removeEventFilter(this);
-        widget->setWindowOpacity(1);
-        q_blend = 0;
-        deleteLater();
-    } else {
-        widget->setWindowOpacity(alpha);
-    }
-#else
     if (alpha >= 1 || !showWidget) {
         anim.stop();
         qApp->removeEventFilter(this);
@@ -289,7 +261,6 @@ void QAlphaWidget::render()
         pm = QPixmap::fromImage(mixedImage);
         repaint();
     }
-#endif // defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
 }
 
 /*
@@ -583,6 +554,27 @@ void qScrollEffect(QWidget* w, QEffects::DirFlags orient, int time)
 */
 void qFadeEffect(QWidget* w, int time)
 {
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+    static QPointer<QPropertyAnimation> animation = 0;
+
+    if (animation) {
+        animation->stop();
+        animation = 0;
+    }
+
+    if (!w)
+        return;
+
+    w->setWindowOpacity(0.0);
+    w->show();
+
+    animation = new QPropertyAnimation(w, "windowOpacity");
+
+    animation->setDuration(time < 0 ? 150 : time);
+    animation->setStartValue(0.0);
+    animation->setEndValue(1.0);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
+#else
     if (q_blend) {
         q_blend->deleteLater();
         q_blend = 0;
@@ -598,8 +590,8 @@ void qFadeEffect(QWidget* w, int time)
 
     // those can be popups - they would steal the focus, but are disabled
     q_blend = new QAlphaWidget(w, flags);
-
     q_blend->run(time);
+#endif
 }
 
 QT_END_NAMESPACE
