@@ -82,6 +82,10 @@
 #include <private/qpaintengineex_opengl2_p.h>
 #endif
 
+#ifdef Q_WS_X11
+#include <X11/Xdefs.h> // for Bool, needed by GL/glx.h
+#define Status int
+#endif
 #include <qglpixelbuffer.h>
 #include <private/qglpixelbuffer_p.h>
 #include <qimage.h>

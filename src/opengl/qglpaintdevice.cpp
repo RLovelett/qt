@@ -39,8 +39,15 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qglobal.h>
+#ifdef Q_WS_X11
+#include <X11/Xdefs.h> // for Bool
+#endif
 #include <private/qglpaintdevice_p.h>
 #include <private/qgl_p.h>
+#if defined(Q_WS_X11) && !defined(Status)
+#define Status int
+#endif
 #include <private/qglpixelbuffer_p.h>
 #include <private/qglframebufferobject_p.h>
 #include <private/qwindowsurface_gl_p.h>

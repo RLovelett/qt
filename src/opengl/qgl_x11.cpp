@@ -39,9 +39,6 @@
 **
 ****************************************************************************/
 
-#include "qgl.h"
-#include "qgl_p.h"
-
 #include "qmap.h"
 #include "qapplication.h"
 #include "qcolormap.h"
@@ -81,6 +78,11 @@
 #  endif
 #endif // Q_OS_VXWORKS
 #include <X11/Xatom.h>
+
+#include "qgl.h"
+#include "qgl_p.h"
+
+#include <X11/Xdefs.h>
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_BSD4)
 #include <dlfcn.h>

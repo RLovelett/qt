@@ -48,6 +48,10 @@
 #include "qapplication.h"
 #include "qbrush.h"
 #include "qgl.h"
+#include <qglobal.h>
+#ifdef Q_WS_X11
+#include <X11/Xdefs.h> // Needed for Bool, needed by GL/glx.h
+#endif
 #include <private/qgl_p.h>
 #include <private/qglpaintdevice_p.h>
 #include <private/qpainter_p.h>
@@ -57,6 +61,9 @@
 #include "qpen.h"
 #include "qvarlengtharray.h"
 #include <private/qpainter_p.h>
+#ifdef Q_WS_X11
+#define Status int
+#endif
 #include <private/qglpixelbuffer_p.h>
 #include <private/qbezier_p.h>
 #include <qglframebufferobject.h>

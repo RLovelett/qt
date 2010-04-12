@@ -40,11 +40,15 @@
 ****************************************************************************/
 #include <qlibrary.h>
 #include <qdebug.h>
-#include <private/qgl_p.h>
 #include <private/qt_x11_p.h>
+#include <private/qgl_p.h>
 #include <private/qpaintengine_opengl_p.h>
 
 #include <qx11info_x11.h>
+#include <X11/Xdefs.h> // for Bool
+#ifndef Status
+#define Status int
+#endif
 #include <GL/glx.h>
 #include <qimage.h>
 
