@@ -86,7 +86,7 @@
     \section1 The Container Classes
 
     Qt provides the following sequential containers: QList,
-    QLinkedList, QVector, QStack, and QQueue. For most
+    QLinkedList, QVector, QStack, QQueue, and QCircularBuffer. For most
     applications, QList is the best type to use. Although it is
     implemented as an array-list, it provides very fast prepends and
     appends. If you really need a linked-list, use QLinkedList; if you
@@ -147,6 +147,12 @@
     functions to those already present in QList:
     \l{QQueue::enqueue()}{enqueue()},
     \l{QQueue::dequeue()}{dequeue()}, and \l{QQueue::head()}{head()}.
+
+    \row \o \l{QCircularBuffer}<T>
+    \o This stores a circular buffer of values of a given type at adjacent
+    positions in memory. It is similar to \l{QVector} but appending to
+    a full circular buffer causes the oldest item to be overwritten.
+    Appending and prepending to a circular buffer is always very fast.
 
     \row \o \l{QSet}<T>
     \o This provides a single-valued mathematical set with fast
@@ -279,6 +285,8 @@
                                                   \o QMutableLinkedListIterator<T>
     \row    \o QVector<T>, QStack<T>              \o QVectorIterator<T>
                                                   \o QMutableVectorIterator<T>
+    \row    \o QCircularBuffer<T>                 \o QCircularBufferIterator<T>
+                                                  \o QMutableCircularBufferIterator<T>
     \row    \o QSet<T>                            \o QSetIterator<T>
                                                   \o QMutableSetIterator<T>
     \row    \o QMap<Key, T>, QMultiMap<Key, T>    \o QMapIterator<Key, T>
@@ -288,9 +296,9 @@
     \endtable
 
     In this discussion, we will concentrate on QList and QMap. The
-    iterator types for QLinkedList, QVector, and QSet have exactly
-    the same interface as QList's iterators; similarly, the iterator
-    types for QHash have the same interface as QMap's iterators.
+    iterator types for QLinkedList, QVector, QCicularBuffer, and QSet
+    have exactly the same interface as QList's iterators; similarly,
+    the iterator types for QHash have the same interface as QMap's iterators.
 
     Unlike STL-style iterators (covered \l{STL-style
     iterators}{below}), Java-style iterators point \e between items
@@ -389,10 +397,10 @@
 
     \snippet doc/src/snippets/code/doc_src_containers.qdoc 6
 
-    As mentioned above, QLinkedList's, QVector's, and QSet's iterator
-    classes have exactly the same API as QList's. We will now turn to
-    QMapIterator, which is somewhat different because it iterates on
-    (key, value) pairs.
+    As mentioned above, QLinkedList's, QVector's, QCircularBuffer's, and
+    QSet's iterator classes have exactly the same API as QList's. We will
+    now turn to QMapIterator, which is somewhat different because it
+    iterates on (key, value) pairs.
 
     Like QListIterator, QMapIterator provides 
     \l{QMapIterator::toFront()}{toFront()}, 
@@ -448,6 +456,8 @@
                                                   \o QLinkedList<T>::iterator
     \row    \o QVector<T>, QStack<T>              \o QVector<T>::const_iterator
                                                   \o QVector<T>::iterator
+    \row    \o QCircularBuffer<T>                 \o QCircularBuffer<T>::const_iterator
+                                                  \o QCircularBuffer<T>::iterator
     \row    \o QSet<T>                            \o QSet<T>::const_iterator
                                                   \o QSet<T>::iterator
     \row    \o QMap<Key, T>, QMultiMap<Key, T>    \o QMap<Key, T>::const_iterator
@@ -466,9 +476,9 @@
     just a typedef for \c{const T *}.
 
     In this discussion, we will concentrate on QList and QMap. The
-    iterator types for QLinkedList, QVector, and QSet have exactly
-    the same interface as QList's iterators; similarly, the iterator
-    types for QHash have the same interface as QMap's iterators.
+    iterator types for QLinkedList, QVector, QCircularBuffer, and QSet
+    have exactly the same interface as QList's iterators; similarly,
+    the iterator types for QHash have the same interface as QMap's iterators.
 
     Here's a typical loop for iterating through all the elements of a
     QList<QString> in order and converting them to lowercase:
@@ -691,10 +701,11 @@
     sequential container classes:
 
     \table
-    \header \o                \o Index lookup \o Insertion \o Prepending         \o Appending
-    \row    \o QLinkedList<T> \o O(\e n)      \o O(1)      \o O(1)               \o O(1)
-    \row    \o QList<T>       \o O(1)         \o O(n)      \o Amort. O(1)        \o Amort. O(1)
-    \row    \o QVector<T>     \o O(1)         \o O(n)      \o O(n)               \o Amort. O(1)
+    \header \o                      \o Index lookup \o Insertion \o Prepending         \o Appending
+    \row    \o QLinkedList<T>       \o O(\e n)      \o O(1)      \o O(1)               \o O(1)
+    \row    \o QList<T>             \o O(1)         \o O(n)      \o Amort. O(1)        \o Amort. O(1)
+    \row    \o QVector<T>           \o O(1)         \o O(n)      \o O(n)               \o Amort. O(1)
+    \row    \o QCircularBuffer<T>   \o O(1)         \o O(n)      \o O(1)               \o O(1)
     \endtable
 
     In the table, "Amort." stands for "amortized behavior". For
@@ -723,7 +734,7 @@
 
     \section1 Growth Strategies
 
-    QVector<T>, QString, and QByteArray store their items
+    QVector<T>, QCircularBuffer, QString, and QByteArray store their items
     contiguously in memory; QList<T> maintains an array of pointers
     to the items it stores to provide fast index-based access (unless
     T is a pointer type or a basic type of the size of a pointer, in
@@ -764,6 +775,8 @@
 
     QByteArray and QList<T> use more or less the same algorithm as
     QString.
+
+    QCircularBuffer<T> does not grow dynamically.
 
     QVector<T> also uses that algorithm for data types that can be
     moved around in memory using memcpy() (including the basic C++

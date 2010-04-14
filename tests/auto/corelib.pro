@@ -15,6 +15,7 @@ SUBDIRS=\
    qbytearray \
    qbytearraymatcher \
    qcache \
+   qcircularbuffer \
    qchar \
    qcontiguouscache \
    qcoreapplication \
