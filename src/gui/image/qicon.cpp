@@ -879,6 +879,19 @@ QList<QSize> QIcon::availableSizes(Mode mode, State state) const
 }
 
 /*!
+    \since 4.7
+
+    Returns the name used to create the icon, if available.
+*/
+QString QIcon::name() const
+{
+    if (!d || !d->engine || d->engine_version < 2)
+        return QString();
+    QIconEngineV2 *engine = static_cast<QIconEngineV2*>(d->engine);
+    return engine->iconName();
+}
+
+/*!
     \since 4.6
 
     Sets the search paths for icon themes to \a paths.
