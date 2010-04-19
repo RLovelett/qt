@@ -1,0 +1,212 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the QtCore module of the Qt Toolkit.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#include "qpriorityqueue.h"
+
+/*
+    QPriorityQueue is a queue where you can only access to the
+    element wich has the higher priority. Accessing this element
+    is in O(1). Both inserting and removing are in O(log(n)), with
+    n being the number of elements in the list.
+*/
+
+/*! \class QPriorityQueue
+    \brief The QPriorityQueue class is a template class that provides priority queues.
+
+    \ingroup tools
+    \ingroup shared
+
+    \reentrant
+
+    QPriorityQueue\<T, LessThan\> is one of Qt's generic \l{container classes}. It
+    stores a queue of values where only the value with higher priority is
+    accessible.
+
+    Internally, QPriorityQueue\<T, LessThan\> is using STL's priority_queue (which
+    is using STL's heap), or an inlined binary heap if STL support is disabled.
+    The binary heap is implemented using a QList\<T\>. To create a QPriorityQueue\<T, LessThan\>
+    you will need a lessThan function, returning true when the first argument has a
+    smaller priority than the second.
+
+    Here's an example of a QPriorityQueue that stores integers and
+    allow to access to the bigger integer:
+
+    \snippet doc/src/snippets/code/src_corelib_tools_qpriority_queue.cpp 0
+
+    QPriorityQueue stores a queue of items. The default constructor creates an
+    empty queue. To insert items into the list, you can use
+    operator<<():
+
+    \snippet doc/src/snippets/code/src_corelib_tools_qlistdata.cpp 1
+
+    QList provides these basic functions to add and remove
+    items: enqueue(), dequeue(). In addition, it provides the following
+    convenience functions removeFirst(), append(), push(),
+    pop()
+
+    To access the first element you can use head() or one of these
+    convenience functions: top() and first().
+
+    QPriorityQueue's value type must be an \l{assignable data type}. This
+    covers most data types that are commonly used, but the compiler
+    won't let you, for example, store a QWidget as a value; instead,
+    store a QWidget *. A few functions have additional requirements;
+    for example, indexOf() and lastIndexOf() expect the value type to
+    support \c operator==().  These requirements are documented on a
+    per-function basis.
+
+    QPriorityQueue does \e not support inserting, prepending, appending or
+    replacing with references to its own values. Doing so will cause
+    your application to abort with an error message.
+
+    To make QPriorityQueue as efficient as possible, its member functions don't
+    validate their input before using it. Except for isEmpty(), member
+    functions always assume the list is \e not empty. Member functions
+    that take index values as parameters always assume their index
+    value parameters are in the valid range. This means QPriorityQueue member
+    functions can fail. If you define QT_NO_DEBUG when you compile,
+    failures will not be detected. If you \e don't define QT_NO_DEBUG,
+    failures will be detected using Q_ASSERT() or Q_ASSERT_X() with an
+    appropriate message.
+
+    To avoid failures when your list can be empty, call isEmpty()
+    before calling other member functions. If you must pass an index
+    value that might not be in the valid range, check that it is less
+    than the value returned by size() but \e not less than 0.
+*/
+
+/*! \fn QPriorityQueue::QPriorityQueue(LessThan lessThan = qLess < T>())
+
+    Constructs an empty queue comparing priorities with the \a lessThan
+    function.
+*/
+
+/*! \fn QPriorityQueue::QPriorityQueue(const QPriorityQueue<T> &other)
+
+    Constructs a copy of \a other.
+
+    \sa operator=()
+*/
+
+/*! \fn QPriorityQueue::~QPriorityQueue()
+
+    Destroys the queue. References to the values in the queue become invalid.
+*/
+
+/*! \fn QPriorityQueue<T> &QPriorityQueue::operator=(const QPriorityQueue<T> &other)
+
+    Assigns \a other to this queue and returns a reference to this
+    list.
+*/
+
+/*!
+    \fn int QPriorityQueue::size() const
+
+    Returns the number of items in the queue.
+
+    \sa isEmpty(), count()
+*/
+
+/*! \fn bool QPriorityQueue::isEmpty() const
+
+    Returns true if the queue contains no items; otherwise returns
+    false.
+
+    \sa size()
+*/
+
+/*! \fn void QPriorityQueue::clear()
+
+    Removes all items from the queue.
+*/
+
+/*! \fn T &QPriorityQueue::head()
+
+    Returns a reference to the queue's head item. This function
+    assumes that the queue isn't empty.
+
+    This function is very fast (\l{constant time}).
+
+    \sa first(), top()
+*/
+
+/*! \fn const T &QPriorityQueue::head() const
+
+    \overload
+
+    Same as head().
+*/
+
+/*! \fn T &QPriorityQueue::first()
+
+    Returns a reference to the queue's head item. This function
+    assumes that the queue isn't empty.
+
+    This function is very fast (\l{constant time}).
+
+    \sa head(), top()
+*/
+
+/*! \fn const T &QPriorityQueue::first() const
+
+    \overload
+
+    Same as head().
+*/
+
+/*! \fn T &QPriorityQueue::top()
+
+    Returns a reference to the queue's head item. This function
+    assumes that the queue isn't empty.
+
+    This function is very fast (\l{constant time}).
+
+    \sa head(), first()
+*/
+
+/*!
+    \fn void QQueue::enqueue(const T& t)
+
+    Adds value \a t to the queue.
+
+    \sa dequeue(), head()
+*/
+

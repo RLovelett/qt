@@ -25,6 +25,7 @@ HEADERS +=  \
         tools/qcontiguouscache.h \
         tools/qpodlist_p.h \
         tools/qpoint.h \
+        tools/qpriorityqueue.h \
         tools/qqueue.h \
         tools/qrect.h \
         tools/qregexp.h \
