@@ -106,16 +106,14 @@ public:
     void append(const QList<T> &t);
     T takeFirst() { return dequeue(); }
     inline int length() const { return size(); } // Same as count()
-    inline T& first() { return head(); }
     inline const T& first() const { return head(); }
     inline void removeFirst() { pop(); }
-    inline bool startsWith(const T &t) const { return !isEmpty() && first() == t; }
+    inline bool startsWith(const T &t) const { return !isEmpty() && (first() == t;) }
 
     // like qqueue
     inline void enqueue(const T &t) { push(t); }
     inline T dequeue() { T t = d.top();	d.pop(); return t; }
-    inline T &head() { top(); }
-    inline const T &head() const { top(); }
+    inline const T &head() const { return top(); }
 
     // stl compatibility
     typedef int size_type;
