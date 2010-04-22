@@ -54,6 +54,8 @@
 #include <QCheckBox>
 #include <QFileDialog>
 #include <QAction>
+#include <QDir>
+#include <QIcon>
 #include <QStatusBar>
 #include <QSettings>
 #include <QMessageBox>
@@ -225,6 +227,44 @@ MainWindow::MainWindow()
             gstylecombo->setCurrentItem(gstylecombo->count() - 1);
         }
     }
+
+    // build list of available icon themes
+    iconThemeCombo->addItem(desktopThemeName);
+    iconThemeCombo->setItemData(iconThemesCombo->findText(desktopThemeName),
+                                   tr("Choose icon theme based on your desktop settings."), Qt::ToolTipRole);
+
+    QStringList iconThemeSearchPaths = QIcon::themeSearchPaths();
+    QStringList::Iterator itspit = iconThemeSearchPaths.begin();
+    while (itspit != iconThemeSearchPaths.end()) {
+        QDir themesDir(*itspit);
+        QStringList themeDirs = themesDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+        QStringList::Iterator itdit = themeDirs.begin();
+        while (itdit != themeDirs.end()) {
+            QSettings themeIndex(themesDir.filePath(*itdit) + QLatin1String("/index.theme"), QSettings::IniFormat);
+            themeIndex.beginGroup(QLatin1String("Icon Theme"));
+            QString themeName = themeIndex.value(QLatin1String("Name")).toString();
+            if (! themeName.isEmpty() && iconThemeCombo.findData(*itdit) == -1)
+                iconThemeCombo->addItem(*itdit, themeName); // ignore invalid and duplicated themes
+
+            itdit++;
+        }
+        itspit++;
+    }
+
+    // select the current icon theme
+    QString currentIconTheme = settings.value(QLatin1String("iconTheme")).toString();
+    if (currentIconTheme.isEmpty()) {
+        iconThemeCombo->setCurrentItem(iconThemeCombo->findText(desktopThemeName));
+    } else {
+        int index = iconThemeCombo->findData(currentIconTheme, Qt::UserRole, Qt::MatchFixedString | Qt::MatchCaseSensitive);
+        if (index != -1) {
+            iconThemeCombo->setCurrentItem(index);
+        } else { // give up
+            iconThemeCombo->addItem(currentIconTheme, currentIconTheme);
+            iconThemeCombo->setCurrentItem(iconThemeCombo->findData(currentIconTheme, Qt::UserRole, Qt::MatchFixedString | Qt::MatchCaseSensitive));
+        }
+    }
+
     buttonMainColor->setColor(palette().color(QPalette::Active,
                                               QColorGroup::Button));
     buttonMainColor2->setColor(palette().color(QPalette::Active,
@@ -499,6 +539,7 @@ void MainWindow::fileSave()
         settings.setValue(QLatin1String("fontPath"), fontpaths);
         settings.setValue(QLatin1String("embedFonts"), fontembeddingcheckbox->isChecked());
         settings.setValue(QLatin1String("style"), overrideDesktopSettings ? gstylecombo->currentText() : QString());
+        settings.setValue(QLatin1String("iconTheme"), iconThemeCombo->itemData(iconThemeCombo->currentIndex()).toString());
 
         settings.setValue(QLatin1String("doubleClickInterval"), dcispin->value());
         settings.setValue(QLatin1String("cursorFlashTime"), cfispin->value() == 9 ? 0 : cfispin->value() );
