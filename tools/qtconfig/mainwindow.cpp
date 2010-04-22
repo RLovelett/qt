@@ -234,34 +234,34 @@ MainWindow::MainWindow()
                                    tr("Choose icon theme based on your desktop settings."), Qt::ToolTipRole);
 
     QStringList iconThemeSearchPaths = QIcon::themeSearchPaths();
-    QStringList::Iterator itspit = iconThemeSearchPaths.begin();
-    while (itspit != iconThemeSearchPaths.end()) {
+    for (QStringList::Iterator itspit = iconThemeSearchPaths.begin(); itspit != iconThemeSearchPaths.end(); itspit++) {
         QDir themesDir(*itspit);
         QStringList themeDirs = themesDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-        QStringList::Iterator itdit = themeDirs.begin();
-        while (itdit != themeDirs.end()) {
+        for (QStringList::Iterator itdit = themeDirs.begin(); itdit != themeDirs.end(); itdit++) {
+            if (iconThemeCombo->findData(*itdit) != -1)
+                continue; // ignore overridden themes
+
             QSettings themeIndex(themesDir.filePath(*itdit) + QLatin1String("/index.theme"), QSettings::IniFormat);
             themeIndex.beginGroup(QLatin1String("Icon Theme"));
-            QString themeName = themeIndex.value(QLatin1String("Name")).toString();
-            if (! themeName.isEmpty() && iconThemeCombo->findData(*itdit) == -1) // ignore invalid and duplicate themes
-                iconThemeCombo->addItem(themeName, *itdit);
+            if (themeIndex.value(QLatin1String("Directories")).toString().isEmpty())
+                continue; // ignore themes without icons (e.g. cursor themes)
 
-            itdit++;
+            QString themeName = themeIndex.value(QLatin1String("Name")).toString();
+            iconThemeCombo->addItem(themeName.isEmpty() ? *itdit : themeName, *itdit);
         }
-        itspit++;
     }
 
     // select the current icon theme
     QString currentIconTheme = settings.value(QLatin1String("iconTheme")).toString();
     if (currentIconTheme.isEmpty()) {
-        iconThemeCombo->setCurrentItem(iconThemeCombo->findText(desktopThemeName));
+        iconThemeCombo->setCurrentItem(iconThemeCombo->findData(QVariant()));
     } else {
         int index = iconThemeCombo->findData(currentIconTheme, Qt::UserRole, Qt::MatchFixedString | Qt::MatchCaseSensitive);
         if (index != -1) {
             iconThemeCombo->setCurrentItem(index);
         } else { // give up
             iconThemeCombo->addItem(currentIconTheme, currentIconTheme);
-            iconThemeCombo->setCurrentItem(iconThemeCombo->findData(currentIconTheme, Qt::UserRole, Qt::MatchFixedString | Qt::MatchCaseSensitive));
+            iconThemeCombo->setCurrentItem(iconThemeCombo->count() - 1);
         }
     }
 
