@@ -1044,6 +1044,8 @@ bool QApplicationPrivate::x11_apply_settings()
 
     settings.endGroup(); // Qt
 
+    QIconLoader::instance()->updateSystemTheme();
+
     return true;
 }
 

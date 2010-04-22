@@ -213,6 +213,10 @@ QString QGuiPlatformPlugin::systemIconThemeName()
         QSettings settings(QKde::kdeHome() + QLatin1String("/share/config/kdeglobals"), QSettings::IniFormat);
         settings.beginGroup(QLatin1String("Icons"));
         result = settings.value(QLatin1String("Theme"), result).toString();
+    } else {
+        QSettings settings(QSettings::UserScope, QLatin1String("Trolltech"));
+        settings.beginGroup(QLatin1String("Qt"));
+        result = settings.value(QLatin1String("iconTheme")).toString();
     }
 #endif
     return result;
