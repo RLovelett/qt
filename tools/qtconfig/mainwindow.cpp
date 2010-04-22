@@ -254,14 +254,14 @@ MainWindow::MainWindow()
     // select the current icon theme
     QString currentIconTheme = settings.value(QLatin1String("iconTheme")).toString();
     if (currentIconTheme.isEmpty()) {
-        iconThemeCombo->setCurrentItem(iconThemeCombo->findData(QVariant()));
+        iconThemeCombo->setCurrentIndex(iconThemeCombo->findData(QVariant()));
     } else {
         int index = iconThemeCombo->findData(currentIconTheme, Qt::UserRole, Qt::MatchFixedString | Qt::MatchCaseSensitive);
         if (index != -1) {
-            iconThemeCombo->setCurrentItem(index);
+            iconThemeCombo->setCurrentIndex(index);
         } else { // give up
             iconThemeCombo->addItem(currentIconTheme, currentIconTheme);
-            iconThemeCombo->setCurrentItem(iconThemeCombo->count() - 1);
+            iconThemeCombo->setCurrentIndex(iconThemeCombo->count() - 1);
         }
     }
 
