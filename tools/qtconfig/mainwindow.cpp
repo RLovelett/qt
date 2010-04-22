@@ -230,7 +230,7 @@ MainWindow::MainWindow()
 
     // build list of available icon themes
     iconThemeCombo->addItem(desktopThemeName);
-    iconThemeCombo->setItemData(iconThemesCombo->findText(desktopThemeName),
+    iconThemeCombo->setItemData(iconThemeCombo->findText(desktopThemeName),
                                    tr("Choose icon theme based on your desktop settings."), Qt::ToolTipRole);
 
     QStringList iconThemeSearchPaths = QIcon::themeSearchPaths();
@@ -243,8 +243,8 @@ MainWindow::MainWindow()
             QSettings themeIndex(themesDir.filePath(*itdit) + QLatin1String("/index.theme"), QSettings::IniFormat);
             themeIndex.beginGroup(QLatin1String("Icon Theme"));
             QString themeName = themeIndex.value(QLatin1String("Name")).toString();
-            if (! themeName.isEmpty() && iconThemeCombo.findData(*itdit) == -1)
-                iconThemeCombo->addItem(*itdit, themeName); // ignore invalid and duplicated themes
+            if (! themeName.isEmpty() && iconThemeCombo->findData(*itdit) == -1) // ignore invalid and duplicate themes
+                iconThemeCombo->addItem(themeName, *itdit);
 
             itdit++;
         }
@@ -833,6 +833,13 @@ void MainWindow::styleSelected(const QString &stylename)
         setModified(true);
     }
     updateStyleLayout();
+}
+
+
+void MainWindow::iconThemeSelected(int index)
+{
+    Q_UNUSED(index);
+    setModified(true);
 }
 
 

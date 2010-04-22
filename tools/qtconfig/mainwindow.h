@@ -63,6 +63,7 @@ public slots:
     virtual void tunePalette();
     virtual void paletteSelected(int);
     virtual void styleSelected(const QString &);
+    virtual void iconThemeSelected( int );
     virtual void familySelected(const QString &);
     virtual void substituteSelected(const QString &);
     virtual void removeSubstitute();

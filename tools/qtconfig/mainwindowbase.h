@@ -71,6 +71,7 @@ public slots:
     virtual void fileSave();
     virtual void helpAbout();
     virtual void helpAboutQt();
+    virtual void iconThemeSelected( int );
     virtual void new_slot();
     virtual void pageChanged( QWidget * );
     virtual void paletteSelected( int );

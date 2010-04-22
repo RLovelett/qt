@@ -75,6 +75,7 @@ MainWindowBase::MainWindowBase(QWidget* parent, const char* name, Qt::WindowFlag
     connect(fileSaveAction, SIGNAL(activated()), this, SLOT(fileSave()));
     connect(helpAboutAction, SIGNAL(activated()), this, SLOT(helpAbout()));
     connect(helpAboutQtAction, SIGNAL(activated()), this, SLOT(helpAboutQt()));
+    connect(iconThemeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(iconThemeSelected(int)));
     connect(TabWidget3, SIGNAL(currentChanged(QWidget*)), this, SLOT(pageChanged(QWidget*)));
     connect(paletteCombo, SIGNAL(activated(int)), this, SLOT(paletteSelected(int)));
     connect(PushButton13, SIGNAL(clicked()), this, SLOT(removeFontpath()));
@@ -190,6 +191,11 @@ void MainWindowBase::helpAbout()
 void MainWindowBase::helpAboutQt()
 {
     qWarning("MainWindowBase::helpAboutQt(): Not implemented yet");
+}
+
+void MainWindowBase::iconThemeSelected(int)
+{
+    qWarning("MainWindowBase::iconThemeSelected(int): Not implemented yet");
 }
 
 void MainWindowBase::new_slot()
