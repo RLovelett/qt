@@ -1,4 +1,4 @@
-/****************************************************************************
+yo/****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
@@ -4384,7 +4384,7 @@ void QGestureEvent::accept(QGesture *gesture)
     of calling \l{QGestureEvent::setAccepted()}{setAccepted(gesture, false)}.
 
     Clearing the accept flag indicates that the event receiver does not
-    want the gesture. Unwanted gestures may be propgated to the parent widget.
+    want the gesture. Unwanted gestures may be propagated to the parent widget.
 
     \sa QGestureEvent::accept()
 */
