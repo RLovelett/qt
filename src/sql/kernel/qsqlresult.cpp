@@ -48,24 +48,17 @@
 #include "qsqlresult.h"
 #include "qvector.h"
 #include "qsqldriver.h"
-#include <QDebug>
+#include "qstringlist.h"
 
 QT_BEGIN_NAMESPACE
-
-struct QHolder {
-    QHolder(const QString& hldr = QString(), int index = -1): holderName(hldr), holderPos(index) {}
-    bool operator==(const QHolder& h) const { return h.holderPos == holderPos && h.holderName == holderName; }
-    bool operator!=(const QHolder& h) const { return h.holderPos != holderPos || h.holderName != holderName; }
-    QString holderName;
-    int holderPos;
-};
 
 class QSqlResultPrivate
 {
 public:
     QSqlResultPrivate(QSqlResult* d)
     : q(d), sqldriver(0), idx(QSql::BeforeFirstRow), active(false),
-      isSel(false), forwardOnly(false), precisionPolicy(QSql::LowPrecisionDouble), bindCount(0), binds(QSqlResult::PositionalBinding)
+      isSel(false), forwardOnly(false), precisionPolicy(QSql::LowPrecisionDouble),
+      bindCount(0), binds(QSqlResult::NotUsed), needsParsed(true)
     {}
 
     void clearValues()
@@ -82,123 +75,86 @@ public:
     void clearIndex()
     {
         indexes.clear();
-        holders.clear();
         types.clear();
     }
 
     void clear()
     {
         clearValues();
-        clearIndex();;
+        clearIndex();
     }
 
     QString positionalToNamedBinding();
     QString namedToPositionalBinding();
-    QString holderAt(int index) const;
+    bool look4NamedBinding();
+    bool look4PositionalBinding();
 
 public:
     QSqlResult* q;
     const QSqlDriver* sqldriver;
     int idx;
-    QString sql;
+    QString sql; // as was given, aka lastQuery()
     bool active;
     bool isSel;
     QSqlError error;
     bool forwardOnly;
     QSql::NumericalPrecisionPolicy precisionPolicy;
 
-    int bindCount;
-    QSqlResult::BindingSyntax binds;
-
-    QString executedQuery;
-    QHash<int, QSql::ParamType> types;
+    int bindCount; // only used by addBindValue()
+    QSqlResult::BindingSyntax binds; // PositionalBinding, NamedBinding
+    bool needsParsed; // if the sql was already parsed
+    QHash<int, QSql::ParamType> types; // QSql::In, QSql::Out, QSql::InOut ...
     QVector<QVariant> values;
     typedef QHash<QString, int> IndexMap;
-    IndexMap indexes;
-
-    typedef QVector<QHolder> QHolderVector;
-    QHolderVector holders;
+    IndexMap indexes; // named placeholder to its position
 };
 
-QString QSqlResultPrivate::holderAt(int index) const
+bool QSqlResultPrivate::look4NamedBinding()
 {
-    return indexes.key(index);
-}
-
-// return a unique id for bound names
-static QString qFieldSerial(int i)
-{
-    ushort arr[] = { ':', 'f', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    ushort *ptr = &arr[1];
-
-    while (i > 0) {
-        *(++ptr) = 'a' + i % 16;
-        i >>= 4;
-    }
-
-    return QString(reinterpret_cast<const QChar *>(arr), int(ptr - arr) + 1);
-}
-
-static bool qIsAlnum(QChar ch)
-{
-    uint u = uint(ch.unicode());
-    // matches [a-zA-Z0-9_]
-    return u - 'a' < 26 || u - 'A' < 26 || u - '0' < 10 || u == '_';
-}
-
-QString QSqlResultPrivate::positionalToNamedBinding()
-{
-    int n = sql.size();
-
-    QString result;
-    result.reserve(n * 5 / 4);
-    bool inQuote = false;
+    QString holder;
+    int from = 0;
+    int found;
     int count = 0;
+    while (true) {
+        found = q->getNamedPlaceholder(from, holder);
+        if (-1 == found) break;
 
-    for (int i = 0; i < n; ++i) {
-        QChar ch = sql.at(i);
-        if (ch == QLatin1Char('?') && !inQuote) {
-            result += qFieldSerial(count++);
-        } else {
-            if (ch == QLatin1Char('\''))
-                inQuote = !inQuote;
-            result += ch;
+        if (!indexes.contains(holder)) {
+            indexes[holder] = count++;
         }
+        from = found + holder.length();
     }
-    result.squeeze();
-    return result;
+
+    if (count > 0) {
+        binds = QSqlResult::NamedBinding;
+        return true;
+    }
+
+    binds = QSqlResult::NotUsed;
+    return false;
 }
 
-QString QSqlResultPrivate::namedToPositionalBinding()
+bool QSqlResultPrivate::look4PositionalBinding()
 {
-    int n = sql.size();
-
-    QString result;
-    result.reserve(n);
-    bool inQuote = false;
+    int from = 0;
+    int found;
     int count = 0;
-    int i = 0;
+    while (true) {
+        found = q->getPositionalPlaceHolder(from);
+        if (-1 == found) break;
 
-    while (i < n) {
-        QChar ch = sql.at(i);
-        if (ch == QLatin1Char(':') && !inQuote
-                && (i == 0 || sql.at(i - 1) != QLatin1Char(':'))
-                && (i < n - 1 && qIsAlnum(sql.at(i + 1)))) {
-            int pos = i + 2;
-            while (pos < n && qIsAlnum(sql.at(pos)))
-                ++pos;
-            indexes[sql.mid(i, pos - i)] = count++;
-            result += QLatin1Char('?');
-            i = pos;
-        } else {
-            if (ch == QLatin1Char('\''))
-                inQuote = !inQuote;
-            result += ch;
-            ++i;
-        }
+        indexes[QString::number(count)] = count;
+        ++count;
+        from = ++found;
     }
-    result.squeeze();
-    return result;
+
+    if (count > 0) {
+        binds = QSqlResult::PositionalBinding;
+        return true;
+    }
+
+    binds = QSqlResult::NotUsed;
+    return false;
 }
 
 /*!
@@ -251,7 +207,7 @@ QSqlResult::QSqlResult(const QSqlDriver *db)
 {
     d = new QSqlResultPrivate(this);
     d->sqldriver = db;
-    if(db) {
+    if (db) {
         setNumericalPrecisionPolicy(db->numericalPrecisionPolicy());
     }
 }
@@ -391,9 +347,6 @@ const QSqlDriver *QSqlResult::driver() const
 
 void QSqlResult::setActive(bool active)
 {
-    if (active && d->executedQuery.isEmpty())
-        d->executedQuery = d->sql;
-
     d->active = active;
 }
 
@@ -585,19 +538,16 @@ bool QSqlResult::savePrepare(const QString& query)
 {
     if (!driver())
         return false;
-    d->clear();
-    d->sql = query;
-    if (!driver()->hasFeature(QSqlDriver::PreparedQueries))
-        return prepare(query);
 
-    if (driver()->hasFeature(QSqlDriver::NamedPlaceholders)) {
-        // parse the query to memorize parameter location
-        d->namedToPositionalBinding();
-        d->executedQuery = d->positionalToNamedBinding();
-    } else {
-        d->executedQuery = d->namedToPositionalBinding();
-    }
-    return prepare(d->executedQuery);
+    d->clear();
+    d->sql = query; // set lastQuery()
+
+    if (!d->look4NamedBinding())
+        d->look4PositionalBinding();
+
+    d->needsParsed = false;
+
+    return prepare(query);
 }
 
 /*!
@@ -609,29 +559,15 @@ bool QSqlResult::savePrepare(const QString& query)
 */
 bool QSqlResult::prepare(const QString& query)
 {
-    int n = query.size();
+    if (d->needsParsed) {
+        d->clear();
+        d->sql = query; // set lastQuery()
+        if (!d->look4NamedBinding())
+            d->look4PositionalBinding();
 
-    bool inQuote = false;
-    int i = 0;
-
-    while (i < n) {
-        QChar ch = query.at(i);
-        if (ch == QLatin1Char(':') && !inQuote
-                && (i == 0 || query.at(i - 1) != QLatin1Char(':'))
-                && (i < n - 1 && qIsAlnum(query.at(i + 1)))) {
-            int pos = i + 2;
-            while (pos < n && qIsAlnum(query.at(pos)))
-                ++pos;
-
-            d->holders.append(QHolder(query.mid(i, pos - i), i));
-            i = pos;
-        } else {
-            if (ch == QLatin1Char('\''))
-                inQuote = !inQuote;
-            ++i;
-        }
+        d->needsParsed = false;
     }
-    d->sql = query;
+
     return true; // fake prepares should always succeed
 }
 
@@ -643,46 +579,7 @@ bool QSqlResult::prepare(const QString& query)
 */
 bool QSqlResult::exec()
 {
-    bool ret;
-    // fake preparation - just replace the placeholders..
-    QString query = lastQuery();
-    if (d->binds == NamedBinding) {
-        int i;
-        QVariant val;
-        QString holder;
-        for (i = d->holders.count() - 1; i >= 0; --i) {
-            holder = d->holders.at(i).holderName;
-            val = d->values.value(d->indexes.value(holder));
-            QSqlField f(QLatin1String(""), val.type());
-            f.setValue(val);
-            query = query.replace(d->holders.at(i).holderPos,
-                                   holder.length(), driver()->formatValue(f));
-        }
-    } else {
-        QString val;
-        int i = 0;
-        int idx = 0;
-        for (idx = 0; idx < d->values.count(); ++idx) {
-            i = query.indexOf(QLatin1Char('?'), i);
-            if (i == -1)
-                continue;
-            QVariant var = d->values.value(idx);
-            QSqlField f(QLatin1String(""), var.type());
-            if (var.isNull())
-                f.clear();
-            else
-                f.setValue(var);
-            val = driver()->formatValue(f);
-            query = query.replace(i, 1, driver()->formatValue(f));
-            i += val.length();
-        }
-    }
-
-    // have to retain the original query with placeholders
-    QString orig = lastQuery();
-    ret = reset(query);
-    d->executedQuery = query;
-    setQuery(orig);
+    bool ret = reset(executedQuery());
     d->resetBindCount();
     return ret;
 }
@@ -696,7 +593,7 @@ bool QSqlResult::exec()
 void QSqlResult::bindValue(int index, const QVariant& val, QSql::ParamType paramType)
 {
     d->binds = PositionalBinding;
-    d->indexes[qFieldSerial(index)] = index;
+    d->indexes[QString::number(index)] = index;
     if (d->values.count() <= index)
         d->values.resize(index + 1);
     d->values[index] = val;
@@ -710,11 +607,11 @@ void QSqlResult::bindValue(int index, const QVariant& val, QSql::ParamType param
     Binds the value \a val of parameter type \a paramType to the \a
     placeholder name in the current record (row).
 
-   Values cannot be bound to multiple locations in the query, eg:
+   Values could be bound to multiple locations in the query, eg:
    \code
    INSERT INTO testtable (id, name, samename) VALUES (:id, :name, :name)
    \endcode
-   Binding to name will bind to the first :name, but not the second.
+   Binding to name will bind to the first :name, and the second.
 
     \note Binding an undefined placeholder will result in undefined behavior.
 
@@ -739,6 +636,94 @@ void QSqlResult::bindValue(const QString& placeholder, const QVariant& val,
 
     if (paramType != QSql::In || !d->types.isEmpty())
         d->types[idx] = paramType;
+}
+
+/*!
+    Placed the next named placeholder \a from position in setted by setQuery()
+    or previous prepared sql in \a placeholder and returns the position inside
+    the sql. Returns -1 if no placeholder was found.
+
+    \sa getPositionalPlaceHolder(), prepare()
+*/
+int QSqlResult::getNamedPlaceholder(const int from, QString &placeholder) const
+{
+    const QString &query = d->sql;
+    const int length = query.length();
+
+    placeholder.clear(); // be on the save side
+    if (from >= length || from < 0) return -1;
+
+    bool inQuote = false;
+    int i = 0;
+    int found = -1;
+    // fast forward from 0 to be sure we are not inside quotes
+    // FIXME: take care of comments -- and /* */
+    while (i < from) {
+        QChar ch = query.at(i);
+        if (ch == QLatin1Char('\''))
+            inQuote = !inQuote;
+        ++i;
+    }
+
+    while (i < length) {
+        QChar ch = query.at(i);
+        if (ch == QLatin1Char(':') && !inQuote) {
+            placeholder += ch;
+            found = i;
+            while (i < length) {
+                ch = query.at(++i);
+                uint u = uint(ch.unicode());
+                // matches [a-zA-Z0-9_]
+                if (!(u - 'a' < 26 || u - 'A' < 26 || u - '0' < 10 || u == '_'))  break;
+                placeholder += ch;
+            }
+            return found;
+        } else {
+            if (ch == QLatin1Char('\'')) inQuote = !inQuote;
+        }
+        ++i;
+    }
+
+    return -1;
+}
+
+/*!
+    Returns the position of the next positional placeholder
+    \a from position in setted by setQuery() or previous prepared sql.
+    Returns -1 if no positional placeholder was found.
+
+    \sa getPositionalPlaceHolder(), prepare(), setQuery()
+*/
+int QSqlResult::getPositionalPlaceHolder(const int from) const
+{
+    const QString &query = d->sql;
+    const int length = query.length();
+
+    if (from >= length || from < 0) return -1;
+
+    bool inQuote = false;
+    int i = 0;
+
+    // fast forward from 0 to be sure we are not inside quotes
+    // FIXME: take care of comments -- and /* */
+    while (i < from) {
+        QChar ch = query.at(i);
+        if (ch == QLatin1Char('\''))
+            inQuote = !inQuote;
+        ++i;
+    }
+
+    while (i < length) {
+        QChar ch = query.at(i);
+        if (ch == QLatin1Char('?') && !inQuote) {
+            return i;
+        } else {
+            if (ch == QLatin1Char('\'')) inQuote = !inQuote;
+        }
+        ++i;
+    }
+
+    return -1;
 }
 
 /*!
@@ -839,16 +824,61 @@ void QSqlResult::clear()
 }
 
 /*!
-    Returns the query that was actually executed. This may differ from
-    the query that was passed, for example if bound values were used
-    with a prepared query and the underlying database doesn't support
-    prepared queries.
+    Returns a fake executed query that looks as expected. These may
+    differ from the query that was passed if bound values were used.
+    Fake means that in case of bound values the place holders was replaced
+    by its values. But if the underlying database, and the data base driver,
+    supports prepared queries, the query truly send by the data base driver
+    to the data base may looks differ.
 
     \sa exec(), setQuery()
 */
 QString QSqlResult::executedQuery() const
 {
-    return d->executedQuery;
+    if (d->binds == NotUsed)
+        return d->sql;
+
+    // just replace the placeholders
+    // have to retain the original query with placeholders
+    QString orig = d->sql;
+    if (d->binds == NamedBinding) {
+        // replace all :foo with bounded value
+        QString holder;
+        int from = 0;
+        int found;
+        while (true) {
+            found = getNamedPlaceholder(from, holder);
+            if (-1 == found) break;
+
+            QVariant val = d->values.value(d->indexes.value(holder));
+            QSqlField f(QLatin1String(""), val.type());
+            f.setValue(val);
+            QString valStr = driver()->formatValue(f);
+            d->sql.replace(found, holder.length(), valStr);
+            from = found + valStr.length();
+        }
+    } else {
+        // replace all ? place holders with bounded value
+        int from = 0;
+        int found;
+        int idx = 0;
+        while (true) {
+            found = getPositionalPlaceHolder(from);
+            if (-1 == found) break;
+
+            QVariant val = d->values.value(idx);
+            QSqlField f(QLatin1String(""), val.type());
+            f.setValue(val);
+            QString valStr = driver()->formatValue(f);
+            d->sql.replace(found, 1, valStr);
+            from = found + valStr.length();
+            ++idx;
+        }
+    }
+
+    QString fake = d->sql;
+    d->sql = orig;
+    return fake;
 }
 
 void QSqlResult::resetBindCount()
@@ -864,7 +894,7 @@ void QSqlResult::resetBindCount()
 */
 QString QSqlResult::boundValueName(int index) const
 {
-    return d->holderAt(index);
+    return d->indexes.key(index);
 }
 
 /*!
@@ -976,7 +1006,7 @@ bool QSqlResult::execBatch(bool arrayBind)
  */
 void QSqlResult::detachFromResultSet()
 {
-    if (driver()->hasFeature(QSqlDriver::FinishQuery) 
+    if (driver()->hasFeature(QSqlDriver::FinishQuery)
             || driver()->hasFeature(QSqlDriver::SimpleLocking))
         virtual_hook(DetachFromResultSet, 0);
 }

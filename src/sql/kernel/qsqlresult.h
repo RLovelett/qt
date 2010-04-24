@@ -72,6 +72,7 @@ public:
 
 protected:
     enum BindingSyntax {
+        NotUsed,
         PositionalBinding,
         NamedBinding
 #ifdef QT3_SUPPORT
@@ -103,12 +104,14 @@ protected:
     virtual void bindValue(int pos, const QVariant& val, QSql::ParamType type);
     virtual void bindValue(const QString& placeholder, const QVariant& val,
                            QSql::ParamType type);
+    int getNamedPlaceholder(const int from, QString &placeholder) const;
+    int getPositionalPlaceHolder(const int from) const;
     void addBindValue(const QVariant& val, QSql::ParamType type);
     QVariant boundValue(const QString& placeholder) const;
     QVariant boundValue(int pos) const;
     QSql::ParamType bindValueType(const QString& placeholder) const;
     QSql::ParamType bindValueType(int pos) const;
-    int boundValueCount() const;
+    int boundValueCount() const; // only used by qsql_oci.cpp
     QVector<QVariant>& boundValues() const;
     QString executedQuery() const;
     QString boundValueName(int pos) const;

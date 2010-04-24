@@ -44,6 +44,8 @@
 
 #include <QtSql/qsqlresult.h>
 #include <QtSql/qsqldriver.h>
+#include <QtSql/qsqlerror.h>
+#include <QtCore/qset.h>
 
 #ifdef QT_PLUGIN
 #define Q_EXPORT_SQLDRIVER_PSQL
@@ -58,16 +60,18 @@ typedef struct pg_result PGresult;
 
 QT_BEGIN_NAMESPACE
 
-class QPSQLResultPrivate;
-class QPSQLDriverPrivate;
 class QPSQLDriver;
 class QSqlRecordInfo;
+class QSocketNotifier;
+class QSqlQuery;
+class QMutex;
 
 class QPSQLResult : public QSqlResult
 {
-    friend class QPSQLResultPrivate;
+    friend class QPSQLDriver;
+
 public:
-    QPSQLResult(const QPSQLDriver* db, const QPSQLDriverPrivate* p);
+    QPSQLResult(const QPSQLDriver* db);
     ~QPSQLResult();
 
     QVariant handle() const;
@@ -89,11 +93,20 @@ protected:
     bool exec();
 
 private:
-    QPSQLResultPrivate *d;
+    bool processResults();
+    void driverIsGone();
+
+    const QPSQLDriver *driver;
+    PGresult *result;
+    int currentSize;
+    bool preparedQueriesEnabled;
+    QString preparedStmtId;
 };
 
 class Q_EXPORT_SQLDRIVER_PSQL QPSQLDriver : public QSqlDriver
 {
+    friend class QPSQLResult;
+
     Q_OBJECT
 public:
     enum Protocol {
@@ -108,7 +121,6 @@ public:
     };
 
     explicit QPSQLDriver(QObject *parent=0);
-    explicit QPSQLDriver(PGconn *conn, QObject *parent=0);
     ~QPSQLDriver();
     bool hasFeature(DriverFeature f) const;
     bool open(const QString & db,
@@ -123,12 +135,11 @@ public:
     QStringList tables(QSql::TableType) const;
     QSqlIndex primaryIndex(const QString& tablename) const;
     QSqlRecord record(const QString& tablename) const;
-
-    Protocol protocol() const;
     QVariant handle() const;
 
     QString escapeIdentifier(const QString &identifier, IdentifierType type) const;
-    QString formatValue(const QSqlField &field, bool trimStrings) const;
+    QString formatValue(const QSqlField &field, bool trimStrings = false) const;
+    QString createParamString(const QVector<QVariant> boundValues) const;
 
 protected:
     bool beginTransaction();
@@ -144,8 +155,22 @@ private Q_SLOTS:
     void _q_handleNotification(int);
 
 private:
-    void init();
-    QPSQLDriverPrivate *d;
+    void resultCheckIn(QPSQLResult *result) const;
+    void resultCheckOut(QPSQLResult *result) const;
+    QString newStmtId() const;
+    void deallocate(QString &stmtId) const;
+    QVariant::Type decodePGType(const int pgType) const;
+    PGresult *exec(const QString &query) const;
+    void appendTables(QStringList &tl, QSqlQuery &t, QChar type) const;
+    QSqlError makeError(const QString& err, QSqlError::ErrorType type) const;
+
+    PGconn *connection;
+    bool isUtf8;
+    QPSQLDriver::Protocol protocol;
+    QSocketNotifier *socketNotifier;
+    QStringList seid;
+    mutable QSet<QPSQLResult*> activeResults;
+    QMutex *mutex;
 };
 
 QT_END_NAMESPACE

@@ -67,8 +67,6 @@ public:
     virtual ~QSqlDriverPrivate();
 
 public:
-    // @CHECK: this member is never used. It was named q, which expanded to q_func().
-    QSqlDriver *q_func();
     uint isOpen : 1;
     uint isOpenError : 1;
     QSqlError error;
@@ -924,7 +922,7 @@ QString QSqlDriver::stripDelimitersImplementation(const QString &identifier, Ide
     Note: Setting the default precision policy to \a precisionPolicy
     doesn't affect any currently active queries.
 
-    \sa QSql::NumericalPrecisionPolicy, numericalPrecisionPolicy(), 
+    \sa QSql::NumericalPrecisionPolicy, numericalPrecisionPolicy(),
     QSqlQuery::setNumericalPrecisionPolicy(), QSqlQuery::numericalPrecisionPolicy()
 */
 void QSqlDriver::setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy precisionPolicy)
@@ -937,7 +935,7 @@ void QSqlDriver::setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy prec
 
     Returns the current default precision policy for the database connection.
 
-    \sa QSql::NumericalPrecisionPolicy, setNumericalPrecisionPolicy(), 
+    \sa QSql::NumericalPrecisionPolicy, setNumericalPrecisionPolicy(),
     QSqlQuery::numericalPrecisionPolicy(), QSqlQuery::setNumericalPrecisionPolicy()
 */
 QSql::NumericalPrecisionPolicy QSqlDriver::numericalPrecisionPolicy() const
