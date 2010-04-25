@@ -692,7 +692,7 @@ bool QLibraryPrivate::isPlugin(QSettings *settings)
 #ifdef Q_OS_WIN
                 //avoid 'Bad Image' message box
                 UINT oldmode = SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
-                hTempModule = ::LoadLibraryEx((wchar_t*)QDir::toNativeSeparators(fileName).utf16(), 0, DONT_RESOLVE_DLL_REFERENCES);
+                hTempModule = ::LoadLibrary((wchar_t*)QDir::toNativeSeparators(fileName).utf16());
                 SetErrorMode(oldmode);
 #else
 #  if defined(Q_OS_SYMBIAN)
