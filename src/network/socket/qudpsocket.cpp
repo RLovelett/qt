@@ -102,6 +102,8 @@
 /*! \enum QUdpSocket::BindFlag
     \since 4.1
 
+    \note This enum has been replaced by QAbstractSocket::BindFlag
+
     This enum describes the different flags you can pass to modify the
     behavior of QUdpSocket::bind().
 
@@ -238,27 +240,7 @@ QUdpSocket::~QUdpSocket()
 */
 bool QUdpSocket::bind(const QHostAddress &address, quint16 port)
 {
-    Q_D(QUdpSocket);
-    if (!d->ensureInitialized(address, port))
-        return false;
-
-    bool result = d_func()->socketEngine->bind(address, port);
-    d->cachedSocketDescriptor = d->socketEngine->socketDescriptor();
-
-    if (!result) {
-        d->socketError = d_func()->socketEngine->error();
-        setErrorString(d_func()->socketEngine->errorString());
-        emit error(d_func()->socketError);
-        return false;
-    }
-
-    d->state = BoundState;
-    d->localAddress = d->socketEngine->localAddress();
-    d->localPort = d->socketEngine->localPort();
-
-    emit stateChanged(d_func()->state);
-    d_func()->socketEngine->setReadNotificationEnabled(true);
-    return true;
+    return QAbstractSocket::bind(address, port);
 }
 
 /*!
@@ -269,43 +251,8 @@ bool QUdpSocket::bind(const QHostAddress &address, quint16 port)
 */
 bool QUdpSocket::bind(const QHostAddress &address, quint16 port, BindMode mode)
 {
-    Q_D(QUdpSocket);
-    if (!d->ensureInitialized(address, port))
-        return false;
-
-#ifdef Q_OS_UNIX
-    if ((mode & ShareAddress) || (mode & ReuseAddressHint))
-        d->socketEngine->setOption(QAbstractSocketEngine::AddressReusable, 1);
-    else
-        d->socketEngine->setOption(QAbstractSocketEngine::AddressReusable, 0);
-#endif
-#ifdef Q_OS_WIN
-    if (mode & ReuseAddressHint)
-        d->socketEngine->setOption(QAbstractSocketEngine::AddressReusable, 1);
-    else
-        d->socketEngine->setOption(QAbstractSocketEngine::AddressReusable, 0);
-    if (mode & DontShareAddress)
-        d->socketEngine->setOption(QAbstractSocketEngine::BindExclusively, 1);
-    else
-        d->socketEngine->setOption(QAbstractSocketEngine::BindExclusively, 0);
-#endif
-    bool result = d_func()->socketEngine->bind(address, port);
-    d->cachedSocketDescriptor = d->socketEngine->socketDescriptor();
-
-    if (!result) {
-        d->socketError = d_func()->socketEngine->error();
-        setErrorString(d_func()->socketEngine->errorString());
-        emit error(d_func()->socketError);
-        return false;
-    }
-
-    d->state = BoundState;
-    d->localAddress = d->socketEngine->localAddress();
-    d->localPort = d->socketEngine->localPort();
-
-    emit stateChanged(d_func()->state);
-    d_func()->socketEngine->setReadNotificationEnabled(true);
-    return true;
+    QAbstractSocket::BindMode nmode = QFlag(mode);
+    return QAbstractSocket::bind(address, port, nmode);
 }
 
 /*! \overload
@@ -314,7 +261,7 @@ bool QUdpSocket::bind(const QHostAddress &address, quint16 port, BindMode mode)
 */
 bool QUdpSocket::bind(quint16 port)
 {
-    return bind(QHostAddress::Any, port);
+    return QAbstractSocket::bind(QHostAddress::Any, port);
 }
 
 /*!
@@ -325,7 +272,8 @@ bool QUdpSocket::bind(quint16 port)
 */
 bool QUdpSocket::bind(quint16 port, BindMode mode)
 {
-    return bind(QHostAddress::Any, port, mode);
+    QAbstractSocket::BindMode nmode = QFlag(mode);
+    return QAbstractSocket::bind(QHostAddress::Any, port, nmode);
 }
 
 /*!

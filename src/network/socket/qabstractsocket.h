@@ -65,6 +65,13 @@ class Q_NETWORK_EXPORT QAbstractSocket : public QIODevice
 {
     Q_OBJECT
 public:
+    enum BindFlag {
+        DefaultForPlatform = 0x0,
+        ShareAddress = 0x1,
+        DontShareAddress = 0x2,
+        ReuseAddressHint = 0x4
+    };
+    Q_DECLARE_FLAGS(BindMode, BindFlag)
     enum SocketType {
         TcpSocket,
         UdpSocket,
@@ -123,6 +130,8 @@ public:
 
     QAbstractSocket(SocketType socketType, QObject *parent);
     virtual ~QAbstractSocket();
+
+    bool bind(const QHostAddress &address, quint16 port, BindMode mode = QAbstractSocket::DefaultForPlatform);
 
     // ### Qt 5: Make connectToHost() and disconnectFromHost() virtual.
     void connectToHost(const QString &hostName, quint16 port, OpenMode mode = ReadWrite);

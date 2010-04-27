@@ -329,7 +329,7 @@
     \value HostLookupState The socket is performing a host name lookup.
     \value ConnectingState The socket has started establishing a connection.
     \value ConnectedState A connection is established.
-    \value BoundState The socket is bound to an address and port (for servers).
+    \value BoundState The socket is bound to an address and port.
     \value ClosingState The socket is about to close (data may still
     be waiting to be written).
     \value ListeningState For internal use only.
@@ -357,6 +357,51 @@
     \value KeepAliveOption Set this to 1 to enable the SO_KEEPALIVE socket option
 
     \sa QAbstractSocket::setSocketOption(), QAbstractSocket::socketOption()
+*/
+
+/*! \enum QAbstractSocket::BindFlag
+    \since 4.7
+
+    This enum describes the different flags you can pass to modify the
+    behavior of QAbstractSocket::bind().
+
+    \note On Symbian OS bind flags behaviour depends on process capabilties.
+    If process has NetworkControl capability, the bind attempt with
+    ReuseAddressHint will always succeed even if the address and port is already
+    bound by another socket with any flags. If process does not have
+    NetworkControl capability, the bind attempt to address and port already
+    bound by another socket will always fail.
+
+    \value ShareAddress Allow other services to bind to the same address
+    and port. This is useful when multiple processes share
+    the load of a single service by listening to the same address and port
+    (e.g., a web server with several pre-forked listeners can greatly
+    improve response time). However, because any service is allowed to
+    rebind, this option is subject to certain security considerations.
+    Note that by combining this option with ReuseAddressHint, you will
+    also allow your service to rebind an existing shared address. On
+    Unix, this is equivalent to the SO_REUSEADDR socket option. On Windows,
+    this option is ignored.
+
+    \value DontShareAddress Bind the address and port exclusively, so that
+    no other services are allowed to rebind. By passing this option to
+    QAbstractSocket::bind(), you are guaranteed that on successs, your service
+    is the only one that listens to the address and port. No services are
+    allowed to rebind, even if they pass ReuseAddressHint. This option
+    provides more security than ShareAddress, but on certain operating
+    systems, it requires you to run the server with administrator privileges.
+    On Unix and Mac OS X, not sharing is the default behavior for binding
+    an address and port, so this option is ignored. On Windows, this
+    option uses the SO_EXCLUSIVEADDRUSE socket option.
+
+    \value ReuseAddressHint Provides a hint to QAbstractSocket that it should try
+    to rebind the service even if the address and port are already bound by
+    another socket. On Windows, this is equivalent to the SO_REUSEADDR
+    socket option. On Unix, this option is ignored.
+
+    \value DefaultForPlatform The default option for the current platform.
+    On Unix and Mac OS X, this is equivalent to (DontShareAddress
+    + ReuseAddressHint), and on Windows, its equivalent to ShareAddress.
 */
 
 #include "qabstractsocket.h"
@@ -1271,6 +1316,80 @@ QAbstractSocket::~QAbstractSocket()
 bool QAbstractSocket::isValid() const
 {
     return d_func()->socketEngine ? d_func()->socketEngine->isValid() : isOpen();
+}
+
+/*!
+    \since 4.7
+
+    Binds this socket to the address \a address and the port \a port,
+    using the BindMode \a mode.
+
+    If the socket instance is a QUdpSocket, the signal readyRead() is
+    emitted whenever a UDP datagram arrives on the specified address
+    and port. This function is useful to write UDP servers.
+
+    If the socket instance is a QTcpSocket, binding is useful to specify
+    the local address and port an outgoing connection will travel on.
+
+    On success, the functions returns true and the socket enters
+    BoundState; otherwise it returns false.
+*/
+bool QAbstractSocket::bind(const QHostAddress &address, quint16 port, BindMode mode)
+{
+    Q_D(QAbstractSocket);
+
+    QAbstractSocket::NetworkLayerProtocol proto = address.protocol();
+    if (proto == QAbstractSocket::UnknownNetworkLayerProtocol)
+        proto = address.protocol();
+
+#if defined(QT_NO_IPV6)
+    if (proto == QAbstractSocket::IPv6Protocol) {
+        d->socketError = QAbstractSocket::UnsupportedSocketOperationError;
+        setErrorString(QAbstractSocket::tr("This platform does not support IPv6"));
+        return false;
+    }
+#endif
+
+    // now check if the socket engine is initialized and to the right type
+    if (!d->socketEngine || !d->socketEngine->isValid() || d->socketEngine->protocol() != proto) {
+        d->resolveProxy(address.toString(), port);
+        if (!d->initSocketLayer(address.protocol()))
+            return false;
+    }
+
+#ifdef Q_OS_UNIX
+    if ((mode & ShareAddress) || (mode & ReuseAddressHint))
+        d->socketEngine->setOption(QAbstractSocketEngine::AddressReusable, 1);
+    else
+        d->socketEngine->setOption(QAbstractSocketEngine::AddressReusable, 0);
+#endif
+#ifdef Q_OS_WIN
+    if (mode & ReuseAddressHint)
+        d->socketEngine->setOption(QAbstractSocketEngine::AddressReusable, 1);
+    else
+        d->socketEngine->setOption(QAbstractSocketEngine::AddressReusable, 0);
+    if (mode & DontShareAddress)
+        d->socketEngine->setOption(QAbstractSocketEngine::BindExclusively, 1);
+    else
+        d->socketEngine->setOption(QAbstractSocketEngine::BindExclusively, 0);
+#endif
+    bool result = d_func()->socketEngine->bind(address, port);
+    d->cachedSocketDescriptor = d->socketEngine->socketDescriptor();
+
+    if (!result) {
+        d->socketError = d_func()->socketEngine->error();
+        setErrorString(d_func()->socketEngine->errorString());
+        emit error(d_func()->socketError);
+        return false;
+    }
+
+    d->state = BoundState;
+    d->localAddress = d->socketEngine->localAddress();
+    d->localPort = d->socketEngine->localPort();
+
+    emit stateChanged(d_func()->state);
+    d_func()->socketEngine->setReadNotificationEnabled(true);
+    return true;
 }
 
 /*!
@@ -2211,7 +2330,7 @@ qint64 QAbstractSocket::writeData(const char *data, qint64 size)
     proxy connections for virtual connection settings.
 
     Note that this function does not bind the local port of the socket
-    prior to a connection (e.g., QUdpSocket::bind()).
+    prior to a connection (e.g., QAbstractSocket::bind()).
 
     \sa localAddress(), setLocalAddress(), setPeerPort()
 */
@@ -2233,7 +2352,7 @@ void QAbstractSocket::setLocalPort(quint16 port)
     proxy connections for virtual connection settings.
 
     Note that this function does not bind the local address of the socket
-    prior to a connection (e.g., QUdpSocket::bind()).
+    prior to a connection (e.g., QAbstractSocket::bind()).
 
     \sa localAddress(), setLocalPort(), setPeerAddress()
 */
