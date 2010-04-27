@@ -450,14 +450,21 @@ int main(int argc, char *argv[])
         return test.run_traditional();
     }
 
-    if (argc == 1) {
-        QCoreApplication app(argc, argv);
-        QStringList args = app.arguments();
-        tst_qstringbuilder test;
-        return QTest::qExec(&test, argc, argv);
+    tst_qstringbuilder test;
+
+    if (argc == 2 && (QLatin1String(argv[1]) == QLatin1String("--help")
+                   || QLatin1String(argv[1]) == QLatin1String("-help")
+                   || QLatin1String(argv[1]) == QLatin1String("-h")
+                   || QLatin1String(argv[1]) == QLatin1String("/?"))) {
+        char *help_argv[] = {argv[0], "-help", "\0"};
+        qDebug() << " Usage:" << argv[0] << "[--run-builder|-r|--run-traditional|-t]";
+        qDebug() << "    ---- or ----";
+        argv = help_argv;
     }
 
-    qDebug() << "Usage: " << argv[0] << " [--run-builder|-r|--run-traditional|-t]";
+    QCoreApplication app(argc, argv);
+    QStringList args = app.arguments();
+    return QTest::qExec(&test, argc, argv);
 }
 
 
