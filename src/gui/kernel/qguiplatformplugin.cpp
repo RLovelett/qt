@@ -203,20 +203,22 @@ QString QGuiPlatformPlugin::systemIconThemeName()
 {
     QString result;
 #ifdef Q_WS_X11
-    if (X11->desktopEnvironment == DE_GNOME) {
-        result = QString::fromLatin1("gnome");
+    QSettings settings(QSettings::UserScope, QLatin1String("Trolltech"));
+    settings.beginGroup(QLatin1String("Qt"));
+    result = settings.value(QLatin1String("iconTheme")).toString();
+    if (result.isEmpty())
+    {
+        if (X11->desktopEnvironment == DE_GNOME) {
+            result = QString::fromLatin1("gnome");
 #ifndef QT_NO_STYLE_GTK
-        result = QGtkStylePrivate::getGConfString(QLatin1String("/desktop/gnome/interface/icon_theme"), result);
+            result = QGtkStylePrivate::getGConfString(QLatin1String("/desktop/gnome/interface/icon_theme"), result);
 #endif
-    } else if (X11->desktopEnvironment == DE_KDE) {
-        result =  X11->desktopVersion >= 4 ? QString::fromLatin1("oxygen") : QString::fromLatin1("crystalsvg");
-        QSettings settings(QKde::kdeHome() + QLatin1String("/share/config/kdeglobals"), QSettings::IniFormat);
-        settings.beginGroup(QLatin1String("Icons"));
-        result = settings.value(QLatin1String("Theme"), result).toString();
-    } else {
-        QSettings settings(QSettings::UserScope, QLatin1String("Trolltech"));
-        settings.beginGroup(QLatin1String("Qt"));
-        result = settings.value(QLatin1String("iconTheme")).toString();
+        } else if (X11->desktopEnvironment == DE_KDE) {
+            result =  X11->desktopVersion >= 4 ? QString::fromLatin1("oxygen") : QString::fromLatin1("crystalsvg");
+            QSettings settings(QKde::kdeHome() + QLatin1String("/share/config/kdeglobals"), QSettings::IniFormat);
+            settings.beginGroup(QLatin1String("Icons"));
+            result = settings.value(QLatin1String("Theme"), result).toString();
+        }
     }
 #endif
     return result;
