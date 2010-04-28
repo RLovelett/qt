@@ -1738,7 +1738,6 @@ QRect QListViewPrivate::mapToViewport(const QRect &rect, bool extend) const
     Q_Q(const QListView);
     if (!rect.isValid())
         return rect;
-
     QRect result = extend ? commonListView->mapToViewport(rect) : rect;
     int dx = -q->horizontalOffset();
     int dy = -q->verticalOffset();
@@ -2107,7 +2106,7 @@ int QListModeViewBase::verticalOffset() const
                 int value = verticalScrollBar()->value();
                 if (value >= segmentPositions.count())
                     return 0;
-                return segmentPositions.at(value);
+                return segmentPositions.at(value) - spacing();
             }
         } else if (flow() == QListView::TopToBottom && !flowPositions.isEmpty()) {
             int value = verticalScrollBar()->value();
@@ -2155,14 +2154,14 @@ void QListModeViewBase::scrollContentsBy(int dx, int dy, bool scrollElasticBand)
         if (horizontal && flow() == QListView::TopToBottom && dx != 0) {
             int currentValue = qBound(0, horizontalValue, max);
             int previousValue = qBound(0, currentValue + dx, max);
-            int currentCoordinate = segmentPositions.at(currentValue);
-            int previousCoordinate = segmentPositions.at(previousValue);
+            int currentCoordinate = segmentPositions.at(currentValue) - spacing();
+            int previousCoordinate = segmentPositions.at(previousValue) - spacing();
             dx = previousCoordinate - currentCoordinate;
         } else if (vertical && flow() == QListView::LeftToRight && dy != 0) {
             int currentValue = qBound(0, verticalValue, max);
             int previousValue = qBound(0, currentValue + dy, max);
-            int currentCoordinate = segmentPositions.at(currentValue);
-            int previousCoordinate = segmentPositions.at(previousValue);
+            int currentCoordinate = segmentPositions.at(currentValue) - spacing();
+            int previousCoordinate = segmentPositions.at(previousValue) - spacing();
             dy = previousCoordinate - currentCoordinate;
         }
     } else {
@@ -2329,6 +2328,8 @@ void QListModeViewBase::doStaticLayout(const QListViewLayoutInfo &info)
                 segmentExtents.append(flowPosition);
                 flowPosition = info.spacing + segStartPosition;
                 segPosition += deltaSegPosition;
+                if (info.wrap)
+                    segPosition += info.spacing;
                 segmentPositions.append(segPosition);
                 segmentStartRows.append(row);
                 deltaSegPosition = 0;
