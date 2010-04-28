@@ -1832,6 +1832,15 @@ QAbstractItemView::DropIndicatorPosition QListViewPrivate::position(const QPoint
     else
         return QAbstractItemViewPrivate::position(pos, rect, idx);
 }
+
+
+bool QListViewPrivate::dropOn(QDropEvent *event, int *dropRow, int *dropCol, QModelIndex *dropIndex)
+{
+    if (viewMode == QListView::ListMode && flow == QListView::LeftToRight)
+        return static_cast<QListModeViewBase *>(commonListView)->dropOn(event, dropRow, dropCol, dropIndex);
+    else
+        return QAbstractItemViewPrivate::dropOn(event, dropRow, dropCol, dropIndex);
+}
 #endif
 
 /*
@@ -2018,6 +2027,68 @@ void QListModeViewBase::dragMoveEvent(QDragMoveEvent *event)
 
     if (dd->shouldAutoScroll(event->pos()))
         qq->startAutoScroll();
+}
+
+/*!
+    If the event hasn't already been accepted, determines the index to drop on.
+
+    if (row == -1 && col == -1)
+        // append to this drop index
+    else
+        // place at row, col in drop index
+
+    If it returns true a drop can be done, and dropRow, dropCol and dropIndex reflects the position of the drop.
+    \internal
+  */
+bool QListModeViewBase::dropOn(QDropEvent *event, int *dropRow, int *dropCol, QModelIndex *dropIndex)
+{
+    if (event->isAccepted())
+        return false;
+
+    QModelIndex index;
+    if (qq->viewport()->rect().contains(event->pos())) {
+        // can't use indexAt, doesn't account for spacing.
+        QPoint p = event->pos();
+        QRect rect(p.x() + horizontalOffset(), p.y() + verticalOffset(), 1, 1);
+        rect.adjust(-dd->spacing(), -dd->spacing(), dd->spacing(), dd->spacing());
+        const QVector<QModelIndex> intersectVector = dd->intersectingSet(rect);
+        index = intersectVector.count() > 0
+            ? intersectVector.last() : QModelIndex();
+        if (!index.isValid())
+            index = dd->root;
+    }
+
+    // If we are allowed to do the drop
+    if (qq->model()->supportedDropActions() & event->dropAction()) {
+        int row = -1;
+        int col = -1;
+        if (index != dd->root) {
+            dd->dropIndicatorPosition = position(event->pos(), qq->visualRect(index), index);
+            switch (dd->dropIndicatorPosition) {
+            case QAbstractItemView::AboveItem:
+                row = index.row();
+                col = index.column();
+                index = index.parent();
+                break;
+            case QAbstractItemView::BelowItem:
+                row = index.row() + 1;
+                col = index.column();
+                index = index.parent();
+                break;
+            case QAbstractItemView::OnItem:
+            case QAbstractItemView::OnViewport:
+                break;
+            }
+        } else {
+            dd->dropIndicatorPosition = QAbstractItemView::OnViewport;
+        }
+        *dropIndex = index;
+        *dropRow = row;
+        *dropCol = col;
+        if (!dd->droppingOnItself(event, index))
+            return true;
+    }
+    return false;
 }
 
 #endif //QT_NO_DRAGANDDROP
