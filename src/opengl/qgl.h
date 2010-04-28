@@ -496,6 +496,8 @@ public:
                      const QFont & fnt = QFont(), int listBase = 2000);
     void renderText(double x, double y, double z, const QString & str,
                      const QFont & fnt = QFont(), int listBase = 2000);
+    void renderText(double x, double y, double z, const QString & str,
+                     const QColor & color, const QFont & fnt = QFont());
     QPaintEngine *paintEngine() const;
 
     GLuint bindTexture(const QImage &image, GLenum target, GLint format,

@@ -4504,6 +4504,25 @@ static void qt_gl_draw_text(QPainter *p, int x, int y, const QString &str,
     p->setFont(old_font);
 }
 
+static void qt_gl_draw_text(QPainter *p, int x, int y, const QString &str,
+                            const QColor & color, const QFont &font)
+{
+    //GLfloat color[4];
+    //glGetFloatv(GL_CURRENT_COLOR, &color[0]);
+
+    //QColor col;
+    //col.setRgbF(color[0], color[1], color[2],color[3]);
+    QPen old_pen = p->pen();
+    QFont old_font = p->font();
+
+    p->setPen(color);
+    p->setFont(font);
+    p->drawText(x, y, str);
+
+    p->setPen(old_pen);
+    p->setFont(old_font);
+}
+
 #endif // !QT_OPENGL_ES
 
 /*!
@@ -4701,6 +4720,102 @@ void QGLWidget::renderText(double x, double y, double z, const QString &str, con
         glEnable(GL_DEPTH_TEST);
     glTranslated(0, 0, -win_z);
     qt_gl_draw_text(p, qRound(win_x), qRound(win_y), str, font);
+
+    if (reuse_painter) {
+        qt_restore_gl_state();
+    } else {
+        p->end();
+        delete p;
+        setAutoBufferSwap(auto_swap);
+        d->disable_clear_on_painter_begin = false;
+    }
+    qgl_engine_selector()->setPreferredPaintEngine(oldEngineType);
+#else // QT_OPENGL_ES
+    Q_UNUSED(x);
+    Q_UNUSED(y);
+    Q_UNUSED(z);
+    Q_UNUSED(str);
+    Q_UNUSED(font);
+    qWarning("QGLWidget::renderText is not supported under OpenGL/ES");
+#endif
+}
+
+/*! \overload
+
+    \a x, \a y and \a z are specified in scene or object coordinates
+    relative to the currently set projection and model matrices. This
+    can be useful if you want to annotate models with text labels and
+    have the labels move with the model as it is rotated etc.
+
+    \note This function is not supported on OpenGL/ES systems.
+
+    \note If depth testing is enabled before this function is called,
+    then the drawn text will be depth-tested against the models that
+    have already been drawn in the scene.  Use \c{glDisable(GL_DEPTH_TEST)}
+    before calling this function to annotate the models without
+    depth-testing the text.
+
+    \l{Overpainting Example}{Overpaint} with QPainter::drawText() instead.
+*/
+void QGLWidget::renderText(double x, double y, double z, const QString &str, const QColor & color, const QFont &font)
+{
+#ifndef QT_OPENGL_ES
+    Q_D(QGLWidget);
+    if (str.isEmpty() || !isValid())
+        return;
+
+    bool auto_swap = autoBufferSwap();
+
+    int width = d->glcx->device()->width();
+    int height = d->glcx->device()->height();
+    GLdouble model[4][4], proj[4][4];
+    GLint view[4];
+    glGetDoublev(GL_MODELVIEW_MATRIX, &model[0][0]);
+    glGetDoublev(GL_PROJECTION_MATRIX, &proj[0][0]);
+    glGetIntegerv(GL_VIEWPORT, &view[0]);
+    GLdouble win_x = 0, win_y = 0, win_z = 0;
+    qgluProject(x, y, z, &model[0][0], &proj[0][0], &view[0],
+                &win_x, &win_y, &win_z);
+    win_y = height - win_y; // y is inverted
+
+    QPaintEngine::Type oldEngineType = qgl_engine_selector()->preferredPaintEngine();
+    qgl_engine_selector()->setPreferredPaintEngine(QPaintEngine::OpenGL);
+    QPaintEngine *engine = paintEngine();
+    QPainter *p;
+    bool reuse_painter = false;
+    bool use_depth_testing = glIsEnabled(GL_DEPTH_TEST);
+    bool use_scissor_testing = glIsEnabled(GL_SCISSOR_TEST);
+
+    if (engine->isActive()) {
+        reuse_painter = true;
+        p = engine->painter();
+        qt_save_gl_state();
+    } else {
+        setAutoBufferSwap(false);
+        // disable glClear() as a result of QPainter::begin()
+        d->disable_clear_on_painter_begin = true;
+        p = new QPainter(this);
+    }
+
+    QRect viewport(view[0], view[1], view[2], view[3]);
+    if (!use_scissor_testing && viewport != rect()) {
+        glScissor(view[0], view[1], view[2], view[3]);
+        glEnable(GL_SCISSOR_TEST);
+    } else if (use_scissor_testing) {
+        glEnable(GL_SCISSOR_TEST);
+    }
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glViewport(0, 0, width, height);
+    glOrtho(0, width, height, 0, 0, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glAlphaFunc(GL_GREATER, 0.0);
+    glEnable(GL_ALPHA_TEST);
+    if (use_depth_testing)
+        glEnable(GL_DEPTH_TEST);
+    glTranslated(0, 0, -win_z);
+    qt_gl_draw_text(p, qRound(win_x), qRound(win_y), str, color, font);
 
     if (reuse_painter) {
         qt_restore_gl_state();
