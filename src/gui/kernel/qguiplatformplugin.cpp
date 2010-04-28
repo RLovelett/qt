@@ -215,9 +215,9 @@ QString QGuiPlatformPlugin::systemIconThemeName()
 #endif
         } else if (X11->desktopEnvironment == DE_KDE) {
             result =  X11->desktopVersion >= 4 ? QString::fromLatin1("oxygen") : QString::fromLatin1("crystalsvg");
-            QSettings settings(QKde::kdeHome() + QLatin1String("/share/config/kdeglobals"), QSettings::IniFormat);
-            settings.beginGroup(QLatin1String("Icons"));
-            result = settings.value(QLatin1String("Theme"), result).toString();
+            QSettings kdeSettings(QKde::kdeHome() + QLatin1String("/share/config/kdeglobals"), QSettings::IniFormat);
+            kdeSettings.beginGroup(QLatin1String("Icons"));
+            result = kdeSettings.value(QLatin1String("Theme"), result).toString();
         }
     }
 #endif
