@@ -1959,7 +1959,13 @@ void QListModeViewBase::dragMoveEvent(QDragMoveEvent *event)
     // ignore by default
     event->ignore();
 
-    QModelIndex index = qq->indexAt(event->pos());
+    // can't use indexAt, doesn't account for spacing.
+    QPoint p = event->pos();
+    QRect rect(p.x() + horizontalOffset(), p.y() + verticalOffset(), 1, 1);
+    rect.adjust(-dd->spacing(), -dd->spacing(), dd->spacing(), dd->spacing());
+    const QVector<QModelIndex> intersectVector = dd->intersectingSet(rect);
+    QModelIndex index = intersectVector.count() > 0
+                        ? intersectVector.last() : QModelIndex();
     dd->hover = index;
     if (!dd->droppingOnItself(event, index)
         && dd->canDecode(event)) {
@@ -1967,10 +1973,11 @@ void QListModeViewBase::dragMoveEvent(QDragMoveEvent *event)
         if (index.isValid() && dd->showDropIndicator) {
             QRect rect = qq->visualRect(index);
             dd->dropIndicatorPosition = position(event->pos(), rect, index);
+            // if spacing, should try to draw between items, not just next to item.
             switch (dd->dropIndicatorPosition) {
             case QAbstractItemView::AboveItem:
                 if (dd->isIndexDropEnabled(index.parent())) {
-                    dd->dropIndicatorRect = QRect(rect.left(), rect.top(), 0, rect.height());
+                    dd->dropIndicatorRect = QRect(rect.left()-dd->spacing(), rect.top(), 0, rect.height());
                     event->accept();
                 } else {
                     dd->dropIndicatorRect = QRect();
@@ -1978,7 +1985,7 @@ void QListModeViewBase::dragMoveEvent(QDragMoveEvent *event)
                 break;
             case QAbstractItemView::BelowItem:
                 if (dd->isIndexDropEnabled(index.parent())) {
-                    dd->dropIndicatorRect = QRect(rect.right(), rect.top(), 0, rect.height());
+                    dd->dropIndicatorRect = QRect(rect.right()+dd->spacing(), rect.top(), 0, rect.height());
                     event->accept();
                 } else {
                     dd->dropIndicatorRect = QRect();
