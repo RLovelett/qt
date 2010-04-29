@@ -52,6 +52,7 @@
 #include "qstringlist.h"
 #include "qurl.h"
 #include "qlocale.h"
+#include "quuid.h"
 #include "private/qvariant_p.h"
 
 #ifndef QT_NO_GEOM_VARIANT
@@ -148,6 +149,9 @@ static void construct(QVariant::Private *x, const void *copy)
         break;
 #endif
 #ifndef QT_BOOTSTRAPPED
+    case QVariant::Uuid:
+        v_construct<QUuid>(x, copy);
+        break;
     case QVariant::EasingCurve:
         v_construct<QEasingCurve>(x, copy);
         break;
@@ -266,6 +270,9 @@ static void clear(QVariant::Private *d)
         break;
 #endif
 #ifndef QT_BOOTSTRAPPED
+    case QVariant::Uuid:
+        v_clear<QUuid>(d);
+        break;
     case QVariant::EasingCurve:
         v_clear<QEasingCurve>(d);
         break;
@@ -329,6 +336,8 @@ static bool isNull(const QVariant::Private *d)
         return v_cast<QPointF>(d)->isNull();
 #endif
 #ifndef QT_BOOTSTRAPPED
+    case QVariant::Uuid:
+        return v_cast<QUuid>(d)->isNull();
     case QVariant::EasingCurve:
 #endif
     case QVariant::Url:
@@ -450,6 +459,8 @@ static bool compare(const QVariant::Private *a, const QVariant::Private *b)
     case QVariant::DateTime:
         return *v_cast<QDateTime>(a) == *v_cast<QDateTime>(b);
 #ifndef QT_BOOTSTRAPPED
+    case QVariant::Uuid:
+        return *v_cast<QUuid>(a) == *v_cast<QUuid>(b);
     case QVariant::EasingCurve:
         return *v_cast<QEasingCurve>(a) == *v_cast<QEasingCurve>(b);
 #endif
@@ -1120,6 +1131,9 @@ static void streamDebug(QDebug dbg, const QVariant &v)
         dbg.nospace() << v.toDateTime();
         break;
 #ifndef QT_BOOTSTRAPPED
+    case QVariant::Uuid:
+        dbg.nospace() << v.toUuid().toString();
+        break;
     case QVariant::EasingCurve:
         dbg.nospace() << v.toEasingCurve();
         break;
@@ -1293,6 +1307,7 @@ const QVariant::Handler *QVariant::handler = &qt_kernel_variant_handler;
     \value DateTime  a QDateTime
     \value Double  a double
     \value EasingCurve a QEasingCurve
+    \value Uuid a QUuid
     \value Font  a QFont
     \value Hash a QVariantHash
     \value Icon  a QIcon
@@ -1512,6 +1527,13 @@ QVariant::QVariant(const char *val)
 
 /*!
     \since 4.7
+  \fn QVariant::QVariant(const QUuid &val)
+
+    Constructs a new variant with a uuid value, \a val.
+*/
+
+/*!
+    \since 4.7
   \fn QVariant::QVariant(const QEasingCurve &val)
 
     Constructs a new variant with an easing curve value, \a val.
@@ -1717,6 +1739,8 @@ QVariant::QVariant(const QTime &val)
 QVariant::QVariant(const QDateTime &val)
 { d.is_null = false; d.type = DateTime; v_construct<QDateTime>(&d, val); }
 #ifndef QT_BOOTSTRAPPED
+QVariant::QVariant(const QUuid &val)
+{ d.is_null = false; d.type = Uuid; v_construct<QUuid>(&d, val); }
 QVariant::QVariant(const QEasingCurve &val)
 { d.is_null = false; d.type = EasingCurve; v_construct<QEasingCurve>(&d, val); }
 #endif
@@ -1909,7 +1933,7 @@ QVariant::Type QVariant::nameToType(const char *name)
 }
 
 #ifndef QT_NO_DATASTREAM
-enum { MapFromThreeCount = 36 };
+enum { MapFromThreeCount = 37 };
 static const ushort map_from_three[MapFromThreeCount] =
 {
     QVariant::Invalid,
@@ -1947,7 +1971,8 @@ static const ushort map_from_three[MapFromThreeCount] =
     QVariant::Pen,
     QVariant::LongLong,
     QVariant::ULongLong,
-    QVariant::EasingCurve
+    QVariant::EasingCurve,
+    QVariant::Uuid
 };
 
 /*!
@@ -2203,6 +2228,22 @@ QDateTime QVariant::toDateTime() const
 {
     return qVariantToHelper<QDateTime>(d, DateTime, handler);
 }
+
+/*!
+    \since 4.7
+    \fn QUuid QVariant::toUuid() const
+
+    Returns the variant as a QUuid if the variant has type() \1
+    Uuid; otherwise returns a null uuid.
+
+    \sa canConvert(), convert()
+*/
+#ifndef QT_BOOTSTRAPPED
+QUuid QVariant::toUuid() const
+{
+    return qVariantToHelper<QUuid>(d, Uuid, handler);
+}
+#endif
 
 /*!
     \since 4.7
@@ -2663,7 +2704,9 @@ static const quint32 qCanConvertMatrix[QVariant::LastCoreType + 1] =
 
 /*QHash*/         0,
 
-/*QEasingCurve*/  0
+/*QEasingCurve*/  0,
+
+/*QUuid*/         0
 };
 
 /*!

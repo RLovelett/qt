@@ -82,6 +82,7 @@ class QTextLength;
 class QUrl;
 class QVariant;
 class QVariantComparisonHelper;
+class QUuid;
 
 #ifndef QT_NO_MEMBER_TEMPLATES
 template <typename T>
@@ -132,7 +133,8 @@ class Q_CORE_EXPORT QVariant
         RegExp = 27,
         Hash = 28,
         EasingCurve = 29,
-        LastCoreType = EasingCurve,
+        Uuid = 30,
+        LastCoreType = Uuid,
 
         // value 62 is internally reserved
 #ifdef QT3_SUPPORT
@@ -222,6 +224,7 @@ class Q_CORE_EXPORT QVariant
     QVariant(const QRegExp &regExp);
 #endif
 #ifndef QT_BOOTSTRAPPED
+    QVariant(const QUuid &uuid);
     QVariant(const QEasingCurve &easing);
 #endif
     QVariant(Qt::GlobalColor color);
@@ -286,6 +289,7 @@ class Q_CORE_EXPORT QVariant
     QRegExp toRegExp() const;
 #endif
 #ifndef QT_BOOTSTRAPPED
+    QUuid toUuid() const;
     QEasingCurve toEasingCurve() const;
 #endif
 

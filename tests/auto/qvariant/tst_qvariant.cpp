@@ -67,6 +67,7 @@
 #include <qvector3d.h>
 #include <qvector4d.h>
 #include <qquaternion.h>
+#include <quuid.h>
 
 #include <limits.h>
 
@@ -85,6 +86,7 @@ Q_DECLARE_METATYPE(QBrush)
 Q_DECLARE_METATYPE(QFont)
 Q_DECLARE_METATYPE(QColor)
 Q_DECLARE_METATYPE(QKeySequence)
+Q_DECLARE_METATYPE(QUuid)
 
 //TESTED_CLASS=
 //TESTED_FILES=
@@ -124,6 +126,9 @@ private slots:
 
     void toLineF_data();
     void toLineF();
+
+    void toUuid_data();
+    void uuid();
 
     void toInt_data();
     void toInt();
@@ -635,6 +640,31 @@ void tst_QVariant::canConvert()
     QCOMPARE(val.canConvert(QVariant::Time), TimeCast);
     QCOMPARE(val.canConvert(QVariant::UInt), UIntCast);
     QCOMPARE(val.canConvert(QVariant::ULongLong), ULongLongCast);
+}
+
+void tst_QVariant::toUuid_data()
+{
+    QTest::addColumn<QVariant>("value");
+    QTest::addColumn<QUuid>("result");
+    QTest::addColumn<bool>("valueOK");
+
+    QTest::newRow("empty") << QVariant() << QUuid() << true;
+    QTest::newRow("int") << QVariant(42) << QUuid() << true;
+    QTest::newRow("string") << QVariant(QLatin1String("{fc69b59e-cc34-4436-a43c-ee95d128b8c5}")) << QUuid(QLatin1String("{fc69b59e-cc34-4436-a43c-ee95d128b8c5}")) << true;
+    QTest::newRow("uuid") << QVariant(QUuid(QLatin1String("{fc69b59e-cc34-4436-a43c-ee95d128b8c5}"))) << QUuid(QLatin1String("{fc69b59e-cc34-4436-a43c-ee95d128b8c5}")) << true;
+}
+
+void tst_QVariant::uuid()
+{
+    QVariant v(QUuid(QLatin1String("{fc69b59e-cc34-4436-a43c-ee95d128b8c5}")));
+    QUuid validstringuuid(QLatin1String("{fc69b59e-cc34-4436-a43c-ee95d128b8c5}"));
+    QUuid emptyuuid;
+
+    QVERIFY(!v.isNull());
+    QCOMPARE(v.toUuid(), validstringuuid);
+
+    emptyuuid = v.toUuid();
+    QCOMPARE(emptyuuid, validstringuuid);
 }
 
 void tst_QVariant::toInt_data()
