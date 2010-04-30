@@ -3317,11 +3317,16 @@ StepExpr: FilteredAxisStep                                                      
         parseInfo->staticContext->setNamespaceBindings(parseInfo->resolvers.pop());
         $$ = $8;
     }
-| CALL_TEMPLATE ElementName LPAREN TemplateWithParameters RPAREN
+| CallTemplate ElementName LPAREN TemplateWithParameters RPAREN
     {
-        $$ = create(new CallTemplate($2, parseInfo->templateWithParams), @$, parseInfo);
+        $$ = create(new CallTemplate($2, parseInfo->templateWithParams.top()), @$, parseInfo);
         parseInfo->templateWithParametersHandled();
         parseInfo->templateCalls.append($$);
+    }
+
+CallTemplate: CALL_TEMPLATE
+    {
+        parseInfo->templateWithParams.push(WithParam::Hash());
     }
 
 TemplateWithParameters:
@@ -3395,7 +3400,7 @@ TemplateParameter: IsTunnel DOLLAR VarName TypeDeclaration OptionalAssign
         else
         {
             if((!isParsingWithParam && VariableDeclaration::contains(parseInfo->templateParameters, $3)) ||
-               (isParsingWithParam && parseInfo->templateWithParams.contains($3)))
+               (isParsingWithParam && parseInfo->templateWithParams.top().contains($3)))
             {
                 parseInfo->staticContext->error(QtXmlPatterns::tr("Each name of a template parameter must be unique; %1 is duplicated.")
                                                                  .arg(formatKeyword(parseInfo->staticContext->namePool(), $3)),
@@ -3404,7 +3409,7 @@ TemplateParameter: IsTunnel DOLLAR VarName TypeDeclaration OptionalAssign
             else
             {
                 if(isParsingWithParam)
-                    parseInfo->templateWithParams[$3] = WithParam::Ptr(new WithParam($3, $4, expr));
+                    parseInfo->templateWithParams.top()[$3] = WithParam::Ptr(new WithParam($3, $4, expr));
                 else
                 {
                     Q_ASSERT(type);
@@ -3631,14 +3636,19 @@ PrimaryExpr: Literal                                                            
 | FunctionCallExpr
 | OrderingExpr
 | Constructor
-| APPLY_TEMPLATE OptionalMode LPAREN TemplateWithParameters RPAREN
+| ApplyTemplate OptionalMode LPAREN TemplateWithParameters RPAREN
     {
         $$ = create(new ApplyTemplate(parseInfo->modeFor($2),
-                                      parseInfo->templateWithParams,
+                                      parseInfo->templateWithParams.top(),
                                       parseInfo->modeFor(QXmlName(StandardNamespaces::InternalXSLT,
                                                                   StandardLocalNames::Default))),
                     @1, parseInfo);
         parseInfo->templateWithParametersHandled();
+    }
+
+ApplyTemplate: APPLY_TEMPLATE
+    {
+        parseInfo->templateWithParams.push(WithParam::Hash());
     }
 
 Literal: NumericLiteral                                                             /* [85] */

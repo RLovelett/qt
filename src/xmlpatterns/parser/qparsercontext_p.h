@@ -356,9 +356,10 @@ namespace QPatternist
         VariableDeclaration::List templateParameters;
 
         /**
-         * The @c xsl:with-param appearing in template calling instruction.
+         * The @c xsl:with-param appearing in template calling instructions.
+         * The stack preserves the nesting of the instructions specifying these parameters.
          */
-        WithParam::Hash templateWithParams;
+        QStack<WithParam::Hash> templateWithParams;
 
         inline void templateParametersHandled()
         {
@@ -368,7 +369,7 @@ namespace QPatternist
 
         inline void templateWithParametersHandled()
         {
-            templateWithParams.clear();
+            templateWithParams.pop();
         }
 
         inline bool isParsingWithParam() const
