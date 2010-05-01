@@ -44393,7 +44393,7 @@
         This patch moves SVGFRGaussianBlur from svg/graphics/filters
         to platform/graphics/filters/FEGaussianBlur. This is needed
         for shadow support on Qt and Cairo.
-        No change in functionality, therfore no new test case needed.
+        No change in functionality, therefore no new test case needed.
 
         * GNUmakefile.am:
         * WebCore.gypi:
