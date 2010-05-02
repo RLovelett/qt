@@ -302,3 +302,45 @@
     \a defaultValue.
 */
 
+/*!
+    \typedef QVarLengthArray::size_type
+
+    Typedef for int. Provided for STL compatibility.
+*/
+
+/*!
+    \typedef QVarLengthArray::value_type
+
+    Typedef for T. Provided for STL compatibility.
+*/
+
+/*!
+    \typedef QVarLengthArray::difference_type
+
+    Typedef for ptrdiff_t. Provided for STL compatibility.
+*/
+
+/*!
+    \typedef QVarLengthArray::pointer
+
+    Typedef for T *. Provided for STL compatibility.
+*/
+
+/*!
+    \typedef QVarLengthArray::const_pointer
+
+    Typedef for const T *. Provided for STL compatibility.
+*/
+
+/*!
+    \typedef QVarLengthArray::reference
+
+    Typedef for T &. Provided for STL compatibility.
+*/
+
+/*!
+    \typedef QVarLengthArray::const_reference
+
+    Typedef for const T &. Provided for STL compatibility.
+*/
+
