@@ -418,7 +418,7 @@ void tst_QPrinter::testMargins()
     printer.setFullPage(fullpage);
     printer.setPageSize((QPrinter::PageSize)pagesize);
     if (withPainter)
-	painter = new QPainter(&printer);
+        painter = new QPainter(&printer);
 
 #ifdef QT3_SUPPORT
     Q3PaintDeviceMetrics metrics(&printer);
