@@ -161,6 +161,8 @@ private slots:
     void idna_testsuite();
     void nameprep_testsuite_data();
     void nameprep_testsuite();
+    void nameprep_highcodes_data();
+    void nameprep_highcodes();
     void ace_testsuite_data();
     void ace_testsuite();
     void std3violations_data();
@@ -3119,8 +3121,6 @@ void tst_QUrl::nameprep_testsuite()
     QFETCH(QString, out);
     QFETCH(QString, profile);
 
-    QEXPECT_FAIL("Case folding U+2121 U+33C6 U+1D7BB",
-                 ">0xffff unicode points are not supported", Continue);
     QEXPECT_FAIL("Self-reverting case folding U+01F0 and normalization",
                  "Investigate further", Continue);
     QEXPECT_FAIL("Left-to-right mark U+200E",
@@ -3133,6 +3133,52 @@ void tst_QUrl::nameprep_testsuite()
                  "Investigate further", Continue);
     QEXPECT_FAIL("Larger test (expanding)",
                  "Investigate further", Continue);
+    qt_nameprep(&in, 0);
+    QCOMPARE(in, out);
+#endif
+}
+
+void tst_QUrl::nameprep_highcodes_data()
+{
+    QTest::addColumn<QString>("in");
+    QTest::addColumn<QString>("out");
+    QTest::addColumn<QString>("profile");
+    QTest::addColumn<int>("flags");
+    QTest::addColumn<int>("rc");
+
+    {
+        QChar st[] = { '-', 0xd801, 0xdc1d, 'a' };
+        QChar se[] = { '-', 0xd801, 0xdc45, 'a' };
+        QTest::newRow("highcodes (U+1041D)")
+            << QString(st, sizeof(st)/sizeof(st[0]))
+            << QString(se, sizeof(se)/sizeof(se[0]))
+            << QString() << 0 << 0;
+    }
+    {
+        QChar st[] = { 0x011C, 0xd835, 0xdf6e, 0x0110 };
+        QChar se[] = { 0x011D, 0x03C9, 0x0111 };
+        QTest::newRow("highcodes (U+1D76E)")
+            << QString(st, sizeof(st)/sizeof(st[0]))
+            << QString(se, sizeof(se)/sizeof(se[0]))
+            << QString() << 0 << 0;
+    }
+    {
+        QChar st[] = { 'D', 0xdb40, 0xdc20, 'o', 0xd834, 0xdd7a, '\'', 0x2060, 'h' };
+        QChar se[] = { 'd', 'o', '\'', 'h' };
+        QTest::newRow("highcodes (D, U+E0020, o, U+1D17A, ', U+2060, h)")
+            << QString(st, sizeof(st)/sizeof(st[0]))
+            << QString(se, sizeof(se)/sizeof(se[0]))
+            << QString() << 0 << 0;
+    }
+}
+
+void tst_QUrl::nameprep_highcodes()
+{
+#ifdef QT_BUILD_INTERNAL
+    QFETCH(QString, in);
+    QFETCH(QString, out);
+    QFETCH(QString, profile);
+
     qt_nameprep(&in, 0);
     QCOMPARE(in, out);
 #endif
