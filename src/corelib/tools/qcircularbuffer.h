@@ -145,84 +145,84 @@ public:
         typedef T *pointer;
         typedef T &reference;
 
-        iterator() : m_buffer(0), m_index(-1) {}
+        iterator() : buffer(0), index(-1) {}
         iterator(QCircularBuffer<T>* buffer, int index)
-            : m_buffer(buffer), m_index(index)
+            : buffer(buffer), index(index)
         {}
         iterator(const iterator& other)
-            : m_buffer(other.m_buffer), m_index(other.m_index)
+            : buffer(other.buffer), index(other.index)
         {}
 
-        T &operator*() const { return (*m_buffer)[ m_index ]; }
+        T &operator*() const { return (*buffer)[ index ]; }
         T* operator->() const
         {
-            return m_buffer->d->data + ((m_buffer->d->first + m_index) % m_buffer->d->capacity);
+            return buffer->d->data + ((buffer->d->first + index) % buffer->d->capacity);
         }
-        T &operator[](int j) const { return (*m_buffer)[ m_index + j ]; }
+        T &operator[](int j) const { return (*buffer)[ index + j ]; }
 
         bool operator==(const iterator& other) const
         {
-            return (m_buffer == other.m_buffer && m_index == other.m_index);
+            return (buffer == other.buffer && index == other.index);
         }
 
         bool operator!=(const iterator& other) const
         {
-            return (m_buffer != other.m_buffer || m_index != other.m_index);
+            return (buffer != other.buffer || index != other.index);
         }
 
         bool operator<(const iterator& other) const
         {
-            Q_ASSERT_X(m_buffer == other.m_buffer, "QCircularBuffer<T>::iterator::operator<", "iterators use different buffers");
-            return m_index < other.m_index;
+            Q_ASSERT_X(buffer == other.buffer, "QCircularBuffer<T>::iterator::operator<", "iterators use different buffers");
+            return index < other.index;
         }
 
         bool operator<=(const iterator& other) const
         {
-            Q_ASSERT_X(m_buffer == other.m_buffer, "QCircularBuffer<T>::iterator::operator<=", "iterators use different buffers");
-            return m_index <= other.m_index;
+            Q_ASSERT_X(buffer == other.buffer, "QCircularBuffer<T>::iterator::operator<=", "iterators use different buffers");
+            return index <= other.index;
         }
 
         bool operator>(const iterator& other) const
         {
-            Q_ASSERT_X(m_buffer == other.m_buffer, "QCircularBuffer<T>::iterator::operator>", "iterators use different buffers");
-            return m_index > other.m_index;
+            Q_ASSERT_X(buffer == other.buffer, "QCircularBuffer<T>::iterator::operator>", "iterators use different buffers");
+            return index > other.index;
         }
 
         bool operator>=(const iterator& other) const
         {
-            Q_ASSERT_X(m_buffer == other.m_buffer, "QCircularBuffer<T>::iterator::operator>=", "iterators use different buffers");
-            return m_index >= other.m_index;
+            Q_ASSERT_X(buffer == other.buffer, "QCircularBuffer<T>::iterator::operator>=", "iterators use different buffers");
+            return index >= other.index;
         }
 
-        iterator& operator++() { ++m_index; return *this; }
+        iterator& operator++() { ++index; return *this; }
         iterator operator++(int)
         {
             iterator ans = *this;
-            ++m_index;
+            ++index;
             return ans;
         }
 
-        iterator& operator--() { --m_index; return *this; }
+        iterator& operator--() { --index; return *this; }
         iterator operator--(int)
         {
             iterator ans = *this;
-            --m_index;
+            --index;
             return ans;
         }
 
-        iterator& operator+=(int j) { m_index += j; return *this; }
-        iterator& operator-=(int j) { m_index -= j; return *this; }
-        iterator operator+(int j) const { return iterator(m_buffer, m_index + j); }
-        iterator operator-(int j) const { return iterator(m_buffer, m_index - j); }
+        iterator& operator+=(int j) { index += j; return *this; }
+        iterator& operator-=(int j) { index -= j; return *this; }
+        iterator operator+(int j) const { return iterator(buffer, index + j); }
+        iterator operator-(int j) const { return iterator(buffer, index - j); }
         int operator-(iterator other) const
         {
-            Q_ASSERT_X(m_buffer == other.m_buffer, "QCircularBuffer<T>::iterator::operator-", "iterators use different buffers");
-            return m_index - other.m_index;
+            Q_ASSERT_X(buffer == other.buffer, "QCircularBuffer<T>::iterator::operator-", "iterators use different buffers");
+            return index - other.index;
         }
 
     private:
-        QCircularBuffer<T>* m_buffer;
-        int m_index;
+        QCircularBuffer<T>* buffer;
+        int index;
         friend class QCircularBuffer;
     };
     friend class iterator;
@@ -236,87 +236,87 @@ public:
         typedef const T* pointer;
         typedef const T &reference;
 
-        const_iterator() : m_buffer(0), m_index(-1) {}
+        const_iterator() : buffer(0), index(-1) {}
         const_iterator(const QCircularBuffer<T>* buffer, int index)
-            : m_buffer(buffer), m_index(index)
+            : buffer(buffer), index(index)
         {}
         const_iterator(const const_iterator& other)
-            : m_buffer(other.m_buffer), m_index(other.m_index)
+            : buffer(other.buffer), index(other.index)
         {}
         explicit const_iterator(const iterator& other)
-            : m_buffer(other.m_buffer), m_index(other.m_index)
+            : buffer(other.buffer), index(other.index)
         {}
 
-        const T &operator*() const { return m_buffer->at(m_index); }
+        const T &operator*() const { return buffer->at(index); }
         const T* operator->() const
         {
-            return m_buffer->d->data + ((m_buffer->d->first + m_index) % m_buffer->d->capacity);
+            return buffer->d->data + ((buffer->d->first + index) % buffer->d->capacity);
         }
-        const T &operator[](int j) const { return m_buffer->at(m_index + j); }
+        const T &operator[](int j) const { return buffer->at(index + j); }
 
         bool operator==(const const_iterator& other) const
         {
-            return (m_buffer == other.m_buffer && m_index == other.m_index);
+            return (buffer == other.buffer && index == other.index);
         }
 
         bool operator!=(const const_iterator& other) const
         {
-            return (m_buffer != other.m_buffer || m_index != other.m_index);
+            return (buffer != other.buffer || index != other.index);
         }
 
         bool operator<(const const_iterator& other) const
         {
-            Q_ASSERT_X(m_buffer == other.m_buffer, "QCircularBuffer<T>::const_iterator::operator<", "iterators use different buffers");
-            return m_index < other.m_index;
+            Q_ASSERT_X(buffer == other.buffer, "QCircularBuffer<T>::const_iterator::operator<", "iterators use different buffers");
+            return index < other.index;
         }
 
         bool operator<=(const const_iterator& other) const
         {
-            Q_ASSERT_X(m_buffer == other.m_buffer, "QCircularBuffer<T>::const_iterator::operator<=", "iterators use different buffers");
-            return m_index <= other.m_index;
+            Q_ASSERT_X(buffer == other.buffer, "QCircularBuffer<T>::const_iterator::operator<=", "iterators use different buffers");
+            return index <= other.index;
         }
 
         bool operator>(const const_iterator& other) const
         {
-            Q_ASSERT_X(m_buffer == other.m_buffer, "QCircularBuffer<T>::const_iterator::operator>", "iterators use different buffers");
-            return m_index > other.m_index;
+            Q_ASSERT_X(buffer == other.buffer, "QCircularBuffer<T>::const_iterator::operator>", "iterators use different buffers");
+            return index > other.index;
         }
 
         bool operator>=(const const_iterator& other) const
         {
-            Q_ASSERT_X(m_buffer == other.m_buffer, "QCircularBuffer<T>::const_iterator::operator>=", "iterators use different buffers");
-            return m_index >= other.m_index;
+            Q_ASSERT_X(buffer == other.buffer, "QCircularBuffer<T>::const_iterator::operator>=", "iterators use different buffers");
+            return index >= other.index;
         }
 
-        const_iterator& operator++() { ++m_index; return *this; }
+        const_iterator& operator++() { ++index; return *this; }
         const_iterator operator++(int)
         {
             const_iterator ans = *this;
-            ++m_index;
+            ++index;
             return ans;
         }
 
-        const_iterator& operator--() { --m_index; return *this; }
+        const_iterator& operator--() { --index; return *this; }
         const_iterator operator--(int)
         {
             const_iterator ans = *this;
-            --m_index;
+            --index;
             return ans;
         }
 
-        const_iterator& operator+=(int j) { m_index += j; return *this; }
-        const_iterator& operator-=(int j) { m_index -= j; return *this; }
-        const_iterator operator+(int j) const { return const_iterator(m_buffer, m_index + j); }
-        const_iterator operator-(int j) const { return const_iterator(m_buffer, m_index - j); }
+        const_iterator& operator+=(int j) { index += j; return *this; }
+        const_iterator& operator-=(int j) { index -= j; return *this; }
+        const_iterator operator+(int j) const { return const_iterator(buffer, index + j); }
+        const_iterator operator-(int j) const { return const_iterator(buffer, index - j); }
         int operator-(const_iterator other) const
         {
-            Q_ASSERT_X(m_buffer == other.m_buffer, "QCircularBuffer<T>::const_iterator::operator-", "iterators use different buffers");
-            return m_index - other.m_index;
+            Q_ASSERT_X(buffer == other.buffer, "QCircularBuffer<T>::const_iterator::operator-", "iterators use different buffers");
+            return index - other.index;
         }
 
     private:
-        const QCircularBuffer<T>* m_buffer;
-        int m_index;
+        const QCircularBuffer<T>* buffer;
+        int index;
         friend class QCircularBuffer;
     };
     friend class const_iterator;
@@ -329,15 +329,15 @@ public:
     const_iterator constEnd() const { return const_iterator(this, d->size); }
     iterator insert(iterator before, int count, const T &value)
     {
-        insert(before.m_index, count, value);
-        return iterator(this, before.m_index);
+        insert(before.index, count, value);
+        return iterator(this, before.index);
     }
     iterator insert(iterator before, const T &value) { return insert(before, 1, value); }
     iterator erase(iterator begin, iterator end)
     {
         int count = end - begin;
-        remove(begin.m_index, count);
-        return iterator(this, end.m_index - count);
+        remove(begin.index, count);
+        return iterator(this, end.index - count);
     }
     iterator erase(iterator pos) { return erase(pos, pos + 1); }
 
