@@ -357,10 +357,10 @@ public:
     void pop_back() { Q_ASSERT(!isEmpty()); erase(end() - 1); }
     void pop_front() { Q_ASSERT(!isEmpty()); erase(begin()); }
     bool empty() const { return isEmpty(); }
-    reference front() { return first(); }
-    const_reference front() const { return first(); }
-    reference back() { return last(); }
-    const_reference back() const { return last(); }
+    T &front() { return first(); }
+    const T &front() const { return first(); }
+    T &back() { return last(); }
+    const T &back() const { return last(); }
 
     int refCount() const { return int(d->ref); }
 
