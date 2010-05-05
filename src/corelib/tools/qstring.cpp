@@ -2105,6 +2105,9 @@ bool QString::operator==(const QString &other) const
     if (d->size != other.d->size)
         return false;
 
+    if (d->data == other.d->data) // shortcut: data is exactly the same
+        return true;
+
     return qMemEquals(d->data, other.d->data, d->size);
 }
 
