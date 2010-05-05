@@ -88,7 +88,7 @@ public:
 
     virtual bool useOffscreen();
 
-    enum DriverTypes { GenericDriver, EInk8Track };
+    enum DriverTypes { GenericDriver, EInk8Track, EInkIRex };
 
     virtual void disconnect();
     virtual void shutdownDevice();

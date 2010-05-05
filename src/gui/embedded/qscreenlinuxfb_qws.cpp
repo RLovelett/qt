@@ -71,6 +71,40 @@
 #endif
 #endif
 
+// Additional ioctls for e-Ink devices...
+#ifndef FBIO_EINK_DISP_PIC
+#define FBIO_EINK_DISP_PIC 		0x46a2
+#endif
+#ifndef FBIO_DELTA_UPDATE_DISPLAY
+// iRex
+extern "C" {
+struct display_update_info {
+    int waveform;
+    int color;
+};
+struct wave_info {
+    int wave_type;
+    unsigned long size;
+    char *wave;
+};
+struct busy_info {
+    unsigned short delay;
+    unsigned short x;
+    unsigned short y;
+};
+#define FBIO_DELTA_UPDATE_DISPLAY	_IOW('v', 1, struct display_update_info)
+#define FBIO_DELTA_ERASE		_IOW('v', 2, struct display_update_info)
+#define FBIO_DELTA_BUSY			_IOW('v', 4, struct busy_info)
+#define FBIO_DELTA_UPLOADWAVES		_IOW('v', 1001, struct wave_info)
+#define FBIO_DELTA_VCOM_SET		_IOW('v', 1002, signed long)
+#define FBIO_DELTA_INIT			_IOR('v', 1004, int)
+#define WAVEFORM_SIZE	(128*1024)
+#define WAVEFORM_1BPP	6
+#define WAVEFORM_2BPP	9
+#define WAVEFORM_4BPP	1
+}
+#endif
+
 QT_BEGIN_NAMESPACE
 
 extern int qws_client_id;
@@ -337,7 +371,57 @@ bool QLinuxFbScreen::connect(const QString &displaySpec)
         return false;
     }
 
-    d_ptr->driverType = strcmp(finfo.id, "8TRACKFB") ? GenericDriver : EInk8Track;
+    if(!strcmp(finfo.id, "8TRACKFB"))
+        d_ptr->driverType = EInk8Track;
+    else if(!strcmp(finfo.id, "Delta FB")) {
+        d_ptr->driverType = EInkIRex;
+        if (QApplication::type() == QApplication::GuiServer) {
+            // iRex has a rather strange initialization procedure...
+	    // Only needed once in the GuiServer
+            ioctl(d_ptr->fd, FBIO_DELTA_INIT, 0);
+            int vcomFd=QT_OPEN("/sys/devices/system/sysset/sysset0/display/vcom", O_RDONLY);
+            if(vcomFd>=0) {
+                char buffer[256];
+                memset(buffer, 0, 256);
+                int ret = read(vcomFd, buffer, 255);
+                close(vcomFd);
+                if(ret >= 0) {
+                    float vcom;
+                    ret = sscanf(buffer, "%f", &vcom);
+                    signed long vcomInt = (signed long)(1000*vcom);
+                    ret = ioctl(d_ptr->fd, FBIO_DELTA_VCOM_SET, &vcomInt);
+                    if(ret)
+                        qWarning("Error from VCOM_SET: %d, %s", ret, strerror(errno));
+                }
+            } else
+                qWarning("Can't read vcom from sysset0, trying without setting it");
+
+            FILE *file=fopen("/var/tmp/waves", "rb"); // FIXME this should move to an FHSly correct place, but /var/tmp/waves is where it resides in the normal firmware on iRex devices
+	    if(!file) {
+                qWarning("Can't open waves file, trying without");
+	    } else {
+                wave_info info;
+                info.wave = static_cast<char*>(qMalloc(WAVEFORM_SIZE));
+                if(!info.wave)
+                    qWarning("OOM while reading waveform");
+                else
+                   info.size = fread(info.wave, 1, WAVEFORM_SIZE, file);
+                fclose(file);
+                int ret = ioctl(d_ptr->fd, FBIO_DELTA_UPLOADWAVES, &info);
+                if(ret)
+                    qWarning("Uploading waves failed: %d, %s", ret, strerror(errno));
+            }
+
+            display_update_info dui;
+            dui.color = 0;
+            dui.waveform = WAVEFORM_4BPP;
+            ioctl(d_ptr->fd, FBIO_DELTA_ERASE, &dui);
+            dui.color = 0;
+            dui.waveform = WAVEFORM_4BPP;
+            ioctl(d_ptr->fd, FBIO_DELTA_UPDATE_DISPLAY, &dui);
+	}
+    } else
+        d_ptr->driverType = GenericDriver;
 
     if (finfo.type == FB_TYPE_VGA_PLANES) {
         qWarning("VGA16 video mode not supported");
@@ -1240,7 +1324,8 @@ int QLinuxFbScreen::sharedRamSize(void * end)
 */
 void QLinuxFbScreen::setDirty(const QRect &r)
 {
-    if(d_ptr->driverType == EInk8Track) {
+    switch(d_ptr->driverType) {
+    case EInk8Track:
         // e-Ink displays need a trigger to actually show what is
         // in their framebuffer memory. The 8-Track driver does this
         // by adding custom IOCTLs - FBIO_EINK_DISP_PIC (0x46a2) takes
@@ -1249,9 +1334,18 @@ void QLinuxFbScreen::setDirty(const QRect &r)
         // There doesn't seem to be a way to tell it to just update
         // a subset of the screen.
         if(r.left() == 0 && r.top() == 0 && r.width() == dw && r.height() == dh)
-            ioctl(d_ptr->fd, 0x46a2, 1);
+            ioctl(d_ptr->fd, FBIO_EINK_DISP_PIC, 1);
         else
-            ioctl(d_ptr->fd, 0x46a2, 0);
+            ioctl(d_ptr->fd, FBIO_EINK_DISP_PIC, 0);
+        break;
+    case EInkIRex:
+        {
+            display_update_info dui;
+            dui.color = 0;
+            dui.waveform = WAVEFORM_4BPP;
+            ioctl(d_ptr->fd, FBIO_DELTA_UPDATE_DISPLAY, &dui);
+        }
+        break;
     }
 }
 
@@ -1373,9 +1467,9 @@ void QLinuxFbScreen::setPixelFormat(struct fb_var_screeninfo info)
 
 bool QLinuxFbScreen::useOffscreen()
 {
-    // Not done for 8Track because on e-Ink displays,
+    // Not done for eInk because on e-Ink displays,
     // everything is offscreen anyway
-    if (d_ptr->driverType == EInk8Track || ((mapsize - size) < 16*1024))
+    if (d_ptr->driverType == EInk8Track || d_ptr->driverType == EInkIRex || ((mapsize - size) < 16*1024))
         return false;
 
     return true;
