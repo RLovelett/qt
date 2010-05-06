@@ -2909,7 +2909,10 @@ if [ "$PLATFORM" != "$XPLATFORM" -a "$CFG_EMBEDDED" != "no" ]; then
     x86_64)
         CFG_ARCH=x86_64
         ;;
-    ipaq|sharp)
+    armv6*)
+        CFG_ARCH=armv6
+        ;;
+    ipaq|sharp|arm*)
         CFG_ARCH=arm
         ;;
     dm7000)
