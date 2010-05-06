@@ -68,8 +68,7 @@ public:
     ~CircularBufferData()
     {
         // Cleanup the data first
-        if (QTypeInfo<T>::isComplex)
-        {
+        if (QTypeInfo<T>::isComplex) {
             // The type is complex so we manually call the destructor for each item
             // since we used the placement new operator to instantiate them
             T* b = data;
@@ -532,15 +531,12 @@ QCircularBuffer<T>::QCircularBuffer(int capacity)
     // Initialise the objects. If the type T is a complex type then we do this
     // using the placement new operator. If the type T is not complex we simply
     // use memset to initialise the memory to zero.
-    if (QTypeInfo<T>::isComplex)
-    {
+    if (QTypeInfo<T>::isComplex) {
         T* b = d->data;
         T* i = b + d->capacity;
         while (i != b)
             new (--i) T;
-    }
-    else
-    {
+    } else {
         qMemSet(d->data, 0, capacity * sizeof(T));
     }
 }
@@ -581,15 +577,12 @@ QCircularBuffer<T>::QCircularBuffer(int capacity, int size, const T &value)
         new (--i) T(value);
 
     // Initialise the remaining objects using the best method available
-    if (QTypeInfo<T>::isComplex)
-    {
+    if (QTypeInfo<T>::isComplex) {
         T* b = d->data + size;
         T* i = b + capacity - size;
         while (i != b)
             new (--i) T;
-    }
-    else
-    {
+    } else {
         qMemSet(d->data + size, 0, (capacity - size) * sizeof(T));
     }
 
@@ -605,15 +598,12 @@ void QCircularBuffer<T>::append(const T &value)
     if (!d->capacity)
         return;
 
-    if (d->size == d->capacity)
-    {
+    if (d->size == d->capacity) {
         // Buffer is full. Overwrite earliest item and rotate
         d->data[ d->first ] = value;
         d->first = (++d->first % d->capacity);
         d->last = (++d->last % d->capacity);
-    }
-    else if (d->size != 0)
-    {
+    } else if (d->size != 0) {
         // Buffer is partially full. Append data to end of array using appropriate method
         int index = (d->first + d->size) % d->capacity;
         if (QTypeInfo<T>::isComplex)
@@ -622,9 +612,7 @@ void QCircularBuffer<T>::append(const T &value)
             d->data[ index ] = value;
         ++d->size;
         ++d->last;
-    }
-    else
-    {
+    } else {
         // Buffer is empty. Append data to end of array using appropriate method
         d->size = 1;
         d->first = d->last = 0;
@@ -638,17 +626,14 @@ void QCircularBuffer<T>::append(const T &value)
 template <typename T>
 bool QCircularBuffer<T>::contains(const T &value) const
 {
-    if (isLinearised())
-    {
+    if (isLinearised()) {
         T* b = d->data + d->first;
         T* i = b + d->size;
         while (i != b)
             if (*--i == value)
                 return true;
         return false;
-    }
-    else
-    {
+    } else {
         // Check the array from m_first to the end
         T* b = d->data + d->first;
         T* i = d->data + d->capacity;
@@ -671,16 +656,13 @@ template <typename T>
 int QCircularBuffer<T>::count(const T &value) const
 {
     int c = 0;
-    if (isLinearised())
-    {
+    if (isLinearised()) {
         T* b = d->data + d->first;
         T* i = b + d->size;
         while (i != b)
             if (*--i == value)
                 ++c;
-    }
-    else
-    {
+    } else {
         // Check the array from m_first to the end
         T* b = d->data + d->first;
         T* i = d->data + d->capacity;
@@ -709,21 +691,18 @@ QCircularBuffer<T>& QCircularBuffer<T>::fill(const T &value, int size)
     d->last = d->size - 1;
 
     // Copy item into array size times
-    if (d->size)
-    {
+    if (d->size) {
         T *b = d->data;
         T *i = d->data + d->size;
         while (i != b)
             *--i = copy;
     }
 
-    if (d->size < oldSize)
-    {
+    if (d->size < oldSize) {
         // Cleanup old items beyond end of new array
         T *b = d->data + d->size;
         T *i = d->data + oldSize;
-        while (i-- != b)
-        {
+        while (i-- != b) {
             i->~T();
             new (i) T();
         }
@@ -783,18 +762,15 @@ void QCircularBuffer<T>::insert(int i, int count, const T &value)
     int numToOverwrite = qMin(i, qMax(0, count - freeCapacity));
 
     // Decide which way to shift to minimise the amount of copying required.
-    if (i < d->size / 2)
-    {
+    if (i < d->size / 2) {
         // Inserting in lower half of buffer so we shift earlier items down
 
         // Shift data at the bottom end down. This may only be a subset if some
         // of the early data is to be overwritten.
-        if (QTypeInfo<T>::isStatic)
-        {
+        if (QTypeInfo<T>::isStatic) {
             int start = d->first + numToOverwrite;
             int end = d->first + i - 1;
-            for (int j = start; j <= end; ++j)
-            {
+            for (int j = start; j <= end; ++j) {
                 int srcIndex = j % d->capacity;
                 int dstIndex = (j - numToInsert + d->capacity) % d->capacity;
                 T* src = d->data + srcIndex;
@@ -802,14 +778,11 @@ void QCircularBuffer<T>::insert(int i, int count, const T &value)
 
                 new (dst) T(*src);
             }
-        }
-        else
-        {
+        } else {
             // We have a movable type so a simple memcopy (or maybe two or
             // three) will suffice to shift the data at the bottom end
             int numToMove = i - numToOverwrite;
-            if (numToMove > 0)
-            {
+            if (numToMove > 0) {
                 int srcBegin = (d->first + numToOverwrite) % d->capacity;
                 int srcEnd = (d->first + i - 1) % d->capacity;
                 int dstBegin = (srcBegin - numToInsert + d->capacity) % d->capacity;
@@ -818,30 +791,23 @@ void QCircularBuffer<T>::insert(int i, int count, const T &value)
                 // Do we have any wrap-around problems to deal with?
                 bool srcRegionWraps = (srcEnd < srcBegin);
                 bool dstRegionWraps = (dstEnd < dstBegin);
-                if (!srcRegionWraps && dstRegionWraps)
-                {
+                if (!srcRegionWraps && dstRegionWraps) {
                     // Destination region wraps so do the move in two steps
                     int wrapCount = abs(srcBegin - numToInsert);
                     memmove(d->data + d->capacity - wrapCount, d->data + srcBegin, wrapCount * sizeof(T));
                     memmove(d->data, d->data + srcBegin + wrapCount, (numToMove - wrapCount) * sizeof(T));
-                }
-                else if (srcRegionWraps && !dstRegionWraps)
-                {
+                } else if (srcRegionWraps && !dstRegionWraps) {
                     // Source region wraps so do the move in two steps
                     int wrapCount = d->capacity - srcBegin;
                     memmove(d->data + dstBegin, d->data + d->capacity - wrapCount, wrapCount * sizeof(T));
                     memmove(d->data + dstBegin + numToInsert, d->data, (numToMove - wrapCount) * sizeof(T));
-                }
-                else if (srcRegionWraps && dstRegionWraps)
-                {
+                } else if (srcRegionWraps && dstRegionWraps) {
                     // Source and destination regions wrap so we have to do this in three steps
                     int srcWrapCount = d->capacity - srcBegin;
                     memmove(d->data + dstBegin, d->data + d->capacity - srcWrapCount, srcWrapCount * sizeof(T));
                     memmove(d->data + d->capacity - numToInsert, d->data, numToInsert * sizeof(T));
                     memmove(d->data, d->data + numToInsert, (numToMove - srcWrapCount - numToInsert) * sizeof(T));
-                }
-                else
-                {
+                } else {
                     // No wrap around - do a single memmove
                     memmove(d->data + dstBegin, d->data + srcBegin, numToMove * sizeof(T));
                 }
@@ -851,8 +817,7 @@ void QCircularBuffer<T>::insert(int i, int count, const T &value)
         // Insert the new items
         int end = d->first + i;
         int start = end - numToInsert;
-        for (int j = start; j < end; ++j)
-        {
+        for (int j = start; j < end; ++j) {
             T* p = d->data + ((j + d->capacity) % d->capacity);
             new (p) T(value);
         }
@@ -861,19 +826,15 @@ void QCircularBuffer<T>::insert(int i, int count, const T &value)
         // NB. The last index never changes in this regime.
         d->size += qMin(count, freeCapacity);
         d->first = (d->first - (numToInsert - numToOverwrite) + d->capacity) % d->capacity;
-    }
-    else
-    {
+    } else {
         // Inserting in upper half of buffer so we shift later items up
 
         // Shift data at the top end up which may or may not overwrite some
         // of the earliest data
-        if (QTypeInfo<T>::isStatic)
-        {
+        if (QTypeInfo<T>::isStatic) {
             int start = d->first + d->size - 1;
             int end = d->first + i;
-            for (int j = start; j >= end; j--)
-            {
+            for (int j = start; j >= end; j--) {
                 int srcIndex = j % d->capacity;
                 int dstIndex = (j + numToInsert) % d->capacity;
                 T* src = d->data + srcIndex;
@@ -881,14 +842,11 @@ void QCircularBuffer<T>::insert(int i, int count, const T &value)
 
                 new (dst) T(*src);
             }
-        }
-        else
-        {
+        } else {
             // We have a movable type so a simple memcopy (or maybe two or
             // three) will suffice to shift the data at the top end
             int numToMove = d->size - i;
-            if (numToMove > 0)
-            {
+            if (numToMove > 0) {
                 int srcBegin = (d->first + i) % d->capacity;
                 int srcEnd = d->last;
                 int dstBegin = (srcBegin + numToInsert) % d->capacity;
@@ -897,30 +855,23 @@ void QCircularBuffer<T>::insert(int i, int count, const T &value)
                 // Do we have any wrap-around problems to deal with?
                 bool srcRegionWraps = (srcEnd < srcBegin);
                 bool dstRegionWraps = (dstEnd < dstBegin);
-                if (!srcRegionWraps && dstRegionWraps)
-                {
+                if (!srcRegionWraps && dstRegionWraps) {
                     // Destination region wraps so do the move in two steps
                     int wrapCount = srcEnd + numToInsert - d->capacity + 1;
                     memmove(d->data, d->data + srcEnd - wrapCount + 1, wrapCount * sizeof(T));
                     memmove(d->data + dstBegin, d->data + srcBegin, (numToMove - wrapCount) * sizeof(T));
-                }
-                else if (srcRegionWraps && !dstRegionWraps)
-                {
+                } else if (srcRegionWraps && !dstRegionWraps) {
                     // Source region wraps so do the move in two steps
                     int wrapCount = d->last + 1;
                     memmove(d->data + numToInsert, d->data, wrapCount * sizeof(T));
                     memmove(d->data + dstBegin, d->data + srcBegin, (numToMove - wrapCount) * sizeof(T));
-                }
-                else if (srcRegionWraps && dstRegionWraps)
-                {
+                } else if (srcRegionWraps && dstRegionWraps) {
                     // Source and destination regions wrap so we have to do this in three steps
                     int srcWrapCount = d->last + 1;
                     memmove(d->data + numToInsert, d->data, srcWrapCount * sizeof(T));
                     memmove(d->data, d->data + d->capacity - numToInsert, numToInsert * sizeof(T));
                     memmove(d->data + dstBegin, d->data + srcBegin, (numToMove - srcWrapCount - numToInsert) * sizeof(T));
-                }
-                else
-                {
+                } else {
                     // No wrap around - do a single memmove
                     memmove(d->data + dstBegin, d->data + srcBegin, numToMove * sizeof(T));
                 }
@@ -928,8 +879,7 @@ void QCircularBuffer<T>::insert(int i, int count, const T &value)
         }
 
         // Insert the new items
-        for (int j = d->first + i; j < d->first + i + numToInsert; ++j)
-        {
+        for (int j = d->first + i; j < d->first + i + numToInsert; ++j) {
             T* p = d->data + (j % d->capacity);
             new (p) T(value);
         }
@@ -979,8 +929,7 @@ void QCircularBuffer<T>::linearise()
         new (--j) T(*--i);
 
     // Destroy the original items
-    if (QTypeInfo<T>::isComplex)
-    {
+    if (QTypeInfo<T>::isComplex) {
         // The type is complex so we manually call the destructor for each item
         // since we used the placement new operator to instantiate them
         T* b = d->data;
@@ -1005,15 +954,12 @@ void QCircularBuffer<T>::prepend(const T &value)
     if (!d->capacity)
         return;
 
-    if (d->size == d->capacity)
-    {
+    if (d->size == d->capacity) {
         // Buffer is full. Overwrite last item and rotate
         d->data[ d->last ] = value;
         d->first = (--d->first + d->capacity) % d->capacity;
         d->last = (--d->last + d->capacity) % d->capacity;
-    }
-    else if (d->size != 0)
-    {
+    } else if (d->size != 0) {
         // Buffer is partially full. Prepend data to start of array using appropriate method
         d->first = (--d->first + d->capacity) % d->capacity;
         ++d->size;
@@ -1021,9 +967,7 @@ void QCircularBuffer<T>::prepend(const T &value)
             new (d->data + d->first) T(value);
         else
             d->data[ d->first ] = value;
-    }
-    else
-    {
+    } else {
         // Buffer is empty. Prepend data to start of array using appropriate method
         d->size = 1;
         d->first = d->last = d->capacity - 1;
@@ -1043,41 +987,32 @@ void QCircularBuffer<T>::remove(int i, int count)
     int numToMoveDown = d->size - count - i;
     int numToMoveUp = i;
 
-    if (numToMoveDown < numToMoveUp)
-    {
+    if (numToMoveDown < numToMoveUp) {
         // Move higher items down
         int numToMove = numToMoveDown;
 
-        if (QTypeInfo<T>::isComplex)
-        {
+        if (QTypeInfo<T>::isComplex) {
             // Copy items down from higher positions
             int start = d->first + i;
             int end = start + numToMove;
-            for (int j = start; j < end ; ++j)
-            {
+            for (int j = start; j < end ; ++j) {
                 T* src = d->data + ((j + count) % d->capacity);
                 T* dst = d->data + (j % d->capacity);
                 new (dst) T(*src);
             }
 
             // Clean up items at end of buffer
-            for (int j = d->last; j > d->last - count; --j)
-            {
+            for (int j = d->last; j > d->last - count; --j) {
                 T* p = d->data + ((j + d->capacity) % d->capacity);
                 p->~T();
                 new (p) T();
             }
-        }
-        else
-        {
-            if (isLinearised())
-            {
+        } else {
+            if (isLinearised()) {
                 // With a linearised buffer we can do a simple move and removal of items
                 memmove(d->data + d->last - numToMove - count + 1, d->data + d->last - numToMove + 1, numToMove * sizeof(T));
                 qMemSet(d->data + d->last - count + 1, 0, count * sizeof(T));
-            }
-            else
-            {
+            } else {
                 // With a non-linearised buffer we need to be careful of wrapping issues
                 int srcBegin = (d->last - numToMove + 1 + d->capacity) % d->capacity;
                 int srcEnd = d->last;
@@ -1086,30 +1021,23 @@ void QCircularBuffer<T>::remove(int i, int count)
 
                 bool srcRegionWraps = (srcEnd < srcBegin);
                 bool dstRegionWraps = (dstEnd < dstBegin);
-                if (srcRegionWraps && !dstRegionWraps)
-                {
+                if (srcRegionWraps && !dstRegionWraps) {
                     // Source region wraps so do the move in two steps
                     int wrapCount = d->capacity - srcBegin;
                     memmove(d->data + dstBegin, d->data + srcBegin, wrapCount * sizeof(T));
                     memmove(d->data + dstBegin + wrapCount, d->data, (numToMove - wrapCount) * sizeof(T));
-                }
-                else if (!srcRegionWraps && dstRegionWraps)
-                {
+                } else if (!srcRegionWraps && dstRegionWraps) {
                     // Destination region wraps so do the move in two steps
                     int wrapCount = count - srcBegin;
                     memmove(d->data + d->capacity - wrapCount, d->data + srcBegin, wrapCount * sizeof(T));
                     memmove(d->data, d->data + srcBegin + wrapCount, (numToMove - wrapCount) * sizeof(T));
-                }
-                else if (srcRegionWraps && dstRegionWraps)
-                {
+                } else if (srcRegionWraps && dstRegionWraps) {
                     // Source and destination regions wrap so we have to do this in three steps
                     int srcWrapCount = d->capacity - srcBegin;
                     memmove(d->data + dstBegin, d->data + srcBegin, srcWrapCount * sizeof(T));
                     memmove(d->data + dstBegin + srcWrapCount, d->data, count * sizeof(T));
                     memmove(d->data, d->data + count, (numToMove - srcWrapCount - count) * sizeof(T));
-                }
-                else
-                {
+                } else {
                     // No wrap around, so we can do this in one hit
                     memmove(d->data + dstBegin, d->data + srcBegin, numToMove * sizeof(T));
                 }
@@ -1117,14 +1045,11 @@ void QCircularBuffer<T>::remove(int i, int count)
                 // We potentially have a disjoint region that needs zeroing
                 int zeroStart = (d->last - count + d->capacity + 1) % d->capacity;
                 int zeroEnd = d->last;
-                if (zeroEnd < zeroStart)
-                {
+                if (zeroEnd < zeroStart) {
                     // Region to be zeroed wraps. Do it in two steps.
                     qMemSet(d->data, 0, (d->last + 1) * sizeof(T));
                     qMemSet(d->data + zeroStart, 0, (count - d->last - 1) * sizeof(T));
-                }
-                else
-                {
+                } else {
                     // Region to be zeroed is contiguous
                     qMemSet(d->data + zeroStart, 0, count * sizeof(T));
                 }
@@ -1134,42 +1059,32 @@ void QCircularBuffer<T>::remove(int i, int count)
         // Adjust the indices
         d->size -= count;
         d->last = (d->last - count + d->capacity) % d->capacity;
-    }
-    else
-    {
+    } else {
         // Move lower items up
         int numToMove = numToMoveUp;
 
-        if (QTypeInfo<T>::isComplex)
-        {
+        if (QTypeInfo<T>::isComplex) {
             // Copy items up from lower positions
             int start = d->first + i - 1;
             int end = start - numToMove;
-            for (int j = start; j > end ; --j)
-            {
+            for (int j = start; j > end ; --j) {
                 T* src = d->data + ((j + d->capacity) % d->capacity);
                 T* dst = d->data + ((j + d->capacity + count) % d->capacity);
                 new (dst) T(*src);
             }
 
             // Clean up items at start of buffer
-            for (int j = d->first; j < d->first + count; ++j)
-            {
+            for (int j = d->first; j < d->first + count; ++j) {
                 T* p = d->data + (j % d->capacity);
                 p->~T();
                 new (p) T();
             }
-        }
-        else
-        {
-            if (isLinearised())
-            {
+        } else {
+            if (isLinearised()) {
                 // With a linearised buffer we can do a simple move and removal of items
                 memmove(d->data + d->first + count, d->data + d->first, numToMove * sizeof(T));
                 qMemSet(d->data + d->first, 0, count * sizeof(T));
-            }
-            else
-            {
+            } else {
                 // With a non-linearised buffer we need to be careful of wrapping issues
                 int srcBegin = d->first;
                 int srcEnd = (srcBegin + numToMove - 1) % d->capacity;
@@ -1178,30 +1093,23 @@ void QCircularBuffer<T>::remove(int i, int count)
 
                 bool srcRegionWraps = (srcEnd < srcBegin);
                 bool dstRegionWraps = (dstEnd < dstBegin);
-                if (srcRegionWraps && !dstRegionWraps)
-                {
+                if (srcRegionWraps && !dstRegionWraps) {
                     // Source region wraps so do the move in two steps
                     int wrapCount = srcEnd + 1;
                     memmove(d->data + dstEnd - wrapCount + 1, d->data, wrapCount * sizeof(T));
                     memmove(d->data + dstBegin, d->data + srcBegin, (numToMove - wrapCount) * sizeof(T));
-                }
-                else if (!srcRegionWraps && dstRegionWraps)
-                {
+                } else if (!srcRegionWraps && dstRegionWraps) {
                     // Destination region wraps so do the move in two steps
                     int wrapCount = dstEnd + 1;
                     memmove(d->data, d->data + srcEnd - wrapCount + 1, wrapCount * sizeof(T));
                     memmove(d->data + dstBegin, d->data + srcBegin, (numToMove - wrapCount) * sizeof(T));
-                }
-                else if (srcRegionWraps && dstRegionWraps)
-                {
+                } else if (srcRegionWraps && dstRegionWraps) {
                     // Source and destination regions wrap so we have to do this in three steps
                     int srcWrapCount = srcEnd + 1;
                     memmove(d->data + dstEnd - srcWrapCount + 1, d->data, srcWrapCount * sizeof(T));
                     memmove(d->data, d->data + d->capacity - count, count * sizeof(T));
                     memmove(d->data + dstBegin, d->data + srcBegin, (numToMove - srcWrapCount - count) * sizeof(T));
-                }
-                else
-                {
+                } else {
                     // No wrap around, so we can do this in one hit
                     memmove(d->data + dstBegin, d->data + srcBegin, numToMove * sizeof(T));
                 }
@@ -1209,14 +1117,11 @@ void QCircularBuffer<T>::remove(int i, int count)
                 // We potentially have a disjoint region that needs zeroing
                 int zeroStart = d->first;
                 int zeroEnd = (zeroStart + count - 1) % d->capacity;
-                if (zeroEnd < zeroStart)
-                {
+                if (zeroEnd < zeroStart) {
                     // Region to be zeroed wraps. Do it in two steps.
                     qMemSet(d->data + zeroStart, 0, (d->capacity - d->first) * sizeof(T));
                     qMemSet(d->data, 0, (count - d->capacity + d->first) * sizeof(T));
-                }
-                else
-                {
+                } else {
                     // Region to be zeroed is contiguous
                     qMemSet(d->data + zeroStart, 0, count * sizeof(T));
                 }
@@ -1241,11 +1146,9 @@ void QCircularBuffer<T>::setCapacity(int capacity)
     // How many items can we copy across?
     int newSize = qMin(d->size, capacity);
 
-    if (QTypeInfo<T>::isComplex)
-    {
+    if (QTypeInfo<T>::isComplex) {
         // Copy across the elements from the original array
-        for (int i = 0; i < newSize; ++i)
-        {
+        for (int i = 0; i < newSize; ++i) {
             T* src = d->data + ((d->first + i) % d->capacity);
             T* dst = newData + i;
             new (dst) T(*src);
@@ -1262,17 +1165,12 @@ void QCircularBuffer<T>::setCapacity(int capacity)
         T* i = b + d->capacity;
         while (i-- != b)
              i->~T();
-    }
-    else
-    {
+    } else {
         // Copy across the elements from the original array. The source region
         // potentially wraps so we may have to do this in one or two steps
-        if (isLinearised())
-        {
+        if (isLinearised()) {
             memmove(newData, d->data + d->first, newSize * sizeof(T));
-        }
-        else
-        {
+        } else {
             int step1Size = qMin(newSize, d->capacity - d->first);
             memmove(newData, d->data + d->first, step1Size * sizeof(T));
             int step2Size = qMax(0, qMin(newSize - d->capacity + d->first, d->last + 1));
@@ -1299,10 +1197,9 @@ void QCircularBuffer<T>::resize(int size)
 {
     Q_ASSERT_X(size >= 0 && size <= d->capacity, "QCircularBuffer<T>::resize", "size out of range");
 
-    if (size < d->size)
+    if (size < d->size) {
         remove(size, d->size - size);
-    else if (size > d->size)
-    {
+    } else if (size > d->size) {
         T t;
         insert(d->size, size - d->size, t);
     }
