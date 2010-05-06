@@ -34,7 +34,7 @@ EOF
 
 
 case "$COMPILER" in
-gcc|g++)
+*gcc|*g++)
     CMDLINE="-fvisibility=hidden"
     RunCompileTest
    ;;
