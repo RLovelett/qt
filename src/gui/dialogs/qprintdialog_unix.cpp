@@ -745,6 +745,7 @@ void QUnixPrintWidgetPrivate::updateWidget()
             widget.printers->setCurrentIndex(widget.printers->count() - 1);
         widget.filename->setEnabled(true);
         widget.lOutput->setEnabled(true);
+        widget.fileBrowser->setEnabled(true);
     }
 
     widget.filename->setVisible(printToFile);
@@ -768,7 +769,7 @@ void QUnixPrintWidgetPrivate::_q_printerChanged(int index)
     const int printerCount = widget.printers->count();
     widget.filename->setEnabled(false);
     widget.lOutput->setEnabled(false);
-
+    widget.fileBrowser->setEnabled(false);
     if (filePrintersAdded) {
         Q_ASSERT(index != printerCount - 3); // separator
         if (index > printerCount - 3) { // PDF or postscript
@@ -778,6 +779,7 @@ void QUnixPrintWidgetPrivate::_q_printerChanged(int index)
                                                                        : QString::fromLatin1("PostScript")));
             widget.properties->setEnabled(true);
             widget.filename->setEnabled(true);
+            widget.fileBrowser->setEnabled(true);
             QString filename = widget.filename->text();
             QString suffix = QFileInfo(filename).suffix();
             if (pdfPrinter && suffix == QLatin1String("ps"))
