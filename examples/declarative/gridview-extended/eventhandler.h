@@ -39,15 +39,19 @@
 **
 ****************************************************************************/
 
+#ifndef EVENTHANDLER_H
+#define EVENTHANDLER_H
+
 #include <QObject>
 
 class EventHandler : public QObject
 {
     Q_OBJECT
 public:
-    EventHandler();
+    EventHandler(QObject *parent = 0);
 
 public slots:
     void itemClicked(QString name);
 };
 
+#endif

@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "eventhandler.h"
-#include "gridview.h"
+#include "applistview.h"
 
 #ifndef QT_NO_OPENGL
 #include <QtOpenGL/QtOpenGL>
@@ -50,7 +50,8 @@
 #include <QUrl>
 
 
-GridView::GridView()
+AppListView::AppListView(QWidget *parent)
+    : QDeclarativeView(parent)
 {
 #ifndef QT_NO_OPENGL
     setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
@@ -62,6 +63,6 @@ GridView::GridView()
     setSource(QUrl::fromLocalFile(":gridview.qml"));
 }
 
-GridView::~GridView()
+AppListView::~AppListView()
 {
 }

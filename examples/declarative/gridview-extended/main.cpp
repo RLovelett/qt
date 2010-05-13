@@ -42,13 +42,13 @@
 
 #include <QtGui/QApplication>
 
-#include "gridview.h"
+#include "applistview.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    GridView view;
+    AppListView view;
     view.show();
 
     return a.exec();

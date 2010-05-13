@@ -39,17 +39,17 @@
 **
 ****************************************************************************/
 
+#ifndef APPLISTVIEW_H
+#define APPLISTVIEW_H
+
 #include <QtDeclarative/QDeclarativeView>
 
-QT_BEGIN_NAMESPACE
-QT_END_NAMESPACE
-
-class GridView : public QDeclarativeView
+class AppListView : public QDeclarativeView
 {
     Q_OBJECT
 public:
-    GridView();
-    ~GridView();
-
-private:
+    AppListView(QWidget *parent  = 0);
+    ~AppListView();
 };
+
+#endif

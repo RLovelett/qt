@@ -10,8 +10,8 @@ INCLUDEPATH += .
 QT += declarative
 
 # Input
-HEADERS += eventhandler.h gridview.h
-SOURCES += eventhandler.cpp gridview.cpp main.cpp
+HEADERS += eventhandler.h applistview.h
+SOURCES += eventhandler.cpp applistview.cpp main.cpp
 
 RESOURCES += gridview.qrc
 

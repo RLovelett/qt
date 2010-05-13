@@ -44,7 +44,8 @@
 #include <QMessageBox>
 #include <QDebug>
 
-EventHandler::EventHandler()
+EventHandler::EventHandler(QObject *parent)
+    : QObject(parent)
 {
 }
 

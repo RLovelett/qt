@@ -1,4 +1,4 @@
-import Qt 4.6
+import Qt 4.7
 
 Rectangle {
     width: 300; height: 400; color: "white"
@@ -17,7 +17,6 @@ Rectangle {
     Component {
         id: appDelegate
         Item {
-            id: item
             width: 100; height: 100
             Image { id: myIcon; y: 20; anchors.horizontalCenter: parent.horizontalCenter; source: icon }
             Text { anchors.top: myIcon.bottom; anchors.horizontalCenter: parent.horizontalCenter; text: name }
@@ -44,7 +43,8 @@ Rectangle {
         id: gridView
         anchors.fill: parent
         cellWidth: 100; cellHeight: 100
-        model: appModel; delegate: appDelegate
+        model: appModel
+        delegate: appDelegate
         highlight: appHighlight
         focus: true
     }
