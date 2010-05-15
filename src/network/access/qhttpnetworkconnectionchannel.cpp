@@ -95,7 +95,7 @@ void QHttpNetworkConnectionChannel::init()
     // the QHttpNetworkReply anyway, so let's grow only that and not
     // here and there.
     socket->setReadBufferSize(64*1024);
-
+    qRegisterMetaType<QAbstractSocket::SocketError>("QAbstractSocket::SocketError");
     QObject::connect(socket, SIGNAL(bytesWritten(qint64)),
                      this, SLOT(_q_bytesWritten(qint64)),
                      Qt::DirectConnection);
@@ -110,7 +110,7 @@ void QHttpNetworkConnectionChannel::init()
                      Qt::DirectConnection);
     QObject::connect(socket, SIGNAL(error(QAbstractSocket::SocketError)),
                      this, SLOT(_q_error(QAbstractSocket::SocketError)),
-                     Qt::DirectConnection);
+                     Qt::QueuedConnection);
 #ifndef QT_NO_NETWORKPROXY
     QObject::connect(socket, SIGNAL(proxyAuthenticationRequired(QNetworkProxy,QAuthenticator*)),
                      this, SLOT(_q_proxyAuthenticationRequired(QNetworkProxy,QAuthenticator*)),

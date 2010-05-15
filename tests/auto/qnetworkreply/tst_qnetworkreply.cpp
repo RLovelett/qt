@@ -156,6 +156,7 @@ private Q_SLOTS:
 
     void stateChecking();
     void invalidProtocol();
+    void networkUnreachable();
     void getFromData_data();
     void getFromData();
     void getFromFile();
@@ -925,6 +926,20 @@ void tst_QNetworkReply::invalidProtocol()
 
     QCOMPARE(reply->url(), url);
     QCOMPARE(reply->error(), QNetworkReply::ProtocolUnknownError);
+}
+
+void tst_QNetworkReply::networkUnreachable()
+{
+    QUrl url = QUrl::fromEncoded("http://255.255.255.255");
+    QNetworkRequest req(url);
+    QNetworkReplyPtr reply;
+
+    QString errorMsg = "Request failed: Network unreachable";
+    QString result = runSimpleRequest(QNetworkAccessManager::GetOperation, req, reply);
+    QCOMPARE(result, errorMsg);
+
+    QCOMPARE(reply->url(), url);
+    QCOMPARE(reply->error(), QNetworkReply::UnknownNetworkError);
 }
 
 void tst_QNetworkReply::getFromData_data()

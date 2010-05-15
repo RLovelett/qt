@@ -790,6 +790,7 @@ QFtpPI::QFtpPI(QObject *parent) :
     waitForDtpToClose(false)
 {
     commandSocket.setObjectName(QLatin1String("QFtpPI_socket"));
+    qRegisterMetaType<QAbstractSocket::SocketError>("QAbstractSocket::SocketError");
     connect(&commandSocket, SIGNAL(hostFound()),
             SLOT(hostFound()));
     connect(&commandSocket, SIGNAL(connected()),
@@ -799,7 +800,8 @@ QFtpPI::QFtpPI(QObject *parent) :
     connect(&commandSocket, SIGNAL(readyRead()),
             SLOT(readyRead()));
     connect(&commandSocket, SIGNAL(error(QAbstractSocket::SocketError)),
-            SLOT(error(QAbstractSocket::SocketError)));
+            SLOT(error(QAbstractSocket::SocketError)),
+            Qt::QueuedConnection);
 
     connect(&dtp, SIGNAL(connectState(int)),
              SLOT(dtpConnectState(int)));
@@ -902,6 +904,10 @@ void QFtpPI::error(QAbstractSocket::SocketError e)
         emit connectState(QFtp::Unconnected);
         emit error(QFtp::ConnectionRefused,
                    QFtp::tr("Connection timed out to host %1").arg(commandSocket.peerName()));
+    } else  if (e == QTcpSocket::NetworkError) {
+        emit connectState(QFtp::Unconnected);
+        emit error(QFtp::ConnectionRefused,
+                   QFtp::tr("Connection error to %1").arg(commandSocket.peerName()));
     }
 }
 

@@ -82,6 +82,7 @@ public slots:
 private slots:
     void connectToHost_data();
     void connectToHost();
+    void connectToUnreachableHost();
     void connectToUnresponsiveHost();
     void login_data();
     void login();
@@ -329,6 +330,26 @@ void tst_QFtp::connectToUnresponsiveHost()
     */
     QEXPECT_FAIL("", "timeout not working due to strange Windows socket behaviour (see source file of this test for explanation)", Abort);
 #endif
+    QVERIFY2(! QTestEventLoop::instance().timeout(), "Network timeout longer than expected (should have been 60 seconds)");
+
+    QVERIFY( ftp->state() == QFtp::Unconnected);
+    ResMapIt it = resultMap.find( QFtp::ConnectToHost );
+    QVERIFY( it != resultMap.end() );
+    QVERIFY( it.value().success == 0 );
+
+    delete ftp;
+}
+
+void tst_QFtp::connectToUnreachableHost()
+{
+    QString host = "255.255.255.255";
+    uint port = 21;
+
+    ftp = newFtp();
+    addCommand( QFtp::ConnectToHost, ftp->connectToHost( host, port ) );
+
+    qDebug( "About to connect to unreachable host that will fail immediately" );
+    QTestEventLoop::instance().enterLoop( 61 );
     QVERIFY2(! QTestEventLoop::instance().timeout(), "Network timeout longer than expected (should have been 60 seconds)");
 
     QVERIFY( ftp->state() == QFtp::Unconnected);
