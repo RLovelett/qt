@@ -189,12 +189,22 @@ public:
 
     QGLWidget *shareWidget() {
         if (!initializing && !widget && !cleanedUp) {
-            initializing = true;
-            widget = new QGLWidget;
-            // We dont need this internal widget to appear in QApplication::topLevelWidgets()
-            if (QWidgetPrivate::allWidgets)
-                QWidgetPrivate::allWidgets->remove(widget);
-            initializing = false;
+            if (QWidgetPrivate::allWidgets) {
+                foreach (QWidget *w, QWidgetPrivate::allWidgets->toList()) {
+                    if (strcmp(w->metaObject()->className(), "QGLWidget") == 0) {
+                        widget = static_cast<const QGLWidget *>(w);
+                    }
+                }
+            } 
+            
+            if (!widget) {
+                initializing = true;
+                widget = new QGLWidget;
+                // We dont need this internal widget to appear in QApplication::topLevelWidgets()
+                if (QWidgetPrivate::allWidgets)
+                    QWidgetPrivate::allWidgets->remove(widget);
+                initializing = false;
+            }
         }
         return widget;
     }
