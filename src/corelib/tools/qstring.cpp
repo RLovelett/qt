@@ -668,7 +668,7 @@ const QString::Null QString::null = { };
     formats, the \e precision represents the maximum number of
     significant digits (trailing zeroes are omitted).
 
-    \section1 More Efficient String Construction 
+    \section1 More Efficient String Construction
 
     Using the QString \c{'+'} operator, it is easy to construct a
     complex string from multiple substrings. You will often write code
@@ -878,7 +878,7 @@ int QString::grow(int size)
 /*!
     \since 4.2
 
-    Returns a copy of the \a string, where the encoding of \a string depends on 
+    Returns a copy of the \a string, where the encoding of \a string depends on
     the size of wchar. If wchar is 4 bytes, the \a string is interpreted as ucs-4,
     if wchar is 2 bytes it is interpreted as ucs-2.
 
@@ -6090,6 +6090,91 @@ QStringList QString::split(const QRegExp &rx, SplitBehavior behavior) const
     }
     if (start != size() || behavior == KeepEmptyParts)
         list.append(mid(start));
+    return list;
+}
+#endif
+
+
+/*!
+    \since 4.8
+
+    Splits the string into substring references wherever \a sep
+    occurs, and returns the list of those string references. If \a sep
+    does not match anywhere in the string, split() returns a
+    single-element list containing a string for the entire string.
+
+    \a cs specifies whether \a sep should be matched case
+    sensitively or case insensitively.
+
+    If \a behavior is QString::SkipEmptyParts, empty entries don't
+    appear in the result. By default, empty entries are kept.
+
+    \sa QStringList::join(), section(), split()
+*/
+QList<QStringRef> QString::splitRef(const QString &sep, SplitBehavior behavior, Qt::CaseSensitivity cs) const
+{
+    QList<QStringRef> list;
+    int start = 0;
+    int extra = 0;
+    int end;
+    while ((end = indexOf(sep, start + extra, cs)) != -1) {
+        if (start != end || behavior == KeepEmptyParts)
+            list.append(midRef(start, end - start));
+        start = end + sep.size();
+        extra = (sep.size() == 0 ? 1 : 0);
+    }
+    if (start != size() || behavior == KeepEmptyParts)
+        list.append(midRef(start));
+    return list;
+}
+
+/*!
+    \since 4.8
+    \overload
+*/
+QList<QStringRef> QString::splitRef(const QChar &sep, SplitBehavior behavior, Qt::CaseSensitivity cs) const
+{
+    QList<QStringRef> list;
+    int start = 0;
+    int end;
+    while ((end = indexOf(sep, start, cs)) != -1) {
+        if (start != end || behavior == KeepEmptyParts)
+            list.append(midRef(start, end - start));
+        start = end + 1;
+    }
+    if (start != size() || behavior == KeepEmptyParts)
+        list.append(midRef(start));
+    return list;
+}
+
+#ifndef QT_NO_REGEXP
+/*!
+    \since 4.8
+    \overload
+
+    Splits the string into substring references wherever the regular
+    expression \a rx matches, and returns the list of those strings.
+    If \a rx does not match anywhere in the string, split() returns a
+    single-element list containing a string reference for the entire
+    string.
+
+    \sa QStringList::join(), section(), split()
+*/
+QList<QStringRef> QString::splitRef(QRegExp &rx, SplitBehavior behavior) const
+{
+    QList<QStringRef> list;
+    int start = 0;
+    int extra = 0;
+    int end;
+    while ((end = rx.indexIn(*this, start + extra)) != -1) {
+        int matchedLen = rx.matchedLength();
+        if (start != end || behavior == KeepEmptyParts)
+            list.append(midRef(start, end - start));
+        start = end + matchedLen;
+        extra = (matchedLen == 0) ? 1 : 0;
+    }
+    if (start != size() || behavior == KeepEmptyParts)
+        list.append(midRef(start));
     return list;
 }
 #endif

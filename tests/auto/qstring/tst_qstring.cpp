@@ -4248,6 +4248,18 @@ void tst_QString::split_data()
     QTest::newRow("sep-empty") << "abc" << "" << (QStringList() << "" << "a" << "b" << "c" << "");
 }
 
+static bool compare(const QList<QStringRef> &refs, const QStringList &list)
+{
+    if (refs.size() != list.size())
+        return false;
+    const int size = refs.size();
+    for (int i=0; i<size; ++i) {
+        if (refs.at(i) != list.at(i))
+            return false;
+    }
+    return true;
+}
+
 void tst_QString::split()
 {
     QFETCH(QString, str);
@@ -4257,33 +4269,58 @@ void tst_QString::split()
     QRegExp rx = QRegExp(QRegExp::escape(sep));
 
     QStringList list;
+    QList<QStringRef> refList;
 
     list = str.split(sep);
     QVERIFY(list == result);
+    refList = str.splitRef(sep);
+    QVERIFY(::compare(refList, result));
+
     list = str.split(rx);
     QVERIFY(list == result);
+    refList = str.splitRef(rx);
+    QVERIFY(::compare(refList, result));
+
     if (sep.size() == 1) {
         list = str.split(sep.at(0));
         QVERIFY(list == result);
+        refList = str.splitRef(sep.at(0));
+        QVERIFY(::compare(refList, result));
     }
 
     list = str.split(sep, QString::KeepEmptyParts);
     QVERIFY(list == result);
+    refList = str.splitRef(sep, QString::KeepEmptyParts);
+    QVERIFY(::compare(refList, result));
+
     list = str.split(rx, QString::KeepEmptyParts);
     QVERIFY(list == result);
+    refList = str.splitRef(rx, QString::KeepEmptyParts);
+    QVERIFY(::compare(refList, result));
+
     if (sep.size() == 1) {
         list = str.split(sep.at(0), QString::KeepEmptyParts);
         QVERIFY(list == result);
+        refList = str.splitRef(sep.at(0), QString::KeepEmptyParts);
+        QVERIFY(::compare(refList, result));
     }
 
     result.removeAll("");
     list = str.split(sep, QString::SkipEmptyParts);
     QVERIFY(list == result);
+    refList = str.splitRef(sep, QString::SkipEmptyParts);
+    QVERIFY(::compare(refList, result));
+
     list = str.split(rx, QString::SkipEmptyParts);
     QVERIFY(list == result);
+    refList = str.splitRef(rx, QString::SkipEmptyParts);
+    QVERIFY(::compare(refList, result));
+
     if (sep.size() == 1) {
         list = str.split(sep.at(0), QString::SkipEmptyParts);
         QVERIFY(list == result);
+        refList = str.splitRef(sep.at(0), QString::SkipEmptyParts);
+        QVERIFY(::compare(refList, result));
     }
 }
 
@@ -4292,28 +4329,44 @@ void tst_QString::split_regexp()
     QString str1 = "Some  text\n\twith  strange whitespace.";
     QStringList list1 = str1.split(QRegExp("\\s+"));
     QStringList result1;
+    QRegExp rx;
+    QList<QStringRef> refList = str1.splitRef((rx = QRegExp("\\s+")));
     result1 << "Some" << "text" << "with" << "strange" << "whitespace.";
     QVERIFY(list1 == result1);
+    QVERIFY(::compare(refList, result1));
+
     list1 = str1.split(QRegExp("\\s"), QString::SkipEmptyParts);
     QVERIFY(list1 == result1);
+    refList = str1.splitRef((rx = QRegExp("\\s")), QString::SkipEmptyParts);
+    QVERIFY(::compare(refList, result1));
 
     QString str2 = "This time, a normal English sentence.";
     QStringList list2 = str2.split(QRegExp("\\W+"));
     QStringList result2;
     result2 << "This" << "time" << "a" << "normal" << "English" << "sentence" << "";
     QVERIFY(list2 == result2);
+    refList = str2.splitRef((rx = QRegExp("\\W+")));
+    QVERIFY(::compare(refList, result2));
+
     list2 = str2.split(QRegExp("\\W"), QString::SkipEmptyParts);
     result2.removeAll(QString());
     QVERIFY(list2 == result2);
+    refList = str2.splitRef((rx = QRegExp("\\W")), QString::SkipEmptyParts);
+    QVERIFY(::compare(refList, result2));
 
     QString str3 = "Now: this sentence fragment.";
     QStringList list3 = str3.split(QRegExp("\\b"));
     QStringList result3;
     result3 << "" << "Now" << ": " << "this" << " " << "sentence" << " " << "fragment" << ".";
     QVERIFY(list3 == result3);
+    refList = str3.splitRef((rx = QRegExp("\\b")));
+    QVERIFY(::compare(refList, result3));
+
     list3 = str3.split(QRegExp("\\b"), QString::SkipEmptyParts);
     result3.removeAll(QString());
     QVERIFY(list3 == result3);
+    refList = str3.splitRef((rx = QRegExp("\\b")), QString::SkipEmptyParts);
+    QVERIFY(::compare(refList, result3));
 }
 
 void tst_QString::fromUtf16_data()

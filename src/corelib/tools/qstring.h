@@ -313,6 +313,14 @@ public:
     QStringList split(const QRegExp &sep, SplitBehavior behavior = KeepEmptyParts) const Q_REQUIRED_RESULT;
 #endif
 
+    QList<QStringRef> splitRef(const QString &sep, SplitBehavior behavior = KeepEmptyParts,
+                               Qt::CaseSensitivity cs = Qt::CaseSensitive) const Q_REQUIRED_RESULT;
+    QList<QStringRef> splitRef(const QChar &sep, SplitBehavior behavior = KeepEmptyParts,
+                               Qt::CaseSensitivity cs = Qt::CaseSensitive) const Q_REQUIRED_RESULT;
+#ifndef QT_NO_REGEXP
+    QList<QStringRef> splitRef(QRegExp &sep, SplitBehavior behavior = KeepEmptyParts) const Q_REQUIRED_RESULT;
+#endif
+
     enum NormalizationForm {
         NormalizationForm_D,
         NormalizationForm_C,
