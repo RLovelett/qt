@@ -67,6 +67,10 @@ private slots:
     void indexIn();
     void lastIndexIn_data();
     void lastIndexIn();
+    void indexInRef_data();
+    void indexInRef();
+    void lastIndexInRef_data();
+    void lastIndexInRef();
     void matchedLength();
     void wildcard_data();
     void wildcard();
@@ -90,6 +94,7 @@ private slots:
 */
     void exactMatch();
     void capturedTexts();
+    void capturedTextsRef();
 /*
     void cap();
     void pos();
@@ -243,7 +248,15 @@ void tst_QRegExp::indexIn_data()
     }
 }
 
+void tst_QRegExp::indexInRef_data()
+{
+    indexIn_data();
+}
 
+void tst_QRegExp::lastIndexInRef_data()
+{
+    lastIndexIn_data();
+}
 
 void tst_QRegExp::indexIn_addMoreRows(const QByteArray &stri)
 {
@@ -578,13 +591,23 @@ void tst_QRegExp::exactMatch()
 	bool is_w = ( ch.isLetterOrNumber()
         || ch.isMark()
         || ch == '_' );
+        const QString string(ch);
 
-	QVERIFY( rx_d.exactMatch(QString(ch)) == is_d );
-	QVERIFY( rx_s.exactMatch(QString(ch)) == is_s );
-	QVERIFY( rx_w.exactMatch(QString(ch)) == is_w );
-	QVERIFY( rx_D.exactMatch(QString(ch)) != is_d );
-	QVERIFY( rx_S.exactMatch(QString(ch)) != is_s );
-	QVERIFY( rx_W.exactMatch(QString(ch)) != is_w );
+	QVERIFY( rx_d.exactMatch(string) == is_d );
+	QVERIFY( rx_s.exactMatch(string) == is_s );
+	QVERIFY( rx_w.exactMatch(string) == is_w );
+	QVERIFY( rx_D.exactMatch(string) != is_d );
+	QVERIFY( rx_S.exactMatch(string) != is_s );
+	QVERIFY( rx_W.exactMatch(string) != is_w );
+        const QString padded = QString::fromLatin1(" %1 ").arg(ch);
+        const QStringRef ref = padded.midRef(1, 1);
+
+	QVERIFY( rx_d.exactMatch(ref) == is_d );
+	QVERIFY( rx_s.exactMatch(ref) == is_s );
+	QVERIFY( rx_w.exactMatch(ref) == is_w );
+	QVERIFY( rx_D.exactMatch(ref) != is_d );
+	QVERIFY( rx_S.exactMatch(ref) != is_s );
+	QVERIFY( rx_W.exactMatch(ref) != is_w );
     }
 }
 
@@ -640,6 +663,64 @@ void tst_QRegExp::capturedTexts()
     QCOMPARE(rx7.cap(1), QString("d"));
     QCOMPARE(rx7.cap(2), QString("elta4"));
 }
+
+void tst_QRegExp::capturedTextsRef()
+{
+    QRegExp rx1("a*(a*)", Qt::CaseSensitive, QRegExp::RegExp);
+    QString padded = QString::fromLatin1(" aaa ");
+    QStringRef ref = padded.midRef(1, 3);
+    rx1.exactMatch(ref);
+    QCOMPARE(rx1.matchedLength(), 3);
+    QCOMPARE(rx1.cap(0), QString("aaa"));
+    QCOMPARE(rx1.cap(1), QString("aaa"));
+
+    QRegExp rx2("a*(a*)", Qt::CaseSensitive, QRegExp::RegExp2);
+    rx2.exactMatch(ref);
+    QCOMPARE(rx2.matchedLength(), 3);
+    QCOMPARE(rx2.cap(0), QString("aaa"));
+    QCOMPARE(rx2.cap(1), QString(""));
+
+    QRegExp rx3("(?:a|aa)(a*)", Qt::CaseSensitive, QRegExp::RegExp);
+    rx3.exactMatch(ref);
+    QCOMPARE(rx3.matchedLength(), 3);
+    QCOMPARE(rx3.cap(0), QString("aaa"));
+    QCOMPARE(rx3.cap(1), QString("aa"));
+
+    QRegExp rx4("(?:a|aa)(a*)", Qt::CaseSensitive, QRegExp::RegExp2);
+    rx4.exactMatch(ref);
+    QCOMPARE(rx4.matchedLength(), 3);
+    QCOMPARE(rx4.cap(0), QString("aaa"));
+    QCOMPARE(rx4.cap(1), QString("a"));
+
+    QRegExp rx5("(a)*(a*)", Qt::CaseSensitive, QRegExp::RegExp);
+    rx5.exactMatch(ref);
+    QCOMPARE(rx5.matchedLength(), 3);
+    QCOMPARE(rx5.cap(0), QString("aaa"));
+    QCOMPARE(rx5.cap(1), QString("a"));
+    QCOMPARE(rx5.cap(2), QString("aa"));
+
+    QRegExp rx6("(a)*(a*)", Qt::CaseSensitive, QRegExp::RegExp2);
+    rx6.exactMatch(ref);
+    QCOMPARE(rx6.matchedLength(), 3);
+    QCOMPARE(rx6.cap(0), QString("aaa"));
+    QCOMPARE(rx6.cap(1), QString("a"));
+    QCOMPARE(rx6.cap(2), QString(""));
+
+    QRegExp rx7("([A-Za-z_])([A-Za-z_0-9]*)");
+    rx7.setCaseSensitivity(Qt::CaseSensitive);
+    rx7.setPatternSyntax(QRegExp::RegExp);
+    QCOMPARE(rx7.captureCount(), 2);
+
+    padded = " (10 + delta4) * 32 ";
+    ref = padded.midRef(1, padded.size() - 2);
+    int pos = rx7.indexIn(ref);
+    QCOMPARE(pos, 6);
+    QCOMPARE(rx7.matchedLength(), 6);
+    QCOMPARE(rx7.cap(0), QString("delta4"));
+    QCOMPARE(rx7.cap(1), QString("d"));
+    QCOMPARE(rx7.cap(2), QString("elta4"));
+}
+
 
 /*
 void tst_QRegExp::cap()
@@ -762,11 +843,132 @@ void tst_QRegExp::lastIndexIn()
     }
 }
 
+void tst_QRegExp::indexInRef()
+{
+    QFETCH( QString, regexpStr );
+    QFETCH( QString, target );
+    QFETCH( int, pos );
+    QFETCH( int, len );
+    QFETCH( QStringList, caps );
+
+    const QString padded = QString::fromLatin1(" %1 ").arg(target);
+    const QStringRef ref = padded.midRef(1, padded.size() - 2);
+
+    caps.prepend( "dummy cap(0)" );
+
+    {
+        QRegExp rx( regexpStr );
+        QVERIFY( rx.isValid() );
+
+        int mypos = rx.indexIn( ref );
+        int mylen = rx.matchedLength();
+        QStringList mycaps = rx.capturedTexts();
+
+        QCOMPARE( mypos, pos );
+        QCOMPARE( mylen, len );
+        if ( caps.size() > 1 && caps[1] != "IGNORE ME" ) {
+	    QCOMPARE( mycaps.count(), caps.count() );
+	    for ( int i = 1; i < (int) mycaps.count(); i++ )
+	        QCOMPARE( mycaps[i], caps[i] );
+        }
+    }
+
+    // same as above, but with RegExp2
+    {
+        QRegExp rx( regexpStr, Qt::CaseSensitive, QRegExp::RegExp2 );
+        QVERIFY( rx.isValid() );
+
+        int mypos = rx.indexIn( ref );
+        int mylen = rx.matchedLength();
+        QStringList mycaps = rx.capturedTexts();
+
+        QCOMPARE( mypos, pos );
+        QCOMPARE( mylen, len );
+        if ( caps.size() > 1 && caps[1] != "IGNORE ME" ) {
+	    QCOMPARE( mycaps.count(), caps.count() );
+	    for ( int i = 1; i < (int) mycaps.count(); i++ )
+	        QCOMPARE( mycaps[i], caps[i] );
+        }
+    }
+}
+
+void tst_QRegExp::lastIndexInRef()
+{
+    QFETCH( QString, regexpStr );
+    QFETCH( QString, target );
+    QFETCH( int, pos );
+    QFETCH( int, len );
+    QFETCH( QStringList, caps );
+
+    const QString padded = QString::fromLatin1(" %1 ").arg(target);
+    const QStringRef ref = padded.midRef(1, padded.size() - 2);
+
+
+    caps.prepend( "dummy" );
+
+    /*
+      The test data was really designed for indexIn(), not
+      lastIndexIn(), but it turns out that we can reuse much of that
+      for lastIndexIn().
+    */
+
+    {
+        QRegExp rx( regexpStr );
+        QVERIFY( rx.isValid() );
+
+        int mypos = rx.lastIndexIn( ref, ref.length() );
+        int mylen = rx.matchedLength();
+        QStringList mycaps = rx.capturedTexts();
+
+        if ( mypos <= pos || pos == -1 ) {
+	    QCOMPARE( mypos, pos );
+	    QCOMPARE( mylen, len );
+
+	    if (caps.size() > 1 && caps[1] != "IGNORE ME") {
+	        QCOMPARE( mycaps.count(), caps.count() );
+	        for ( int i = 1; i < (int) mycaps.count(); i++ )
+		    QCOMPARE( mycaps[i], caps[i] );
+	    }
+        }
+    }
+
+    {
+        QRegExp rx( regexpStr, Qt::CaseSensitive, QRegExp::RegExp2 );
+        QVERIFY( rx.isValid() );
+
+        int mypos = rx.lastIndexIn( ref, ref.length() );
+        int mylen = rx.matchedLength();
+        QStringList mycaps = rx.capturedTexts();
+
+        if ( mypos <= pos || pos == -1 ) {
+	    QCOMPARE( mypos, pos );
+	    QCOMPARE( mylen, len );
+
+	    if (caps.size() > 1 && caps[1] != "IGNORE ME") {
+	        QCOMPARE( mycaps.count(), caps.count() );
+	        for ( int i = 1; i < (int) mycaps.count(); i++ )
+		    QCOMPARE( mycaps[i], caps[i] );
+	    }
+        }
+    }
+}
+
+
+
 void tst_QRegExp::matchedLength()
 {
-    QRegExp r1( "a+" );
-    r1.exactMatch( "aaaba" );
-    QCOMPARE( r1.matchedLength(), 3 );
+    {
+        QRegExp r1( "a+" );
+        r1.exactMatch( "aaaba" );
+        QCOMPARE( r1.matchedLength(), 3 );
+    }
+    {
+        QRegExp r1( "a+" );
+        const QString padded = QString::fromLatin1(" aaaba ");
+        r1.exactMatch( padded.midRef(1, padded.size() - 2));
+        QCOMPARE( r1.matchedLength(), 3 );
+    }
+
 }
 
 const char email[] =

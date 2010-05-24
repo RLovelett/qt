@@ -299,7 +299,7 @@ int qFindString(const QChar *haystack, int haystackLen, int from,
     Square brackets mean match any character contained in the square
     brackets. The character set abbreviations described above can
     appear in a character set in square brackets. Except for the
-    character set abbreviations and the following two exceptions, 
+    character set abbreviations and the following two exceptions,
     characters do not have special meanings in square brackets.
 
     \table
@@ -3656,6 +3656,7 @@ struct QRegExpPrivate
     bool minimal;
 #ifndef QT_NO_REGEXP_CAPTURE
     QString t; // last string passed to QRegExp::indexIn() or lastIndexIn()
+    QStringRef ref;
     QStringList capturedCache; // what QRegExp::capturedTexts() returned last
 #endif
     QRegExpMatchState matchState;
@@ -3731,6 +3732,19 @@ static void prepareEngineForMatch(QRegExpPrivate *priv, const QString &str)
     priv->matchState.prepareForMatch(priv->eng);
 #ifndef QT_NO_REGEXP_CAPTURE
     priv->t = str;
+    priv->capturedCache.clear();
+#else
+    Q_UNUSED(str);
+#endif
+}
+
+static void prepareEngineForMatch(QRegExpPrivate *priv, const QStringRef &str)
+{
+    prepareEngine(priv);
+    priv->matchState.prepareForMatch(priv->eng);
+#ifndef QT_NO_REGEXP_CAPTURE
+    priv->t = str.string() ? *str.string() : QString();
+    priv->ref = str;
     priv->capturedCache.clear();
 #else
     Q_UNUSED(str);
@@ -4237,15 +4251,15 @@ QStringList QRegExp::capturedTexts() const
         prepareEngine(priv);
         const int *captured = priv->matchState.captured;
         int n = priv->matchState.capturedSize;
-
         for (int i = 0; i < n; i += 2) {
             QString m;
             if (captured[i + 1] == 0)
                 m = QLatin1String(""); // ### Qt 5: don't distinguish between null and empty
             else if (captured[i] >= 0)
-                m = priv->t.mid(captured[i], captured[i + 1]);
+                m = priv->t.mid(captured[i] + priv->ref.position(), captured[i + 1]);
             priv->capturedCache.append(m);
         }
+        priv->ref.clear();
         priv->t.clear();
     }
     return priv->capturedCache;
@@ -4384,6 +4398,118 @@ QString QRegExp::escape(const QString &str)
     }
     return quoted;
 }
+
+/*!
+    \since 4.8
+    \overload
+
+    Returns true if the string reference \a str is matched exactly by
+    this regular expression; otherwise returns false. You can
+    determine how much of the string reference was matched by calling
+    matchedLength().
+
+    For a given regexp string R, exactMatch("R") is the equivalent of
+    indexIn("^R$") since exactMatch() effectively encloses the regexp
+    in the start of string and end of string anchors, except that it
+    sets matchedLength() differently.
+
+    For example, if the regular expression is \bold{blue}, then
+    exactMatch() returns true only for input \c blue. For inputs \c
+    bluebell, \c blutak and \c lightblue, exactMatch() returns false
+    and matchedLength() will return 4, 3 and 0 respectively.
+
+    \sa indexIn(), lastIndexIn()
+*/
+bool QRegExp::exactMatch(const QStringRef &str)
+{
+    prepareEngineForMatch(priv, str);
+    priv->matchState.match(str.unicode(), str.length(), 0, priv->minimal, true, 0);
+    if (priv->matchState.captured[1] == str.length()) {
+        return true;
+    } else {
+        priv->matchState.captured[0] = 0;
+        priv->matchState.captured[1] = priv->matchState.oneTestMatchedLen;
+        return false;
+    }
+}
+
+/*!
+    \since 4.8
+    \overload
+
+    Attempts to find a match in the string reference \a str from
+    position \a offset (0 by default). If \a offset is -1, the search
+    starts at the last character; if -2, at the next to last
+    character; etc.
+
+    Returns the position of the first match, or -1 if there was no
+    match.
+
+    The \a caretMode parameter can be used to instruct whether \bold{^}
+    should match at index 0 or at \a offset.
+
+    You might prefer to use QString::indexOf(), QString::contains(),
+    or even QStringList::filter(). To replace matches use
+    QString::replace().
+
+    If the QRegExp is a wildcard expression (see setPatternSyntax())
+    and want to test a string against the whole wildcard expression,
+    use exactMatch() instead of this function.
+
+    \sa lastIndexIn(), exactMatch()
+*/
+
+int QRegExp::indexIn(const QStringRef &str, int offset, CaretMode caretMode)
+{
+    prepareEngineForMatch(priv, str);
+    if (offset < 0)
+        offset += str.length();
+    priv->matchState.match(str.unicode(), str.length(), offset,
+        priv->minimal, false, caretIndex(offset, caretMode));
+    return priv->matchState.captured[0];
+}
+
+/*!
+    \since 4.8
+    \overload
+
+    Attempts to find a match backwards in the string reference \a str
+    from position \a offset. If \a offset is -1 (the default), the
+    search starts at the last character; if -2, at the next to last
+    character; etc.
+
+    Returns the position of the first match, or -1 if there was no
+    match.
+
+    The \a caretMode parameter can be used to instruct whether \bold{^}
+    should match at index 0 or at \a offset.
+
+    \warning Searching backwards is much slower than searching
+    forwards.
+
+    \sa indexIn(), exactMatch()
+*/
+
+int QRegExp::lastIndexIn(const QStringRef &str, int offset, CaretMode caretMode)
+{
+    prepareEngineForMatch(priv, str);
+    if (offset < 0)
+        offset += str.length();
+    if (offset < 0 || offset > str.length()) {
+        memset(priv->matchState.captured, -1, priv->matchState.capturedSize*sizeof(int));
+        return -1;
+    }
+
+    while (offset >= 0) {
+        priv->matchState.match(str.unicode(), str.length(), offset,
+            priv->minimal, true, caretIndex(offset, caretMode));
+        if (priv->matchState.captured[0] == offset)
+            return offset;
+        --offset;
+    }
+    return -1;
+}
+
 
 /*!
     \fn bool QRegExp::caseSensitive() const

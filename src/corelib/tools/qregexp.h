@@ -109,6 +109,11 @@ public:
 
     int indexIn(const QString &str, int offset = 0, CaretMode caretMode = CaretAtZero) const;
     int lastIndexIn(const QString &str, int offset = -1, CaretMode caretMode = CaretAtZero) const;
+
+    bool exactMatch(const QStringRef &str);
+
+    int indexIn(const QStringRef &str, int offset = 0, CaretMode caretMode = CaretAtZero);
+    int lastIndexIn(const QStringRef &str, int offset = -1, CaretMode caretMode = CaretAtZero);
 #ifdef QT3_SUPPORT
     inline QT3_SUPPORT int search(const QString &str, int from = 0,
                                 CaretMode caretMode = CaretAtZero) const
