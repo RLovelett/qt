@@ -1146,6 +1146,16 @@ static bool write_jpeg_image(const QImage &sourceImage, QIODevice *device, int s
                 }
                 break;
             }
+            case QImage::Format_RGB16: {
+                quint16* rgb = (quint16*)image.scanLine(cinfo.next_scanline);
+                for (int i=0; i<w; i++) {
+                    *row++ = (*rgb >> 11) << 3;
+                    *row++ = ((*rgb >> 5) & 0x3f) << 2;
+                    *row++ = (*rgb & 0x1f) << 3;
+                    ++rgb;
+                }
+                break;
+            }
             default:
                 qWarning("QJpegHandler: unable to write image of format %i",
                          image.format());
