@@ -419,6 +419,7 @@ void QGLFramebufferObjectPrivate::init(QGLFramebufferObject *q, const QSize &sz,
     // init texture
     if (samples == 0) {
         glGenTextures(1, &texture);
+        ownsTexture = true;
         glBindTexture(target, texture);
         glTexImage2D(target, 0, internal_format, size.width(), size.height(), 0,
                 GL_RGBA, GL_UNSIGNED_BYTE, NULL);
@@ -543,6 +544,52 @@ void QGLFramebufferObjectPrivate::init(QGLFramebufferObject *q, const QSize &sz,
     format.setTextureTarget(target);
     format.setSamples(int(samples));
     format.setAttachment(fbo_attachment);
+    format.setInternalTextureFormat(internal_format);
+}
+
+void QGLFramebufferObjectPrivate::initWithTextureId(QGLFramebufferObject *q, const QSize &sz, GLenum internal_format, GLuint textureId)
+{
+    QGLContext *ctx = const_cast<QGLContext *>(QGLContext::currentContext());
+    fbo_guard.setContext(ctx);
+
+    bool ext_detected = (QGLExtensions::glExtensions() & QGLExtensions::FramebufferObject);
+    if (!ext_detected || (ext_detected && !qt_resolve_framebufferobject_extensions(ctx)))
+        return;
+
+    size = sz;
+    target = GL_TEXTURE_2D;
+    // texture dimensions
+
+    QT_RESET_GLERROR(); // reset error state
+    GLuint fbo = 0;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER_EXT, fbo);
+    fbo_guard.setId(fbo);
+
+    glDevice.setFBO(q, QGLFramebufferObject::NoAttachment);
+
+    QT_CHECK_GLERROR();
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, target, textureId, 0);
+    ownsTexture = false;
+    
+    QT_CHECK_GLERROR();
+    valid = checkFramebufferStatus();
+    glBindTexture(target, 0);
+    color_buffer = 0;
+    
+    glBindFramebuffer(GL_FRAMEBUFFER_EXT, ctx->d_ptr->current_fbo);
+    
+    if (!valid) {
+        glDeleteFramebuffers(1, &fbo);
+        fbo_guard.setId(0);
+    }
+    
+    QT_CHECK_GLERROR();
+
+    format.setTextureTarget(target);
+    format.setSamples(0);
+    format.setAttachment(QGLFramebufferObject::NoAttachment);
     format.setInternalTextureFormat(internal_format);
 }
 
@@ -699,6 +746,54 @@ QGLFramebufferObject::QGLFramebufferObject(int width, int height, GLenum target)
 
 /*! \overload
 
+    Constructs an OpenGL framebuffer object that renders to the given \a textureId.
+    
+    The texture \a textureId is bound to the fbo as GL_TEXTURE_2D target on color buffer 0.
+    No stencil or depth buffers are attached.
+    
+    The \a sz and \a internal_format should describe the texture represented by the
+    texture id. Those parameters are not used directly but they are used to 
+    set the size and format of the constructed class.
+    
+    The \a textureId is not owned by the fbo and is not destroyed when the object is
+    destroyed.
+
+    \sa size(), texture(), format()
+*/
+
+QGLFramebufferObject::QGLFramebufferObject(const QSize &sz, GLenum internal_format, GLuint textureId)
+    : d_ptr(new QGLFramebufferObjectPrivate)
+{
+    Q_D(QGLFramebufferObject);
+    d->initWithTextureId(this, sz, internal_format, textureId);
+}
+
+/*! \overload
+
+    Constructs an OpenGL framebuffer object that renders to the given \a textureId.
+    
+    The texture \a textureId is bound to the fbo as GL_TEXTURE_2D target on color buffer 0.
+    No stencil or depth buffers are attached.
+    
+    The \a width and \a height and \a internal_format should describe the texture represented by the
+    texture id. Those parameters are not used directly but they are used to 
+    set the size and format of the constructed class.
+    
+    The \a textureId is not owned by the fbo and is not destroyed when the object is
+    destroyed.
+
+    \sa size(), texture(), format()
+*/
+
+QGLFramebufferObject::QGLFramebufferObject(int width, int height, GLenum internal_format, GLuint textureId)
+    : d_ptr(new QGLFramebufferObjectPrivate)
+{
+    Q_D(QGLFramebufferObject);
+    d->initWithTextureId(this, QSize(width, height), internal_format, textureId);    
+}
+
+/*! \overload
+
     Constructs an OpenGL framebuffer object of the given \a size based on the
     supplied \a format.
 */
@@ -813,7 +908,7 @@ QGLFramebufferObject::~QGLFramebufferObject()
 
     if (isValid() && ctx) {
         QGLShareContextScope scope(ctx);
-        if (d->texture)
+        if (d->texture && d->ownsTexture)
             glDeleteTextures(1, &d->texture);
         if (d->color_buffer)
             glDeleteRenderbuffers(1, &d->color_buffer);

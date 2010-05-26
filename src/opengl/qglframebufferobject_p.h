@@ -133,6 +133,7 @@ public:
     void init(QGLFramebufferObject *q, const QSize& sz,
               QGLFramebufferObject::Attachment attachment,
               GLenum internal_format, GLenum texture_target, GLint samples = 0);
+	void initWithTextureId(QGLFramebufferObject *q, const QSize &sz, GLenum internal_format, GLuint textureId);
     bool checkFramebufferStatus() const;
     QGLSharedResourceGuard fbo_guard;
     GLuint texture;
@@ -145,6 +146,7 @@ public:
     QGLFramebufferObject::Attachment fbo_attachment;
     mutable QPaintEngine *engine;
     QGLFBOGLPaintDevice glDevice;
+    bool ownsTexture;
 
     inline GLuint fbo() const { return fbo_guard.id(); }
 };
