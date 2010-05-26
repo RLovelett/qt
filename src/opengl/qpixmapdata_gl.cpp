@@ -214,12 +214,17 @@ void QGLPixmapGLPaintDevice::endPaint()
     if (!data->isValid())
         return;
 
-    data->copyBackFromRenderFbo(false);
+    if (!data->m_directFbo)
+        data->copyBackFromRenderFbo(false);
 
     // Base's endPaint will restore the previous FBO binding
     QGLPaintDevice::endPaint();
 
-    qgl_fbo_pool()->release(data->m_renderFbo);
+    if (data->m_directFbo)
+        delete data->m_renderFbo;
+    else
+        qgl_fbo_pool()->release(data->m_renderFbo);
+        
     data->m_renderFbo = 0;
 }
 
@@ -552,7 +557,7 @@ QImage QGLPixmapData::toImage() const
     if (!isValid())
         return QImage();
 
-    if (m_renderFbo) {
+    if (m_renderFbo && ! m_directFbo) {
         copyBackFromRenderFbo(true);
     } else if (!m_source.isNull()) {
         return m_source;
@@ -660,16 +665,18 @@ QPaintEngine* QGLPixmapData::paintEngine() const
             qt_gl_share_widget()->makeCurrent();
         QGLShareContextScope ctx(qt_gl_share_widget()->context());
 
-        QGLFramebufferObjectFormat format;
 #ifndef QT_OPENGL_ES_2
+        QGLFramebufferObjectFormat format;
         format.setAttachment(QGLFramebufferObject::CombinedDepthStencil);
         format.setSamples(4);
         format.setInternalTextureFormat(GLenum(m_hasAlpha ? GL_RGBA : GL_RGB));
-#else
-        format.setSamples(0);
-        format.setInternalTextureFormat(GLenum(GL_RGBA));
-#endif
+        m_directFbo = false;
         m_renderFbo = qgl_fbo_pool()->acquire(size(), format);
+#else
+        ensureCreated();
+        m_renderFbo = new QGLFramebufferObject(w, h, GLenum(m_hasAlpha ? GL_RGBA : GL_RGB), m_texture.id);
+        m_directFbo = true;
+#endif
 
         if (m_renderFbo) {
             if (!m_engine)
@@ -697,7 +704,7 @@ extern QRgb qt_gl_convertToGLFormat(QRgb src_pixel, GLenum texture_format);
 // a multisample FBO).
 GLuint QGLPixmapData::bind(bool copyBack) const
 {
-    if (m_renderFbo && copyBack) {
+    if (m_renderFbo && copyBack && !m_directFbo) {
         copyBackFromRenderFbo(true);
     } else {
         ensureCreated();

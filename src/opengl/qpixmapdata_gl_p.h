@@ -164,6 +164,7 @@ private:
     mutable bool m_hasFillColor;
 
     mutable bool m_hasAlpha;
+    mutable bool m_directFbo;
 
     mutable QGLPixmapGLPaintDevice m_glDevice;
 
