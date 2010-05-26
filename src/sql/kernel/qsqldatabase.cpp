@@ -197,7 +197,8 @@ void QSqlDatabasePrivate::cleanConnections()
 
     QConnectionDict::iterator it = dict->begin();
     while (it != dict->end()) {
-        invalidateDb(it.value(), it.key());
+        it.value().d->disable();
+        it.value().d->connName.clear();
         ++it;
     }
     dict->clear();
