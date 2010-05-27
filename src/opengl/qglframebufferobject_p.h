@@ -133,7 +133,7 @@ public:
     void init(QGLFramebufferObject *q, const QSize& sz,
               QGLFramebufferObject::Attachment attachment,
               GLenum internal_format, GLenum texture_target, GLint samples = 0);
-	void initWithTextureId(QGLFramebufferObject *q, const QSize &sz, GLenum internal_format, GLuint textureId);
+    void initWithTextureId(QGLFramebufferObject *q, const QSize &sz, GLenum internal_format, GLuint textureId);
     bool checkFramebufferStatus() const;
     QGLSharedResourceGuard fbo_guard;
     GLuint texture;
