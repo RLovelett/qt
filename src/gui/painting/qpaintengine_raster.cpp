@@ -4118,9 +4118,9 @@ void QRasterPaintEnginePrivate::rasterize(QT_FT_Outline *outline,
         rasterParams.flags |= (QT_FT_RASTER_FLAG_AA | QT_FT_RASTER_FLAG_DIRECT);
         rasterParams.gray_spans = callback;
         error = qt_ft_grays_raster.raster_render(*grayRaster.data(), &rasterParams);
-
+        
         // Out of memory, reallocate some more and try again...
-        if (error == -6) { // -6 is Result_err_OutOfMemory
+        if (error == -3) { 
             int new_size = rasterPoolSize * 2;
             if (new_size > 1024 * 1024) {
                 qWarning("QPainter: Rasterization of primitive failed");
