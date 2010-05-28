@@ -775,9 +775,8 @@ void QApplicationPrivate::construct(
     qt_is_gui_used = (qt_appType != QApplication::Tty);
     process_cmdline();
     // the environment variable has the lowest precedence of runtime graphicssystem switches
-    if (graphics_system_name.isEmpty()) {
+    if (graphics_system_name.isEmpty())
         graphics_system_name = QString::fromLocal8Bit(qgetenv("QT_GRAPHICSSYSTEM"));
-    }
     // Must be called before initialize()
     qt_init(this, qt_appType
 #ifdef Q_WS_X11
