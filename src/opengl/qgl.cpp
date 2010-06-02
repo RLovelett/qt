@@ -1255,6 +1255,8 @@ QGLFormat::OpenGLVersionFlags Q_AUTOTEST_EXPORT qOpenGLVersionFlagsFromString(co
                             QGLFormat::OpenGL_Version_2_1 |
                             QGLFormat::OpenGL_Version_3_0;
             switch (versionString[2].toAscii()) {
+            case '3':
+                versionFlags |= QGLFormat::OpenGL_Version_3_3;
             case '2':
                 versionFlags |= QGLFormat::OpenGL_Version_3_2;
             case '1':
@@ -1263,9 +1265,23 @@ QGLFormat::OpenGLVersionFlags Q_AUTOTEST_EXPORT qOpenGLVersionFlagsFromString(co
                 break;
             default:
                 versionFlags |= QGLFormat::OpenGL_Version_3_1 |
-                                QGLFormat::OpenGL_Version_3_2;
+                                QGLFormat::OpenGL_Version_3_2 |
+                                QGLFormat::OpenGL_Version_3_3;
                 break;
             }
+        } else if (versionString.startsWith(QLatin1String("4."))) {
+            versionFlags |= QGLFormat::OpenGL_Version_1_1 |
+                            QGLFormat::OpenGL_Version_1_2 |
+                            QGLFormat::OpenGL_Version_1_3 |
+                            QGLFormat::OpenGL_Version_1_4 |
+                            QGLFormat::OpenGL_Version_1_5 |
+                            QGLFormat::OpenGL_Version_2_0 |
+                            QGLFormat::OpenGL_Version_2_1 |
+                            QGLFormat::OpenGL_Version_3_0 |
+                            QGLFormat::OpenGL_Version_3_1 |
+                            QGLFormat::OpenGL_Version_3_2 |
+                            QGLFormat::OpenGL_Version_3_3 |
+                            QGLFormat::OpenGL_Version_4_0;
         } else {
             versionFlags |= QGLFormat::OpenGL_Version_1_1 |
                             QGLFormat::OpenGL_Version_1_2 |
@@ -1276,7 +1292,9 @@ QGLFormat::OpenGLVersionFlags Q_AUTOTEST_EXPORT qOpenGLVersionFlagsFromString(co
                             QGLFormat::OpenGL_Version_2_1 |
                             QGLFormat::OpenGL_Version_3_0 |
                             QGLFormat::OpenGL_Version_3_1 |
-                            QGLFormat::OpenGL_Version_3_2;
+                            QGLFormat::OpenGL_Version_3_2 |
+                            QGLFormat::OpenGL_Version_3_3 |
+                            QGLFormat::OpenGL_Version_4_0;
         }
     }
     return versionFlags;
