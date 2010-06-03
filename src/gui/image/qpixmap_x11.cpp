@@ -69,6 +69,8 @@
 #include <private/qdrawhelper_p.h>
 #include <private/qimage_p.h>
 #include <private/qimagepixmapcleanuphooks_p.h>
+#include <private/qapplication_p.h>
+#include <private/qgraphicssystem_p.h>
 
 #include <stdlib.h>
 
@@ -2352,5 +2354,18 @@ QPixmap QPixmap::fromX11Pixmap(Qt::HANDLE pixmap, QPixmap::ShareMode mode)
     return QPixmap(data);
 }
 
+QPixmap QPixmap::fromSharedImage(Qt::HANDLE h)
+{
+    QGraphicsSystem* gs = QApplicationPrivate::graphicsSystem();
+    QScopedPointer<QPixmapData> data(gs ? gs->createPixmapData(QPixmapData::PixmapType)
+            : QGraphicsSystem::createDefaultPixmapData(QPixmapData::PixmapType));
+    data->fromSharedImage(h);
+    return QPixmap(data.take());
+}
+
+Qt::HANDLE QPixmap::toSharedImage()
+{
+    return data.data()->toSharedImage();
+}
 
 QT_END_NAMESPACE

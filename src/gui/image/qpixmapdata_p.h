@@ -129,6 +129,9 @@ public:
 #if defined(Q_OS_SYMBIAN)
     virtual void* toNativeType(NativeType type);
     virtual void fromNativeType(void* pixmap, NativeType type);
+#elif defined(Q_WS_X11)
+    virtual void fromSharedImage(Qt::HANDLE h);
+    virtual Qt::HANDLE toSharedImage();
 #endif
 
     static QPixmapData *create(int w, int h, PixelType type);
