@@ -254,6 +254,7 @@ QGLPixmapData::QGLPixmapData(PixelType type)
     , m_dirty(false)
     , m_hasFillColor(false)
     , m_hasAlpha(false)
+    , m_writable(false)
 {
     setSerialNumber(++qt_gl_pixmap_serial);
     m_glDevice.setPixmapData(this);
@@ -483,6 +484,11 @@ void QGLPixmapData::fill(const QColor &color)
 {
     if (!isValid())
         return;
+        
+    if (!m_writable) {
+        qWarning() << "Filling a non-writable texture-backed QPixmap is not supported!";
+        return;
+    }
 
     bool hasAlpha = color.alpha() != 255;
     if (hasAlpha && !m_hasAlpha) {
@@ -632,6 +638,11 @@ QPaintEngine* QGLPixmapData::paintEngine() const
 {
     if (!isValid())
         return 0;
+        
+    if (!m_writable) {
+        qWarning() << "Painting on non-writable texture-backed QPixmap is not supported!";
+        return 0;
+    }
 
     if (m_renderFbo)
         return m_engine;
