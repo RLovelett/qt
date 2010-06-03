@@ -168,6 +168,7 @@ typedef void *EGLImageKHR;
 
 #if !defined(EGL_KHR_image) && !defined(EGL_KHR_image_pixmap)
 #define EGL_NATIVE_PIXMAP_KHR       0x30B0
+#define EGL_GL_TEXTURE_2D_KHR       0x30B1
 #define EGL_KHR_image_pixmap
 #endif
 
