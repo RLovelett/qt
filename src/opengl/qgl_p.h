@@ -74,6 +74,7 @@ class QGLContext;
 class QGLOverlayWidget;
 class QPixmap;
 class QPixmapFilter;
+class QGLPixmapData;
 #ifdef Q_WS_MAC
 # ifdef qDebug
 #   define old_qDebug qDebug
@@ -352,6 +353,10 @@ public:
     EGLSurface eglSurfaceForDevice() const;
 #elif defined(Q_WS_X11) || defined(Q_WS_MAC)
     void* cx;
+#endif
+#if defined(QT_OPENGL_ES) && defined(Q_WS_X11)
+    Qt::HANDLE createSharedImageFromPixmap(QGLPixmapData *sourcePixmapData);
+    GLuint createTextureFromSharedImage(Qt::HANDLE handle, GLint *w, GLint *h);
 #endif
 #if defined(Q_WS_X11) || defined(Q_WS_MAC)
     void* vi;

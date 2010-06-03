@@ -756,4 +756,49 @@ QGLPaintDevice *QGLPixmapData::glDevice() const
     return &m_glDevice;
 }
 
+#if defined(Q_WS_X11)
+void QGLPixmapData::fromSharedImage(Qt::HANDLE handle)
+{
+#if defined(QT_OPENGL_ES)
+    QGLShareContextScope ctx(qt_gl_share_widget()->context());
+    if (m_texture.id) {
+        qWarning() << "Pixmap already initialized!";
+        return;
+    } else {
+        GLuint texId = ctx->d_func()->createTextureFromSharedImage(handle, &w, &h);
+        m_writable = false;
+
+        if (texId) {
+            m_texture.id = texId;
+            m_dirty = false;
+            is_null = false;
+            m_ctx = ctx;
+            m_texture.options &= ~QGLContext::MemoryManagedBindOption;
+            d = 32;
+            setSerialNumber(++qt_gl_pixmap_serial);
+
+            glBindTexture(GL_TEXTURE_2D, m_texture.id);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        } else
+            is_null = true;
+    }
+#else
+    qWarning() << "Shared images are only supported on EGL";
+#endif    
+}
+
+Qt::HANDLE QGLPixmapData::toSharedImage()
+{
+#if defined(QT_OPENGL_ES)
+    ensureCreated();
+    QGLShareContextScope ctx(qt_gl_share_widget()->context());
+    return ctx->d_func()->createSharedImageFromPixmap(this);
+#else
+    qWarning() << "Shared images are only supported on EGL";
+    return 0;
+#endif    
+}
+#endif
+
 QT_END_NAMESPACE

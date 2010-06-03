@@ -119,6 +119,11 @@ public:
     QPaintEngine *paintEngine() const;
     int metric(QPaintDevice::PaintDeviceMetric metric) const;
 
+#if defined(Q_WS_X11)    
+    Qt::HANDLE toSharedImage();
+    void fromSharedImage(Qt::HANDLE h);
+#endif
+
     // For accessing as a target:
     QGLPaintDevice *glDevice() const;
 

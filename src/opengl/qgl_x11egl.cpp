@@ -44,6 +44,7 @@
 #include <private/qpixmap_x11_p.h>
 #include <private/qgl_p.h>
 #include <private/qpaintengine_opengl_p.h>
+#include <private/qpixmapdata_gl_p.h>
 #include "qgl_egl_p.h"
 #include "qcolormap.h"
 #include <QDebug>
@@ -534,6 +535,69 @@ void QGLContextPrivate::unbindPixmapFromTexture(QPixmapData* pmd)
             qWarning() << "unbindPixmapFromTexture() - Unable to release bound texture: "
                        << QEgl::errorString();
         }
+    }
+}
+
+Qt::HANDLE QGLContextPrivate::createSharedImageFromPixmap(QGLPixmapData *sourcePixmapData)
+{
+    Q_Q(QGLContext);
+
+    GLuint textureId = sourcePixmapData->bind();
+    EGLint attribs[] = {
+        EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
+        EGL_NONE
+    };
+    
+    EGLImageKHR image = QEgl::eglCreateImageKHR(QEgl::display(), q->d_func()->eglContext->context(), EGL_GL_TEXTURE_2D_KHR,
+                                                (EGLClientBuffer) textureId, attribs);
+
+    if (image) {
+        EGLNativeSharedImageTypeNOK handle = QEgl::eglCreateSharedImageNOK(QEgl::display(), image, NULL);
+        QEgl::eglDestroyImageKHR(QEgl::display(), image);
+        return handle;
+    } else {
+        qWarning() << "Failed to create shared image from pixmap/texture!";
+        return 0;
+    }
+}
+
+GLuint QGLContextPrivate::createTextureFromSharedImage(Qt::HANDLE handle, GLint *w, GLint *h)
+{
+    Q_Q(QGLContext);
+
+    bool textureIsBound = false;
+    GLuint textureId;
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    EGLint attribs[] = {
+        EGL_IMAGE_PRESERVED_KHR, EGL_TRUE,
+        EGL_NONE
+    };
+    
+    EGLImageKHR image = QEgl::eglCreateImageKHR(QEgl::display(), EGL_NO_CONTEXT, EGL_SHARED_IMAGE_NOK,
+                                                (EGLClientBuffer)handle, attribs);
+
+    if (image != EGL_NO_IMAGE_KHR) {
+        QGLContext* ctx = q;
+        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+            
+        GLint err = glGetError();
+        if (err == GL_NO_ERROR)
+            textureIsBound = true;
+         
+        QEgl::eglQueryImageNOK(QEgl::display(), image, EGL_WIDTH, w);
+        QEgl::eglQueryImageNOK(QEgl::display(), image, EGL_HEIGHT, h);
+
+        QEgl::eglDestroyImageKHR(QEgl::display(), image);
+    }
+    
+    if (textureIsBound)
+        return textureId;
+    else {
+        qWarning() << "Failed to create a texture from a shared image!";
+        glDeleteTextures(1, &textureId);
+        return 0;
     }
 }
 
