@@ -262,6 +262,15 @@ bool QAbstractProxyModel::setData(const QModelIndex &index, const QVariant &valu
 /*!
     \reimp
  */
+bool QAbstractProxyModel::setItemData(const QModelIndex &index, const QMap< int, QVariant >& roles)
+{
+    Q_D(QAbstractProxyModel);
+    return d->model->setItemData(mapToSource(index), roles);
+}
+
+/*!
+    \reimp
+ */
 bool QAbstractProxyModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role)
 {
     Q_D(QAbstractProxyModel);
@@ -274,6 +283,90 @@ bool QAbstractProxyModel::setHeaderData(int section, Qt::Orientation orientation
         sourceSection = mapToSource(proxyIndex).row();
     }
     return d->model->setHeaderData(sourceSection, orientation, value, role);
+}
+
+/*!
+    \reimp
+ */
+QModelIndex QAbstractProxyModel::buddy(const QModelIndex &index) const
+{
+    Q_D(const QAbstractProxyModel);
+    return mapFromSource(d->model->buddy(mapToSource(index)));
+}
+
+/*!
+    \reimp
+ */
+bool QAbstractProxyModel::canFetchMore(const QModelIndex &parent) const
+{
+    Q_D(const QAbstractProxyModel);
+    return d->model->canFetchMore(mapToSource(parent));
+}
+
+/*!
+    \reimp
+ */
+void QAbstractProxyModel::fetchMore(const QModelIndex &parent)
+{
+    Q_D(QAbstractProxyModel);
+    d->model->fetchMore(mapToSource(parent));
+}
+
+/*!
+    \reimp
+ */
+void QAbstractProxyModel::sort(int column, Qt::SortOrder order)
+{
+    Q_D(QAbstractProxyModel);
+    d->model->sort(column, order);
+}
+
+/*!
+    \reimp
+ */
+QSize QAbstractProxyModel::span(const QModelIndex &index) const
+{
+    Q_D(const QAbstractProxyModel);
+    return d->model->span(mapToSource(index));
+}
+
+/*!
+    \reimp
+ */
+bool QAbstractProxyModel::hasChildren(const QModelIndex &parent = QModelIndex()) const
+{
+    Q_D(const QAbstractProxyModel);
+    return d->model->hasChildren(mapToSource(index));
+}
+
+/*!
+    \reimp
+ */
+QMimeData* QAbstractProxyModel::mimeData(const QModelIndexList &indexes) const
+{
+    Q_D(const QAbstractProxyModel);
+    QModelIndexList list;
+    foreach(const QModelIndex &index, indexes)
+        list << mapToSource(index);
+    return d->model->mimeData(indexes);
+}
+
+/*!
+    \reimp
+ */
+QStringList QAbstractProxyModel::mimeTypes() const
+{
+    Q_D(const QAbstractProxyModel);
+    return d->model->mimeTypes();
+}
+
+/*!
+    \reimp
+ */
+Qt::DropActions QAbstractProxyModel::supportedDropActions() const
+{
+    Q_D(const QAbstractProxyModel);
+    return d->model->supportedDropActions();
 }
 
 QT_END_NAMESPACE
