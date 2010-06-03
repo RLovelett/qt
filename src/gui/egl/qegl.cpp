@@ -528,10 +528,16 @@ int QEglContext::configAttrib(int name) const
 typedef EGLImageKHR (EGLAPIENTRY *_eglCreateImageKHR)(EGLDisplay, EGLContext, EGLenum, EGLClientBuffer, const EGLint*);
 typedef EGLBoolean (EGLAPIENTRY *_eglDestroyImageKHR)(EGLDisplay, EGLImageKHR);
 
-// Defined in qegl.cpp:
 static _eglCreateImageKHR qt_eglCreateImageKHR = 0;
 static _eglDestroyImageKHR qt_eglDestroyImageKHR = 0;
 
+typedef EGLNativeSharedImageTypeNOK (EGLAPIENTRY *_eglCreateSharedImageNOK)(EGLDisplay, EGLImageKHR, EGLint*);
+typedef EGLBoolean (EGLAPIENTRY *_eglDestroySharedImageNOK)(EGLDisplay, EGLNativeSharedImageTypeNOK);
+typedef EGLBoolean (EGLAPIENTRY *_eglQueryImageNOK)(EGLDisplay, EGLImageKHR, EGLint, EGLint*);
+
+static _eglCreateSharedImageNOK qt_eglCreateSharedImageNOK = 0;
+static _eglDestroySharedImageNOK qt_eglDestroySharedImageNOK = 0;
+static _eglQueryImageNOK qt_eglQueryImageNOK = 0;
 
 EGLDisplay QEgl::display()
 {
@@ -558,6 +564,14 @@ EGLDisplay QEgl::display()
         if (QEgl::hasExtension("EGL_KHR_image") || QEgl::hasExtension("EGL_KHR_image_base")) {
             qt_eglCreateImageKHR = (_eglCreateImageKHR) eglGetProcAddress("eglCreateImageKHR");
             qt_eglDestroyImageKHR = (_eglDestroyImageKHR) eglGetProcAddress("eglDestroyImageKHR");
+        }
+#endif
+
+#if !defined(EGL_NOK_image_shared)
+        if (QEgl::hasExtension("EGL_NOK_image_shared")) {
+            qt_eglCreateSharedImageNOK = (_eglCreateSharedImageNOK) eglGetProcAddress("eglCreateSharedImageNOK");
+            qt_eglDestroySharedImageNOK = (_eglDestroySharedImageNOK) eglGetProcAddress("eglDestroySharedImageNOK");
+            qt_eglQueryImageNOK = (_eglQueryImageNOK) eglGetProcAddress("eglQueryImageNOK");
         }
 #endif
     }
@@ -591,6 +605,44 @@ EGLBoolean QEgl::eglDestroyImageKHR(EGLDisplay dpy, EGLImageKHR img)
     return 0;
 }
 
+EGLNativeSharedImageTypeNOK QEgl::eglCreateSharedImageNOK(EGLDisplay dpy, EGLImageKHR image, EGLint* attribs)
+{
+    if (qt_eglCreateSharedImageNOK)
+        return qt_eglCreateSharedImageNOK(dpy, image, attribs);
+
+    QEgl::display(); // Initialises function pointers
+    if (qt_eglCreateSharedImageNOK)
+        return qt_eglCreateSharedImageNOK(dpy, image, attribs);
+
+    qWarning("QEgl::eglCreateSharedImageNOK called but EGL_NOK_image_shared extension not present");
+    return 0;   
+}
+ 
+EGLBoolean QEgl::eglDestroySharedImageNOK(EGLDisplay dpy, EGLNativeSharedImageTypeNOK handle)
+{
+    if (qt_eglDestroySharedImageNOK)
+        return qt_eglDestroySharedImageNOK(dpy, handle);
+    
+    QEgl::display(); // Initialises function pointers
+    if (qt_eglDestroySharedImageNOK)
+        return qt_eglDestroySharedImageNOK(dpy, handle);
+
+    qWarning("QEgl::eglDestroySharedImageNOK called but EGL_NOK_image_shared extension not present");
+    return 0;   
+}
+
+EGLBoolean QEgl::eglQueryImageNOK(EGLDisplay dpy, EGLImageKHR image, EGLint attrib, EGLint* v)
+{   
+    if (qt_eglQueryImageNOK)
+        return qt_eglQueryImageNOK(dpy, image, attrib, v);
+
+    QEgl::display(); // Initialises function pointers
+    if (qt_eglQueryImageNOK)
+        return qt_eglQueryImageNOK(dpy, image, attrib, v);
+
+    qWarning("QEgl::eglQueryImageNOK called but EGL_NOK_image_shared extension not present");
+    return 0;   
+}
 
 #ifndef Q_WS_X11
 EGLSurface QEgl::createSurface(QPaintDevice *device, EGLConfig cfg, const QEglProperties *properties)

@@ -171,6 +171,10 @@ typedef void *EGLImageKHR;
 #define EGL_KHR_image_pixmap
 #endif
 
+#if !defined(EGL_NOK_image_shared)
+typedef XID EGLNativeSharedImageTypeNOK;
+#define EGL_SHARED_IMAGE_NOK 0x30DA
+#endif
 
 class QEglProperties;
 
@@ -224,6 +228,10 @@ namespace QEgl {
     // Extension functions
     Q_GUI_EXPORT EGLImageKHR eglCreateImageKHR(EGLDisplay dpy, EGLContext ctx, EGLenum target, EGLClientBuffer buffer, const EGLint *attrib_list);
     Q_GUI_EXPORT EGLBoolean  eglDestroyImageKHR(EGLDisplay dpy, EGLImageKHR img);
+    Q_GUI_EXPORT EGLNativeSharedImageTypeNOK eglCreateSharedImageNOK(EGLDisplay, EGLImageKHR, EGLint*);
+    Q_GUI_EXPORT EGLBoolean eglDestroySharedImageNOK(EGLDisplay, EGLNativeSharedImageTypeNOK);
+    Q_GUI_EXPORT EGLBoolean eglQueryImageNOK(EGLDisplay, EGLImageKHR, EGLint, EGLint*);
+
 
 #ifdef Q_WS_X11
     Q_GUI_EXPORT VisualID getCompatibleVisualId(EGLConfig config);
