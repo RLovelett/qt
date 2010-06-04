@@ -804,10 +804,12 @@ private:
 };
 
 QAccessibleItemView::QAccessibleItemView(QWidget *w)
-    : QAccessibleAbstractScrollArea(w->objectName() == QLatin1String("qt_scrollarea_viewport") ? w->parentWidget() : w)
+    : QAccessibleAbstractScrollArea(
+        w->objectName() == QLatin1String("qt_scrollarea_viewport") ? w->parentWidget() // as defined in QAbstractScrollAreaPrivate::init()
+        : qobject_cast<QAbstractScrollArea*>(w->parentWidget()) && !qobject_cast<QAbstractScrollArea*>(w) ? w->parentWidget() // look if the parent is the viewPort()
+        : w) // fallback
 {
-    atVP = w->objectName() == QLatin1String("qt_scrollarea_viewport");
-
+    atVP = w->objectName() == QLatin1String("qt_scrollarea_viewport") || dynamic_cast<QAbstractScrollArea*>(object());
 }
 
 
