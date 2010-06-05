@@ -14,6 +14,12 @@ QT -= gui
 
 CONFIG += depend_includepath
 
+static:win32-g++* {
+    # applications must link to static libjscore
+    target.path = $$[QT_INSTALL_LIBS]
+    INSTALLS += target
+}
+
 contains(QT_CONFIG, embedded):CONFIG += embedded
 
 CONFIG(QTDIR_build) {
