@@ -1284,11 +1284,14 @@ bool QDirectFBScreen::connect(const QString &displaySpec)
 #ifdef QT_NO_DIRECTFB_WM
         result = d_ptr->primarySurface->GetSize(d_ptr->primarySurface, &w, &h);
 #elif (Q_DIRECTFB_VERSION >= 0x010000)
-        IDirectFBSurface *layerSurface;
+        IDirectFBSurface *layerSurface = 0;
+        d_ptr->dfbLayer->SetCooperativeLevel(d_ptr->dfbLayer, DLSCL_EXCLUSIVE);
         if (d_ptr->dfbLayer->GetSurface(d_ptr->dfbLayer, &layerSurface) != DFB_OK) {
             result = layerSurface->GetSize(layerSurface, &w, &h);
             layerSurface->Release(layerSurface);
         }
+        d_ptr->dfbLayer->SetCooperativeLevel(d_ptr->dfbLayer, DLSCL_SHARED);
+
         if (w <= 0 || h <= 0) {
             result = d_ptr->dfbScreen->GetSize(d_ptr->dfbScreen, &w, &h);
         }
