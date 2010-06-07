@@ -1100,7 +1100,12 @@ void QGLContext::generateFontDisplayLists(const QFont & fnt, int listBase)
 
 void *QGLContext::getProcAddress(const QString &proc) const
 {
-    typedef void *(*qt_glXGetProcAddressARB)(const GLubyte *);
+    return reinterpret_cast<void *>(getProc(proc));
+}
+
+QGLProc QGLContext::getProc(const QString &proc) const
+{
+    typedef QGLProc (*qt_glXGetProcAddressARB)(const GLubyte *);
     static qt_glXGetProcAddressARB glXGetProcAddressARB = 0;
     static bool resolved = false;
 

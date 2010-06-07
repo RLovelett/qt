@@ -41,7 +41,7 @@
 
 #include "glextensions.h"
 
-#define RESOLVE_GL_FUNC(f) ok &= bool((f = (_gl##f) context->getProcAddress(QLatin1String("gl" #f))));
+#define RESOLVE_GL_FUNC(f) ok &= bool((f = (_gl##f) context->getProc(QLatin1String("gl" #f))));
 
 bool GLExtensionFunctions::resolve(const QGLContext *context)
 {

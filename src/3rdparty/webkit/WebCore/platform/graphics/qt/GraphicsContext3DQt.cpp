@@ -250,7 +250,7 @@ public:
 
 private:
 
-    void* getProcAddress(const String& proc);
+    QGLProc getProcAddress(const String& proc);
     bool m_contextValid;
 };
 
@@ -426,14 +426,14 @@ GraphicsContext3DInternal::~GraphicsContext3DInternal()
     m_glWidget = 0;
 }
 
-void* GraphicsContext3DInternal::getProcAddress(const String& proc)
+QGLProc GraphicsContext3DInternal::getProcAddress(const String& proc)
 {
     String ext[3] = { "", "ARB", "EXT" };
 
     for (int i = 0; i < 3; i++) {
         String nameWithExt = proc + ext[i];
 
-        void* addr = m_glWidget->context()->getProcAddress(nameWithExt.utf8().data());
+        QGLProc addr = m_glWidget->context()->getProc(nameWithExt.utf8().data());
         if (addr) 
             return addr;
     }

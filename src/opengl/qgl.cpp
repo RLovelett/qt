@@ -3734,7 +3734,19 @@ QGLWidget::~QGLWidget()
 */
 
 /*!
+    \obsolete
+
     \fn void *QGLContext::getProcAddress(const QString &proc) const
+
+    Returns a function pointer to the GL extension function passed in
+    \a proc. 0 is returned if a pointer to the function could not be
+    obtained.
+
+    \sa getProc()
+*/
+
+/*!
+    \fn QGLProc QGLContext::getProc(const QString &proc) const
 
     Returns a function pointer to the GL extension function passed in
     \a proc. 0 is returned if a pointer to the function could not be
@@ -5495,7 +5507,7 @@ QSize QGLTexture::bindCompressedTexture
                      "not support texture compression extensions.");
             return QSize();
         }
-        glCompressedTexImage2D = (_glCompressedTexImage2DARB) ctx->getProcAddress(QLatin1String("glCompressedTexImage2DARB"));
+        glCompressedTexImage2D = (_glCompressedTexImage2DARB) ctx->getProc(QLatin1String("glCompressedTexImage2DARB"));
         if (!glCompressedTexImage2D) {
             qWarning("QGLContext::bindTexture(): could not resolve "
                      "glCompressedTexImage2DARB.");
