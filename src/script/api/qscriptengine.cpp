@@ -1664,13 +1664,7 @@ QVariant QScriptEnginePrivate::toVariant(JSC::ExecState *exec, JSC::JSValue valu
             return variantListFromArray(exec, value);
         else if (QScriptDeclarativeClass *dc = declarativeClass(value))
             return dc->toVariant(declarativeObject(value));
-        // try to convert to primitive
-        JSC::JSValue savedException;
-        saveException(exec, &savedException);
-        JSC::JSValue prim = value.toPrimitive(exec);
-        restoreException(exec, savedException);
-        if (!prim.isObject())
-            return toVariant(exec, prim);
+        return variantMapFromObject(exec, value);
     } else if (value.isNumber()) {
         return QVariant(toNumber(exec, value));
     } else if (value.isString()) {
