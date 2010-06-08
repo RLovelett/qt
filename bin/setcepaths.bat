@@ -130,10 +130,10 @@ tmp_created_script_setup.bat
 del tmp_created_script_setup.bat
 echo Windows Mobile 6 Professional selected, environment is set up
 ) ELSE IF "%1" EQU "wincewm65professional-msvc2008" (
-checksdk.exe -sdk "Windows Mobile 6 Professional SDK (ARMV4I)" -script tmp_created_script_setup.bat 1>NUL
+checksdk.exe -sdk "Windows Mobile 6.5.3 Professional DTK (ARMV4I)" -script tmp_created_script_setup.bat 1>NUL
 tmp_created_script_setup.bat
 del tmp_created_script_setup.bat
-echo Windows Mobile 6 Professional selected, environment is set up
+echo Windows Mobile 6.5.3 Professional selected, environment is set up
 ) ELSE IF "%1" EQU "wincewm60standard-msvc2008" (
 checksdk.exe -sdk "Windows Mobile 6 Standard SDK (ARMV4I)" -script tmp_created_script_setup.bat 1>NUL
 tmp_created_script_setup.bat
@@ -155,6 +155,8 @@ echo   wince50standard-sh4-msvc2005    - Build for the WinCE standard SDK 5.0
 echo                                     with sh4 platform preset
 echo   wincewm60professional-msvc2005  - SDK for Windows Mobile 6 professional
 echo   wincewm60standard-msvc2005      - SDK for Windows Mobile 6 Standard
+echo   wincewm65professional-msvc2005  - DTK for Windows Mobile 6.5.3 Professional
+echo   wincewm65standard-msvc2005      - DTK for Windows Mobile 6.5.3 Standard
 echo and the corresponding versions for msvc2008.
 echo.
 )
