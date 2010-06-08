@@ -1662,9 +1662,14 @@ QVariant QScriptEnginePrivate::toVariant(JSC::ExecState *exec, JSC::JSValue valu
         else if (isRegExp(value))
             return QVariant(toRegExp(exec, value));
 #endif
-        else if (isArray(value))
+        else if (isArray(value)) {
+            // For arrays below a certain depth, we simply return an invalid QVariant. 
+            // This will mostly happen for recursive data structures
+            if (depth >= MaxDepth)
+                return QVariant();
+        
             return variantListFromArray(exec, value, depth);
-        else if (QScriptDeclarativeClass *dc = declarativeClass(value))
+        } else if (QScriptDeclarativeClass *dc = declarativeClass(value))
             return dc->toVariant(declarativeObject(value));
 
         // For objects below a certain depth, we simply return an invalid QVariant. 

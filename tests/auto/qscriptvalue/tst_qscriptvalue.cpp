@@ -1345,6 +1345,22 @@ void tst_QScriptValue::objectToVariantSlot()
     QVERIFY(!current["a"].isValid());
 }
 
+/*
+    Tests how recursive arrays are handled by QScriptValue::toVariant
+*/
+void tst_QScriptValue::toVariantArrayRecursion()
+{
+    QScriptEngine eng;
+    
+    QScriptValue recursiveArray = eng.evaluate("(function() {var a = []; a.push(a); return a;})()");
+
+    /*
+        If a stack overflow occurs on the next line, array conversion chokes on the infinitely recursive 
+        data structure produced by the (valid) javascript snippet above.
+    */
+    QCOMPARE(recursiveArray.toVariant().typeName(), "QVariantList");
+}
+
 void tst_QScriptValue::toVariant_old()
 {
     QScriptEngine eng;

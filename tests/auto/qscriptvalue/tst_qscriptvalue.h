@@ -191,6 +191,7 @@ private slots:
     void objectToVariantSlot();
     void objectToVariant();
     void objectToVariant_data();
+    void toVariantArrayRecursion();
 
     void toString_old();
     void toNumber_old();
