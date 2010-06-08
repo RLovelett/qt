@@ -980,6 +980,12 @@ void QGridLayoutEngine::removeItem(QGridLayoutItem *item)
         }
     }
 
+    for (int i = 0; i < NOrientations; ++i) {
+        for (int j = item->firstRow(); j <= item->lastRow(); ++j) {
+            setRowSpacing(j, 0, (Qt::Orientation)i);
+        }
+    }
+
     q_items.removeAll(item);
 }
 
