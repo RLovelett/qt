@@ -50,7 +50,7 @@ extern bool qt_script_isJITEnabled();
 QT_END_NAMESPACE
 
 tst_QScriptValue::tst_QScriptValue()
-    : engine(0)
+    : engine(0), m_ConversionSlotCalled(false)
 {
 }
 
@@ -1234,6 +1234,117 @@ void tst_QScriptValue::toUInt16_old()
 Q_DECLARE_METATYPE(QVariant)
 #endif
 
+void tst_QScriptValue::objectToVariant_data()
+{
+    QVariantMap map;
+    QVariantList list;
+
+    /*
+        This dataset is used to test c++ -> javascript -> c++ roundtrips.
+     */     
+    QTest::addColumn<QVariant>("variant");
+    QTest::newRow("Empty variant map.") << QVariant(QVariantMap());
+    
+    map["a"] = 1;
+    QTest::newRow("Variant map with one entry.") << QVariant(map);
+    
+    map["b"] = map;
+    QTest::newRow("Variant map within a variant map.") << QVariant(map);
+    
+    map.clear();
+    list << 1;
+    map["c"] = list;
+    QTest::newRow("List within a variant map.") << QVariant(map);
+    
+    list.clear();
+    list << map;
+    QTest::newRow("Variant map within a list.") << QVariant(list);
+}
+
+/*
+    The purpose of this test is to check whether a variant map / variant list passed to javascript
+    can be returned untouched. Since they are converted to javascript objects/arrays, this requires
+    QScriptValue::toVariant() to handle these two correctly.
+ */
+void tst_QScriptValue::objectToVariant()
+{
+    QFETCH(QVariant, variant);
+    
+    // Define a pass-through function in a script engine
+    QScriptEngine eng;
+    eng.evaluate("function test(a) { return a; }");
+    QScriptValue function = eng.globalObject().property("test");
+    QVERIFY(function.isFunction());
+    
+    QScriptValue result = function.call(QScriptValue(), QScriptValueList() << eng.newVariant(variant));
+    QCOMPARE(result.toVariant(), variant);
+}
+
+void tst_QScriptValue::objectToVariantSlot()
+{
+    QVariantMap expected;
+    QScriptEngine eng;
+    
+    // Expose the test-case to the script engine, so the testConversionSlot is available to the script
+    eng.globalObject().setProperty("testCase", eng.newQObject(this));
+    
+    // Test a simple empty object
+    resetConversionSlot();
+    eng.evaluate("testCase.testConversionSlot({})");    
+    QVERIFY(m_ConversionSlotCalled);
+    QCOMPARE(m_LastReceivedVariant, QVariant(QVariantMap()));
+    
+    // A more esoteric use: Pass a function object. The map has several entries, but they are not the subject of this test
+    resetConversionSlot();
+    eng.evaluate("testCase.testConversionSlot(function() {})");
+    QVERIFY(m_ConversionSlotCalled);
+    QCOMPARE(m_LastReceivedVariant.typeName(), "QVariantMap");
+        
+    // Pass a useful object with several key/value pairs and verify the conversion
+    resetConversionSlot();
+    expected.clear();
+    expected["a"] = QVariant(1);
+    expected["b"] = QVariant(2);
+    eng.evaluate("testCase.testConversionSlot({'a': 1, 'b': 2});");
+    QVERIFY(m_ConversionSlotCalled);
+    QCOMPARE(m_LastReceivedVariant, QVariant(expected));
+    
+    // Try it with nested objects
+    resetConversionSlot();
+    expected.clear();
+    expected["a"] = QVariant(1);
+    expected["b"] = QVariant(2);
+    expected["c"] = expected; // This is non-recursive since it copies the map
+    eng.evaluate("testCase.testConversionSlot({'a': 1, 'b': 2, 'c': {'a': 1, 'b': 2}});");
+    QVERIFY(m_ConversionSlotCalled);
+    QCOMPARE(m_LastReceivedVariant, QVariant(expected));
+    
+    // Try an array with objects in it
+    resetConversionSlot();
+    eng.evaluate("testCase.testConversionSlot([{'a': 1, 'b': 2, 'c': {'a': 1, 'b': 2}}]);");
+    QVERIFY(m_ConversionSlotCalled);
+    QCOMPARE(m_LastReceivedVariant, QVariant(QVariantList() << expected));
+    
+    // Try a self-recursive data structure
+    resetConversionSlot();
+    eng.evaluate("(function() { var a = {}; a.a = a; testCase.testConversionSlot(a); })();");
+    QVERIFY(m_ConversionSlotCalled);
+    QCOMPARE(m_LastReceivedVariant.typeName(), "QVariantMap");
+    
+    // Verify that the recursion is 10 levels deep - This must be synchronized with the MaxDepth constant in QScriptEngine.
+    static const int MaxDepth = 10;
+    QVariantMap current = m_LastReceivedVariant.value<QVariantMap>();
+    for (int i = 0; i < MaxDepth - 1; ++i) {
+        QVERIFY(current.contains("a"));
+        QCOMPARE(current["a"].typeName(), "QVariantMap");
+        current = current["a"].value<QVariantMap>();
+    }
+    
+    // The last one should simply be invalid, since on depth 10, primitives are still converted, but objects are not.
+    QVERIFY(current.contains("a"));
+    QVERIFY(!current["a"].isValid());
+}
+
 void tst_QScriptValue::toVariant_old()
 {
     QScriptEngine eng;
@@ -1270,7 +1381,7 @@ void tst_QScriptValue::toVariant_old()
     QCOMPARE(opaque.toVariant(), var);
 
     QScriptValue object = eng.newObject();
-    QCOMPARE(object.toVariant(), QVariant(QString("[object Object]")));
+    QCOMPARE(object.toVariant(), QVariant(QVariantMap()));
 
     QScriptValue qobject = eng.newQObject(this);
     {
@@ -2296,7 +2407,7 @@ void tst_QScriptValue::getSetScriptClass()
         QCOMPARE(obj.scriptClass(), (QScriptClass*)&testClass);
         QVERIFY(obj.isObject());
         QVERIFY(!obj.isVariant());
-        QVERIFY(!obj.toVariant().isValid());
+        QCOMPARE(obj.toVariant(), QVariant(QVariantMap())); // toVariant now converts objects to QVariantMaps. In this case, an empty one
     }
     {
         QScriptValue obj = eng.newQObject(this);
@@ -3470,6 +3581,18 @@ void tst_QScriptValue::objectId()
     QScriptValue obj = eng.objectById(globalObjectId);
     QVERIFY(obj.isObject());
     QVERIFY(obj.strictlyEquals(eng.globalObject()));
+}
+
+void tst_QScriptValue::testConversionSlot(QVariant variant)
+{
+    m_ConversionSlotCalled = true;
+    m_LastReceivedVariant = variant;
+}
+
+void tst_QScriptValue::resetConversionSlot()
+{
+    m_ConversionSlotCalled = false;
+    m_LastReceivedVariant = QVariant();
 }
 
 QTEST_MAIN(tst_QScriptValue)

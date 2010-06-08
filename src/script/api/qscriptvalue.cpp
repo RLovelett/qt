@@ -1218,7 +1218,8 @@ qsreal QScriptValue::toInteger() const
     \row    \o Array Object \o The array is converted to a QVariantList.
     \row    \o Object     \o The result is a QVariantMap with a (key, value) pair of the form 
                (propertyName, propertyValue.toVariant()) for each property, using QScriptValueIterator to 
-               iterate over the object's properties.
+               iterate over the object's properties. Objects on level 10 of an object graph are converted
+               to an invalid QVariant to prevent infinite recursion.
     \endtable
 
   \sa isVariant()

@@ -188,6 +188,9 @@ private slots:
 
     void toObject();
     void ctor();
+    void objectToVariantSlot();
+    void objectToVariant();
+    void objectToVariant_data();
 
     void toString_old();
     void toNumber_old();
@@ -399,10 +402,17 @@ private:
     void qscriptvalue_castquint16_makeData(const char *);
     void qscriptvalue_castquint16_test(const char *, const QScriptValue &value);
 
+public slots:
+    // This slot can be called by javascript. It preserves its argument and makes it available to the test-case.
+    void testConversionSlot(QVariant variant);
+    
 private:
     QScriptEngine *engine;
     QHash<QString, QScriptValue> m_values;
     QString m_currentExpression;
+    bool m_ConversionSlotCalled;
+    QVariant m_LastReceivedVariant;
+    void resetConversionSlot();
 };
 
 #define DEFINE_TEST_FUNCTION(name) \

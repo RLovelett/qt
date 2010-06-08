@@ -174,7 +174,7 @@ public:
 #ifndef QT_NO_REGEXP
     static QRegExp toRegExp(JSC::ExecState*, JSC::JSValue);
 #endif
-    static QVariant toVariant(JSC::ExecState *, JSC::JSValue);
+    static QVariant toVariant(JSC::ExecState *, JSC::JSValue, int depth = 0);
     static inline QObject *toQObject(JSC::ExecState *, JSC::JSValue);
     static inline const QMetaObject *toQMetaObject(JSC::ExecState *, JSC::JSValue);
 
@@ -215,10 +215,10 @@ public:
     static QStringList stringListFromArray(JSC::ExecState*, JSC::JSValue arr);
 
     static JSC::JSValue arrayFromVariantList(JSC::ExecState*, const QVariantList &lst);
-    static QVariantList variantListFromArray(JSC::ExecState*, JSC::JSValue arr);
+    static QVariantList variantListFromArray(JSC::ExecState*, JSC::JSValue arr, int depth = 0);
 
     static JSC::JSValue objectFromVariantMap(JSC::ExecState*, const QVariantMap &vmap);
-    static QVariantMap variantMapFromObject(JSC::ExecState*, JSC::JSValue obj);
+    static QVariantMap variantMapFromObject(JSC::ExecState*, JSC::JSValue obj, int depth = 0);
 
     JSC::JSValue defaultPrototype(int metaTypeId) const;
     void setDefaultPrototype(int metaTypeId, JSC::JSValue prototype);

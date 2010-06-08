@@ -1011,12 +1011,12 @@ JSC::JSValue QScriptEnginePrivate::arrayFromVariantList(JSC::ExecState *exec, co
     return arr;
 }
 
-QVariantList QScriptEnginePrivate::variantListFromArray(JSC::ExecState *exec, JSC::JSValue arr)
+QVariantList QScriptEnginePrivate::variantListFromArray(JSC::ExecState *exec, JSC::JSValue arr, int depth)
 {
     QVariantList lst;
     uint len = toUInt32(exec, property(exec, arr, exec->propertyNames().length));
     for (uint i = 0; i < len; ++i)
-        lst.append(toVariant(exec, property(exec, arr, i)));
+        lst.append(toVariant(exec, property(exec, arr, i), depth + 1));
     return lst;
 }
 
@@ -1029,14 +1029,14 @@ JSC::JSValue QScriptEnginePrivate::objectFromVariantMap(JSC::ExecState *exec, co
     return obj;
 }
 
-QVariantMap QScriptEnginePrivate::variantMapFromObject(JSC::ExecState *exec, JSC::JSValue obj)
+QVariantMap QScriptEnginePrivate::variantMapFromObject(JSC::ExecState *exec, JSC::JSValue obj, int depth)
 {
     JSC::PropertyNameArray propertyNames(exec);
     JSC::asObject(obj)->getOwnPropertyNames(exec, propertyNames, JSC::IncludeDontEnumProperties);
     QVariantMap vmap;
     JSC::PropertyNameArray::const_iterator it = propertyNames.begin();
     for( ; it != propertyNames.end(); ++it)
-        vmap.insert(it->ustring(), toVariant(exec, property(exec, obj, *it)));
+        vmap.insert(it->ustring(), toVariant(exec, property(exec, obj, *it), depth + 1));
     return vmap;
 }
 
@@ -1643,8 +1643,10 @@ QRegExp QScriptEnginePrivate::toRegExp(JSC::ExecState *exec, JSC::JSValue value)
 
 #endif
 
-QVariant QScriptEnginePrivate::toVariant(JSC::ExecState *exec, JSC::JSValue value)
+QVariant QScriptEnginePrivate::toVariant(JSC::ExecState *exec, JSC::JSValue value, int depth)
 {
+    static const int MaxDepth = 10;
+
     if (!value) {
         return QVariant();
     } else if (isObject(value)) {
@@ -1661,10 +1663,16 @@ QVariant QScriptEnginePrivate::toVariant(JSC::ExecState *exec, JSC::JSValue valu
             return QVariant(toRegExp(exec, value));
 #endif
         else if (isArray(value))
-            return variantListFromArray(exec, value);
+            return variantListFromArray(exec, value, depth);
         else if (QScriptDeclarativeClass *dc = declarativeClass(value))
             return dc->toVariant(declarativeObject(value));
-        return variantMapFromObject(exec, value);
+
+        // For objects below a certain depth, we simply return an invalid QVariant. 
+        // This will mostly happen for recursive data structures
+        if (depth >= MaxDepth)
+            return QVariant();
+
+        return variantMapFromObject(exec, value, depth);
     } else if (value.isNumber()) {
         return QVariant(toNumber(exec, value));
     } else if (value.isString()) {
