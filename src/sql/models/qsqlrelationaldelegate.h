@@ -87,7 +87,8 @@ void setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     const QSqlRelationalTableModel *sqlModel = qobject_cast<const QSqlRelationalTableModel *>(index.model());
     QComboBox *combo = qobject_cast<QComboBox *>(editor);
-    if (!sqlModel || !combo) {
+    QByteArray n = editor->metaObject()->userProperty().name();
+    if (!sqlModel || !combo || !n.isEmpty()) {
         QItemDelegate::setEditorData(editor, index);
         return;
     }
