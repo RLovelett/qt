@@ -480,7 +480,9 @@ public:
         : context(ctx),
           id(tx_id),
           target(tx_target),
-          options(opt)
+          options(opt), 
+          currentWrapModeFilterSetting(GL_INVALID_ENUM), 
+          currentSmoothPixmapTransformSetting(false)
 #if defined(Q_WS_X11)
         , boundPixmap(0)
 #endif
@@ -505,8 +507,11 @@ public:
     QGLContext *context;
     GLuint id;
     GLenum target;
-
+    
     QGLContext::BindOptions options;
+
+    GLenum currentWrapModeFilterSetting;
+    bool currentSmoothPixmapTransformSetting;
 
 #if defined(Q_WS_X11)
     QPixmapData* boundPixmap;
@@ -520,6 +525,7 @@ public:
         (const char *buf, int len, const char *format = 0);
     QSize bindCompressedTextureDDS(const char *buf, int len);
     QSize bindCompressedTexturePVR(const char *buf, int len);
+    bool setTextureFilterSetting(GLenum wrapMode, bool smoothPixmapTransform);
 };
 
 struct QGLTextureCacheKey {

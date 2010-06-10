@@ -5714,6 +5714,19 @@ QSize QGLTexture::bindCompressedTexturePVR(const char *buf, int len)
     return QSize(pvrHeader->width, pvrHeader->height);
 }
 
+bool QGLTexture::setTextureFilterSetting(GLenum wrapMode, bool smoothPixmapTransform)
+{
+    // Returns true if setting was changed. False if otherwise.
+
+    if (wrapMode != currentWrapModeFilterSetting || 
+        smoothPixmapTransform != currentSmoothPixmapTransformSetting) {
+        currentWrapModeFilterSetting = wrapMode;
+        currentSmoothPixmapTransformSetting = smoothPixmapTransform;
+        return true;
+    } else
+        return false;
+}
+
 #undef ctx
 
 QT_END_NAMESPACE

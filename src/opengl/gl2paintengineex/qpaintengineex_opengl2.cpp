@@ -220,7 +220,10 @@ void QGL2PaintEngineExPrivate::updateBrushTexture()
         QGLTexture *tex = ctx->d_func()->bindTexture(texPixmap, GL_TEXTURE_2D, GL_RGBA,
                                                      QGLContext::InternalBindOption |
                                                      QGLContext::CanFlipNativePixmapBindOption);
-        updateTextureFilter(GL_TEXTURE_2D, GL_REPEAT, q->state()->renderHints & QPainter::SmoothPixmapTransform);
+
+        if (tex->setTextureFilterSetting(GL_REPEAT, q->state()->renderHints & QPainter::SmoothPixmapTransform))
+            updateTextureFilter(GL_TEXTURE_2D, GL_REPEAT, q->state()->renderHints & QPainter::SmoothPixmapTransform);
+
         textureInvertedY = tex->options & QGLContext::InvertedYBindOption ? -1 : 1;
     }
     brushTextureDirty = false;
@@ -1302,8 +1305,10 @@ void QGL2PaintEngineEx::drawPixmap(const QRectF& dest, const QPixmap & pixmap, c
     bool isBitmap = pixmap.isQBitmap();
     bool isOpaque = !isBitmap && !pixmap.hasAlphaChannel();
 
-    d->updateTextureFilter(GL_TEXTURE_2D, GL_CLAMP_TO_EDGE,
-                           state()->renderHints & QPainter::SmoothPixmapTransform, texture->id);
+    if (texture->setTextureFilterSetting(GL_CLAMP_TO_EDGE, state()->renderHints & QPainter::SmoothPixmapTransform))
+        d->updateTextureFilter(GL_TEXTURE_2D, GL_CLAMP_TO_EDGE, 
+                               state()->renderHints & QPainter::SmoothPixmapTransform, texture->id);
+
     d->drawTexture(dest, srcRect, pixmap.size(), isOpaque, isBitmap);
 }
 
@@ -1319,8 +1324,10 @@ void QGL2PaintEngineEx::drawImage(const QRectF& dest, const QImage& image, const
     QGLTexture *texture = ctx->d_func()->bindTexture(image, GL_TEXTURE_2D, GL_RGBA, QGLContext::InternalBindOption);
     GLuint id = texture->id;
 
-    d->updateTextureFilter(GL_TEXTURE_2D, GL_CLAMP_TO_EDGE,
-                           state()->renderHints & QPainter::SmoothPixmapTransform, id);
+    if (texture->setTextureFilterSetting(GL_CLAMP_TO_EDGE, state()->renderHints & QPainter::SmoothPixmapTransform))
+        d->updateTextureFilter(GL_TEXTURE_2D, GL_CLAMP_TO_EDGE,
+                               state()->renderHints & QPainter::SmoothPixmapTransform, id);
+
     d->drawTexture(dest, src, image.size(), !image.hasAlphaChannel());
 }
 
@@ -1753,8 +1760,9 @@ void QGL2PaintEngineExPrivate::drawPixmapFragments(const QPainter::PixmapFragmen
     bool isBitmap = pixmap.isQBitmap();
     bool isOpaque = !isBitmap && (!pixmap.hasAlphaChannel() || (hints & QPainter::OpaqueHint)) && allOpaque;
 
-    updateTextureFilter(GL_TEXTURE_2D, GL_CLAMP_TO_EDGE,
-                           q->state()->renderHints & QPainter::SmoothPixmapTransform, texture->id);
+    if (texture->setTextureFilterSetting(GL_CLAMP_TO_EDGE, q->state()->renderHints & QPainter::SmoothPixmapTransform))
+        updateTextureFilter(GL_TEXTURE_2D, GL_CLAMP_TO_EDGE,
+                            q->state()->renderHints & QPainter::SmoothPixmapTransform, texture->id);
 
     // Setup for texture drawing
     currentBrush = noBrush;
