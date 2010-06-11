@@ -1027,6 +1027,10 @@ void Configure::parseCmdLine()
             opensslLibs = configCmdLine.at(i);
         } else if (configCmdLine.at(i).startsWith("PSQL_LIBS=")) {
             psqlLibs = configCmdLine.at(i);
+        } else if (configCmdLine.at(i).startsWith("SYBASE=")) {
+            sybase = configCmdLine.at(i);
+        } else if (configCmdLine.at(i).startsWith("SYBASE_LIBS=")) {
+            sybaseLibs = configCmdLine.at(i);
         }
 
         else if ((configCmdLine.at(i) == "-override-version") || (configCmdLine.at(i) == "-version-override")){
@@ -2745,6 +2749,17 @@ void Configure::generateOutputVars()
         }
     if (!psqlLibs.isEmpty())
         qmakeVars += QString("QT_LFLAGS_PSQL=") + psqlLibs.section("=", 1);
+
+    {
+      QStringList lflagsTDS;
+      if (!sybase.isEmpty())
+          lflagsTDS += QString("-L") + fixSeparators(sybase.section("=", 1) + "/lib");
+      if (!sybaseLibs.isEmpty())
+          lflagsTDS += sybaseLibs.section("=", 1);
+      if (!lflagsTDS.isEmpty())
+          qmakeVars += QString("QT_LFLAGS_TDS=") + lflagsTDS.join(" ");
+    }
+
     if (!qmakeSql.isEmpty())
         qmakeVars += QString("sql-drivers    += ") + qmakeSql.join(" ");
     if (!qmakeSqlPlugins.isEmpty())
