@@ -332,13 +332,13 @@ static void find_trans_colors()
   QGLFormat UNIX/GLX-specific code
  *****************************************************************************/
 
-void* qglx_getProcAddress(const char* procName)
+QGLProc qglx_getProcAddress(const char* procName)
 {
     // On systems where the GL driver is pluggable (like Mesa), we have to use
     // the glXGetProcAddressARB extension to resolve other function pointers as
     // the symbols wont be in the GL library, but rather in a plugin loaded by
     // the GL library.
-    typedef void* (*qt_glXGetProcAddressARB)(const char *);
+    typedef QGLProc (*qt_glXGetProcAddressARB)(const char *);
     static qt_glXGetProcAddressARB glXGetProcAddressARB = 0;
     static bool triedResolvingGlxGetProcAddress = false;
     if (!triedResolvingGlxGetProcAddress) {
@@ -348,7 +348,7 @@ void* qglx_getProcAddress(const char* procName)
 #if defined(Q_OS_LINUX) || defined(Q_OS_BSD4)
             void *handle = dlopen(NULL, RTLD_LAZY);
             if (handle) {
-                glXGetProcAddressARB = (qt_glXGetProcAddressARB) dlsym(handle, "glXGetProcAddressARB");
+                glXGetProcAddressARB = reinterpret_cast<qt_glXGetProcAddressARB>(dlsym(handle, "glXGetProcAddressARB"));
                 dlclose(handle);
             }
             if (!glXGetProcAddressARB)
@@ -357,13 +357,13 @@ void* qglx_getProcAddress(const char* procName)
 #if !defined(QT_NO_LIBRARY)
                 extern const QString qt_gl_library_name();
                 QLibrary lib(qt_gl_library_name());
-                glXGetProcAddressARB = (qt_glXGetProcAddressARB) lib.resolve("glXGetProcAddressARB");
+                glXGetProcAddressARB = reinterpret_cast<qt_glXGetProcAddressARB>(lib.resolve("glXGetProcAddressARB"));
 #endif
             }
         }
     }
 
-    void *procAddress = 0;
+    QGLProc procAddress = 0;
     if (glXGetProcAddressARB)
         procAddress = glXGetProcAddressARB(procName);
 
@@ -372,7 +372,7 @@ void* qglx_getProcAddress(const char* procName)
     if (!procAddress) {
         void *handle = dlopen(NULL, RTLD_LAZY);
         if (handle) {
-            procAddress = dlsym(handle, procName);
+            procAddress = reinterpret_cast<QGLProc>(dlsym(handle, procName));
             dlclose(handle);
         }
     }
@@ -381,7 +381,7 @@ void* qglx_getProcAddress(const char* procName)
     if (!procAddress) {
         extern const QString qt_gl_library_name();
         QLibrary lib(qt_gl_library_name());
-        procAddress = lib.resolve(procName);
+        procAddress = reinterpret_cast<QGLProc>(lib.resolve(procName));
     }
 #endif
 
@@ -1100,7 +1100,12 @@ void QGLContext::generateFontDisplayLists(const QFont & fnt, int listBase)
 
 void *QGLContext::getProcAddress(const QString &proc) const
 {
-    typedef void *(*qt_glXGetProcAddressARB)(const GLubyte *);
+    return reinterpret_cast<void *>(getProc(proc));
+}
+
+QGLProc QGLContext::getProc(const QString &proc) const
+{
+    typedef QGLProc (*qt_glXGetProcAddressARB)(const GLubyte *);
     static qt_glXGetProcAddressARB glXGetProcAddressARB = 0;
     static bool resolved = false;
 
@@ -1112,7 +1117,7 @@ void *QGLContext::getProcAddress(const QString &proc) const
 #if defined(Q_OS_LINUX) || defined(Q_OS_BSD4)
             void *handle = dlopen(NULL, RTLD_LAZY);
             if (handle) {
-                glXGetProcAddressARB = (qt_glXGetProcAddressARB) dlsym(handle, "glXGetProcAddressARB");
+                glXGetProcAddressARB = reinterpret_cast<qt_glXGetProcAddressARB>(dlsym(handle, "glXGetProcAddressARB"));
                 dlclose(handle);
             }
             if (!glXGetProcAddressARB)
@@ -1121,7 +1126,7 @@ void *QGLContext::getProcAddress(const QString &proc) const
 #if !defined(QT_NO_LIBRARY)
                 extern const QString qt_gl_library_name();
                 QLibrary lib(qt_gl_library_name());
-                glXGetProcAddressARB = (qt_glXGetProcAddressARB) lib.resolve("glXGetProcAddressARB");
+                glXGetProcAddressARB = reinterpret_cast<qt_glXGetProcAddressARB>(lib.resolve("glXGetProcAddressARB"));
 #endif
             }
         }

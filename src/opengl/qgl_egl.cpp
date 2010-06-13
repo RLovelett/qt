@@ -297,6 +297,11 @@ void *QGLContext::getProcAddress(const QString &proc) const
     return (void*)eglGetProcAddress(reinterpret_cast<const char *>(proc.toLatin1().data()));
 }
 
+QGLProc QGLContext::getProc(const QString &proc) const
+{
+    return eglGetProcAddress(proc.toLatin1().constData());
+}
+
 bool QGLWidgetPrivate::renderCxPm(QPixmap*)
 {
     return false;

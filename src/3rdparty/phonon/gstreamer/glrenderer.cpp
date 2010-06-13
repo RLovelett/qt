@@ -238,11 +238,11 @@ GLRenderWidgetImplementation::GLRenderWidgetImplementation(VideoWidget*videoWidg
     makeCurrent();
     glGenTextures(3, m_texture);
 
-    glProgramStringARB = (_glProgramStringARB) context()->getProcAddress(QLatin1String("glProgramStringARB"));
-    glBindProgramARB = (_glBindProgramARB) context()->getProcAddress(QLatin1String("glBindProgramARB"));
-    glDeleteProgramsARB = (_glDeleteProgramsARB) context()->getProcAddress(QLatin1String("glDeleteProgramsARB"));
-    glGenProgramsARB = (_glGenProgramsARB) context()->getProcAddress(QLatin1String("glGenProgramsARB"));
-    glActiveTexture = (_glActiveTexture) context()->getProcAddress(QLatin1String("glActiveTexture"));
+    glProgramStringARB = (_glProgramStringARB) context()->getProc(QLatin1String("glProgramStringARB"));
+    glBindProgramARB = (_glBindProgramARB) context()->getProc(QLatin1String("glBindProgramARB"));
+    glDeleteProgramsARB = (_glDeleteProgramsARB) context()->getProc(QLatin1String("glDeleteProgramsARB"));
+    glGenProgramsARB = (_glGenProgramsARB) context()->getProc(QLatin1String("glGenProgramsARB"));
+    glActiveTexture = (_glActiveTexture) context()->getProc(QLatin1String("glActiveTexture"));
 
     m_hasPrograms = glProgramStringARB && glBindProgramARB && glDeleteProgramsARB && glGenProgramsARB && glActiveTexture;
 

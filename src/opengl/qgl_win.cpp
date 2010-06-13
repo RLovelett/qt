@@ -1394,6 +1394,11 @@ void *QGLContext::getProcAddress(const QString &proc) const
     return (void *)wglGetProcAddress(proc.toLatin1());
 }
 
+QGLProc QGLContext::getProc(const QString &proc) const
+{
+    return wglGetProcAddress(proc.toLatin1());
+}
+
 /*****************************************************************************
   QGLWidget Win32/WGL-specific code
  *****************************************************************************/

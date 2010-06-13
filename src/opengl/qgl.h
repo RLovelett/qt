@@ -117,6 +117,8 @@ inline QT3_SUPPORT const char *qGLVersion() {
 }
 #endif
 
+extern "C" { typedef void (*QGLProc)(); }
+
 #if defined(Q_WS_WIN) || defined(Q_WS_MAC)
 class QGLCmap;
 #endif
@@ -365,6 +367,7 @@ public:
     static int textureCacheLimit();
 
     void *getProcAddress(const QString &proc) const;
+    QGLProc getProc(const QString &proc) const;
     QPaintDevice* device() const;
     QColor overlayTransparentColor() const;
 
