@@ -979,14 +979,15 @@ void QGridLayoutEngine::removeItem(QGridLayoutItem *item)
                 setItemAt(i, j, 0);
         }
     }
+   
+    q_items.removeAll(item);
 
-    for (int i = 0; i < NOrientations; ++i) {
-        for (int j = item->firstRow(); j <= item->lastRow(); ++j) {
-            setRowSpacing(j, 0, (Qt::Orientation)i);
+    if (itemCount() == 0) {
+        for (int i = 0; i < NOrientations; ++i) {
+            for (int j = item->firstRow(); j <= item->lastRow(); ++j)
+                setRowSpacing(j, 0, (Qt::Orientation)i);
         }
     }
-
-    q_items.removeAll(item);
 }
 
 QGridLayoutItem *QGridLayoutEngine::findLayoutItem(QGraphicsLayoutItem *layoutItem) const

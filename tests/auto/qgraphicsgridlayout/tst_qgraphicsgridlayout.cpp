@@ -106,6 +106,7 @@ private slots:
     void geometries();
     void avoidRecursionInInsertItem();
     void task236367_maxSizeHint();
+    void task10314_columnSpacing();
 };
 
 class RectWidget : public QGraphicsWidget
@@ -764,6 +765,31 @@ void tst_QGraphicsGridLayout::columnSpacing()
     QCOMPARE(layout->itemAt(0,1)->geometry().right(), 70.0);
     QCOMPARE(layout->itemAt(0,2)->geometry().left(),  70.0);
     QCOMPARE(layout->itemAt(0,2)->geometry().right(), 95.0);
+
+    delete widget;
+}
+
+void tst_QGraphicsGridLayout::task10314_columnSpacing()
+{
+ QGraphicsScene scene;
+    QGraphicsView view(&scene);
+    QGraphicsWidget *widget = new QGraphicsWidget(0, Qt::Window);
+    QGraphicsGridLayout *layout = new QGraphicsGridLayout();
+    scene.addItem(widget);
+    widget->setLayout(layout);
+    populateLayout(layout, 2, 1);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    layout->setColumnSpacing(0, 20);
+    view.show();
+    widget->show();
+ 
+    layout->removeAt(1);
+    layout->removeAt(0);
+    widget->resize(widget->effectiveSizeHint(Qt::MinimumSize));
+    QApplication::processEvents();
+
+    QCOMPARE(layout->preferredSize(), QSizeF(0, 0));
 
     delete widget;
 }
