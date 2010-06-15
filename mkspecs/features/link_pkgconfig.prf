@@ -1,4 +1,9 @@
 # handle pkg-config files
+
+!system(pkg-config --exists --print-errors '$$quote(PKGCONFIG)') {
+    error(Please install the missing libraries)
+}
+
 QMAKE_CXXFLAGS += $$system(pkg-config --cflags '$$quote(PKGCONFIG)')
 QMAKE_CFLAGS += $$system(pkg-config --cflags '$$quote(PKGCONFIG)')
 LIBS += $$system(pkg-config --libs '$$quote(PKGCONFIG)')
