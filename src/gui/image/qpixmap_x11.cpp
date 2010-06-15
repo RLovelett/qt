@@ -2365,7 +2365,10 @@ QPixmap QPixmap::fromSharedImage(Qt::HANDLE h)
 
 Qt::HANDLE QPixmap::toSharedImage()
 {
-    return data.data()->toSharedImage();
+    if (data)
+        return data.data()->toSharedImage();
+    else
+        return 0;
 }
 
 QT_END_NAMESPACE
