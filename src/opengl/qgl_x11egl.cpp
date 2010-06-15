@@ -564,6 +564,10 @@ Qt::HANDLE QGLContextPrivate::createSharedImageFromPixmap(QGLPixmapData *sourceP
 GLuint QGLContextPrivate::createTextureFromSharedImage(Qt::HANDLE handle, GLint *w, GLint *h)
 {
     Q_Q(QGLContext);
+    
+    static bool resolved_extensions = false;
+    if (! resolved_extensions)
+        qt_resolve_eglimage_gl_extensions(q);
 
     bool textureIsBound = false;
     GLuint textureId;
