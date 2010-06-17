@@ -79,6 +79,10 @@ public:
 
     virtual QtVariantProperty *addProperty(int propertyType, const QString &name = QString());
 
+    void addNotEditablePropertyName(const QString &propertyName);
+    bool isNotEditablePropertyName(const QString &propertyName);
+    void resetNotEditablePropertyNames();
+
     int propertyType(const QtProperty *property) const;
     int valueType(const QtProperty *property) const;
     QtVariantProperty *variantProperty(const QtProperty *property) const;

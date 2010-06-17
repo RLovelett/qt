@@ -3172,15 +3172,42 @@ QList<QAction*> QWidget::actions() const
     your widget needs to know when it becomes enabled or disabled, you
     can use the changeEvent() with type QEvent::EnabledChange.
 
-    Disabling a widget implicitly disables all its children. Enabling
-    respectively enables all child widgets unless they have been
-    explicitly disabled.
+    \note A deprecated function setEnabled() does not set this property 
+    directly. It sets QWidget::enabledAllowed instead. Exactly equivalent 
+    but more explicit function setEnabledAllowed() should be used instead.
 
     By default, this property is true.
 
-    \sa isEnabledTo(), QKeyEvent, QMouseEvent, changeEvent()
+    \sa isEnabledTo(), QKeyEvent, QMouseEvent, changeEvent(), QWidget::enabledAllowed
+*/
+/*!
+    \obsolete
+
+    This function is deprecated. It is equivalent to setEnabledAllowed().
+
+    \sa setEnabledAllowed()
 */
 void QWidget::setEnabled(bool enable)
+{
+    setEnabledAllowed(enable);
+}
+
+/*!
+    \property QWidget::enabledAllowed
+    \brief whether the widget is enabled when its parent is enabled
+
+    A widget which has enabledAllowed set to false is disabled. A 
+    widget which has enabledAllowed set to true may be enabled, 
+    depending on whether its parent is enabled: namely, if the 
+    widget has no parent or its parent widget is enabled then it 
+    is enabled; if its parent widget is disabled then the widget 
+    is disabled.
+
+    By default, this property is true.
+
+    \sa QWidget::enabled
+*/
+void QWidget::setEnabledAllowed(bool enable)
 {
     Q_D(QWidget);
     setAttribute(Qt::WA_ForceDisabled, !enable);

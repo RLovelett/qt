@@ -344,6 +344,7 @@ PropertyEditor::PropertyEditor(QDesignerFormEditorInterface *core, QWidget *pare
     m_treeFactory->setSpacing(0);
     m_groupFactory = new DesignerEditorFactory(m_core, this);
     QtVariantPropertyManager *variantManager = m_propertyManager;
+    variantManager->addNotEditablePropertyName("enabled");
     m_buttonBrowser->setFactoryForManager(variantManager, m_groupFactory);
     m_treeBrowser->setFactoryForManager(variantManager, m_treeFactory);
 

@@ -337,6 +337,10 @@ public:
             QtProperty *internal);
     void removeSubProperty(QtVariantProperty *property);
 
+    void addNotEditablePropertyName(const QString &propertyName);
+    bool isNotEditablePropertyName(const QString &propertyName);
+    void resetNotEditablePropertyNames();
+
     QMap<int, QtAbstractPropertyManager *> m_typeToPropertyManager;
     QMap<int, QMap<QString, int> > m_typeToAttributeToAttributeType;
 
@@ -356,6 +360,8 @@ public:
     const QString m_maximumAttribute;
     const QString m_minimumAttribute;
     const QString m_regExpAttribute;
+    
+    QStringList m_notEditablePropertyNames;
 };
 
 QtVariantPropertyManagerPrivate::QtVariantPropertyManagerPrivate() :
@@ -662,6 +668,19 @@ void QtVariantPropertyManagerPrivate::slotFlagNamesChanged(QtProperty *property,
 {
     if (QtVariantProperty *varProp = m_internalToProperty.value(property, 0))
         emit q_ptr->attributeChanged(varProp, m_flagNamesAttribute, QVariant(flagNames));
+}
+
+bool QtVariantPropertyManagerPrivate::isNotEditablePropertyName(const QString & propertyName) {
+    return m_notEditablePropertyNames.contains(propertyName);
+}
+
+void QtVariantPropertyManagerPrivate::addNotEditablePropertyName(const QString & propertyName){
+    if ( !m_notEditablePropertyNames.contains(propertyName) )
+        m_notEditablePropertyNames << propertyName;
+}
+
+void QtVariantPropertyManagerPrivate::resetNotEditablePropertyNames(){
+    m_notEditablePropertyNames.clear();
 }
 
 /*!
@@ -1835,6 +1854,21 @@ QtProperty *QtVariantPropertyManager::createProperty()
     return property;
 }
 
+void QtVariantPropertyManager::addNotEditablePropertyName(const QString &propertyName)
+{
+    d_ptr->addNotEditablePropertyName(propertyName);
+}
+
+bool QtVariantPropertyManager::isNotEditablePropertyName(const QString &propertyName)
+{
+    return d_ptr->isNotEditablePropertyName(propertyName);
+}
+
+void QtVariantPropertyManager::resetNotEditablePropertyNames()
+{
+    d_ptr->resetNotEditablePropertyNames();
+}
+
 /////////////////////////////
 
 class QtVariantEditorFactoryPrivate
@@ -2130,6 +2164,8 @@ QWidget *QtVariantEditorFactory::createEditor(QtVariantPropertyManager *manager,
     const int propType = manager->propertyType(property);
     QtAbstractEditorFactoryBase *factory = d_ptr->m_typeToFactory.value(propType, 0);
     if (!factory)
+        return 0;
+    if ( manager->isNotEditablePropertyName(property->propertyName()) )
         return 0;
     return factory->createEditor(wrappedProperty(property), parent);
 }
