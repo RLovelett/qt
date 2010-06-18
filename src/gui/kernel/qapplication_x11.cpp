@@ -2850,27 +2850,37 @@ void QApplicationPrivate::applyX11SpecificCommandLineArguments(QWidget *main_wid
         int x, y;
         int w, h;
         int m = XParseGeometry((char*)mwGeometry, &x, &y, (uint*)&w, (uint*)&h);
-        QSize minSize = main_widget->minimumSize();
-        QSize maxSize = main_widget->maximumSize();
-        if ((m & XValue) == 0)
-            x = main_widget->geometry().x();
-        if ((m & YValue) == 0)
-            y = main_widget->geometry().y();
-        if ((m & WidthValue) == 0)
-            w = main_widget->width();
-        if ((m & HeightValue) == 0)
-            h = main_widget->height();
-        w = qMin(w,maxSize.width());
-        h = qMin(h,maxSize.height());
-        w = qMax(w,minSize.width());
-        h = qMax(h,minSize.height());
-        if ((m & XNegative)) {
-            x = QApplication::desktop()->width()  + x - w;
+        // w & h are required for size or negative positions
+        if (m & (WidthValue | HeightValue | XNegative | YNegative)) {
+            QSize minSize = main_widget->minimumSize();
+            QSize maxSize = main_widget->maximumSize();
+            if ((m & WidthValue) == 0)
+                w = main_widget->width();
+            if ((m & HeightValue) == 0)
+                h = main_widget->height();
+            w = qMin(w,maxSize.width());
+            h = qMin(h,maxSize.height());
+            w = qMax(w,minSize.width());
+            h = qMax(h,minSize.height());
         }
-        if ((m & YNegative)) {
-            y = QApplication::desktop()->height() + y - h;
+        // only if a size is specified
+        if (m & (WidthValue | HeightValue))
+            main_widget->resize(QSize(w, h));
+        // only if a position is given
+        if (m & (XValue | YValue)) {
+            if ((m & XValue) == 0)
+                x = main_widget->geometry().x();
+            if ((m & YValue) == 0)
+                y = main_widget->geometry().y();
+            if (m & (XNegative | YNegative)) {
+                QDesktopWidget *desktop = QApplication::desktop();
+                if ((m & XNegative))
+                    x = desktop->width() + x - w;
+                if ((m & YNegative))
+                    y = desktop->height() + y - h;
+            }
+            main_widget->move(QPoint(x, y));
         }
-        main_widget->setGeometry(x, y, w, h);
     }
 }
 
