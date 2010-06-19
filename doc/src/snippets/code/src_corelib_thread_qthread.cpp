@@ -40,18 +40,33 @@
 ****************************************************************************/
 
 //! [0]
-class MyThread : public QThread
+
+class MyWorker : public QObject 
 {
-public:
-    void run();
+Q_OBJECT
+public slots:
+    void doWork()
+    {
+        // do some heavy cpu work here
+    }
 };
 
-void MyThread::run()
+class MyMainObject : public QObject
 {
-    QTcpSocket socket;
-    // connect QTcpSocket's signals somewhere meaningful
-    ...
-    socket.connectToHost(hostName, portNumber);
-    exec();
+public:    
+    MyMainObject()
+    {
+        // create a thread
+        QThread *thread = new QThread;
+        // and a worker
+        MyWorker *worker = new Worker;
+        // move the worker to our newly created thread
+        worker->moveToThread(thread);
+        // make the worker start its work on the thread as soon as its ready
+        QObject::connect(thread,SIGNAL(started()),worker,SLOT(doWork()));
+        // start the thread
+        thread->start();
+    }
 }
+
 //! [0]

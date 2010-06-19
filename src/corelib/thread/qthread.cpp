@@ -208,14 +208,8 @@ QThreadPrivate::~QThreadPrivate()
     process but executes independently in the way that a separate
     program does on a multitasking operating system. Instead of
     starting in \c main(), QThreads begin executing in run().  By
-    default, run() starts the event loop by calling exec() (see
-    below). To create your own threads, subclass QThread and
-    reimplement run(). For example:
+    default, run() starts an event loop by calling exec().
 
-    \snippet doc/src/snippets/code/src_corelib_thread_qthread.cpp 0
-
-    This will create a QTcpSocket in the thread and then execute the
-    thread's event loop. Use the start() method to begin execution.
     Execution ends when you return from run(), just as an application
     does when it leaves main(). QThread will notifiy you via a signal
     when the thread is started(), finished(), and terminated(), or
@@ -223,19 +217,26 @@ QThreadPrivate::~QThreadPrivate()
     the thread. Use wait() to block until the thread has finished
     execution.
 
-    Each thread gets its own stack from the operating system. The
-    operating system also determines the default size of the stack.
-    You can use setStackSize() to set a custom stack size.
-
-    Each QThread can have its own event loop. You can start the event
-    loop by calling exec(); you can stop it by calling exit() or
-    quit(). Having an event loop in a thread makes it possible to
+    Each QThread has its own event loop. You can start the event
+    loop by calling exec() inside run(), which is the default.
+    you can stop it by calling exit() or quit(). 
+    Having an event loop in a thread makes it possible to
     connect signals from other threads to slots in this thread, using
     a mechanism called \l{Qt::QueuedConnection}{queued
     connections}. It also makes it possible to use classes that
     require the event loop, such as QTimer and QTcpSocket, in the
     thread. Note, however, that it is not possible to use any widget
-    classes in the thread.
+    classes in the thread. Qt automatically ensures that a slot
+    connected to a signal, is called in the thread that the QObject
+    containing the slot, belongs to.
+
+    To have a QObjects slots run in a QThread, call moveToThread()
+
+    \snippet doc/src/snippets/code/src_corelib_thread_qthread.cpp 0
+
+    Each thread gets its own stack from the operating system. The
+    operating system also determines the default size of the stack.
+    You can use setStackSize() to set a custom stack size.
 
     In extreme cases, you may want to forcibly terminate() an
     executing thread. However, doing so is dangerous and discouraged.
@@ -291,8 +292,7 @@ QThreadPrivate::~QThreadPrivate()
 /*!
     \fn void QThread::start(Priority priority)
 
-    Begins execution of the thread by calling run(), which should be
-    reimplemented in a QThread subclass to contain your code. The
+    Begins execution of the thread by calling run(). The
     operating system will schedule the thread according to the \a
     priority parameter. If the thread is already running, this
     function does nothing.
