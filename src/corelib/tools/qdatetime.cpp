@@ -546,7 +546,8 @@ int QDate::weekNumber(int *yearNumber) const
     The month names will be localized according to the system's locale
     settings.
 
-    \sa toString(), longMonthName(), shortDayName(), longDayName()
+    \sa toString(), longMonthName(), narrowMonthName(), shortDayName(),
+        longDayName(), narrowDayName()
 */
 
 QString QDate::shortMonthName(int month, QDate::MonthNameType type)
@@ -569,7 +570,8 @@ QString QDate::shortMonthName(int month, QDate::MonthNameType type)
     Returns the short version of the name of the \a month. The
     returned name is in normal type which can be used for date formatting.
 
-    \sa toString(), longMonthName(), shortDayName(), longDayName()
+    \sa toString(), longMonthName(), narrowMonthName(), shortDayName(),
+        longDayName(), narrowDayName()
  */
 
 QString QDate::shortMonthName(int month)
@@ -603,7 +605,8 @@ QString QDate::shortMonthName(int month)
     The month names will be localized according to the system's locale
     settings.
 
-    \sa toString(), shortMonthName(), shortDayName(), longDayName()
+    \sa toString(), shortMonthName(), narrowMonthName(), shortDayName(),
+        longDayName(), narrowDayName()
 */
 
 QString QDate::longMonthName(int month, MonthNameType type)
@@ -626,7 +629,8 @@ QString QDate::longMonthName(int month, MonthNameType type)
     Returns the long version of the name of the \a month. The
     returned name is in normal type which can be used for date formatting.
 
-    \sa toString(), shortMonthName(), shortDayName(), longDayName()
+    \sa toString(), shortMonthName(), narrowMonthName(), shortDayName(),
+        longDayName(), narrowDayName()
  */
 
 QString QDate::longMonthName(int month)
@@ -635,6 +639,70 @@ QString QDate::longMonthName(int month)
         month = 1;
     }
     return QLocale::system().monthName(month, QLocale::LongFormat);
+}
+
+/*!
+    \since 4.8
+
+    Returns the narrow name of the \a month for the representation specified
+    by \a type.
+
+    The months are enumerated using the following convention:
+
+    \list
+    \i 1 = "J"
+    \i 2 = "F"
+    \i 3 = "M"
+    \i 4 = "A"
+    \i 5 = "M"
+    \i 6 = "J"
+    \i 7 = "J"
+    \i 8 = "A"
+    \i 9 = "S"
+    \i 10 = "O"
+    \i 11 = "N"
+    \i 12 = "D"
+    \endlist
+
+    The month names will be localized according to the system's locale
+    settings. Note that narrow names may not be unique.
+
+    \sa toString(), shortMonthName(), longMonthName(), shortDayName(),
+        longDayName(), narrowDayName()
+*/
+
+QString QDate::narrowMonthName(int month, MonthNameType type)
+{
+    if (month < 1 || month > 12) {
+        month = 1;
+    }
+    switch (type) {
+    case QDate::DateFormat:
+        return QLocale::system().monthName(month, QLocale::NarrowFormat);
+    case QDate::StandaloneFormat:
+        return QLocale::system().standaloneMonthName(month, QLocale::NarrowFormat);
+    default:
+        break;
+    }
+    return QString();
+}
+
+/*!
+    \since 4.8
+
+    Returns the narrow version of the name of the \a month. The
+    returned name is in normal type which can be used for date formatting.
+
+    \sa toString(), shortMonthName(), longMonthName(), shortDayName(),
+        longDayName(), narrowDayName()
+ */
+
+QString QDate::narrowMonthName(int month)
+{
+    if (month < 1 || month > 12) {
+        month = 1;
+    }
+    return QLocale::system().monthName(month, QLocale::NarrowFormat);
 }
 
 /*!
@@ -658,7 +726,8 @@ QString QDate::longMonthName(int month)
     The day names will be localized according to the system's locale
     settings.
 
-    \sa toString(), shortMonthName(), longMonthName(), longDayName()
+    \sa toString(), shortMonthName(), longMonthName(), narrowMonthName(),
+        longDayName(), narrowDayName()
 */
 
 QString QDate::shortDayName(int weekday, MonthNameType type)
@@ -681,7 +750,8 @@ QString QDate::shortDayName(int weekday, MonthNameType type)
     Returns the short version of the name of the \a weekday. The
     returned name is in normal type which can be used for date formatting.
 
-    \sa toString(), longDayName(), shortMonthName(), longMonthName()
+    \sa toString(), longDayName(), narrowDayName(), shortMonthName(),
+        longMonthName(), narrowMonthName()
  */
 
 QString QDate::shortDayName(int weekday)
@@ -713,7 +783,8 @@ QString QDate::shortDayName(int weekday)
     The day names will be localized according to the system's locale
     settings.
 
-    \sa toString(), shortDayName(), shortMonthName(), longMonthName()
+    \sa toString(), shortDayName(), narrowDayName(), shortMonthName(),
+        longMonthName(), narrowMonthName()
 */
 
 QString QDate::longDayName(int weekday, MonthNameType type)
@@ -729,14 +800,15 @@ QString QDate::longDayName(int weekday, MonthNameType type)
     default:
         break;
     }
-    return QLocale::system().dayName(weekday, QLocale::LongFormat);
+    return QString();
 }
 
 /*!
     Returns the long version of the name of the \a weekday. The
     returned name is in normal type which can be used for date formatting.
 
-    \sa toString(), shortDayName(), shortMonthName(), longMonthName()
+    \sa toString(), shortDayName(), narrowDayName(), shortMonthName(),
+        longMonthName(), narrowMonthName()
  */
 
 QString QDate::longDayName(int weekday)
@@ -746,6 +818,66 @@ QString QDate::longDayName(int weekday)
     }
     return QLocale::system().dayName(weekday, QLocale::LongFormat);
 }
+
+/*!
+    \since 4.8
+
+    Returns the narrow name of the \a weekday for the representation specified
+    by \a type.
+
+    The days are enumerated using the following convention:
+
+    \list
+    \i 1 = "M"
+    \i 2 = "T"
+    \i 3 = "W"
+    \i 4 = "T"
+    \i 5 = "F"
+    \i 6 = "S"
+    \i 7 = "S"
+    \endlist
+
+    The day names will be localized according to the system's locale
+    settings. Note that these names may be non-unique.
+
+    \sa toString(), shortDayName(), longDayName(), shortMonthName(),
+        longMonthName(), narrowMonthName()
+*/
+
+QString QDate::narrowDayName(int weekday, MonthNameType type)
+{
+    if (weekday < 1 || weekday > 7) {
+        weekday = 1;
+    }
+    switch (type) {
+    case QDate::DateFormat:
+        return QLocale::system().dayName(weekday, QLocale::NarrowFormat);
+    case QDate::StandaloneFormat:
+        return QLocale::system().standaloneDayName(weekday, QLocale::NarrowFormat);
+    default:
+        break;
+    }
+    return QLocale::system().dayName(weekday, QLocale::NarrowFormat);
+}
+
+/*!
+    \since 4.8
+
+    Returns the narrow version of the name of the \a weekday. The
+    returned name is in normal type which can be used for date formatting.
+
+    \sa toString(), shortDayName(), longDayName(), shortMonthName(),
+        longMonthName(), narrowMonthName()
+ */
+
+QString QDate::narrowDayName(int weekday)
+{
+    if (weekday < 1 || weekday > 7) {
+        weekday = 1;
+    }
+    return QLocale.system().dayName(weekday, QLocale::NarrowFormat);
+}
+
 #endif //QT_NO_TEXTDATE
 
 #ifndef QT_NO_DATESTRING
@@ -847,6 +979,18 @@ QString QDate::toString(Qt::DateFormat f) const
     \row \i dddd
          \i the long localized day name (e.g. 'Monday' to 'Sunday').
             Uses QDate::longDayName().
+    \row \i ddddd
+         \i the narrow localized day name (e.g. 'M' to 'S').
+            Uses QDate::narrowDayName().
+    \row \i ccc
+         \i the standalone, abbreviated localized day name (e.g. 'Mon'
+            to 'Sun'). Uses QDate::shortDayName().
+    \row \i cccc
+         \i the standalone, long localized day name (e.g. 'Monday' to 'Sunday').
+            Uses QDate::longDayName().
+    \row \i ccccc
+         \i the standalone, narrow localized day name (e.g. 'M' to 'S').
+            Uses QDate::longDayName().
     \row \i M \i the month as number without a leading zero (1 to 12)
     \row \i MM \i the month as number with a leading zero (01 to 12)
     \row \i MMM
@@ -855,6 +999,18 @@ QString QDate::toString(Qt::DateFormat f) const
     \row \i MMMM
          \i the long localized month name (e.g. 'January' to 'December').
             Uses QDate::longMonthName().
+    \row \i MMMMM
+         \i the narrow localized month name (e.g. 'J' to 'D').
+            Uses QDate::narrowMonthName().
+    \row \i LLL
+            the standalone, short localized month name (e.g. 'Jan' to 'Dec').
+            Uses QDate::shortMonthName().
+    \row \i LLLL
+         \i the standalone, long localized month name (e.g. 'January' to
+            'December'). Uses QDate::longMonthName().
+    \row \i LLLLL
+         \i the standalone, narrow localized month name (e.g. 'J' to 'D').
+            Uses QDate::narrowMonthName().
     \row \i yy \i the year as two digit number (00 to 99)
     \row \i yyyy \i the year as four digit number. If the year is negative,
             a minus sign is prepended in addition.
@@ -3813,7 +3969,10 @@ static QString getFmtString(const QString& f, const QTime* dt = 0, const QDate* 
     }
 
     if (dd) {
-        if (f.startsWith(QLatin1String("dddd"))) {
+        if (f.startsWith(QLatin1String("ddddd"))) {
+            buf = dd->narrowDayName(dd->dayOfWeek());
+            removed = 5;
+        } else if (f.startsWith(QLatin1String("dddd"))) {
             buf = dd->longDayName(dd->dayOfWeek());
             removed = 4;
         } else if (f.startsWith(QLatin1String("ddd"))) {
@@ -3825,6 +3984,18 @@ static QString getFmtString(const QString& f, const QTime* dt = 0, const QDate* 
         } else if (f.at(0) == QLatin1Char('d')) {
             buf = QString::number(dd->day());
             removed = 1;
+        } else if (f.startsWith(QLatin1String("ccccc"))) {
+            buf = dd->narrowDayName(dd->dayOfWeek(), QDate::StandaloneFormat);
+            removed = 5;
+        } else if (f.startsWith(QLatin1String("cccc"))) {
+            buf = dd->longDayName(dd->dayOfWeek(), QDate::StandaloneFormat);
+            removed = 4;
+        } else if (f.startsWith(QLatin1String("ccc"))) {
+            buf = dd->shortDayName(dd->dayOfWeek(), QDate::StandaloneFormat);
+            removed = 3;
+        } else if (f.startsWith(QLatin1String("MMMMM"))) {
+            buf = dd->narrowMonthName(dd->month());
+            removed = 5;
         } else if (f.startsWith(QLatin1String("MMMM"))) {
             buf = dd->longMonthName(dd->month());
             removed = 4;
@@ -3837,6 +4008,15 @@ static QString getFmtString(const QString& f, const QTime* dt = 0, const QDate* 
         } else if (f.at(0) == QLatin1Char('M')) {
             buf = QString::number(dd->month());
             removed = 1;
+        } else if (f.startsWith(QLatin1String("LLLLL"))) {
+            buf = dd->narrowMonthName(dd->month(), QDate::StandaloneFormat);
+            removed = 5;
+        } else if (f.startsWith(QLatin1String("LLLL"))) {
+            buf = dd->longMonthName(dd->month(), QDate::StandaloneFormat);
+            removed = 4;
+        } else if (f.startsWith(QLatin1String("LLL"))) {
+            buf = dd->shortMonthName(dd->month(), QDate::StandaloneFormat);
+            removed = 3;
         } else if (f.startsWith(QLatin1String("yyyy"))) {
             const int year = dd->year();
             buf = QString::number(qAbs(year)).rightJustified(4, QLatin1Char('0'));
@@ -3904,7 +4084,7 @@ static QString fmtDateTime(const QString& f, const QTime* dt, const QDate* dd)
                 || (f.at(i) == QLatin1Char('s')) || (f.at(i) == QLatin1Char('z'))) {
                 status = f.at(i);
                 frm += f.at(i);
-            } else if ((f.at(i) == QLatin1Char('d')) || (f.at(i) == QLatin1Char('M')) || (f.at(i) == QLatin1Char('y'))) {
+            } else if ((f.at(i) == QLatin1Char('d')) || (f.at(i) == QLatin1Char('c')) || (f.at(i) == QLatin1Char('M')) || (f.at(i) == QLatin1Char('L')) || (f.at(i) == QLatin1Char('y'))) {
                 status = f.at(i);
                 frm += f.at(i);
             } else if ((ap) && (f.at(i) == QLatin1Char('A'))) {

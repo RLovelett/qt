@@ -89,6 +89,10 @@ public:
     static QString longMonthName(int month, MonthNameType type);
     static QString longDayName(int weekday);
     static QString longDayName(int weekday, MonthNameType type);
+    static QString narrowMonthName(int month);
+    static QString narrowMonthName(int month, MonthNameType type);
+    static QString narrowDayName(int weekday);
+    static QString narrowDayName(int weekday, MonthNameType type);
 #endif // QT_NO_TEXTDATE
 #ifndef QT_NO_DATESTRING
     QString toString(Qt::DateFormat f = Qt::TextDate) const;
