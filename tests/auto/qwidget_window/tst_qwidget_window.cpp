@@ -50,6 +50,8 @@
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <QX11Info>
+#include <stdio.h>
+#include <unistd.h>
 #endif // Q_WS_X11
 
 #include "../../shared/util.h"
@@ -67,6 +69,8 @@ public slots:
     void cleanupTestCase();
 
 private slots:
+    void tst_showGeometry();
+    void tst_getGeometry();
     void tst_move_show();
     void tst_show_move();
     void tst_show_move_hide_show();
@@ -90,6 +94,218 @@ void tst_QWidget_window::initTestCase()
 
 void tst_QWidget_window::cleanupTestCase()
 {
+}
+
+// helper class to print the parameters for the current window if the
+// test fails.
+class PrintParams
+{
+public:
+    PrintParams(const char *n) : name(n), exit_print(true),
+        fw(-1), fh(-1), fx(-1), fy(-1),
+        ww(-1), wh(-1), wx(-1), wy(-1) {}
+    ~PrintParams()
+    {
+        if (exit_print)
+            print();
+    }
+    void print()
+    {
+        printf("frame  %s w %d h %d x %d y %d\n", name, fw, fh, fx, fy);
+        printf("widget %s w %d h %d x %d y %d\n", name, ww, wh, wx, wy);
+        QWidget w;
+        QRect screenRect = QApplication::desktop()->screenGeometry(&w);
+        printf("screen geometry    %d x %d\n", screenRect.width(), screenRect.height());
+    }
+    void parse(QProcess &p)
+    {
+        QByteArray out=p.readAllStandardOutput();
+        QVERIFY2(out.constData(), "pointer not NULL");
+        QVERIFY2(*out.constData(), "not empty string");
+        QVERIFY(sscanf(out.constData(), "frame %d %d %d %d widget %d %d %d %d",
+            &fw, &fh, &fx, &fy, &ww, &wh, &wx, &wy) == 8);
+    }
+    const char * name;
+    bool exit_print;
+    int fw, fh, fx, fy;
+    int ww, wh, wx, wy;
+};
+
+void tst_QWidget_window::tst_showGeometry()
+{
+#ifndef Q_WS_X11
+    QSKIP("This test is X11-only.", SkipAll);
+#else
+    // Note, the tests assume that any toolbar that will reduce the avaiable
+    // desktop geometry (and window placement) does so less than 50 pixels
+    // so the requested absolute positions will place the window at that
+    // location.
+    QString program("./tst_qmain_widget");
+    QStringList args;
+    // common to all
+    args.push_back("-geometry");
+    // replaced per window
+    args.push_back("");
+    // Startup multiple windows at the same time, and do some validation on
+    // where they appear.
+    const int count=10;
+    QProcess p[count];
+    QString geometry[count]={
+        "+50+50",
+        "200x200",
+        "320x240+50+50",
+        "320x240-50+50",
+        "320x240+50-50",
+        "320x240-50-50",
+        "320x240+60+60",
+        "320x240-60+60",
+        "320x240+60-80",
+        "320x240-60-80"};
+    // start them all at once
+    for (int i=0; i<count; ++i)
+    {
+        args[1]=geometry[i];
+        p[i].start(program, args);
+        // Pause slightly to serialize startup to make sure the first window is
+        // up before the second starts.
+        usleep(20*1000);
+    }
+    bool process_fail=false;
+    // wait for them to finish
+    for (int i=0; i<count; ++i)
+    {
+        p[i].waitForFinished(3000);
+        // If the prgoram failed to start, it's
+        // NotRunning, NormalExit, and FailedToSTart
+        // If the program started, ran, and exited without any errors, it's
+        // NotRunning, NormalExit, and UnknownError
+        if (p[i].state() != QProcess::NotRunning
+            || p[i].exitStatus() != QProcess::NormalExit
+            || p[i].error() != QProcess::UnknownError) {
+            process_fail=true;
+        }
+    }
+    // Can't verify in the loop, or the remaining QProcess objects will
+    // complain "Destroyed while process is still running."
+    QVERIFY(!process_fail);
+
+    QWidget w;
+    QRect screenRect = QApplication::desktop()->screenGeometry(&w);
+
+    PrintParams pp1("pp1");
+    PrintParams pp2("pp2");
+    pp1.parse(p[0]);
+    // Should be placed an exact location, verify.
+    // Note, there's a race condition in the window manager placing the
+    // window and Qt getting the frame and widget geometry.  tst_qmain_widget
+    // gets around this by quering the X server directly.
+    // geometry from Qt
+    QVERIFY2(pp1.fx == 50 && pp1.fy == 50, "position for +50+50");
+    pp2.parse(p[1]);
+    // Should be placed an exact size, verify.
+    QVERIFY2(pp2.ww == 200 && pp2.wh == 200, "size for 200x200");
+    // Can't be at the same location (can't be at 0, 0), or at least it's
+    // unlikely the window manager would do that, before this changeset Qt
+    // would force the window to 0,0 when a width and height was specified even
+    // if +0+0 wasnt.
+    QVERIFY2(pp1.fx != pp2.fx || pp1.fy != pp2.fy, "not the same location");
+
+    pp2.parse(p[2]);
+    QVERIFY2(pp2.fx == 50 && pp2.fy == 50, "position for 320x240+50+50");
+    QVERIFY2(pp2.ww == 320 && pp2.wh == 240, "size for 320x240+50+50");
+
+    pp2.parse(p[3]);
+    QVERIFY2(pp2.fy == 50 && pp2.fx + pp2.fw == screenRect.width() - 50,
+        "top right 320x240-50+50");
+    pp2.parse(p[4]);
+    QVERIFY2(pp2.fy + pp2.fh == screenRect.height() - 50 && pp2.fx == 50,
+        "bottom left 320x240+50-50");
+    pp2.parse(p[5]);
+    QVERIFY2(pp2.fy + pp2.fh == screenRect.height() - 50
+        && pp2.fx + pp2.fw == screenRect.width() - 50,
+        "bottom right 320x240-50-50");
+
+    pp2.parse(p[6]);
+    QVERIFY2(pp2.fx == 60 && pp2.fy == 60, "position for 320x240+60+60");
+    QVERIFY2(pp2.ww == 320 && pp2.wh == 240, "size for 320x240+60+60");
+
+    pp2.parse(p[7]);
+    QVERIFY2(pp2.fy == 60 && pp2.fx + pp2.fw == screenRect.width() - 60,
+        "top right 320x240-10+10");
+    pp2.parse(p[8]);
+    QVERIFY2(pp2.fy + pp2.fh == screenRect.height() - 80 && pp2.fx == 60,
+        "bottom left 320x240+60-80");
+    pp2.parse(p[9]);
+    QVERIFY2(pp2.fy + pp2.fh == screenRect.height() - 80
+        && pp2.fx + pp2.fw == screenRect.width() - 60,
+        "bottom right 320x240-60-80");
+
+    // disable printing now that none of the tests failed
+    pp1.exit_print=pp2.exit_print=false;
+#endif // Q_WS_X11
+}
+
+void tst_QWidget_window::tst_getGeometry()
+{
+#ifndef Q_WS_X11
+    QSKIP("This test is X11-only.", SkipAll);
+#else
+    // Startup multiple windows at the same location and check to make sure
+    // they all give the same results.  Qt 4.6 fails and there doesn't seem
+    // to be any way to invalidate the geometry and try again later.
+    QSKIP("Test would fail, tst_qmain_widget.cpp", SkipAll);
+    QString program("./tst_qmain_widget");
+    QStringList args;
+    args.push_back("--query-qt");
+    args.push_back("-geometry");
+    args.push_back("100x100+0+0");
+    const int count=20;
+    QProcess p[count];
+    // start them all at once
+    for (int i=0; i<count; ++i)
+    {
+        p[i].start(program, args);
+    }
+    bool process_fail=false;
+    // wait for them to finish
+    for (int i=0; i<count; ++i)
+    {
+        p[i].waitForFinished(4000);
+        // If the prgoram failed to start, it's
+        // NotRunning, NormalExit, and FailedToSTart
+        // If the program started, ran, and exited without any errors, it's
+        // NotRunning, NormalExit, and UnknownError
+        if (p[i].state() != QProcess::NotRunning
+            || p[i].exitStatus() != QProcess::NormalExit
+            || p[i].error() != QProcess::UnknownError) {
+            process_fail=true;
+        }
+    }
+    // Can't verify in the loop, or the remaining QProcess objects will
+    // complain "Destroyed while process is still running."
+    QVERIFY(!process_fail);
+
+    PrintParams pp2("pp2");
+    PrintParams pp1("pp1");
+    pp1.parse(p[0]);
+    //pp1.print();
+    QString message;
+    QByteArray buffer;
+    for (int i=1; i<count; ++i)
+    {
+        pp2.parse(p[i]);
+        //pp2.print();
+        message.sprintf("comparing 0 and %d positions", i);
+        buffer=message.toAscii();
+        QVERIFY2(pp1.fw == pp2.fw && pp1.fh == pp2.fh, buffer.constData());
+        QVERIFY2(pp1.fx == pp2.fx && pp1.fy == pp2.fy, buffer.constData());
+        QVERIFY2(pp1.ww == pp2.ww && pp1.wh == pp2.wh, buffer.constData());
+        QVERIFY2(pp1.wx == pp2.wx && pp1.wy == pp2.wy, buffer.constData());
+    }
+
+    // disable printing now that none of the tests failed
+    pp1.exit_print=pp2.exit_print=false;
+#endif // Q_WS_X11
 }
 
 void tst_QWidget_window::tst_move_show()
