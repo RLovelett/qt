@@ -1,7 +1,2 @@
-load(qttest_p4)
-SOURCES  += tst_qwidget_window.cpp
-
-x11 {
-    LIBS += $$QMAKE_LIBS_X11
-}
-
+TEMPLATE = subdirs
+SUBDIRS = tst_qmain_widget.pro tst_qwidget_window.pro
