@@ -3187,6 +3187,31 @@ void QWidget::setEnabled(bool enable)
     d->setEnabled_helper(enable);
 }
 
+/*!
+    \property QWidget::enabledAllowed
+    \brief whether the widget is enabled when its parent is enabled
+
+    This property is true when widget's attribute Qt::WA_ForceDisabled
+    is not set, and false otherwise.
+
+    By default, this property is true.
+
+    \sa QWidget::enabled
+*/
+void QWidget::setEnabledAllowed(bool enable)
+{
+    Q_D(QWidget);
+    setAttribute(Qt::WA_ForceDisabled, !enable);
+    d->setEnabled_helper(enable);
+}
+
+bool QWidget::isEnabledStored() const
+{
+    if (isWindow() || !parentWidget())
+        return true;
+    return false;
+}
+
 void QWidgetPrivate::setEnabled_helper(bool enable)
 {
     Q_Q(QWidget);

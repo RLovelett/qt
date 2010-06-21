@@ -1091,7 +1091,14 @@ void QDesignerResource::applyProperties(QObject *o, const QList<DomProperty*> &p
     for (DomPropertyList::const_iterator it = properties.constBegin(); it != cend; ++it) {
         const DomProperty *p = *it;
         const QString propertyName = p->attributeName();
-        const int index = sheet->indexOf(propertyName);
+        int tempIdx = -1;
+        if ( propertyName == QLatin1String("enabled") ) {
+            // support for old .ui files which tried to set property "enabled" instead of "enabledAllowed":
+            tempIdx = sheet->indexOf("enabledAllowed");
+        } else {
+            tempIdx = sheet->indexOf(propertyName);
+        }
+        const int index = tempIdx;
         QVariant v;
         if (!readDomEnumerationValue(p, sheet, index, v))
             v = toVariant(o->metaObject(), *it);

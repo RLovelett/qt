@@ -144,7 +144,8 @@ class Q_GUI_EXPORT QWidget : public QObject, public QPaintDevice
 
     Q_PROPERTY(bool modal READ isModal)
     Q_PROPERTY(Qt::WindowModality windowModality READ windowModality WRITE setWindowModality)
-    Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled)
+    Q_PROPERTY(bool enabled READ isEnabled WRITE setEnabled DESIGNABLE isEnabledStored() STORED isEnabledStored())
+    Q_PROPERTY(bool enabledAllowed READ isEnabledAllowed WRITE setEnabledAllowed)
     Q_PROPERTY(QRect geometry READ geometry WRITE setGeometry)
     Q_PROPERTY(QRect frameGeometry READ frameGeometry)
     Q_PROPERTY(QRect normalGeometry READ normalGeometry)
@@ -247,11 +248,13 @@ public:
     void setWindowModality(Qt::WindowModality windowModality);
 
     bool isEnabled() const;
+    bool isEnabledAllowed() const;
     bool isEnabledTo(QWidget*) const;
     bool isEnabledToTLW() const;
 
 public Q_SLOTS:
     void setEnabled(bool);
+    void setEnabledAllowed(bool);
     void setDisabled(bool);
     void setWindowModified(bool);
 
@@ -790,6 +793,8 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_delayedDestroy(WId winId))
 #endif
 
+    bool isEnabledStored() const;
+
     QWidgetData *data;
 
 #ifdef QT3_SUPPORT
@@ -933,6 +938,9 @@ inline bool QWidget::isWindow() const
 
 inline bool QWidget::isEnabled() const
 { return !testAttribute(Qt::WA_Disabled); }
+
+inline bool QWidget::isEnabledAllowed() const
+{ return !testAttribute(Qt::WA_ForceDisabled); }
 
 inline bool QWidget::isModal() const
 { return data->window_modality != Qt::NonModal; }
