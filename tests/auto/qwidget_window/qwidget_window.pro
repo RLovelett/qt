@@ -1,4 +1,2 @@
-load(qttest_p4)
-SOURCES  += tst_qwidget_window.cpp
-
-
+TEMPLATE = subdirs
+SUBDIRS = tst_qmain_widget.pro tst_qwidget_window.pro
