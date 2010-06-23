@@ -272,15 +272,15 @@ void QPixmapData::fromNativeType(void* /* pixmap */, NativeType /* typre */)
     return;
 }
 #elif defined(Q_WS_X11)
-Qt::HANDLE QPixmapData::toSharedImage()
+Qt::HANDLE QPixmapData::toEGLSharedImage()
 {
-    qWarning() << "You need to run with OpenGL graphics system to use QPixmap::toSharedImage";
+    qWarning() << "You need to run with OpenGL graphics system to use QPixmap::toEGLSharedImage";
     return 0;
 }
 
-void QPixmapData::fromSharedImage(Qt::HANDLE h)
+void QPixmapData::fromEGLSharedImage(Qt::HANDLE h)
 {
-    qWarning() << "You need to run with OpenGL graphics system to use QPixmap::fromSharedImage";
+    qWarning() << "You need to run with OpenGL graphics system to use QPixmap::fromEGLSharedImage";
 }
 #endif
 

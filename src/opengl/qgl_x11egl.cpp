@@ -538,7 +538,7 @@ void QGLContextPrivate::unbindPixmapFromTexture(QPixmapData* pmd)
     }
 }
 
-Qt::HANDLE QGLContextPrivate::createSharedImageFromPixmap(QGLPixmapData *sourcePixmapData)
+Qt::HANDLE QGLContextPrivate::createEGLSharedImageFromPixmap(QGLPixmapData *sourcePixmapData)
 {
     Q_Q(QGLContext);
 
@@ -561,7 +561,7 @@ Qt::HANDLE QGLContextPrivate::createSharedImageFromPixmap(QGLPixmapData *sourceP
     }
 }
 
-GLuint QGLContextPrivate::createTextureFromSharedImage(Qt::HANDLE handle, GLint *w, GLint *h)
+GLuint QGLContextPrivate::createTextureFromEGLSharedImage(Qt::HANDLE handle, GLint *w, GLint *h)
 {
     Q_Q(QGLContext);
     

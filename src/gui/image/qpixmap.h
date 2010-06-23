@@ -204,8 +204,8 @@ public:
     const QX11Info &x11Info() const;
     Qt::HANDLE x11PictureHandle() const;
 
-    static QPixmap fromSharedImage(Qt::HANDLE h);
-    Qt::HANDLE toSharedImage();
+    static QPixmap fromEGLSharedImage(Qt::HANDLE h);
+    Qt::HANDLE toEGLSharedImage();
 #endif
 
 #if defined(Q_WS_X11) || defined(Q_WS_QWS)

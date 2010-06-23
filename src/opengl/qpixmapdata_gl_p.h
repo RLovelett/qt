@@ -120,8 +120,8 @@ public:
     int metric(QPaintDevice::PaintDeviceMetric metric) const;
 
 #if defined(Q_WS_X11)    
-    Qt::HANDLE toSharedImage();
-    void fromSharedImage(Qt::HANDLE h);
+    Qt::HANDLE toEGLSharedImage();
+    void fromEGLSharedImage(Qt::HANDLE h);
 #endif
 
     // For accessing as a target:

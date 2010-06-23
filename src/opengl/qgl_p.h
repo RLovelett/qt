@@ -355,8 +355,8 @@ public:
     void* cx;
 #endif
 #if defined(QT_OPENGL_ES) && defined(Q_WS_X11)
-    Qt::HANDLE createSharedImageFromPixmap(QGLPixmapData *sourcePixmapData);
-    GLuint createTextureFromSharedImage(Qt::HANDLE handle, GLint *w, GLint *h);
+    Qt::HANDLE createEGLSharedImageFromPixmap(QGLPixmapData *sourcePixmapData);
+    GLuint createTextureFromEGLSharedImage(Qt::HANDLE handle, GLint *w, GLint *h);
 #endif
 #if defined(Q_WS_X11) || defined(Q_WS_MAC)
     void* vi;
