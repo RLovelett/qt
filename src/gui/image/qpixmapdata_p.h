@@ -130,7 +130,7 @@ public:
     virtual void* toNativeType(NativeType type);
     virtual void fromNativeType(void* pixmap, NativeType type);
 #elif defined(Q_WS_X11)
-    virtual void fromEGLSharedImage(Qt::HANDLE h);
+    virtual void fromEGLSharedImage(Qt::HANDLE h, QPixmap::ShareMode mode);
     virtual Qt::HANDLE toEGLSharedImage();
 #endif
 

@@ -2354,12 +2354,12 @@ QPixmap QPixmap::fromX11Pixmap(Qt::HANDLE pixmap, QPixmap::ShareMode mode)
     return QPixmap(data);
 }
 
-QPixmap QPixmap::fromEGLSharedImage(Qt::HANDLE h)
+QPixmap QPixmap::fromEGLSharedImage(Qt::HANDLE h, ShareMode mode)
 {
     QGraphicsSystem* gs = QApplicationPrivate::graphicsSystem();
     QScopedPointer<QPixmapData> data(gs ? gs->createPixmapData(QPixmapData::PixmapType)
             : QGraphicsSystem::createDefaultPixmapData(QPixmapData::PixmapType));
-    data->fromEGLSharedImage(h);
+    data->fromEGLSharedImage(h, mode);
     return QPixmap(data.take());
 }
 

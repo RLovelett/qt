@@ -121,7 +121,7 @@ public:
 
 #if defined(Q_WS_X11)    
     Qt::HANDLE toEGLSharedImage();
-    void fromEGLSharedImage(Qt::HANDLE h);
+    void fromEGLSharedImage(Qt::HANDLE h, QPixmap::ShareMode mode);
 #endif
 
     // For accessing as a target:

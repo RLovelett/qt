@@ -277,8 +277,10 @@ Qt::HANDLE QPixmapData::toEGLSharedImage()
     return 0;
 }
 
-void QPixmapData::fromEGLSharedImage(Qt::HANDLE h)
+void QPixmapData::fromEGLSharedImage(Qt::HANDLE h, QPixmap::ShareMode mode)
 {
+    Q_UNUSED(h);
+    Q_UNUSED(mode);
     qWarning("You need to run with OpenGL graphics system to use QPixmap::fromEGLSharedImage");
 }
 #endif

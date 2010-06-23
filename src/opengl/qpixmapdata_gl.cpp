@@ -757,11 +757,14 @@ QGLPaintDevice *QGLPixmapData::glDevice() const
 }
 
 #if defined(Q_WS_X11)
-void QGLPixmapData::fromEGLSharedImage(Qt::HANDLE handle)
+void QGLPixmapData::fromEGLSharedImage(Qt::HANDLE handle, QPixmap::ShareMode mode)
 {
 #if defined(QT_OPENGL_ES)
     QGLShareContextScope ctx(qt_gl_share_widget()->context());
-    if (m_texture.id) {
+    if (mode != QPixmap::ImplicitlyShared) {
+        qWarning("Only implicit sharing is currently supported!");
+        return;
+    } else if (m_texture.id) {
         qWarning() << "Pixmap already initialized!";
         return;
     } else {

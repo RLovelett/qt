@@ -204,7 +204,7 @@ public:
     const QX11Info &x11Info() const;
     Qt::HANDLE x11PictureHandle() const;
 
-    static QPixmap fromEGLSharedImage(Qt::HANDLE h);
+    static QPixmap fromEGLSharedImage(Qt::HANDLE h, ShareMode mode = ImplicitlyShared);
     Qt::HANDLE toEGLSharedImage();
 #endif
 
