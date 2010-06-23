@@ -172,7 +172,7 @@ typedef void *EGLImageKHR;
 #define EGL_KHR_image_pixmap
 #endif
 
-#if !defined(EGL_NOK_image_shared)
+#if !defined(EGL_NOK_image_shared) && defined(Q_WS_X11)
 typedef XID EGLNativeSharedImageTypeNOK;
 #define EGL_SHARED_IMAGE_NOK 0x30DA
 #endif
