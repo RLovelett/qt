@@ -590,33 +590,50 @@ void QGLPixmapData::copyBackFromRenderFbo(bool keepCurrentFboBound) const
     QGLShareContextScope ctx(share_ctx);
 
     ensureCreated();
-
-    if (!ctx->d_ptr->fbo)
-        glGenFramebuffers(1, &ctx->d_ptr->fbo);
-
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER_EXT, ctx->d_ptr->fbo);
-    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
-        GL_TEXTURE_2D, m_texture.id, 0);
+    glDisable(GL_SCISSOR_TEST);
 
     const int x0 = 0;
     const int x1 = w;
     const int y0 = 0;
     const int y1 = h;
 
-    if (!m_renderFbo->isBound())
-        glBindFramebuffer(GL_READ_FRAMEBUFFER_EXT, m_renderFbo->handle());
+    GLenum drawTarget;
+    if (QGLFramebufferObject::hasOpenGLFramebufferBlit()) {
+        drawTarget = GL_DRAW_FRAMEBUFFER_EXT;
+        if (!ctx->d_ptr->fbo) {
+            glGenFramebuffers(1, &ctx->d_ptr->fbo);
+        }
 
-    glDisable(GL_SCISSOR_TEST);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER_EXT, ctx->d_ptr->fbo);
+        glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT,
+                               GL_TEXTURE_2D, m_texture.id, 0);
 
-    glBlitFramebufferEXT(x0, y0, x1, y1,
-            x0, y0, x1, y1,
-            GL_COLOR_BUFFER_BIT,
-            GL_NEAREST);
+        if (!m_renderFbo->isBound())
+            glBindFramebuffer(GL_READ_FRAMEBUFFER_EXT, m_renderFbo->handle());
+
+        glBlitFramebufferEXT(x0, y0, x1, y1,
+                             x0, y0, x1, y1,
+                             GL_COLOR_BUFFER_BIT,
+                             GL_NEAREST);
+    } else {
+        drawTarget = GL_FRAMEBUFFER_EXT;
+
+	static GLuint tempFbo = 0;
+        if (tempFbo == 0) {
+            glGenFramebuffers(1, &tempFbo);
+        }
+
+        glBindFramebuffer(GL_FRAMEBUFFER_EXT, tempFbo);
+        glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0,
+                               GL_TEXTURE_2D, m_texture.id, 0);
+        glViewport(0, 0, w, h);
+        ctx->drawTexture(QRectF(x0, y0, x1, y1), m_renderFbo->texture());
+    }
 
     if (keepCurrentFboBound) {
         glBindFramebuffer(GL_FRAMEBUFFER_EXT, ctx->d_ptr->current_fbo);
     } else {
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER_EXT, m_renderFbo->handle());
+        glBindFramebuffer(drawTarget, m_renderFbo->handle());
         ctx->d_ptr->current_fbo = m_renderFbo->handle();
     }
 }
@@ -624,7 +641,6 @@ void QGLPixmapData::copyBackFromRenderFbo(bool keepCurrentFboBound) const
 bool QGLPixmapData::useFramebufferObjects()
 {
     return QGLFramebufferObject::hasOpenGLFramebufferObjects()
-           && QGLFramebufferObject::hasOpenGLFramebufferBlit()
            && qt_gl_preferGL2Engine();
 }
 
