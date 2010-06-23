@@ -46,7 +46,6 @@
 #include <private/qgraphicssystem_p.h>
 #include <private/qapplication_p.h>
 #include <private/qimagepixmapcleanuphooks_p.h>
-#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 
@@ -274,13 +273,13 @@ void QPixmapData::fromNativeType(void* /* pixmap */, NativeType /* typre */)
 #elif defined(Q_WS_X11)
 Qt::HANDLE QPixmapData::toEGLSharedImage()
 {
-    qWarning() << "You need to run with OpenGL graphics system to use QPixmap::toEGLSharedImage";
+    qWarning("You need to run with OpenGL graphics system to use QPixmap::toEGLSharedImage");
     return 0;
 }
 
 void QPixmapData::fromEGLSharedImage(Qt::HANDLE h)
 {
-    qWarning() << "You need to run with OpenGL graphics system to use QPixmap::fromEGLSharedImage";
+    qWarning("You need to run with OpenGL graphics system to use QPixmap::fromEGLSharedImage");
 }
 #endif
 
