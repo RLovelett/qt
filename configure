@@ -1094,6 +1094,15 @@ while [ "$#" -gt 0 ]; do
             VAL=`echo $1 | sed 's,-fw,,'`
         fi
         ;;
+    -j?*|-j)
+        VAR="makejobs"
+        if [ "$1" = "-j" ]; then
+            shift
+            VAL="$1"
+        else
+            VAL=`echo $1 | sed 's,-j,,'`
+        fi
+        ;;
     -*)
         VAR=`echo $1 | sed "s,^-\(.*\),\1,"`
         VAL="unknown"
@@ -2173,6 +2182,9 @@ while [ "$#" -gt 0 ]; do
         else
             UNKNOWN_OPT=yes
         fi
+        ;;
+    makejobs)
+        MAKEJOBS="-j $VAL"
         ;;
     *)
         UNKNOWN_OPT=yes
@@ -3415,7 +3427,7 @@ Usage:  $relconf [-h] [-prefix <dir>] [-prefix-install] [-bindir <dir>] [-libdir
         [-docdir <dir>] [-headerdir <dir>] [-plugindir <dir> ] [-importdir <dir>] [-datadir <dir>]
         [-translationdir <dir>] [-sysconfdir <dir>] [-examplesdir <dir>]
         [-demosdir <dir>] [-buildkey <key>] [-release] [-debug]
-        [-debug-and-release] [-developer-build] [-shared] [-static] [-no-fast] [-fast] [-no-largefile]
+        [-debug-and-release] [-developer-build] [-shared] [-static] [-no-fast] [-fast] [-j <jobs>] [-no-largefile]
         [-largefile] [-no-exceptions] [-exceptions] [-no-accessibility]
         [-accessibility] [-no-stl] [-stl] [-no-sql-<driver>] [-sql-<driver>]
         [-plugin-sql-<driver>] [-system-sqlite] [-no-qt3support] [-qt3support]
@@ -3519,6 +3531,8 @@ Configure options:
     -fast .............. Configure Qt quickly by generating Makefiles only for
                          library and subdirectory targets.  All other Makefiles
                          are created as wrappers, which will in turn run qmake.
+
+    -j...................Number of jobs for make's -j flag when invoked by configure.
 
     -no-largefile ...... Disables large file support.
  +  -largefile ......... Enables Qt to access files larger than 4 GB.
@@ -4611,7 +4625,7 @@ if true; then ###[ '!' -f "$outpath/bin/qmake" ];
 	    -e "s,@QMAKESPEC@,$adjqmakespec,g" "$in_mkfile" >>"$mkfile"
 
         if "$WHICH" makedepend >/dev/null 2>&1 && grep 'depend:' "$mkfile" >/dev/null 2>&1; then
-            (cd "$outpath/qmake" && "$MAKE" -f "$mkfile" depend) >/dev/null 2>&1
+            (cd "$outpath/qmake" && "$MAKE" $MAKEJOBS -f "$mkfile" depend) >/dev/null 2>&1
 	    sed "s,^.*/\([^/]*.o\):,\1:,g" "$mkfile" >"$mkfile.tmp"
 	    sed "s,$outpath,$adjoutpath,g" "$mkfile.tmp" >"$mkfile"
 	    rm "$mkfile.tmp"
@@ -4619,7 +4633,7 @@ if true; then ###[ '!' -f "$outpath/bin/qmake" ];
     done
 
     QMAKE_BUILD_ERROR=no
-    (cd "$outpath/qmake"; "$MAKE") || QMAKE_BUILD_ERROR=yes
+    (cd "$outpath/qmake"; "$MAKE" $MAKEJOBS) || QMAKE_BUILD_ERROR=yes
     [ '!' -z "$QCONFIG_H" ] && mv -f "$QCONFIG_H" "$QMAKE_QCONFIG_H" #move qmake's qconfig.h to qconfig.h.qmake
     [ '!' -z "$OLD_QCONFIG_H" ] && mv -f "${OLD_QCONFIG_H}.old" "$OLD_QCONFIG_H" #put back qconfig.h
     [ "$QMAKE_BUILD_ERROR" = "yes" ] && exit 2
@@ -6252,7 +6266,7 @@ fi
 if [ "$CFG_PTMALLOC" != "no" ]; then
     # build ptmalloc, copy .a file to lib/
     echo "Building ptmalloc. Please wait..."
-    (cd "$relpath/src/3rdparty/ptmalloc/"; "$MAKE" "clean" ; "$MAKE" "posix"
+    (cd "$relpath/src/3rdparty/ptmalloc/"; "$MAKE" "clean" ; "$MAKE" $MAKEJOBS "posix"
      mkdir "$outpath/lib/" ; cp "libptmalloc3.a" "$outpath/lib/")
 
     QMakeVar add QMAKE_LFLAGS "$outpath/lib/libptmalloc3.a"
