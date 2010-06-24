@@ -1510,19 +1510,10 @@ QImage QX11PixmapData::toImage() const
             for (int i=0; i < image.height(); i++) {
                 uint *p = (uint*)image.scanLine(i);
                 uint *end = p + image.width();
-                if ((xi->byte_order == LSBFirst && QSysInfo::ByteOrder == QSysInfo::BigEndian)
-                    || (xi->byte_order == MSBFirst && QSysInfo::ByteOrder == QSysInfo::LittleEndian)) {
-                    while (p < end) {
-                        *p = ((*p << 24) & 0xff000000) | ((*p << 8) & 0x00ff0000)
-                             | ((*p >> 8) & 0x0000ff00) | ((*p >> 24) & 0x000000ff);
-                        p++;
-                    }
-                } else if (xi->byte_order == MSBFirst && QSysInfo::ByteOrder == QSysInfo::BigEndian) {
-                    while (p < end) {
-                        *p = ((*p << 16) & 0x00ff0000) | ((*p >> 16) & 0x000000ff)
-                             | ((*p ) & 0xff00ff00);
-                        p++;
-                    }
+                while (p < end) {
+                    *p = ((*p << 24) & 0xff000000) | ((*p << 8) & 0x00ff0000)
+                         | ((*p >> 8) & 0x0000ff00) | ((*p >> 24) & 0x000000ff);
+                    p++;
                 }
             }
         }
