@@ -769,13 +769,20 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
         // note: WM_TRANSIENT_FOR is set in QWidgetPrivate::show_sys()
 
         XSizeHints size_hints;
-        size_hints.flags = USSize | PSize | PWinGravity;
+        memset(&size_hints, 0, sizeof(size_hints));
+        long supplied_return;
+        XGetWMNormalHints(dpy, id, &size_hints, &supplied_return);
         size_hints.x = data.crect.left();
         size_hints.y = data.crect.top();
         size_hints.width = data.crect.width();
         size_hints.height = data.crect.height();
-        size_hints.win_gravity =
-            QApplication::isRightToLeft() ? NorthEastGravity : NorthWestGravity;
+        // keep the existing gravity if one is set unless it's static
+        if (!(size_hints.flags & PWinGravity) ||
+            size_hints.win_gravity == StaticGravity) {
+            size_hints.win_gravity = QApplication::isRightToLeft() ?
+                NorthEastGravity : NorthWestGravity;
+        }
+        size_hints.flags = USSize | PSize | PWinGravity;
 
         XWMHints wm_hints;                        // window manager hints
         memset(&wm_hints, 0, sizeof(wm_hints)); // make valgrind happy
@@ -2257,7 +2264,9 @@ static void do_size_hints(QWidget* widget, QWExtra *x)
 {
     Q_ASSERT(widget->testAttribute(Qt::WA_WState_Created));
     XSizeHints s;
-    s.flags = 0;
+    memset(&s, 0, sizeof(s));
+    long supplied_return;
+    Status result = XGetWMNormalHints(X11->display, widget->internalWinId(), &s, &supplied_return);
     if (x) {
         QRect g = widget->geometry();
         s.x = g.x();
@@ -2296,7 +2305,6 @@ static void do_size_hints(QWidget* widget, QWExtra *x)
         s.flags |= USSize;
         s.flags |= PSize;
     }
-    s.flags |= PWinGravity;
     if (widget->testAttribute(Qt::WA_Moved) && x && x->topextra && !x->topextra->posFromMove) {
         // position came from setGeometry(), tell the WM that we don't
         // want our window gravity-shifted
@@ -2305,8 +2313,12 @@ static void do_size_hints(QWidget* widget, QWExtra *x)
         // position came from move()
         s.x = widget->x();
         s.y = widget->y();
-        s.win_gravity = QApplication::isRightToLeft() ? NorthEastGravity : NorthWestGravity;
+        // keep the existing gravity if one is set unless it's static
+        if (!(s.flags & PWinGravity) || s.win_gravity == StaticGravity) {
+            s.win_gravity = QApplication::isRightToLeft() ? NorthEastGravity : NorthWestGravity;
+        }
     }
+    s.flags |= PWinGravity;
     if (widget->internalWinId())
         XSetWMNormalHints(X11->display, widget->internalWinId(), &s);
 }
