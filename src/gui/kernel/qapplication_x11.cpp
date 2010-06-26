@@ -2793,11 +2793,17 @@ void QApplicationPrivate::applyX11SpecificCommandLineArguments(QWidget *main_wid
                 x = main_widget->geometry().x();
             if ((m & YValue) == 0)
                 y = main_widget->geometry().y();
-            if ((m & XNegative)) {
-                x = QApplication::desktop()->width()  + x - w;
-            }
-            if ((m & YNegative)) {
-                y = QApplication::desktop()->height() + y - h;
+            QRect avail = QApplication::desktop()->availableGeometry(main_widget);
+            // adjust for panel/taskbar location
+            x += avail.left();
+            y += avail.top();
+            if (m & (XNegative | YNegative)) {
+                if ((m & XNegative)) {
+                    x = avail.width() + x - w;
+                }
+                if ((m & YNegative)) {
+                    y = avail.height() + y - h;
+                }
             }
             main_widget->move(QPoint(x, y));
         }
