@@ -2804,6 +2804,30 @@ void QApplicationPrivate::applyX11SpecificCommandLineArguments(QWidget *main_wid
                 if ((m & YNegative)) {
                     y = avail.height() + y - h;
                 }
+                // The window manager moves the window to make room for the
+                // window borders, window gravity specifies which direction.
+                // Pick the direction based on the negative value so 0 -0
+                // is on the border and 1 -1 is a pixel away.
+                XSizeHints s;
+                memset(&s, 0, sizeof(s));
+                long supplied_return;
+                XGetWMNormalHints(X11->display, main_widget->internalWinId(),
+                    &s, &supplied_return);
+                if (m & XNegative && m & YNegative) {
+                    // -x -y
+                    s.win_gravity = SouthEastGravity;
+                } else if (m & XNegative) {
+                    // -x +y
+                    s.win_gravity = NorthEastGravity;
+                } else if (QApplication::isRightToLeft()) {
+                    // +x -y, right to left
+                    s.win_gravity = SouthEastGravity;
+                } else {
+                    // +x -y, left to right
+                    s.win_gravity = SouthWestGravity;
+                }
+                s.flags |= PWinGravity;
+                XSetWMNormalHints(X11->display, main_widget->internalWinId(), &s);
             }
             main_widget->move(QPoint(x, y));
         }
