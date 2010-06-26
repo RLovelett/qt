@@ -735,7 +735,7 @@ void QGLContext::doneCurrent()
 #endif
 }
 
-void QGLContext::swapBuffers() const
+void QGLContext::swapBuffers(const QRegion *) const
 {
     Q_D(const QGLContext);
     if (!d->valid)

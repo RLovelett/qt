@@ -218,13 +218,16 @@ void QGLContext::doneCurrent()
 }
 
 
-void QGLContext::swapBuffers() const
+void QGLContext::swapBuffers(const QRegion *region) const
 {
     Q_D(const QGLContext);
     if (!d->valid || !d->eglContext)
         return;
 
-    d->eglContext->swapBuffers(d->eglSurfaceForDevice());
+    if (region != NULL)
+        d->eglContext->swapBuffersRegion2NOK(d->eglSurfaceForDevice(), region);
+    else
+        d->eglContext->swapBuffers(d->eglSurfaceForDevice());
 }
 
 void QGLContextPrivate::destroyEglSurfaceForDevice()
