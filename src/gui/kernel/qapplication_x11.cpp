@@ -601,6 +601,7 @@ public:
 
         // static gravity!
         XSizeHints sh;
+        memset(&sh, 0, sizeof(sh));
         long unused;
         XGetWMNormalHints(X11->display, internalWinId(), &sh, &unused);
         sh.flags |= USPosition | PPosition | USSize | PSize | PWinGravity;
@@ -2811,6 +2812,29 @@ bool qt_nograb()                                // application no-grab option
 #endif
 }
 
+// For the X11 -geometry argument to work property with the first window,
+// the window gravity must be set propertly in the window manager property
+// hints.  This routine allows a local cache of the window gravity to
+// avoid the round trip of asking the server.
+// The gravity will only be set or queried for the first window and only if it
+// is something other than ForgetGravity.
+int qt_wm_gravity(Display *dpy, Window w, int gravity=ForgetGravity)
+{
+    static Display *Dpy = NULL;
+    static Window Win = 0;
+    static int Gravity = ForgetGravity;
+    if (Gravity == ForgetGravity && gravity != ForgetGravity && !Dpy && !Win) {
+        Dpy = dpy;
+        Win = w;
+        Gravity = gravity;
+    }
+    if (Dpy == dpy && Win == w)
+        gravity = Gravity;
+    else
+        gravity = QApplication::isRightToLeft() ? NorthEastGravity : NorthWestGravity;
+    return gravity;
+}
+
 
 /*****************************************************************************
   Platform specific QApplication members
@@ -2878,6 +2902,26 @@ void QApplicationPrivate::applyX11SpecificCommandLineArguments(QWidget *main_wid
                     x = desktop->width() + x - w;
                 if ((m & YNegative))
                     y = desktop->height() + y - h;
+                // The window manager moves the window to make room for the
+                // window borders, window gravity specifies which direction.
+                // Pick the direction based on the negative value so 0 -0
+                // is on the border and 1 -1 is a pixel away.
+                XSizeHints s;
+                memset(&s, 0, sizeof(s));
+                if (m & XNegative) {
+                    if (m & YNegative)
+                        s.win_gravity = SouthEastGravity; // -x -y
+                    else
+                        s.win_gravity = NorthEastGravity; // -x +y
+                } else {
+                    if (m & YNegative)
+                        s.win_gravity = SouthWestGravity; // +x -y
+                    else
+                        s.win_gravity = NorthWestGravity; // +x +y
+                }
+                s.flags |= PWinGravity;
+                qt_wm_gravity(X11->display, main_widget->internalWinId(), s.win_gravity);
+                XSetWMNormalHints(X11->display, main_widget->internalWinId(), &s);
             }
             main_widget->move(QPoint(x, y));
         }
