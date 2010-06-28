@@ -164,7 +164,36 @@ QT_BEGIN_NAMESPACE
    Example:
    \snippet doc/src/snippets/code/src_qtestlib_qtestcase.cpp 2
 
-   \sa QVERIFY(), QTest::toString()
+   \sa QFUZZY_COMPARE(), QVERIFY(), QTest::toString()
+*/
+
+/*! \macro QFUZZY_COMPARE(actual, expected, tolerance)
+
+   \relates QTest
+   \since 4.8
+
+   The QFUZZY_COMPARE macro compares an \a actual value to an \a expected value using
+   the equals operator, with a given tolerance. If \a actual and \a expected are
+   within the tolerance, execution continues. If not, a failure is recorded in the
+   test log and the test won't be executed further.
+
+   QFUZZY_COMPARE only operates on ints, floats and doubles. The tolerance would be taken
+   as a float or double. This function can be used for comparing to 0 (compared to
+   the limiations of QCOMPARE), given that a useful tolerance is defined.
+
+   QFUZZY_COMPARE tries to output the contents of the values and the specified tolerance
+   if the comparison fails, so it is visible from the test log why the comparison failed.
+
+   QFUZZY_COMPARE is very strict on the data types. \a actual \a expected and \a tolerance
+   all have to be ints, floats or doubles, otherwise the test won't compile.
+
+   \note This macro can only be used in a test function that is invoked
+   by the test framework.
+
+   Example:
+   \snippet doc/src/snippets/code/src_qtestlib_qtestcase.cpp 24
+
+   \sa QCOMPARE(), QVERIFY(), qFuzzyCompare()
 */
 
 /*! \macro QFETCH(type, name)
@@ -370,9 +399,9 @@ QT_BEGIN_NAMESPACE
     this macro.
 
     Unlike QBENCHMARK, the contents of the contained code block is only run
-    once. The elapsed time will be reported as "0" if it's to short to
+    once. The elapsed time will be reported as "0" if it's to short to 
     be measured by the selected backend. (Use)
-
+ 
     \sa {QTestLib Manual#Creating a Benchmark}{Creating a Benchmark},
     {Chapter 5: Writing a Benchmark}{Writing a Benchmark}
 */
@@ -752,7 +781,7 @@ QT_BEGIN_NAMESPACE
 
     \brief The QTouchEventSequence class is used to simulate a sequence of touch events.
 
-    To simulate a sequence of touch events on a specific device for a widget, call
+    To simulate a sequence of touch events on a specific device for a widget, call 
     QTest::touchEvent to create a QTouchEventSequence instance. Add touch events to
     the sequence by calling press(), move(), release() and stationary(), and let the
     instance run out of scope to commit the sequence to the event system.
@@ -770,7 +799,7 @@ QT_BEGIN_NAMESPACE
     Adds a press event for touchpoint \a touchId at position \a pt to this sequence and returns
     a reference to this QTouchEventSequence.
 
-    The position \a pt is interpreted as relative to \a widget. If \a widget is the null pointer, then
+    The position \a pt is interpreted as relative to \a widget. If \a widget is the null pointer, then 
     \a pt is interpreted as relative to the widget provided when instantiating this QTouchEventSequence.
 
     Simulates that the user pressed the touch screen or pad with the finger identified by \a touchId.
@@ -782,7 +811,7 @@ QT_BEGIN_NAMESPACE
     Adds a move event for touchpoint \a touchId at position \a pt to this sequence and returns
     a reference to this QTouchEventSequence.
 
-    The position \a pt is interpreted as relative to \a widget. If \a widget is the null pointer, then
+    The position \a pt is interpreted as relative to \a widget. If \a widget is the null pointer, then 
     \a pt is interpreted as relative to the widget provided when instantiating this QTouchEventSequence.
 
     Simulates that the user moved the finger identified by \a touchId.
@@ -793,8 +822,8 @@ QT_BEGIN_NAMESPACE
 
     Adds a release event for touchpoint \a touchId at position \a pt to this sequence and returns
     a reference to this QTouchEventSequence.
-
-    The position \a pt is interpreted as relative to \a widget. If \a widget is the null pointer, then
+        
+    The position \a pt is interpreted as relative to \a widget. If \a widget is the null pointer, then 
     \a pt is interpreted as relative to the widget provided when instantiating this QTouchEventSequence.
 
     Simulates that the user lifted the finger identified by \a touchId.
@@ -805,7 +834,7 @@ QT_BEGIN_NAMESPACE
 
     Adds a stationary event for touchpoint \a touchId to this sequence and returns
     a reference to this QTouchEventSequence.
-
+    
     Simulates that the user did not move the finger identified by \a touchId.
 */
 
@@ -2033,6 +2062,15 @@ bool QTest::compare_helper(bool success, const char *msg, char *val1, char *val2
     return QTestResult::compare(success, msg, val1, val2, actual, expected, file, line);
 }
 
+/*! \internal
+ */
+bool QTest::compare_helper(bool success, const char *msg, char *val1, char *val2, char *val3,
+                           const char *actual, const char *expected,
+			   const char *fuzz, const char *file, int line)
+{
+    return QTestResult::compare(success, msg, val1, val2, val3, actual, expected, fuzz, file, line);
+}
+
 /*! \fn bool QTest::qCompare<float>(float const &t1, float const &t2, const char *actual, const char *expected, const char *file, int line)
 \internal
  */
@@ -2195,7 +2233,7 @@ bool QTest::compare_string_helper(const char *t1, const char *t2, const char *ac
 /*! \fn bool QTest::qCompare(bool const &t1, int const &t2, const char *actual, const char *expected, const char *file, int line)
   \internal
  */
-
+  
 /*! \fn bool QTest::qTest(const T& actual, const char *elementName, const char *actualStr, const char *expected, const char *file, int line)
     \internal
 */

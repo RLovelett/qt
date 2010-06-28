@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" failures="4" tests="5" name="tst_Cmptest">
+<testsuite errors="0" failures="24" tests="8" name="tst_Cmptest">
   <properties>
     <property value="@INSERT_QT_VERSION_HERE@" name="QTestVersion"/>
     <property value="@INSERT_QT_VERSION_HERE@" name="QtVersion"/>
@@ -20,6 +20,92 @@
     <failure tag="both non&#x002D;null user type" message="Compared values are not the same
    Actual (actual): QVariant(PhonyClass,&lt;value not representable as string&gt;)
    Expected (expected): QVariant(PhonyClass,&lt;value not representable as string&gt;)" result="fail"/>
+  </testcase>
+  <testcase result="fail" name="qfuzzy_compare_int">
+    <failure tag="positive fuzz fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): 3
+   Fuzz (fuzz): 1" result="fail"/>
+    <failure tag="positive swap fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): 3
+   Expected (comparison): 1
+   Fuzz (fuzz): 1" result="fail"/>
+    <failure tag="negative fuzz fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): &#x002D;1
+   Expected (comparison): &#x002D;3
+   Fuzz (fuzz): 1" result="fail"/>
+    <failure tag="negative swap fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): &#x002D;3
+   Expected (comparison): &#x002D;1
+   Fuzz (fuzz): 1" result="fail"/>
+    <failure tag="positive match fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): 2
+   Fuzz (fuzz): 0" result="fail"/>
+    <failure tag="negative match fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): &#x002D;1
+   Expected (comparison): &#x002D;2
+   Fuzz (fuzz): 0" result="fail"/>
+    <failure tag="neg/pos fuzz fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): &#x002D;2
+   Fuzz (fuzz): 2" result="fail"/>
+    <failure tag="pos/neg swap fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): &#x002D;2
+   Expected (comparison): 1
+   Fuzz (fuzz): 2" result="fail"/>
+    <failure tag="big value fuzz fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): &#x002D;10000
+   Expected (comparison): 10000
+   Fuzz (fuzz): 19999" result="fail"/>
+  </testcase>
+  <testcase result="fail" name="qfuzzy_compare_float">
+    <failure tag="positive fuzz fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): 3
+   Fuzz (fuzz): 1" result="fail"/>
+    <failure tag="positive swap fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): 3
+   Expected (comparison): 1
+   Fuzz (fuzz): 1" result="fail"/>
+    <failure tag="negative fuzz fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): &#x002D;1
+   Expected (comparison): &#x002D;3
+   Fuzz (fuzz): 1" result="fail"/>
+    <failure tag="negative swap fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): &#x002D;3
+   Expected (comparison): &#x002D;1
+   Fuzz (fuzz): 1" result="fail"/>
+    <failure tag="positive match fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): 2
+   Fuzz (fuzz): 0" result="fail"/>
+    <failure tag="negative match fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): &#x002D;1
+   Expected (comparison): &#x002D;2
+   Fuzz (fuzz): 0" result="fail"/>
+    <failure tag="neg/pos fuzz fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): 1
+   Expected (comparison): &#x002D;2
+   Fuzz (fuzz): 2" result="fail"/>
+    <failure tag="pos/neg swap fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): &#x002D;2
+   Expected (comparison): 1
+   Fuzz (fuzz): 2" result="fail"/>
+    <failure tag="big value fuzz fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): &#x002D;10000
+   Expected (comparison): 10000
+   Fuzz (fuzz): 19999" result="fail"/>
+  </testcase>
+  <testcase result="fail" name="qfuzzy_compare_char">
+    <failure tag="fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): a
+   Expected (comparison): c
+   Fuzz (fuzz): ?" result="fail"/>
+    <failure tag="A&#x002D;z fail" message="Compared values are not the same (fuzzy compare)
+   Actual (expected): A
+   Expected (comparison): z
+   Fuzz (fuzz): ?" result="fail"/>
   </testcase>
   <testcase result="pass" name="cleanupTestCase"/>
   <system-err/>
