@@ -829,17 +829,24 @@ void qt_init(QApplicationPrivate *priv, int)
     extern void qt_win_initialize_directdraw();
     qt_win_initialize_directdraw();
 
-#ifndef Q_OS_WINCE
+    QLatin1String win_lib(
+#ifdef Q_OS_WINCE
+            "coredll"
+#else
+            "user32"
+#endif
+            );
+
     ptrUpdateLayeredWindowIndirect =
-        (PtrUpdateLayeredWindowIndirect) QLibrary::resolve(QLatin1String("user32"),
+        (PtrUpdateLayeredWindowIndirect) QLibrary::resolve(win_lib,
                                                            "UpdateLayeredWindowIndirect");
     ptrUpdateLayeredWindow =
-        (PtrUpdateLayeredWindow) QLibrary::resolve(QLatin1String("user32"),
-                                                   "UpdateLayeredWindow");
+        (PtrUpdateLayeredWindow) QLibrary::resolve(win_lib, "UpdateLayeredWindow");
 
     if (ptrUpdateLayeredWindow && !ptrUpdateLayeredWindowIndirect)
         ptrUpdateLayeredWindowIndirect = qt_updateLayeredWindowIndirect;
 
+#ifndef Q_OS_WINCE
     // Notify Vista and Windows 7 that we support highter DPI settings
     ptrSetProcessDPIAware = (PtrSetProcessDPIAware)
         QLibrary::resolve(QLatin1String("user32"), "SetProcessDPIAware");

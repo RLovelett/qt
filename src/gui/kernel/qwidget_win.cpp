@@ -996,8 +996,8 @@ void QWidget::setWindowState(Qt::WindowStates newstate)
 #else
                 UINT style = WS_POPUP;
 #endif
-		if (ulong(d->topData()->savedFlags) & WS_SYSMENU)
-		    style |= WS_SYSMENU;
+                if (ulong(d->topData()->savedFlags) & WS_SYSMENU)
+                    style |= WS_SYSMENU;
                 if (isVisible())
                     style |= WS_VISIBLE;
                 SetWindowLong(internalWinId(), GWL_STYLE, style);
@@ -1561,7 +1561,6 @@ bool QWidgetPrivate::shouldShowMaximizeButton()
 
 void QWidgetPrivate::winUpdateIsOpaque()
 {
-#ifndef Q_WS_WINCE
     Q_Q(QWidget);
 
     if (!q->isWindow() || !q->testAttribute(Qt::WA_TranslucentBackground))
@@ -1577,7 +1576,6 @@ void QWidgetPrivate::winUpdateIsOpaque()
         SetWindowLong(q->internalWinId(), GWL_EXSTYLE,
             GetWindowLong(q->internalWinId(), GWL_EXSTYLE) & ~Q_WS_EX_LAYERED);
     }
-#endif
 }
 
 void QWidgetPrivate::setConstraints_sys()
@@ -1873,7 +1871,6 @@ void QWidgetPrivate::updateFrameStrut()
     }
 }
 
-#ifndef Q_WS_WINCE
 void QWidgetPrivate::setWindowOpacity_sys(qreal level)
 {
     Q_Q(QWidget);
@@ -1889,7 +1886,13 @@ void QWidgetPrivate::setWindowOpacity_sys(qreal level)
     static bool function_resolved = false;
     if (!function_resolved) {
         ptrSetLayeredWindowAttributes =
-            (PtrSetLayeredWindowAttributes) QLibrary::resolve(QLatin1String("user32"),
+            (PtrSetLayeredWindowAttributes) QLibrary::resolve(QLatin1String(
+#ifdef Q_WS_WINCE
+                                                                "coredll"
+#else
+                                                                "user32"
+#endif
+                                                                ),
                                                               "SetLayeredWindowAttributes");
         function_resolved = true;
     }
@@ -1907,7 +1910,6 @@ void QWidgetPrivate::setWindowOpacity_sys(qreal level)
     }
     ptrSetLayeredWindowAttributes(q->internalWinId(), 0, (int)(level * 255), Q_LWA_ALPHA);
 }
-#endif //Q_WS_WINCE
 
 // class QGlobalRasterPaintEngine: public QRasterPaintEngine
 // {

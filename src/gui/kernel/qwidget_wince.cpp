@@ -268,7 +268,7 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
         setWinId(id);
     } else if (topLevel) {                       // create top-level widget
         const bool wasMoved = q->testAttribute(Qt::WA_Moved);
-        
+
         int x, y;
         if (qt_wince_is_mobile()) {
             x = wasMoved ? data.crect.left() : CW_USEDEFAULT;
@@ -277,7 +277,7 @@ void QWidgetPrivate::create_sys(WId window, bool initializeWindow, bool destroyO
             x = wasMoved ? data.crect.left() : 100;
             y = wasMoved ? data.crect.top() : 100;
         }
-        
+
         int w = CW_USEDEFAULT;
         int h = CW_USEDEFAULT;
 
@@ -584,10 +584,12 @@ void QWidgetPrivate::deleteSysExtra()
     }
 }
 
+#if 0
 void QWidgetPrivate::setWindowOpacity_sys(qreal level) {
     Q_UNUSED(level);
     return;
 }
+#endif
 
 // The procedure does nothing, but is required for mousegrabbing to work
 LRESULT QT_WIN_CALLBACK qJournalRecordProc(int nCode, WPARAM wParam, LPARAM lParam) {
