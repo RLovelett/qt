@@ -180,12 +180,12 @@
 <context>
     <name>BrushPropertyManager</name>
     <message>
-        <location filename="../tools/designer/src/components/propertyeditor/brushpropertymanager.cpp" line="+149"/>
+        <location filename="../tools/designer/src/components/propertyeditor/brushpropertymanager.cpp" line="+159"/>
         <source>Style</source>
         <translation>Styl</translation>
     </message>
     <message>
-        <location line="-97"/>
+        <location line="-107"/>
         <source>No brush</source>
         <translation>Žádný vzor</translation>
     </message>
@@ -260,7 +260,7 @@
         <translation>Křížící se úhlopříčky</translation>
     </message>
     <message>
-        <location line="+94"/>
+        <location line="+104"/>
         <source>Color</source>
         <translation>Barva</translation>
     </message>
@@ -506,7 +506,7 @@
         <translation>Smazat nástrojový pruh</translation>
     </message>
     <message>
-        <location filename="../tools/designer/src/lib/shared/qdesigner_menu.cpp" line="+1195"/>
+        <location filename="../tools/designer/src/lib/shared/qdesigner_menu.cpp" line="+1194"/>
         <source>Set action text</source>
         <translation>Nastavit text k činnosti</translation>
     </message>
@@ -517,12 +517,12 @@
     </message>
     <message>
         <location line="+89"/>
-        <location filename="../tools/designer/src/lib/shared/qdesigner_menubar.cpp" line="+907"/>
+        <location filename="../tools/designer/src/lib/shared/qdesigner_menubar.cpp" line="+915"/>
         <source>Move action</source>
         <translation>Posunout činnost</translation>
     </message>
     <message>
-        <location filename="../tools/designer/src/lib/shared/qdesigner_menubar.cpp" line="-424"/>
+        <location filename="../tools/designer/src/lib/shared/qdesigner_menubar.cpp" line="-432"/>
         <source>Change Title</source>
         <translation>Změnit název</translation>
     </message>
@@ -621,7 +621,7 @@
         <translation>Změnit skript</translation>
     </message>
     <message>
-        <location filename="../tools/designer/src/lib/shared/qdesigner_propertycommand.cpp" line="+1213"/>
+        <location filename="../tools/designer/src/lib/shared/qdesigner_propertycommand.cpp" line="+1225"/>
         <source>Changed &apos;%1&apos; of &apos;%2&apos;</source>
         <translation>Změněno &apos;%1&apos; z &apos;%2&apos;</translation>
     </message>
@@ -636,7 +636,7 @@
         </translation>
     </message>
     <message>
-        <location line="+76"/>
+        <location line="+84"/>
         <source>Reset &apos;%1&apos; of &apos;%2&apos;</source>
         <translation>Znovu nastavit &apos;%1&apos; &apos;%2&apos;</translation>
     </message>
@@ -706,7 +706,7 @@
 <context>
     <name>ConnectionDelegate</name>
     <message>
-        <location filename="../tools/designer/src/components/signalsloteditor/signalsloteditorwindow.cpp" line="+643"/>
+        <location filename="../tools/designer/src/components/signalsloteditor/signalsloteditorwindow.cpp" line="+645"/>
         <source>&lt;object&gt;</source>
         <translation>&lt;Předmět&gt;</translation>
     </message>
@@ -745,7 +745,7 @@
 <context>
     <name>Designer</name>
     <message>
-        <location filename="../tools/designer/src/components/formeditor/qdesigner_resource.cpp" line="+449"/>
+        <location filename="../tools/designer/src/components/formeditor/qdesigner_resource.cpp" line="+446"/>
         <source>Qt Designer</source>
         <translation>Qt Designer</translation>
     </message>
@@ -1031,7 +1031,7 @@
 <context>
     <name>FormBuilder</name>
     <message>
-        <location filename="../tools/designer/src/lib/uilib/formbuilderextra.cpp" line="+359"/>
+        <location filename="../tools/designer/src/lib/uilib/formbuilderextra.cpp" line="+375"/>
         <source>Invalid stretch value for &apos;%1&apos;: &apos;%2&apos;</source>
         <extracomment>Parsing layout stretch values</extracomment>
         <translation>Neplatná hodnota roztažení pro &apos;%1&apos;: &apos;%2&apos;</translation>
@@ -1113,7 +1113,7 @@
 <context>
     <name>FormWindow</name>
     <message>
-        <location filename="../tools/designer/src/components/formeditor/formwindow.cpp" line="+1701"/>
+        <location filename="../tools/designer/src/components/formeditor/formwindow.cpp" line="+1754"/>
         <source>Unexpected element &lt;%1&gt;</source>
         <translation>Neplatný prvek &lt;%1&gt;</translation>
     </message>
@@ -1206,7 +1206,7 @@
 <context>
     <name>MainWindowBase</name>
     <message>
-        <location filename="../tools/designer/src/designer/mainwindow.cpp" line="+119"/>
+        <location filename="../tools/designer/src/designer/mainwindow.cpp" line="+121"/>
         <source>Main</source>
         <extracomment>Not currently used (main tool bar)</extracomment>
         <translation>Hlavní pruh s nástroji</translation>
@@ -1416,7 +1416,7 @@
         <translation>Chyba při čtení souboru s rozhraním: Kořenový prvek &lt;ui&gt; chybí.</translation>
     </message>
     <message>
-        <location line="+119"/>
+        <location line="+104"/>
         <source>The creation of a widget of the class &apos;%1&apos; failed.</source>
         <translation>Nepodařilo se vytvořit žádný prvek třídy &apos;%1&apos;.</translation>
     </message>
@@ -1583,7 +1583,7 @@ Script: %3</source>
 <context>
     <name>QDesignerActions</name>
     <message>
-        <location filename="../tools/designer/src/designer/qdesigner_actions.cpp" line="+178"/>
+        <location filename="../tools/designer/src/designer/qdesigner_actions.cpp" line="+180"/>
         <source>Edit Widgets</source>
         <translation>Upravit prvky</translation>
     </message>
@@ -1608,17 +1608,17 @@ Script: %3</source>
         <translation>Nastavení...</translation>
     </message>
     <message>
-        <location line="+298"/>
+        <location line="+322"/>
         <source>Clear &amp;Menu</source>
         <translation>Smazat &amp;nabídku</translation>
     </message>
     <message>
-        <location line="-233"/>
+        <location line="-247"/>
         <source>CTRL+SHIFT+S</source>
         <translation>CTRL+SHIFT+S</translation>
     </message>
     <message>
-        <location line="+113"/>
+        <location line="+127"/>
         <source>CTRL+R</source>
         <translation>CTRL+R</translation>
     </message>
@@ -1672,7 +1672,7 @@ Script: %3</source>
         <translation>Soubory rozhraní programu Designer (*.%1);;Všechny soubory (*)</translation>
     </message>
     <message>
-        <location line="-620"/>
+        <location line="-644"/>
         <source>%1 already exists.
 Do you want to replace it?</source>
         <translation>Soubor %1 již existuje.
@@ -1684,7 +1684,7 @@ Chcete jej nahradit?</translation>
         <translation>Formulář %1 byl uložen.</translation>
     </message>
     <message>
-        <location line="+371"/>
+        <location line="+395"/>
         <source>&amp;Recent Forms</source>
         <translation>&amp;Naposledy otevřené formuláře</translation>
     </message>
@@ -1768,7 +1768,7 @@ Chcete zadat jiný název pro soubor, nebo vytvořit nový formulář?</translat
         <translation>&amp;Zavřít náhled</translation>
     </message>
     <message>
-        <location line="-898"/>
+        <location line="-922"/>
         <source>Save &amp;Image...</source>
         <translation>&amp;Uložit obraz...</translation>
     </message>
@@ -1783,7 +1783,7 @@ Chcete zadat jiný název pro soubor, nebo vytvořit nový formulář?</translat
         <translation>Dodatečná písma...</translation>
     </message>
     <message>
-        <location line="+651"/>
+        <location line="+675"/>
         <source>The file %1 could not be opened.
 Reason: %2
 Would you like to retry or select a different file?</source>
@@ -1817,7 +1817,7 @@ Chcete to zkusit ještě jednou?</translation>
         <translation>Soubor %1 se nepodařilo zapsat.</translation>
     </message>
     <message>
-        <location line="-1163"/>
+        <location line="-1187"/>
         <source>&amp;New...</source>
         <translation>&amp;Nový...</translation>
     </message>
@@ -1848,17 +1848,17 @@ Chcete to zkusit ještě jednou?</translation>
     </message>
     <message>
         <location line="+1"/>
-        <location line="+901"/>
+        <location line="+925"/>
         <source>&amp;Close</source>
         <translation>&amp;Zavřít</translation>
     </message>
     <message>
-        <location line="-896"/>
+        <location line="-920"/>
         <source>View &amp;Code...</source>
         <translation>Ukázat &amp;kód...</translation>
     </message>
     <message>
-        <location line="+424"/>
+        <location line="+448"/>
         <location line="+248"/>
         <source>Save Form As</source>
         <translation>Uložit formulář jako</translation>
@@ -1890,7 +1890,7 @@ Chcete to zkusit ještě jednou?</translation>
         <translation>%1 byl vytištěn.</translation>
     </message>
     <message>
-        <location line="-1149"/>
+        <location line="-1163"/>
         <source>ALT+CTRL+S</source>
         <translation>ALT+CTRL+S</translation>
     </message>
@@ -1989,7 +1989,7 @@ Chcete to zkusit ještě jednou?</translation>
 <context>
     <name>QDesignerMenu</name>
     <message>
-        <location filename="../tools/designer/src/lib/shared/qdesigner_menu.cpp" line="-1181"/>
+        <location filename="../tools/designer/src/lib/shared/qdesigner_menu.cpp" line="-1179"/>
         <source>Type Here</source>
         <translation>Zadejte text</translation>
     </message>
@@ -2015,7 +2015,7 @@ Chcete to zkusit ještě jednou?</translation>
     </message>
     <message>
         <location line="+27"/>
-        <location line="+650"/>
+        <location line="+648"/>
         <source>Add separator</source>
         <translation>Přidat oddělovač</translation>
     </message>
@@ -2089,7 +2089,7 @@ Chcete to zkusit ještě jednou?</translation>
 <context>
     <name>QDesignerPropertySheet</name>
     <message>
-        <location filename="../tools/designer/src/lib/shared/qdesigner_propertysheet.cpp" line="+754"/>
+        <location filename="../tools/designer/src/lib/shared/qdesigner_propertysheet.cpp" line="+758"/>
         <source>Dynamic Properties</source>
         <translation>Dynamické vlastnosti</translation>
     </message>
@@ -2102,14 +2102,14 @@ Chcete to zkusit ještě jednou?</translation>
         <translation>Typ rozvržení &apos;%1&apos; není podporován; bylo vytvořeno mřížkové rozvržení.</translation>
     </message>
     <message>
-        <location line="+243"/>
+        <location line="+239"/>
         <source>The container extension of the widget &apos;%1&apos; (%2) returned a widget not managed by Designer &apos;%3&apos; (%4) when queried for page #%5.
 Container pages should only be added by specifying them in XML returned by the domXml() method of the custom widget.</source>
         <translation>Kontejnerové rozšíření prvku &apos;%1&apos; (%2) vrátilo pro stranu %5 prvek &apos;%3&apos; (%4), který není spravován programem Designer.
 Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu domXML() uživatelsky stanoveného prvku.</translation>
     </message>
     <message>
-        <location line="+599"/>
+        <location line="+545"/>
         <source>Unexpected element &lt;%1&gt;</source>
         <extracomment>Parsing clipboard contents</extracomment>
         <translation>Neplatný prvek &lt;%1&gt;</translation>
@@ -2211,12 +2211,12 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
         <translation>Nástrojové pruhy</translation>
     </message>
     <message>
-        <location line="+465"/>
+        <location line="+466"/>
         <source>Save Forms?</source>
         <translation>Uložit formuláře?</translation>
     </message>
     <message>
-        <location line="-494"/>
+        <location line="-495"/>
         <source>&amp;View</source>
         <translation>&amp;Pohled</translation>
     </message>
@@ -2231,7 +2231,7 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
         <translation>Krabice s prvky</translation>
     </message>
     <message>
-        <location line="+292"/>
+        <location line="+293"/>
         <source>If you do not review your documents, all your changes will be lost.</source>
         <translation>Změny budou ztraceny, pokud se na formuláře ještě jednou nepodíváte.</translation>
     </message>
@@ -2278,7 +2278,7 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
 <context>
     <name>QFormBuilder</name>
     <message>
-        <location filename="../tools/designer/src/lib/uilib/formbuilder.cpp" line="+163"/>
+        <location filename="../tools/designer/src/lib/uilib/formbuilder.cpp" line="+168"/>
         <source>An empty class name was passed on to %1 (object name: &apos;%2&apos;).</source>
         <extracomment>Empty class name passed to widget factory method</extracomment>
         <translation>Postupu %1 byl předán prázdný název třídy (název předmětu &apos;%2&apos;).</translation>
@@ -2317,6 +2317,16 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
         <location line="+266"/>
         <source>The property %1 could not be written. The type %2 is not supported yet.</source>
         <translation>Vlastnost %1 se nepodařilo zapsat, protože typ %2 není podporován.</translation>
+    </message>
+    <message>
+        <location filename="../tools/designer/src/lib/uilib/properties_p.h" line="+132"/>
+        <source>The enumeration-value &apos;%1&apos; is invalid. The default value &apos;%2&apos; will be used instead.</source>
+        <translation>Výčtová hodnota &apos;%1&apos; je neplatná. Místo ní se použije výchozí hodnota &apos;%2&apos;.</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>The flag-value &apos;%1&apos; is invalid. Zero will be used instead.</source>
+        <translation>Příznaková hodnota &apos;%1&apos; je neplatná. Místo ní se použije nulová hodnota.</translation>
     </message>
 </context>
 <context>
@@ -2451,7 +2461,7 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
 <context>
     <name>QtBoolEdit</name>
     <message>
-        <location filename="../tools/shared/qtpropertybrowser/qtpropertybrowserutils.cpp" line="+226"/>
+        <location filename="../tools/shared/qtpropertybrowser/qtpropertybrowserutils.cpp" line="+255"/>
         <location line="+10"/>
         <location line="+25"/>
         <source>True</source>
@@ -2467,7 +2477,7 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
 <context>
     <name>QtBoolPropertyManager</name>
     <message>
-        <location filename="../tools/shared/qtpropertybrowser/qtpropertymanager.cpp" line="+1469"/>
+        <location filename="../tools/shared/qtpropertybrowser/qtpropertymanager.cpp" line="+1507"/>
         <source>True</source>
         <translation>Pravdivý</translation>
     </message>
@@ -2480,7 +2490,7 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
 <context>
     <name>QtCharEdit</name>
     <message>
-        <location filename="../tools/shared/qtpropertybrowser/qteditorfactory.cpp" line="+1581"/>
+        <location filename="../tools/shared/qtpropertybrowser/qteditorfactory.cpp" line="+1584"/>
         <source>Clear Char</source>
         <translation>Smazat znak</translation>
     </message>
@@ -2496,7 +2506,7 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
 <context>
     <name>QtColorPropertyManager</name>
     <message>
-        <location filename="../tools/shared/qtpropertybrowser/qtpropertymanager.cpp" line="+4743"/>
+        <location filename="../tools/shared/qtpropertybrowser/qtpropertymanager.cpp" line="+4718"/>
         <source>Red</source>
         <translation>Červená</translation>
     </message>
@@ -2519,7 +2529,7 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
 <context>
     <name>QtCursorDatabase</name>
     <message>
-        <location filename="../tools/shared/qtpropertybrowser/qtpropertybrowserutils.cpp" line="-206"/>
+        <location filename="../tools/shared/qtpropertybrowser/qtpropertybrowserutils.cpp" line="-234"/>
         <source>Arrow</source>
         <translation>Šipka</translation>
     </message>
@@ -3067,6 +3077,7 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
     <name>QtGradientViewDialog</name>
     <message>
         <location filename="../tools/shared/qtgradienteditor/qtgradientviewdialog.ui"/>
+        <location filename="../tools/shared/qtgradienteditor/qtgradientviewdialog.h" line="+62"/>
         <source>Select Gradient</source>
         <translation>Vybrat přechod</translation>
     </message>
@@ -3074,7 +3085,7 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
 <context>
     <name>QtKeySequenceEdit</name>
     <message>
-        <location filename="../tools/shared/qtpropertybrowser/qtpropertybrowserutils.cpp" line="+221"/>
+        <location filename="../tools/shared/qtpropertybrowser/qtpropertybrowserutils.cpp" line="+249"/>
         <source>Clear Shortcut</source>
         <translation>Smazat klávesové zkratky</translation>
     </message>
@@ -3136,7 +3147,7 @@ Kontejnerové stránky by měly být zadány výhradně v XML vráceném postupu
 <context>
     <name>QtPropertyBrowserUtils</name>
     <message>
-        <location filename="../tools/shared/qtpropertybrowser/qtpropertybrowserutils.cpp" line="-136"/>
+        <location filename="../tools/shared/qtpropertybrowser/qtpropertybrowserutils.cpp" line="-156"/>
         <source>[%1, %2, %3] (%4)</source>
         <translation>[%1, %2, %3] (%4)</translation>
     </message>
@@ -3491,7 +3502,7 @@ Může to být například jazykové rozšíření &quot;_cs&quot;.</translation
 <context>
     <name>QtResourceView</name>
     <message>
-        <location filename="../tools/designer/src/lib/shared/qtresourceview.cpp" line="+566"/>
+        <location filename="../tools/designer/src/lib/shared/qtresourceview.cpp" line="+567"/>
         <source>Size: %1 x %2
 %3</source>
         <translation>Velikost: %1 x %2
@@ -3516,7 +3527,7 @@ Může to být například jazykové rozšíření &quot;_cs&quot;.</translation
 <context>
     <name>QtResourceViewDialog</name>
     <message>
-        <location line="+250"/>
+        <location line="+252"/>
         <source>Select Resource</source>
         <translation>Vybrat zdroj</translation>
     </message>
@@ -3902,6 +3913,26 @@ Chcete tuto předlohu přepsat?</translation>
     </message>
     <message>
         <location line="+6"/>
+        <source>File</source>
+        <translation>Soubor</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Edit</source>
+        <translation>Úpravy</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Tools</source>
+        <translation>Nástroje</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Form</source>
+        <translation>Formulář</translation>
+    </message>
+    <message>
+        <location line="+4"/>
         <source>Toolbars</source>
         <translation>Nástrojové pruhy</translation>
     </message>
@@ -3909,7 +3940,7 @@ Chcete tuto předlohu přepsat?</translation>
 <context>
     <name>VersionDialog</name>
     <message>
-        <location filename="../tools/designer/src/designer/versiondialog.cpp" line="+171"/>
+        <location filename="../tools/designer/src/designer/versiondialog.cpp" line="+170"/>
         <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;br/&gt;&lt;br/&gt;Version %2</source>
         <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;br/&gt;&lt;br/&gt;Verze %2</translation>
     </message>
@@ -3925,8 +3956,12 @@ Chcete tuto předlohu přepsat?</translation>
     </message>
     <message>
         <location line="+2"/>
+        <source>%1&lt;br/&gt;Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).</source>
+        <translation>%1&lt;br/&gt;Autorské právo (C) 2010 Nokia Corporation a/nebo její dceřinná společnost(i).</translation>
+    </message>
+    <message>
         <source>%1&lt;br/&gt;Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).</source>
-        <translation>%1&lt;br/&gt;Autorské právo (C) 2009 Nokia Corporation a/nebo její dceřinná společnost(i).</translation>
+        <translation type="obsolete">%1&lt;br/&gt;Autorské právo (C) 2009 Nokia Corporation a/nebo její dceřinná společnost(i).</translation>
     </message>
 </context>
 <context>
@@ -4028,7 +4063,7 @@ Chcete tuto předlohu přepsat?</translation>
 <context>
     <name>qdesigner_internal::ActionModel</name>
     <message>
-        <location filename="../tools/designer/src/lib/shared/actionrepository.cpp" line="+95"/>
+        <location filename="../tools/designer/src/lib/shared/actionrepository.cpp" line="+89"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
@@ -4695,9 +4730,18 @@ Chcete tuto předlohu přepsat?</translation>
 <context>
     <name>qdesigner_internal::FilterWidget</name>
     <message>
-        <location filename="../tools/designer/src/lib/shared/filterwidget.cpp" line="+185"/>
         <source>&lt;Filter&gt;</source>
-        <translation>&lt;FIltr&gt;</translation>
+        <translation type="obsolete">&lt;FIltr&gt;</translation>
+    </message>
+    <message>
+        <location filename="../tools/designer/src/lib/shared/filterwidget.cpp" line="+163"/>
+        <source>Filter</source>
+        <translation>Filtr</translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Clear text</source>
+        <translation>Smazat text</translation>
     </message>
 </context>
 <context>
@@ -4724,7 +4768,7 @@ Chcete tuto předlohu přepsat?</translation>
 <context>
     <name>qdesigner_internal::FormWindow</name>
     <message>
-        <location filename="../tools/designer/src/components/formeditor/formwindow.cpp" line="-1267"/>
+        <location filename="../tools/designer/src/components/formeditor/formwindow.cpp" line="-1322"/>
         <source>Edit contents</source>
         <translation>Upravit obsah</translation>
     </message>
@@ -4734,34 +4778,33 @@ Chcete tuto předlohu přepsat?</translation>
         <translation>F2</translation>
     </message>
     <message>
-        <location line="+841"/>
+        <location line="+840"/>
         <source>Resize</source>
         <translation>Změnit velikost</translation>
     </message>
     <message>
-        <location line="+218"/>
-        <location line="+15"/>
+        <location line="+248"/>
         <source>Key Move</source>
         <translation>Posunout s pomocí klávesnice</translation>
     </message>
     <message>
-        <location line="+276"/>
+        <location line="+317"/>
         <source>Paste error</source>
         <translation>Chyba při vložení</translation>
     </message>
     <message>
-        <location line="+445"/>
+        <location line="+448"/>
         <source>Lay out</source>
         <translation>Rozvržení</translation>
     </message>
     <message>
-        <location line="+493"/>
+        <location line="+485"/>
         <location line="+55"/>
         <source>Drop widget</source>
         <translation>Vložit prvek</translation>
     </message>
     <message numerus="yes">
-        <location line="-1058"/>
+        <location line="-1053"/>
         <source>Paste %n action(s)</source>
         <translation>
             <numerusform>Vložit jednu činnost</numerusform>
@@ -4770,12 +4813,17 @@ Chcete tuto předlohu přepsat?</translation>
         </translation>
     </message>
     <message>
-        <location line="-511"/>
+        <location line="-565"/>
         <source>Insert widget &apos;%1&apos;</source>
         <translation>Vložit prvek &apos;%1&apos;</translation>
     </message>
+    <message>
+        <location line="+313"/>
+        <source>Key Resize</source>
+        <translation>Změnit velikost pomocí klávesnice</translation>
+    </message>
     <message numerus="yes">
-        <location line="+513"/>
+        <location line="+254"/>
         <source>Paste %n widget(s)</source>
         <translation>
             <numerusform>Vložit jeden prvek</numerusform>
@@ -4799,17 +4847,17 @@ Chcete tuto předlohu přepsat?</translation>
         <translation>Zrušte, prosím, rozvržení kontejneru, do kterého chcete vkládat. Vyberte jej znovu a proveďte vložení znovu.</translation>
     </message>
     <message>
-        <location line="+408"/>
+        <location line="+406"/>
         <source>Select Ancestor</source>
         <translation>Vybrat nadřazený prvek</translation>
     </message>
     <message>
-        <location line="+576"/>
+        <location line="+573"/>
         <source>A QMainWindow-based form does not contain a central widget.</source>
         <translation>Formulář založený na QMainWindow neobsahuje ústřední prvek.</translation>
     </message>
     <message>
-        <location line="-797"/>
+        <location line="-794"/>
         <source>Raise widgets</source>
         <translation>Přenést prvky do popředí</translation>
     </message>
@@ -4822,7 +4870,7 @@ Chcete tuto předlohu přepsat?</translation>
 <context>
     <name>qdesigner_internal::FormWindowBase</name>
     <message>
-        <location filename="../tools/designer/src/lib/shared/formwindowbase.cpp" line="+393"/>
+        <location filename="../tools/designer/src/lib/shared/formwindowbase.cpp" line="+404"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
@@ -4835,7 +4883,7 @@ Chcete tuto předlohu přepsat?</translation>
 <context>
     <name>qdesigner_internal::FormWindowManager</name>
     <message>
-        <location filename="../tools/designer/src/components/formeditor/formwindowmanager.cpp" line="+364"/>
+        <location filename="../tools/designer/src/components/formeditor/formwindowmanager.cpp" line="+365"/>
         <source>Cu&amp;t</source>
         <translation>Vyj&amp;mout</translation>
     </message>
@@ -4992,7 +5040,7 @@ Chcete tuto předlohu přepsat?</translation>
         <translation>&amp;Nastavení formuláře...</translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+94"/>
         <source>Break Layout</source>
         <translation>Zrušit rozvržení</translation>
     </message>
@@ -5013,7 +5061,7 @@ Chcete tuto předlohu přepsat?</translation>
         <translation>Nastavení formuláře - %1</translation>
     </message>
     <message>
-        <location line="-525"/>
+        <location line="-527"/>
         <source>Removes empty columns and rows</source>
         <translation>Odstraní prázdné řádky a sloupce</translation>
     </message>
@@ -6008,7 +6056,7 @@ která byla volně puštěná.</translation>
 <context>
     <name>qdesigner_internal::PropertyEditor</name>
     <message>
-        <location filename="../tools/designer/src/components/propertyeditor/propertyeditor.cpp" line="+183"/>
+        <location filename="../tools/designer/src/components/propertyeditor/propertyeditor.cpp" line="+231"/>
         <source>Add Dynamic Property...</source>
         <translation>Přidat dynamickou vlastnost...</translation>
     </message>
@@ -6028,14 +6076,14 @@ která byla volně puštěná.</translation>
         <translation>Podrobný pohled</translation>
     </message>
     <message>
-        <location line="+597"/>
+        <location line="+598"/>
         <source>Object: %1
 Class: %2</source>
         <translation>Předmět: %1
 Třída: %2</translation>
     </message>
     <message>
-        <location line="-600"/>
+        <location line="-601"/>
         <source>Sorting</source>
         <translation>Třídění</translation>
     </message>
@@ -6045,7 +6093,7 @@ Třída: %2</translation>
         <translation>Barevné zdůraznění</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+61"/>
         <source>Configure Property Editor</source>
         <translation>Nastavit editor vlastností</translation>
     </message>

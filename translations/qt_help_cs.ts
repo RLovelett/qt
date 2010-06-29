@@ -47,7 +47,7 @@
     </message>
     <message>
         <location line="+11"/>
-        <location line="+49"/>
+        <location line="+52"/>
         <source>Cannot open collection file: %1</source>
         <translation>Nelze otevřít soubor se sbírkou: %1</translation>
     </message>
@@ -62,12 +62,12 @@
         <translation>Soubor se sbírkou &apos;%1&apos; již existuje!</translation>
     </message>
     <message>
-        <location line="+148"/>
+        <location line="+151"/>
         <source>Unknown filter &apos;%1&apos;!</source>
         <translation>Neznámý filtr &apos;%1&apos;!</translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+103"/>
         <source>Invalid documentation file &apos;%1&apos;!</source>
         <translation>Neplatný soubor s dokumentací &apos;%1&apos;!</translation>
     </message>
@@ -86,12 +86,12 @@
         <translation type="obsolete">Zadaný soubor se sbírkou již existuje!</translation>
     </message>
     <message>
-        <location line="-438"/>
+        <location line="-439"/>
         <source>Cannot create directory: %1</source>
         <translation>Nelze vytvořit adresář: %1</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+26"/>
         <source>Cannot copy collection file: %1</source>
         <translation>Nelze kopírovat soubor se sbírkou: %1</translation>
     </message>
@@ -100,7 +100,7 @@
         <translation type="obsolete">Neznámý filtr!</translation>
     </message>
     <message>
-        <location line="+174"/>
+        <location line="+172"/>
         <source>Cannot register filter %1!</source>
         <translation>Nelze zapsat filtr %1!</translation>
     </message>
@@ -144,7 +144,12 @@
 <context>
     <name>QHelpEngineCore</name>
     <message>
-        <location filename="../tools/assistant/lib/qhelpenginecore.cpp" line="+524"/>
+        <location filename="../tools/assistant/lib/qhelpenginecore.cpp" line="+122"/>
+        <source>Cannot open documentation file %1: %2!</source>
+        <translation>Nelze otevřít soubor s dokumentací %1: %2!</translation>
+    </message>
+    <message>
+        <location line="+404"/>
         <source>The specified namespace does not exist!</source>
         <translation>Zadaný jmenný prostor neexistuje!</translation>
     </message>
@@ -152,15 +157,14 @@
 <context>
     <name>QHelpEngineCorePrivate</name>
     <message>
-        <location line="-402"/>
         <source>Cannot open documentation file %1: %2!</source>
-        <translation>Nelze otevřít soubor s dokumentací %1: %2!</translation>
+        <translation type="obsolete">Nelze otevřít soubor s dokumentací %1: %2!</translation>
     </message>
 </context>
 <context>
     <name>QHelpGenerator</name>
     <message>
-        <location filename="../tools/assistant/lib/qhelpgenerator.cpp" line="+157"/>
+        <location filename="../tools/assistant/lib/qhelpgenerator.cpp" line="+158"/>
         <source>Invalid help data!</source>
         <translation>Neplatná data s nápovědou!</translation>
     </message>
@@ -185,7 +189,7 @@
         <translation>Nelze otevřít soubor s databází: %1!</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+14"/>
         <source>Cannot register namespace %1!</source>
         <translation>Nelze zapsat jmenný prostor %1!</translation>
     </message>
@@ -240,7 +244,7 @@
         <translation>Soubor %1 nelze otevřít! Přeskakuje se.</translation>
     </message>
     <message>
-        <location line="+131"/>
+        <location line="+133"/>
         <source>The filter %1 is already registered!</source>
         <translation>Filtr %1 je již zapsán!</translation>
     </message>
@@ -255,7 +259,7 @@
         <translation>Vložit rejstříky...</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+91"/>
         <source>Insert contents...</source>
         <translation>Vložit obsah...</translation>
     </message>
@@ -269,85 +273,31 @@
         <source>Cannot register contents!</source>
         <translation>Obsah nelze zapsat!</translation>
     </message>
-</context>
-<context>
-    <name>QHelpSearchQueryWidget</name>
     <message>
-        <location filename="../tools/assistant/lib/qhelpsearchquerywidget.cpp" line="+411"/>
-        <source>Search for:</source>
-        <translation>Hledat:</translation>
+        <location line="+56"/>
+        <source>File &apos;%1&apos; does not exist.</source>
+        <translation>Soubor &apos;%1&apos; neexistuje.</translation>
     </message>
     <message>
-        <location line="+5"/>
-        <source>Previous search</source>
-        <translation>Předchozí hledání</translation>
+        <location line="+19"/>
+        <source>File &apos;%1&apos; cannot be opened.</source>
+        <translation>Soubor &apos;%1&apos; nelze otevřít.</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>Next search</source>
-        <translation>Další hledání</translation>
+        <location line="+19"/>
+        <source>File &apos;%1&apos; contains an invalid link to file &apos;%2&apos;</source>
+        <translation>Soubor &apos;%1&apos; obsahuje neplatný odkaz na soubor &apos;%2&apos;</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <source>Search</source>
-        <translation>Hledat</translation>
-    </message>
-    <message>
-        <location line="+20"/>
-        <source>Advanced search</source>
-        <translation>Rozšířené hledání</translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>words &lt;B&gt;similar&lt;/B&gt; to:</source>
-        <translation>Slova &lt;B&gt;podobná&lt;/B&gt;:</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>&lt;B&gt;without&lt;/B&gt; the words:</source>
-        <translation>&lt;B&gt;beze&lt;/B&gt; slov:</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>with &lt;B&gt;exact phrase&lt;/B&gt;:</source>
-        <translation>s &lt;B&gt;přesnou skupinou slov&lt;/B&gt;:</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>with &lt;B&gt;all&lt;/B&gt; of the words:</source>
-        <translation>se &lt;B&gt;všemi&lt;/B&gt; slovy:</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>with &lt;B&gt;at least one&lt;/B&gt; of the words:</source>
-        <translation>s &lt;B&gt;jakýmkoli&lt;/B&gt; ze slov:</translation>
+        <location line="+9"/>
+        <source>Invalid links in HTML files.</source>
+        <translation>Neplatné odkazy v souborech HTML.</translation>
     </message>
 </context>
 <context>
-    <name>QHelpSearchResultWidget</name>
+    <name>QHelpProject</name>
     <message>
-        <location filename="../tools/assistant/lib/qhelpsearchresultwidget.cpp" line="+235"/>
-        <source>0 - 0 of 0 Hits</source>
-        <translation>0 - 0 z 0 zásahů</translation>
-    </message>
-</context>
-<context>
-    <name>QHelpSearchResultWidgetPrivate</name>
-    <message>
-        <location line="-61"/>
-        <source>%1 - %2 of %3 Hits</source>
-        <translation>%1 - %2 z %3 zásahů</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <location filename="../tools/assistant/lib/qhelp_global.h" line="+83"/>
-        <source>Untitled</source>
-        <translation>Bez názvu</translation>
-    </message>
-    <message>
-        <location filename="../tools/assistant/lib/qhelpprojectdata.cpp" line="+85"/>
+        <location filename="../tools/assistant/lib/qhelpprojectdata.cpp" line="+88"/>
         <source>Unknown token.</source>
         <translation>Neznámý symbol.</translation>
     </message>
@@ -357,39 +307,159 @@
         <translation>Neznámý symbol. Byl očekáván &quot;QtHelpProject&quot;!</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>Error in line %1: %2</source>
         <translation>Chyba na řádku %1: %2</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <source>A virtual folder must not contain a &apos;/&apos; character!</source>
-        <translation>Virtuální složka nesmí obsahovat znak &apos;/&apos;!</translation>
+        <location line="+14"/>
+        <source>Virtual folder has invalid syntax.</source>
+        <translation>Virtuální složka má neplatnou skladbu.</translation>
     </message>
     <message>
-        <location line="+4"/>
-        <source>A namespace must not contain a &apos;/&apos; character!</source>
-        <translation>Jmenný prostor nesmí obsahovat znak &apos;/&apos;!</translation>
+        <location line="+5"/>
+        <source>Namespace has invalid syntax.</source>
+        <translation>Jmenný prostor má neplatnou skladbu.</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+19"/>
         <source>Missing namespace in QtHelpProject.</source>
-        <translation>Chybějící jmenný prostor QtHelpProject.</translation>
+        <translation>Chybí jmenný prostor v QtHelpProject.</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Missing virtual folder in QtHelpProject</source>
+        <translation>Chybí virtuální složka v QtHelpProject</translation>
+    </message>
+    <message>
+        <location line="+89"/>
+        <source>Missing attribute in keyword at line %1.</source>
+        <translation>Chybí vlastnost v klíčovém slově na řádku %1.</translation>
+    </message>
+    <message>
+        <location line="+141"/>
+        <source>The input file %1 could not be opened!</source>
+        <translation>Vstupní soubor %1 se nepodařilo otevřít!</translation>
+    </message>
+</context>
+<context>
+    <name>QHelpSearchQueryWidget</name>
+    <message>
+        <location filename="../tools/assistant/lib/qhelpsearchquerywidget.cpp" line="+124"/>
+        <source>Search for:</source>
+        <translation>Hledat:</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Previous search</source>
+        <translation>Předchozí hledání</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Next search</source>
+        <translation>Další hledání</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Search</source>
+        <translation>Hledat</translation>
     </message>
     <message>
         <location line="+2"/>
+        <source>Advanced search</source>
+        <translation>Rozšířené hledání</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>words &lt;B&gt;similar&lt;/B&gt; to:</source>
+        <translation>Slova &lt;B&gt;podobná&lt;/B&gt;:</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>&lt;B&gt;without&lt;/B&gt; the words:</source>
+        <translation>&lt;B&gt;beze&lt;/B&gt; slov:</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>with &lt;B&gt;exact phrase&lt;/B&gt;:</source>
+        <translation>s &lt;B&gt;přesnou skupinou slov&lt;/B&gt;:</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>with &lt;B&gt;all&lt;/B&gt; of the words:</source>
+        <translation>se &lt;B&gt;všemi&lt;/B&gt; slovy:</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>with &lt;B&gt;at least one&lt;/B&gt; of the words:</source>
+        <translation>s &lt;B&gt;jakýmkoli&lt;/B&gt; ze slov:</translation>
+    </message>
+</context>
+<context>
+    <name>QHelpSearchResultWidget</name>
+    <message numerus="yes">
+        <location filename="../tools/assistant/lib/qhelpsearchresultwidget.cpp" line="+174"/>
+        <source>%1 - %2 of %n Hits</source>
+        <translation>
+            <numerusform>%1 - %2 - jeden zásah</numerusform>
+            <numerusform>%1 - %2 ze %n zásahů</numerusform>
+            <numerusform>%1 - %2 ze %n zásahů</numerusform>
+        </translation>
+    </message>
+    <message>
+        <location line="+61"/>
+        <source>0 - 0 of 0 Hits</source>
+        <translation>0 - 0 z 0 zásahů</translation>
+    </message>
+</context>
+<context>
+    <name>QHelpSearchResultWidgetPrivate</name>
+    <message>
+        <source>%1 - %2 of %3 Hits</source>
+        <translation type="obsolete">%1 - %2 z %3 zásahů</translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <source>Untitled</source>
+        <translation type="obsolete">Bez názvu</translation>
+    </message>
+    <message>
+        <source>Unknown token.</source>
+        <translation type="obsolete">Neznámý symbol.</translation>
+    </message>
+    <message>
+        <source>Unknown token. Expected &quot;QtHelpProject&quot;!</source>
+        <translation type="obsolete">Neznámý symbol. Byl očekáván &quot;QtHelpProject&quot;!</translation>
+    </message>
+    <message>
+        <source>Error in line %1: %2</source>
+        <translation type="obsolete">Chyba na řádku %1: %2</translation>
+    </message>
+    <message>
+        <source>A virtual folder must not contain a &apos;/&apos; character!</source>
+        <translation type="obsolete">Virtuální složka nesmí obsahovat znak &apos;/&apos;!</translation>
+    </message>
+    <message>
+        <source>A namespace must not contain a &apos;/&apos; character!</source>
+        <translation type="obsolete">Jmenný prostor nesmí obsahovat znak &apos;/&apos;!</translation>
+    </message>
+    <message>
+        <source>Missing namespace in QtHelpProject.</source>
+        <translation type="obsolete">Chybějící jmenný prostor QtHelpProject.</translation>
+    </message>
+    <message>
         <source>Missing virtual folder in QtHelpProject</source>
-        <translation>Chybějící virtuální složka v QtHelpProject.</translation>
+        <translation type="obsolete">Chybějící virtuální složka v QtHelpProject.</translation>
     </message>
     <message>
-        <location line="+88"/>
         <source>Missing attribute in keyword at line %1.</source>
-        <translation>Chybějící vlastnost v klíčovém slově na řádku %1.</translation>
+        <translation type="obsolete">Chybějící vlastnost v klíčovém slově na řádku %1.</translation>
     </message>
     <message>
-        <location line="+123"/>
         <source>The input file %1 could not be opened!</source>
-        <translation>Vstupní soubor %1 se nepodařilo otevřít!</translation>
+        <translation type="obsolete">Vstupní soubor %1 se nepodařilo otevřít!</translation>
     </message>
 </context>
 </TS>

@@ -4,7 +4,7 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+1357"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+1366"/>
         <source>Qt Linguist</source>
         <translation>Qt Linguist</translation>
     </message>
@@ -110,11 +110,17 @@
     </message>
     <message>
         <location line="+4"/>
+        <location line="+8"/>
         <source>&lt;p&gt;[more duplicates omitted]</source>
         <translation>&lt;p&gt;[vypuštěny další vícekrát existující zprávy]</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-5"/>
+        <source>&lt;p&gt;* ID: %1</source>
+        <translation>&lt;p&gt;* ID: %1</translation>
+    </message>
+    <message>
+        <location line="+8"/>
         <source>&lt;p&gt;* Context: %1&lt;br&gt;* Source: %2</source>
         <translation>&lt;p&gt;* Souvislosti: %1&lt;br&gt;* Zdroj: %2</translation>
     </message>
@@ -124,7 +130,7 @@
         <translation>&lt;br&gt;* Poznámka: %3</translation>
     </message>
     <message>
-        <location line="+70"/>
+        <location line="+71"/>
         <source>Linguist does not know the plural rules for &apos;%1&apos;.
 Will assume a single universal form.</source>
         <translation>Pravidla pro tvoření množného čísla (plurálu) jazyka &apos;%1&apos; nejsou v Linguistu stanovena.
@@ -166,12 +172,12 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
     <message>
         <location line="+3"/>
         <source>Translation does not refer to the same place markers as in the source text.</source>
-        <translation>Držitelé místa v textu překladu a ve zdrojovém textu se liší.</translation>
+        <translation>Zástupné znaky v textu překladu a ve zdrojovém textu se liší.</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Translation does not contain the necessary %n place marker.</source>
-        <translation>Potřebný držitel místa (%n) v překladu chybí.</translation>
+        <translation>Potřebný zástupný znak (%n) v překladu chybí.</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -281,7 +287,7 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
 <context>
     <name>FormMultiWidget</name>
     <message>
-        <location filename="../tools/linguist/linguist/messageeditorwidgets.cpp" line="+296"/>
+        <location filename="../tools/linguist/linguist/messageeditorwidgets.cpp" line="+302"/>
         <source>Alt+Delete</source>
         <extracomment>translate, but don&apos;t change</extracomment>
         <translation>Alt+Delete</translation>
@@ -312,7 +318,7 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
 <context>
     <name>LRelease</name>
     <message numerus="yes">
-        <location filename="../tools/linguist/shared/qm.cpp" line="+748"/>
+        <location filename="../tools/linguist/shared/qm.cpp" line="+763"/>
         <source>Dropped %n message(s) which had no ID.</source>
         <translation>
             <numerusform>Byl smazán záznam bez identifikátoru.</numerusform>
@@ -331,9 +337,26 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
     </message>
     <message numerus="yes">
         <location line="+8"/>
+        <source>    Generated %n translation(s) (%1 finished and %2 unfinished)</source>
+        <translation>
+            <numerusform>    Vytvořen jeden překlad (%1 dokončen a %2 nedokončen)</numerusform>
+            <numerusform>    Vytvořeny %n překlady (%1 dokončen a %2 nedokončen)</numerusform>
+            <numerusform>    Vytvořeno %n překladů (%1 dokončen a %2 nedokončen)</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
+        <location line="+4"/>
+        <source>    Ignored %n untranslated source text(s)</source>
+        <translation>
+            <numerusform>    Opomenut jeden nepřeložený zdrojový text</numerusform>
+            <numerusform>    Opomenuty %n nepřeložené zdrojové texty</numerusform>
+            <numerusform>    Opomenuto %n nepřeložených zdrojových textů</numerusform>
+        </translation>
+    </message>
+    <message numerus="yes">
         <source>    Generated %n translation(s) (%1 finished and %2 unfinished)
 </source>
-        <translation>
+        <translation type="obsolete">
             <numerusform>    Byl vytvořen jeden překlad (%1 dokončeno %2 nedokončeno)
 </numerusform>
             <numerusform>    Byly vytvořeny %n překlady (%1 dokončeno %2 nedokončeno)
@@ -343,10 +366,9 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
         </translation>
     </message>
     <message numerus="yes">
-        <location line="+4"/>
         <source>    Ignored %n untranslated source text(s)
 </source>
-        <translation>
+        <translation type="obsolete">
             <numerusform>    Na jeden nepřeložený text nebyl brán zřetel
 </numerusform>
             <numerusform>    na %n nepřeložené texty nebyl brán zřetel
@@ -454,7 +476,7 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
         <translation>Ctrl+Q</translation>
     </message>
     <message>
-        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+646"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+668"/>
         <location line="+15"/>
         <source>&amp;Save</source>
         <translation>&amp;Uložit</translation>
@@ -512,7 +534,7 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
     <message>
         <location/>
         <source>Toggle the validity check of place markers, i.e. whether %1, %2, ... are used consistently in the source text and translation text. If the check fails, a message is shown in the warnings window.</source>
-        <translation>Zapnout/Vypnout ověření držitelů místa, to znamená, zda se shoduje používání %1, %2,... ve zdrojovém textu a v textu překladu. V případě neúspěchu se v okně s upozorněními ukáže zpráva s varováním.</translation>
+        <translation>Zapnout/Vypnout ověření zástupných znaků, to znamená, zda se shoduje používání %1, %2,... ve zdrojovém textu a v textu překladu. V případě neúspěchu se v okně s upozorněními ukáže zpráva s varováním.</translation>
     </message>
     <message>
         <location/>
@@ -779,7 +801,7 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
     <message>
         <location/>
         <source>Place &amp;Marker Matches</source>
-        <translation>Držitel &amp;místa</translation>
+        <translation>Zástupný &amp;znak</translation>
     </message>
     <message>
         <location/>
@@ -862,9 +884,8 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
         <translation>O Qt</translation>
     </message>
     <message>
-        <location/>
         <source>Display information about the Qt toolkit by Trolltech.</source>
-        <translation>Zobrazit informace o sadě nástrojů Qt od Trolltechu.</translation>
+        <translation type="obsolete">Zobrazit informace o sadě nástrojů Qt od Trolltechu.</translation>
     </message>
     <message>
         <location/>
@@ -915,13 +936,13 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
         <translation>Vydat jako...</translation>
     </message>
     <message>
-        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-2004"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-2035"/>
         <source></source>
         <comment>This is the application&apos;s main window.</comment>
         <translation></translation>
     </message>
     <message>
-        <location line="+188"/>
+        <location line="+190"/>
         <source>Source text</source>
         <translation>Zdrojový text</translation>
     </message>
@@ -933,27 +954,27 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
     </message>
     <message>
         <location line="-2"/>
-        <location line="+62"/>
+        <location line="+63"/>
         <source>Context</source>
         <translation>Souvislosti</translation>
     </message>
     <message>
-        <location line="-61"/>
+        <location line="-62"/>
         <source>Items</source>
         <translation>Záznamy</translation>
     </message>
     <message>
-        <location line="+78"/>
+        <location line="+79"/>
         <source>This panel lists the source contexts.</source>
         <translation>V tomto panelu jsou ukazovány souvislosti.</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+13"/>
         <source>Strings</source>
         <translation>Řetězce</translation>
     </message>
     <message>
-        <location line="+39"/>
+        <location line="+37"/>
         <source>Phrases and guesses</source>
         <translation>Slovník a návrhy</translation>
     </message>
@@ -974,7 +995,7 @@ Pracuje se s jednoduchým všeobecným tvarem.</translation>
         <translation>Změněno</translation>
     </message>
     <message>
-        <location line="+130"/>
+        <location line="+139"/>
         <source>Loading...</source>
         <translation>Nahrává se...</translation>
     </message>
@@ -1012,7 +1033,7 @@ Přeskočit nahrávání prve jmenovaného souboru?</translation>
         </translation>
     </message>
     <message>
-        <location line="+93"/>
+        <location line="+94"/>
         <source>Related files (%1);;</source>
         <translation>Příbuzné soubory (%1);;</translation>
     </message>
@@ -1030,12 +1051,12 @@ Přeskočit nahrávání prve jmenovaného souboru?</translation>
     <message>
         <location filename="../tools/linguist/linguist/mainwindow.ui"/>
         <location filename="../tools/linguist/linguist/mainwindow.cpp" line="+15"/>
-        <location line="+1165"/>
+        <location line="+1187"/>
         <source>Release</source>
         <translation>Vydat</translation>
     </message>
     <message>
-        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-1164"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-1186"/>
         <source>Qt message files for released applications (*.qm)
 All files (*)</source>
         <translation>Qt soubory se zprávami pro vydané aplikace (*.qm)
@@ -1102,7 +1123,7 @@ Všechny soubory (*)</translation>
         <location line="+34"/>
         <location line="+24"/>
         <location line="+22"/>
-        <location line="+516"/>
+        <location line="+538"/>
         <location line="+1"/>
         <location line="+274"/>
         <location line="+40"/>
@@ -1111,7 +1132,7 @@ Všechny soubory (*)</translation>
         <translation>Qt Linguist</translation>
     </message>
     <message>
-        <location line="-1198"/>
+        <location line="-1220"/>
         <location line="+102"/>
         <source>Cannot find the string &apos;%1&apos;.</source>
         <translation>Nelze najít řetězec &apos;%1&apos;.</translation>
@@ -1212,8 +1233,12 @@ Všechny soubory (*)</translation>
     </message>
     <message>
         <location line="+3"/>
+        <source>&lt;center&gt;&lt;img src=&quot;:/images/splash.png&quot;/&gt;&lt;/img&gt;&lt;p&gt;%1&lt;/p&gt;&lt;/center&gt;&lt;p&gt;Qt Linguist is a tool for adding translations to Qt applications.&lt;/p&gt;&lt;p&gt;Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).</source>
+        <translation>&lt;center&gt;&lt;img src=&quot;:/images/splash.png&quot;/&gt;&lt;/img&gt;&lt;p&gt;%1&lt;/p&gt;&lt;/center&gt;&lt;p&gt;Qt Linguist je nástrojem pro přidávání překladů do aplikací Qt.&lt;/p&gt;&lt;p&gt;Autorské právo (C) 2010 Nokia Corporation a/nebo její dceřinná společnost(i).</translation>
+    </message>
+    <message>
         <source>&lt;center&gt;&lt;img src=&quot;:/images/splash.png&quot;/&gt;&lt;/img&gt;&lt;p&gt;%1&lt;/p&gt;&lt;/center&gt;&lt;p&gt;Qt Linguist is a tool for adding translations to Qt applications.&lt;/p&gt;&lt;p&gt;Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).</source>
-        <translation>&lt;center&gt;&lt;img src=&quot;:/images/splash.png&quot;/&gt;&lt;/img&gt;&lt;p&gt;%1&lt;/p&gt;&lt;/center&gt;&lt;p&gt;Qt Linguist je nástrojem pro přidávání překladů do aplikací Qt.&lt;/p&gt;&lt;p&gt;Copyright (C) 2009 Nokia Corporation a/nebo její dceřinná společnost(i).</translation>
+        <translation type="obsolete">&lt;center&gt;&lt;img src=&quot;:/images/splash.png&quot;/&gt;&lt;/img&gt;&lt;p&gt;%1&lt;/p&gt;&lt;/center&gt;&lt;p&gt;Qt Linguist je nástrojem pro přidávání překladů do aplikací Qt.&lt;/p&gt;&lt;p&gt;Copyright (C) 2009 Nokia Corporation a/nebo její dceřinná společnost(i).</translation>
     </message>
     <message>
         <location line="+38"/>
@@ -1242,7 +1267,7 @@ Všechny soubory (*)</translation>
         <translation>Nezbyly žádné nepřeložené překladové jednotky.</translation>
     </message>
     <message>
-        <location line="+176"/>
+        <location line="+198"/>
         <source>&amp;Window</source>
         <translation>&amp;Okno</translation>
     </message>
@@ -1394,7 +1419,7 @@ Všechny soubory (*)</translation>
         <translation>Chcete uložit slovník &apos;%1&apos;?</translation>
     </message>
     <message>
-        <location line="+323"/>
+        <location line="+349"/>
         <source>All</source>
         <translation>Vše</translation>
     </message>
@@ -1415,7 +1440,7 @@ Všechny soubory (*)</translation>
     </message>
     <message>
         <location/>
-        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-536"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-562"/>
         <source>Translation File &amp;Settings...</source>
         <translation>&amp;Nastavení souboru s překladem...</translation>
     </message>
@@ -1487,7 +1512,7 @@ Všechny soubory (*)</translation>
     <message>
         <location/>
         <source>Toggle the validity check of place markers</source>
-        <translation>Zapnout/Vypnout ověření držitelů místa</translation>
+        <translation>Zapnout/Vypnout ověření zástupných znaků</translation>
     </message>
     <message>
         <location/>
@@ -1498,6 +1523,11 @@ Všechny soubory (*)</translation>
         <location/>
         <source>Length Variants</source>
         <translation>Varianty délky</translation>
+    </message>
+    <message>
+        <location/>
+        <source>Display information about the Qt toolkit by Nokia.</source>
+        <translation>Zobrazit informace o sadě nástrojů Qt od Trolltechu.</translation>
     </message>
 </context>
 <context>
@@ -1539,12 +1569,12 @@ Všechny soubory (*)</translation>
         <translation>Čínský</translation>
     </message>
     <message>
-        <location line="+53"/>
+        <location line="+47"/>
         <source>This whole panel allows you to view and edit the translation of some source text.</source>
         <translation>Celý tento panel umožňuje zobrazení a úpravy překladu zdrojového textu.</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+10"/>
         <source>Source text</source>
         <translation>Zdrojový text</translation>
     </message>
@@ -1579,7 +1609,7 @@ Všechny soubory (*)</translation>
         <translation>Sem můžete vepsat poznámky určené pro vaše vlastní použití. Na překlad nemají žádný vliv.</translation>
     </message>
     <message>
-        <location line="+232"/>
+        <location line="+234"/>
         <source>%1 translation (%2)</source>
         <translation>Překlad %1 (%2)</translation>
     </message>
@@ -1609,7 +1639,7 @@ Line: %2</source>
 <context>
     <name>MessageModel</name>
     <message>
-        <location filename="../tools/linguist/linguist/messagemodel.cpp" line="+832"/>
+        <location filename="../tools/linguist/linguist/messagemodel.cpp" line="+839"/>
         <source>Completion status for %1</source>
         <translation>Stav zpracování %1</translation>
     </message>
@@ -1632,7 +1662,7 @@ Line: %2</source>
 <context>
     <name>MsgEdit</name>
     <message>
-        <location filename="../tools/linguist/linguist/messageeditor.cpp" line="-614"/>
+        <location filename="../tools/linguist/linguist/messageeditor.cpp" line="-602"/>
         <source></source>
         <comment>This is the right panel of the main window.</comment>
         <translation></translation>
@@ -1801,7 +1831,7 @@ Line: %2</source>
         <translation>Sestavené překlady Qt</translation>
     </message>
     <message>
-        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-1280"/>
+        <location filename="../tools/linguist/linguist/mainwindow.cpp" line="-1302"/>
         <source>Translation files (%1);;</source>
         <translation>Překladové soubory (%1);;</translation>
     </message>
@@ -1811,8 +1841,8 @@ Line: %2</source>
         <translation>Všechny soubory (*)</translation>
     </message>
     <message>
-        <location filename="../tools/linguist/linguist/messagemodel.cpp" line="-1118"/>
-        <location line="+18"/>
+        <location filename="../tools/linguist/linguist/messagemodel.cpp" line="-1134"/>
+        <location line="+27"/>
         <location line="+67"/>
         <location line="+39"/>
         <location line="+17"/>
@@ -1822,8 +1852,13 @@ Line: %2</source>
         <translation>Qt Linguist</translation>
     </message>
     <message>
-        <location filename="../tools/linguist/shared/po.cpp" line="+658"/>
+        <location filename="../tools/linguist/shared/po.cpp" line="+870"/>
         <source>GNU Gettext localization files</source>
+        <translation>Překladové soubory GNU Gettext</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>GNU Gettext localization template files</source>
         <translation>Překladové soubory GNU Gettext</translation>
     </message>
     <message>
@@ -1842,12 +1877,12 @@ Line: %2</source>
         <translation>Překladové soubory Qt (nejnovější formát)</translation>
     </message>
     <message>
-        <location filename="../tools/linguist/shared/xliff.cpp" line="+827"/>
+        <location filename="../tools/linguist/shared/xliff.cpp" line="+829"/>
         <source>XLIFF localization files</source>
         <translation>Překladové soubory XLIFF</translation>
     </message>
     <message>
-        <location filename="../tools/linguist/shared/qph.cpp" line="+183"/>
+        <location filename="../tools/linguist/shared/qph.cpp" line="+195"/>
         <source>Qt Linguist &apos;Phrase Book&apos;</source>
         <translation>Slovník Qt Linguist</translation>
     </message>
@@ -1989,12 +2024,12 @@ Line: %2</source>
 <context>
     <name>TranslationSettingsDialog</name>
     <message>
-        <location filename="../tools/linguist/linguist/translationsettingsdialog.cpp" line="+68"/>
+        <location filename="../tools/linguist/linguist/translationsettingsdialog.cpp" line="+93"/>
         <source>Any Country</source>
         <translation>Země</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="-22"/>
         <location line="+8"/>
         <source>Settings for &apos;%1&apos; - Qt Linguist</source>
         <translation>Nastavení pro &apos;%1&apos; - Qt Linguist</translation>

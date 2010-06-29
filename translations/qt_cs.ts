@@ -26,7 +26,7 @@
 <context>
     <name>CloseButton</name>
     <message>
-        <location filename="../src/gui/widgets/qtabbar.cpp" line="+2245"/>
+        <location filename="../src/gui/widgets/qtabbar.cpp" line="+2313"/>
         <source>Close Tab</source>
         <translation>Zavřít kartu</translation>
     </message>
@@ -34,7 +34,7 @@
 <context>
     <name>FakeReply</name>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/tests/qwebframe/tst_qwebframe.cpp" line="+2193"/>
+        <location filename="../src/3rdparty/webkit/WebKit/qt/tests/qwebframe/tst_qwebframe.cpp" line="+2278"/>
         <source>Fake error !</source>
         <translation>Napodobená chyba!</translation>
     </message>
@@ -42,6 +42,44 @@
         <location line="+3"/>
         <source>Invalid URL</source>
         <translation>Neplátné URL</translation>
+    </message>
+</context>
+<context>
+    <name>MAC_APPLICATION_MENU</name>
+    <message>
+        <location filename="../src/gui/kernel/qapplication.cpp" line="+2348"/>
+        <source>Services</source>
+        <translation>Služby</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hide %1</source>
+        <translation>Skrýt %1</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hide Others</source>
+        <translation>Skrýt ostatní</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Show All</source>
+        <translation>Ukázat vše</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Preferences...</source>
+        <translation>Nastavení...</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Quit %1</source>
+        <translation>Ukončit %1</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>About %1</source>
+        <translation>O %1</translation>
     </message>
 </context>
 <context>
@@ -80,25 +118,32 @@
 <context>
     <name>Phonon::AudioOutput</name>
     <message>
-        <location filename="../src/3rdparty/phonon/phonon/audiooutput.cpp" line="+377"/>
+        <location filename="../src/3rdparty/phonon/phonon/audiooutput.cpp" line="+444"/>
+        <location line="+34"/>
         <source>&lt;html&gt;The audio playback device &lt;b&gt;%1&lt;/b&gt; does not work.&lt;br/&gt;Falling back to &lt;b&gt;%2&lt;/b&gt;.&lt;/html&gt;</source>
         <translation>&lt;html&gt;Zařízení pro přehrávání zvuku &lt;b&gt;%1&lt;/b&gt; nepracuje.&lt;br/&gt;Místo něj &lt;b&gt;%2&lt;/b&gt; se používá.&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-21"/>
         <source>&lt;html&gt;Switching to the audio playback device &lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;which just became available and has higher preference.&lt;/html&gt;</source>
         <translation>&lt;html&gt;Zařízení pro přehrávání zvuku &lt;b&gt;%1&lt;/b&gt; bylo spuštěno,&lt;br/&gt;protože je právě dostupné a má větší přednost.&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location line="+14"/>
         <source>Revert back to device &apos;%1&apos;</source>
         <translation>Přepnout zpět na zařízení &apos;%1&apos;</translation>
+    </message>
+    <message>
+        <location line="-3"/>
+        <source>&lt;html&gt;Switching to the audio playback device &lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;which has higher preference or is specifically configured for this stream.&lt;/html&gt;</source>
+        <translation>&lt;html&gt;Přepíná se na zvukové přehrávací zařízení &lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;, které má větší přednost, nebo bylo zvláště nastaveno pro tento proud.&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>Phonon::Gstreamer::Backend</name>
     <message>
-        <location filename="../src/3rdparty/phonon/gstreamer/backend.cpp" line="+176"/>
+        <location filename="../src/3rdparty/phonon/gstreamer/backend.cpp" line="+193"/>
         <source>Warning: You do not seem to have the base GStreamer plugins installed.
           All audio and video support has been disabled</source>
         <translation>Upozornění: Zdá se, že zákládní přídavné moduly pro GStreamer nejsou nainstalovány.￼
@@ -115,13 +160,13 @@ Některé vlastnosti videa nejsou dostupné.</translation>
 <context>
     <name>Phonon::Gstreamer::MediaObject</name>
     <message>
-        <location filename="../src/3rdparty/phonon/gstreamer/mediaobject.cpp" line="+884"/>
-        <location line="+8"/>
-        <location line="+15"/>
-        <location line="+22"/>
+        <location filename="../src/3rdparty/phonon/gstreamer/mediaobject.cpp" line="+965"/>
         <location line="+6"/>
-        <location line="+19"/>
-        <location line="+339"/>
+        <location line="+13"/>
+        <location line="+24"/>
+        <location line="+6"/>
+        <location line="+18"/>
+        <location line="+434"/>
         <location line="+24"/>
         <source>Could not open media source.</source>
         <translation>Zdroj s médii se nepodařilo otevřít.</translation>
@@ -132,15 +177,35 @@ Některé vlastnosti videa nejsou dostupné.</translation>
         <translation>Zdroj s médii se nepodařilo rozluštit.</translation>
     </message>
     <message>
-        <location line="-417"/>
+        <location line="-511"/>
         <source>Invalid source type.</source>
         <translation>Neplatný typ zdroje s médii.</translation>
     </message>
     <message>
-        <location line="-807"/>
         <source>Cannot start playback. 
 
 Check your Gstreamer installation and make sure you 
+have libgstreamer-plugins-base installed.</source>
+        <translation type="obsolete">Přehrávání nelze spustit.
+
+Ověřte, prosím, instalaci Gstreamer a ujistěte se,
+že je nainstalován balíček libgstreamer-plugins-base.</translation>
+    </message>
+    <message>
+        <location line="+498"/>
+        <source>Could not open audio device. The device is already in use.</source>
+        <translation>Zvukové zařízení se nepodařilo otevřít, protože se již používá.</translation>
+    </message>
+    <message>
+        <location line="-1239"/>
+        <source>A required codec is missing. You need to install the following codec(s) to play this content: %0</source>
+        <translation>Všechny vyžadované kodeky nejsou nainstalovány. Kvůli přehrání tohoto obsahu je potřeba nainstalovat následující kodek(y): %0</translation>
+    </message>
+    <message>
+        <location line="-142"/>
+        <source>Cannot start playback. 
+
+Check your GStreamer installation and make sure you 
 have libgstreamer-plugins-base installed.</source>
         <translation>Přehrávání nelze spustit.
 
@@ -148,17 +213,17 @@ Ověřte, prosím, instalaci Gstreamer a ujistěte se,
 že je nainstalován balíček libgstreamer-plugins-base.</translation>
     </message>
     <message>
-        <location line="+1211"/>
-        <source>Could not open audio device. The device is already in use.</source>
-        <translation>Zvukové zařízení se nepodařilo otevřít, protože se již používá.</translation>
+        <location line="+129"/>
+        <source>Missing codec helper script assistant.</source>
+        <translation>Chybí skriptový pomocník pro nápovědu ke kodeku.</translation>
     </message>
     <message>
-        <location line="-1098"/>
-        <source>A required codec is missing. You need to install the following codec(s) to play this content: %0</source>
-        <translation>Všechny vyžadované kodeky nejsou nainstalovány. Kvůli přehrání tohoto obsahu je potřeba nainstalovat následující kodek(y): %0</translation>
+        <location line="+2"/>
+        <source>Plugin codec installation failed for codec: %0</source>
+        <translation>Instalace přídavného modulu kodeku se nezdařila pro kodek: %0</translation>
     </message>
     <message>
-        <location line="+1088"/>
+        <location line="+1240"/>
         <source>Could not locate media source.</source>
         <translation>Zdroj s médii se nepodařilo nalézt.</translation>
     </message>
@@ -166,7 +231,7 @@ Ověřte, prosím, instalaci Gstreamer a ujistěte se,
 <context>
     <name>Phonon::MMF</name>
     <message>
-        <location filename="../src/3rdparty/phonon/mmf/audiooutput.cpp" line="+108"/>
+        <location filename="../src/3rdparty/phonon/mmf/audiooutput.cpp" line="+106"/>
         <source>Audio Output</source>
         <translation>Výstup zvuku</translation>
     </message>
@@ -175,52 +240,373 @@ Ověřte, prosím, instalaci Gstreamer a ujistěte se,
         <source>The audio output device</source>
         <translation>Zařízení pro výstup zvuku</translation>
     </message>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/utils.cpp" line="+89"/>
+        <source>No error</source>
+        <translation>Žádná chyba</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Not found</source>
+        <translation>Nenalezeno</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Out of memory</source>
+        <translation>Není dostupná žádná další paměť</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Not supported</source>
+        <translation>Nepodporováno</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Overflow</source>
+        <translation>Přetečení</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Underflow</source>
+        <translation>Podtečení</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Already exists</source>
+        <translation>Již existuje</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Path not found</source>
+        <translation>Cesta nenalezena</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>In use</source>
+        <translation>Již se používá</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Not ready</source>
+        <translation>Nepřipraven</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Access denied</source>
+        <translation>Přístup odepřen</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Could not connect</source>
+        <translation>Nepodařilo se vytvořit žádné spojení</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Disconnected</source>
+        <translation>Odpojeno</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Permission denied</source>
+        <translation>Povolení odepřeno</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Insufficient bandwidth</source>
+        <translation>Nedostatečná šířka pásma</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Network unavailable</source>
+        <translation>Síť není dostupná</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Network communication error</source>
+        <translation>Chyba při spojení přes síť</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Streaming not supported</source>
+        <translation>Proudění nepodporováno</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Server alert</source>
+        <translation>Stav pohotovosti serveru</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Invalid protocol</source>
+        <translation>Neplatný protokol</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Invalid URL</source>
+        <translation>Neplátné URL</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Multicast error</source>
+        <translation>Chyba ve vícepočítání (multicast)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Proxy server error</source>
+        <translation>Chyba při spojení u zprostředkujícího serveru (proxy)</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Proxy server not supported</source>
+        <translation>Zprostředkující server nepodporován</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Audio output error</source>
+        <translation>Chyba při výstupu zvuku</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Video output error</source>
+        <translation>Chyba při výstupu obrazu</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Decoder error</source>
+        <translation>Chyba v dekodéru</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Audio or video components could not be played</source>
+        <translation>Zvukové nebo obrazové složky se nepodařilo přehrát</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>DRM error</source>
+        <translation>Chyba DRM</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Unknown error (%1)</source>
+        <translation>Neznámá chyba (%1)</translation>
+    </message>
+</context>
+<context>
+    <name>Phonon::MMF::AbstractMediaPlayer</name>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/abstractmediaplayer.cpp" line="+73"/>
+        <source>Not ready to play</source>
+        <translation>Nepřipraven k přehrávání</translation>
+    </message>
+    <message>
+        <location line="+161"/>
+        <location line="+10"/>
+        <source>Error opening file</source>
+        <translation>Soubor se nepodařilo otevřít</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Error opening URL</source>
+        <translation>Adresu se nepodařilo otevřít</translation>
+    </message>
+    <message>
+        <location line="+83"/>
+        <source>Setting volume failed</source>
+        <translation>Hlasitost se nepodařilo nastavit</translation>
+    </message>
+    <message>
+        <location line="+45"/>
+        <source>Loading clip failed</source>
+        <translation>Ukázku se nepodařilo nahrát</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Playback complete</source>
+        <translation>Přehrávání dokončeno</translation>
+    </message>
+</context>
+<context>
+    <name>Phonon::MMF::AbstractVideoPlayer</name>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/abstractvideoplayer.cpp" line="+108"/>
+        <source>Pause failed</source>
+        <translation>Pozastavení se nepodařilo provést</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Seek failed</source>
+        <translation>Hledání se nepodařilo provést</translation>
+    </message>
+    <message>
+        <location line="+54"/>
+        <source>Getting position failed</source>
+        <translation>Polohu se nepodařilo určit</translation>
+    </message>
+    <message>
+        <location line="+66"/>
+        <source>Opening clip failed</source>
+        <translation>Ukázku se nepodařilo otevřít</translation>
+    </message>
 </context>
 <context>
     <name>Phonon::MMF::AudioEqualizer</name>
     <message>
-        <location filename="../src/3rdparty/phonon/mmf/audioequalizer.cpp" line="+75"/>
         <source>Frequency band, %1 Hz</source>
-        <translation>Kmitočtové pásmo, %1 Hz</translation>
+        <translation type="obsolete">Kmitočtové pásmo, %1 Hz</translation>
+    </message>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/audioequalizer.cpp" line="+92"/>
+        <source>%1 Hz</source>
+        <translation>%1 Hz</translation>
+    </message>
+</context>
+<context>
+    <name>Phonon::MMF::AudioPlayer</name>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/audioplayer.cpp" line="+173"/>
+        <source>Getting position failed</source>
+        <translation>Polohu se nepodařilo určit</translation>
+    </message>
+</context>
+<context>
+    <name>Phonon::MMF::DsaVideoPlayer</name>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/videoplayer_dsa.cpp" line="+238"/>
+        <location line="+15"/>
+        <location line="+8"/>
+        <location line="+22"/>
+        <location line="+22"/>
+        <source>Video display error</source>
+        <translation>Chyba při zobrazení videa</translation>
     </message>
 </context>
 <context>
     <name>Phonon::MMF::EffectFactory</name>
     <message>
-        <location filename="../src/3rdparty/phonon/mmf/effectfactory.cpp" line="+65"/>
         <source>audio equalizer</source>
-        <translation>zvukový ekvalizér</translation>
+        <translation type="obsolete">zvukový ekvalizér</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Bass boost</source>
-        <translation>Zdůraznění basů</translation>
+        <translation type="obsolete">Zdůraznění basů</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Distance Attenuation</source>
-        <translation>Zeslabení v závislosti na vzdálenosti</translation>
+        <translation type="obsolete">Zeslabení v závislosti na vzdálenosti</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <location line="+2"/>
         <source>Environmental Reverb</source>
-        <translation>Vnější ozvěna</translation>
+        <translation type="obsolete">Vnější ozvěna</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Loudness</source>
-        <translation>Hlasitost</translation>
+        <translation type="obsolete">Hlasitost</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Source Orientation</source>
-        <translation>Zaměření zdroje</translation>
+        <translation type="obsolete">Zaměření zdroje</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Stereo Widening</source>
-        <translation>Rozšíření sterea</translation>
+        <translation type="obsolete">Rozšíření sterea</translation>
+    </message>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/effectfactory.cpp" line="+181"/>
+        <source>Enabled</source>
+        <translation>Povoleno</translation>
+    </message>
+</context>
+<context>
+    <name>Phonon::MMF::EnvironmentalReverb</name>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/environmentalreverb.cpp" line="+146"/>
+        <source>Decay HF ratio (%)</source>
+        <extracomment>DecayHFRatio: Ratio of high-frequency decay time to the value specified by DecayTime.</extracomment>
+        <translation>Poměr dozvuku u vysokých kmitočtů (%)</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Decay time (ms)</source>
+        <extracomment>DecayTime: Time over which reverberation is diminished.</extracomment>
+        <translation>Čas dozvuku (ms)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Density (%)</source>
+        <extracomment>Density Delay between first and subsequent reflections. Note that the S60 platform documentation does not make clear the distinction between this value and the Diffusion value.</extracomment>
+        <translation>Hustota (%)</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Diffusion (%)</source>
+        <extracomment>Diffusion: Delay between first and subsequent reflections. Note that the S60 platform documentation does not make clear the distinction between this value and the Density value.</extracomment>
+        <translation>Rozptyl (%)</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Reflections delay (ms)</source>
+        <extracomment>ReflectionsDelay: Amount of delay between the arrival the direct path from the source and the arrival of the first reflection.</extracomment>
+        <translation>Zpoždění odrazu (ms)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Reflections level (mB)</source>
+        <extracomment>ReflectionsLevel: Amplitude of reflections. This value is corrected by the RoomLevel to give the final reflection amplitude.</extracomment>
+        <translation>Síla odrazu (mB)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Reverb delay (ms)</source>
+        <extracomment>ReverbDelay: Amount of time between arrival of the first reflection and start of the late reverberation.</extracomment>
+        <translation>Zpoždění ozvěny (ms)</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Reverb level (mB)</source>
+        <extracomment>ReverbLevel Amplitude of reverberations. This value is corrected by the RoomLevel to give the final reverberation amplitude.</extracomment>
+        <translation>Síla ozvěny (mB)</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Room HF level</source>
+        <extracomment>RoomHFLevel: Amplitude of low-pass filter used to attenuate the high frequency component of reflected sound.</extracomment>
+        <translation>Hladina vysokého kmitočtu v prostoru</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Room level (mB)</source>
+        <extracomment>RoomLevel: Master volume control for all reflected sound.</extracomment>
+        <translation>Hladina prostoru (mB)</translation>
+    </message>
+</context>
+<context>
+    <name>Phonon::MMF::MediaObject</name>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/mediaobject.cpp" line="+276"/>
+        <source>Error opening source: type not supported</source>
+        <translation>Zdroj se nepodařilo otevřít: tento typ není podporován</translation>
+    </message>
+    <message>
+        <location line="+18"/>
+        <source>Error opening source: media type could not be determined</source>
+        <translation>Zdroj se nepodařilo otevřít: nepodařilo se určit typ média</translation>
+    </message>
+</context>
+<context>
+    <name>Phonon::MMF::StereoWidening</name>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/stereowidening.cpp" line="+79"/>
+        <source>Level (%)</source>
+        <translation>Síla (%)</translation>
+    </message>
+</context>
+<context>
+    <name>Phonon::MMF::SurfaceVideoPlayer</name>
+    <message>
+        <location filename="../src/3rdparty/phonon/mmf/videoplayer_surface.cpp" line="+126"/>
+        <location line="+16"/>
+        <source>Video display error</source>
+        <translation>Chyba při zobrazení videa</translation>
     </message>
 </context>
 <context>
@@ -290,7 +676,7 @@ Ověřte, prosím, instalaci Gstreamer a ujistěte se,
 <context>
     <name>Q3FileDialog</name>
     <message>
-        <location filename="../src/qt3support/dialogs/q3filedialog.cpp" line="+2426"/>
+        <location filename="../src/qt3support/dialogs/q3filedialog.cpp" line="+2432"/>
         <location line="+2027"/>
         <source>&amp;OK</source>
         <translation>&amp;OK</translation>
@@ -544,7 +930,7 @@ Ověřte cestu a název souboru.</translation>
         <location line="-1837"/>
         <location line="+49"/>
         <location line="+2149"/>
-        <location filename="../src/qt3support/dialogs/q3filedialog_mac.cpp" line="+112"/>
+        <location filename="../src/qt3support/dialogs/q3filedialog_mac.cpp" line="+133"/>
         <source>All Files (*)</source>
         <translation>Všechny soubory (*)</translation>
     </message>
@@ -931,8 +1317,8 @@ na
 <context>
     <name>QAbstractSocket</name>
     <message>
-        <location filename="../src/network/socket/qabstractsocket.cpp" line="+890"/>
-        <location filename="../src/network/socket/qhttpsocketengine.cpp" line="+633"/>
+        <location filename="../src/network/socket/qabstractsocket.cpp" line="+916"/>
+        <location filename="../src/network/socket/qhttpsocketengine.cpp" line="+629"/>
         <location filename="../src/network/socket/qsocks5socketengine.cpp" line="+661"/>
         <location line="+26"/>
         <source>Host not found</source>
@@ -951,12 +1337,13 @@ na
         <translation>Časový limit pro spojení byl překročen</translation>
     </message>
     <message>
-        <location line="+1029"/>
+        <location line="+1053"/>
         <source>Socket is not connected</source>
         <translation>Zásuvka (socket) není spojena</translation>
     </message>
     <message>
-        <location line="-380"/>
+        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="+625"/>
+        <location filename="../src/network/socket/qabstractsocket.cpp" line="-380"/>
         <source>Socket operation timed out</source>
         <translation>Časový limit pro zásuvkovou (socket) operaci byl překročen</translation>
     </message>
@@ -966,9 +1353,9 @@ na
         <translation>Síť není dosažitelná</translation>
     </message>
     <message>
-        <location filename="../src/network/socket/qabstractsocket.cpp" line="-1197"/>
-        <location line="+789"/>
-        <location line="+208"/>
+        <location filename="../src/network/socket/qabstractsocket.cpp" line="-1232"/>
+        <location line="+809"/>
+        <location line="+220"/>
         <source>Operation on socket is not supported</source>
         <translation>Tato zásuvková (socket) operace není podporována</translation>
     </message>
@@ -976,7 +1363,7 @@ na
 <context>
     <name>QAbstractSpinBox</name>
     <message>
-        <location filename="../src/gui/widgets/qabstractspinbox.cpp" line="+1219"/>
+        <location filename="../src/gui/widgets/qabstractspinbox.cpp" line="+1265"/>
         <source>Step &amp;down</source>
         <translation>Krok &amp;dolů</translation>
     </message>
@@ -1026,7 +1413,7 @@ na
         <translation>Qt není slučitelná</translation>
     </message>
     <message>
-        <location filename="../src/gui/kernel/qapplication.cpp" line="+2290"/>
+        <location filename="../src/gui/kernel/qapplication.cpp" line="-13"/>
         <source>QT_LAYOUT_DIRECTION</source>
         <comment>Translate this string to the string &apos;LTR&apos; in left-to-right languages or to &apos;RTL&apos; in right-to-left languages (such as Hebrew and Arabic) to get proper widget layout.</comment>
         <translation>LTR</translation>
@@ -1076,7 +1463,7 @@ na
 <context>
     <name>QColorDialog</name>
     <message>
-        <location filename="../src/gui/dialogs/qcolordialog.cpp" line="+1352"/>
+        <location filename="../src/gui/dialogs/qcolordialog.cpp" line="+1381"/>
         <source>&amp;Red:</source>
         <translation>&amp;Červená:</translation>
     </message>
@@ -1101,12 +1488,12 @@ na
         <translation>Vybrat barvu</translation>
     </message>
     <message>
-        <location line="+182"/>
+        <location line="+185"/>
         <source>&amp;Add to Custom Colors</source>
         <translation>&amp;Přidat k uživatelem stanoveným barvám</translation>
     </message>
     <message>
-        <location line="-284"/>
+        <location line="-287"/>
         <source>Bl&amp;ue:</source>
         <translation>&amp;Modrá:</translation>
     </message>
@@ -1116,7 +1503,7 @@ na
         <translation>&amp;Zelená:</translation>
     </message>
     <message>
-        <location line="+283"/>
+        <location line="+286"/>
         <source>&amp;Basic colors</source>
         <translation>Základní &amp;barvy</translation>
     </message>
@@ -1126,7 +1513,7 @@ na
         <translation>&amp;Uživatelem stanovené barvy</translation>
     </message>
     <message>
-        <location line="-282"/>
+        <location line="-285"/>
         <source>A&amp;lpha channel:</source>
         <translation>A&amp;lfa kanál:</translation>
     </message>
@@ -1134,7 +1521,7 @@ na
 <context>
     <name>QComboBox</name>
     <message>
-        <location filename="../src/plugins/accessible/widgets/complexwidgets.cpp" line="+1771"/>
+        <location filename="../src/plugins/accessible/widgets/complexwidgets.cpp" line="+1772"/>
         <location line="+65"/>
         <source>Open</source>
         <translation>Otevřít</translation>
@@ -1215,7 +1602,7 @@ na
 <context>
     <name>QDB2Driver</name>
     <message>
-        <location filename="../src/sql/drivers/db2/qsql_db2.cpp" line="+1552"/>
+        <location filename="../src/sql/drivers/db2/qsql_db2.cpp" line="+1551"/>
         <source>Unable to commit transaction</source>
         <translation>Transakci se nepodařilo provést (operace &apos;commit&apos;, odeslání, se nezdařila)</translation>
     </message>
@@ -1238,7 +1625,7 @@ na
 <context>
     <name>QDB2Result</name>
     <message>
-        <location line="-786"/>
+        <location line="-785"/>
         <source>Unable to bind variable</source>
         <translation>Proměnnou se nepodařilo provést</translation>
     </message>
@@ -1293,6 +1680,1112 @@ na
     </message>
 </context>
 <context>
+    <name>QDeclarativeAbstractAnimation</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativeanimation.cpp" line="+166"/>
+        <source>Cannot animate non-existent property &quot;%1&quot;</source>
+        <translation>Vlastnost &apos;%1&quot; neexistuje a nelze ji proto animovat</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Cannot animate read-only property &quot;%1&quot;</source>
+        <translation>Vlastnost &apos;%1&quot; je pouze pro čtení a nelze ji proto animovat</translation>
+    </message>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativeutilmodule.cpp" line="+122"/>
+        <source>Animation is an abstract class</source>
+        <translation>Animace je abstraktní třída</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeAnchorAnimation</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativeanimation.cpp" line="+2568"/>
+        <source>Cannot set a duration of &lt; 0</source>
+        <translation>Nelze nastavit dobu trvání &lt; 0</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeAnchors</name>
+    <message>
+        <location filename="../src/declarative/graphicsitems/qdeclarativeanchors.cpp" line="+180"/>
+        <source>Possible anchor loop detected on fill.</source>
+        <translation>Při operaci naplnění byla zjištěna případná nekonečná smyčka kotvy.</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Possible anchor loop detected on centerIn.</source>
+        <translation>Při operaci &apos;centerIn&apos; byla zjištěna případná nekonečná smyčka kotvy.</translation>
+    </message>
+    <message>
+        <location line="+201"/>
+        <location line="+34"/>
+        <location line="+610"/>
+        <location line="+37"/>
+        <source>Cannot anchor to an item that isn&apos;t a parent or sibling.</source>
+        <translation>Cílem kotvy musí být rodičovský prvek nebo prvek na stejné úrovni.</translation>
+    </message>
+    <message>
+        <location line="-534"/>
+        <source>Possible anchor loop detected on vertical anchor.</source>
+        <translation>Při svislé kotvě byla zjištěna případná nekonečná smyčka kotvy.</translation>
+    </message>
+    <message>
+        <location line="+59"/>
+        <source>Possible anchor loop detected on horizontal anchor.</source>
+        <translation>Při vodorovné kotvě byla zjištěna případná nekonečná smyčka kotvy.</translation>
+    </message>
+    <message>
+        <location line="+422"/>
+        <source>Cannot specify left, right, and hcenter anchors.</source>
+        <translation>Nelze zadat kotevní údaje pro vlevo, vpravo a umístěno vodorovně do středu. Nesmí se vyskytovat společně.</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <location line="+37"/>
+        <source>Cannot anchor to a null item.</source>
+        <translation>Nelze dát kotvu k nulovému prvku.</translation>
+    </message>
+    <message>
+        <location line="-34"/>
+        <source>Cannot anchor a horizontal edge to a vertical edge.</source>
+        <translation>Nelze ukotvit vodorovný okraj ke svislému.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location line="+37"/>
+        <source>Cannot anchor item to self.</source>
+        <translation>Prvek nemůže mít kotvu k sobě samému.</translation>
+    </message>
+    <message>
+        <location line="-25"/>
+        <source>Cannot specify top, bottom, and vcenter anchors.</source>
+        <translation>Nelze zadat kotevní údaje pro nahoře, dole a umístěno svisle do středu. Nesmí se vyskytovat společně.</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Baseline anchor cannot be used in conjunction with top, bottom, or vcenter anchors.</source>
+        <translation>Kotva pro výchozí bod se nesmí používat společně s dalšími kotevními údaji pro nahoře, dole a umístěno svisle do středu.</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Cannot anchor a vertical edge to a horizontal edge.</source>
+        <translation>Nelze ukotvit svislý okraj k vodorovnému.</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeAnimatedImage</name>
+    <message>
+        <location filename="../src/declarative/graphicsitems/qdeclarativeitemsmodule.cpp" line="+86"/>
+        <source>Qt was built without support for QMovie</source>
+        <translation>Qt bylo sestaveno bez podpory pro QMovie</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeBehavior</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativebehavior.cpp" line="+127"/>
+        <source>Cannot change the animation assigned to a Behavior.</source>
+        <translation>Animaci patřící k prvku Behavior nelze změnit.</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeBinding</name>
+    <message>
+        <location filename="../src/declarative/qml/qdeclarativebinding.cpp" line="+238"/>
+        <source>Binding loop detected for property &quot;%1&quot;</source>
+        <translation>U pro vlastnost &quot;%1&quot; zadané vazby byla zjištěna nekonečná smyčka</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeCompiledBindings</name>
+    <message>
+        <location filename="../src/declarative/qml/qdeclarativecompiledbindings.cpp" line="+372"/>
+        <source>Binding loop detected for property &quot;%1&quot;</source>
+        <translation>U pro vlastnost &quot;%1&quot; zadané vazby byla zjištěna nekonečná smyčka</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeCompiler</name>
+    <message>
+        <location filename="../src/declarative/qml/qdeclarativecompiler.cpp" line="+186"/>
+        <location line="+1596"/>
+        <location line="+186"/>
+        <location line="+81"/>
+        <location line="+75"/>
+        <location line="+487"/>
+        <source>Invalid property assignment: &quot;%1&quot; is a read-only property</source>
+        <translation>Neplatné přiřazení vlastnosti: &quot;%1&quot; je vlastnost pouze pro čtení</translation>
+    </message>
+    <message>
+        <location line="-2416"/>
+        <source>Invalid property assignment: unknown enumeration</source>
+        <translation>Neplatné přiřazení vlastnosti: neplatná výčtová hodnota</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Invalid property assignment: string expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáván řetězec</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Invalid property assignment: url expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekávána adresa (URL)</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Invalid property assignment: unsigned int expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekávána celočíselná hodnota bez znaménka</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Invalid property assignment: int expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekávána celočíselná hodnota</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Invalid property assignment: float expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáváno číslo s plovoucí desetinnou čárkou</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Invalid property assignment: double expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáváno číslo s plovoucí desetinnou čárkou (double)</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Invalid property assignment: color expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáváno vymezení barvy</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Invalid property assignment: date expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáván údaj s datem</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Invalid property assignment: time expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáván časový údaj</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Invalid property assignment: datetime expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáván údaj s datem</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Invalid property assignment: point expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáván souřadnicový údaj pro jeden bod</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Invalid property assignment: size expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáván údaj s velikostí</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Invalid property assignment: rect expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáván parametr pro pravoúhelník</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Invalid property assignment: boolean expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekávána booleánská hodnota</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Invalid property assignment: 3D vector expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáván třírozměrný vektor</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Invalid property assignment: unsupported type &quot;%1&quot;</source>
+        <translation>Neplatné přiřazení vlastnosti: Typ &quot;%1&quot; není podporován</translation>
+    </message>
+    <message>
+        <location line="+277"/>
+        <source>Element is not creatable.</source>
+        <translation>Příkaz nelze vytvořit.</translation>
+    </message>
+    <message>
+        <location line="+618"/>
+        <source>Component elements may not contain properties other than id</source>
+        <translation>Prvky součástek nesmí kromě ID obsahovat další vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Invalid component id specification</source>
+        <translation>Neplatné vymezení součástky</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location line="+478"/>
+        <source>id is not unique</source>
+        <translation>Hodnota ID není jednoznačná</translation>
+    </message>
+    <message>
+        <location line="-468"/>
+        <source>Invalid component body specification</source>
+        <translation>Neplatné vymezení obsahu součástky</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Component objects cannot declare new properties.</source>
+        <translation>Předměty součástek nemohou prohlásit nové vlastnosti.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Component objects cannot declare new signals.</source>
+        <translation>Předměty součástek nemohou prohlásit nové signály.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Component objects cannot declare new functions.</source>
+        <translation>Předměty součástek nemohou prohlásit nové funkce.</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Cannot create empty component specification</source>
+        <translation>Nelze vytvořit prázdné vymezení součástky</translation>
+    </message>
+    <message>
+        <location line="+89"/>
+        <source>Incorrectly specified signal assignment</source>
+        <translation>Nesprávně vymezené přiřazení signálu</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Cannot assign a value to a signal (expecting a script to be run)</source>
+        <translation>K signálu nelze přiřadit hodnotu (očekává se spuštění skriptu)</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Empty signal assignment</source>
+        <translation>Prázdné přiřazení signálu</translation>
+    </message>
+    <message>
+        <location line="+38"/>
+        <source>Empty property assignment</source>
+        <translation>Prázdné přiřazení vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <source>Attached properties cannot be used here</source>
+        <translation>Na tomto místě nemohou být připojené vlastnosti (typu &apos;attached&apos;) používány</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <location line="+102"/>
+        <source>Non-existent attached object</source>
+        <translation>Pro vlastnost neexistuje žádný připojený předmět</translation>
+    </message>
+    <message>
+        <location line="-98"/>
+        <location line="+101"/>
+        <source>Invalid attached object assignment</source>
+        <translation>Neplatné přiřazení připojeného předmětu</translation>
+    </message>
+    <message>
+        <location line="-48"/>
+        <source>Cannot assign to non-existent default property</source>
+        <translation>Nelze provést žádné přiřazení, neboť neexistuje výchozí vlastnost</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location line="+352"/>
+        <source>Cannot assign to non-existent property &quot;%1&quot;</source>
+        <translation>Nelze provést žádné přiřazení, neboť neexistuje výchozí vlastnost pojmenovaná jako &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <location line="-322"/>
+        <source>Invalid use of namespace</source>
+        <translation>Neplatné použití jmenného prostoru</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Not an attached property name</source>
+        <translation>Neplatný název pro připojenou vlastnost (typu &apos;attached&apos;)</translation>
+    </message>
+    <message>
+        <location line="+182"/>
+        <source>Invalid use of id property</source>
+        <translation>Neplatné použití vlastnosti typu &apos;id&apos;</translation>
+    </message>
+    <message>
+        <location line="+89"/>
+        <location line="+2"/>
+        <source>Property has already been assigned a value</source>
+        <translation>Vlastnosti již byla přiřazena hodnota</translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <location line="+7"/>
+        <source>Invalid grouped property access</source>
+        <translation>Nesprávné seskupení při přístupu k vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Cannot assign a value directly to a grouped property</source>
+        <translation>U vlastnosti, která je částí seskupení, není žádné přímé přiřazení hodnoty přípustné</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Invalid property use</source>
+        <translation>Neplatné použití vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Property assignment expected</source>
+        <translation>Očekáváno přiřazení vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Single property assignment expected</source>
+        <translation>Očekáváno jednotlivé přiřazení vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Unexpected object assignment</source>
+        <translation>Nepřípustné přiřazení předmětu</translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <source>Cannot assign object to list</source>
+        <translation>Přiřazení předmětu k seznamům není přípustné</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Can only assign one binding to lists</source>
+        <translation>K seznamům lze přiřadit pouze jednu jedinou vazbu</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Cannot assign primitives to lists</source>
+        <translation>Přiřazení jednoduché hodnoty (primitivy) k seznamům není přípustné</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Cannot assign multiple values to a script property</source>
+        <translation>Přiřazení více hodnot k vlastnosti skriptu není přípustné</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Invalid property assignment: script expected</source>
+        <translation>Neplatné přiřazení vlastnosti: očekáván skript</translation>
+    </message>
+    <message>
+        <location line="+105"/>
+        <source>Cannot assign object to property</source>
+        <translation>Přiřazení předmětu k vlastnosti není přípustné</translation>
+    </message>
+    <message>
+        <location line="+50"/>
+        <source>&quot;%1&quot; cannot operate on &quot;%2&quot;</source>
+        <translation>&quot;%1&quot; nelze použít na &quot;%2&quot;</translation>
+    </message>
+    <message>
+        <location line="+117"/>
+        <source>Duplicate default property</source>
+        <translation>Zdvojená výchozí vlastnost</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Duplicate property name</source>
+        <translation>Zdvojený název vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Property names cannot begin with an upper case letter</source>
+        <translation>Názvy vlastností nesmí začínat velkým písmenem</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Duplicate signal name</source>
+        <translation>Zdvojený název signálu</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Signal names cannot begin with an upper case letter</source>
+        <translation>Názvy signálů nesmí začínat velkým písmenem</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Duplicate method name</source>
+        <translation>Zdvojený název metody</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Method names cannot begin with an upper case letter</source>
+        <translation>Názvy metod nesmí začínat velkým písmenem</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>Property value set multiple times</source>
+        <translation>Vícenásobné přiřazení hodnoty k vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Invalid property nesting</source>
+        <translation>Neplatné vkládání vlastností</translation>
+    </message>
+    <message>
+        <location line="+53"/>
+        <source>Cannot override FINAL property</source>
+        <translation>Nelze přepsat vlastnost prohlašovanou jako &apos;FINAL&apos;</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Invalid property type</source>
+        <translation>Neplatný typ vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+159"/>
+        <source>Invalid empty ID</source>
+        <translation>Neplatná, protože prázdná, hodnota ID</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>IDs cannot start with an uppercase letter</source>
+        <translation>Hodnoty ID nesmí začínat velkým písmenem</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>IDs must start with a letter or underscore</source>
+        <translation>Hodnoty ID musí začínat písmenem nebo znakem _podtržítka</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>IDs must contain only letters, numbers, and underscores</source>
+        <translation>Hodnoty ID musí obsahovat pouze písmena, číslice nebo znaky _podtržítka</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>ID illegally masks global JavaScript property</source>
+        <translation>Hodnota ID nedovoleně zakrývá celkovou vlastnost z JavaScriptu</translation>
+    </message>
+    <message>
+        <location line="+31"/>
+        <location line="+9"/>
+        <source>No property alias location</source>
+        <translation>Vlastnost alias bez umístění</translation>
+    </message>
+    <message>
+        <location line="-4"/>
+        <location line="+25"/>
+        <source>Invalid alias location</source>
+        <translation>Neplatné umístění alias</translation>
+    </message>
+    <message>
+        <location line="-16"/>
+        <source>Invalid alias reference. An alias reference must be specified as &lt;id&gt; or &lt;id&gt;.&lt;property&gt;</source>
+        <translation>Neplatné odkazování na vlastnost alias. Odkaz na alias musí být zadán v podobě &lt;id&gt; nebo &lt;id&gt;.&lt;property&gt;</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Invalid alias reference. Unable to find id &quot;%1&quot;</source>
+        <translation>Neplatné odkazování na vlastnost alias. Nelze najít ID &quot;%1&quot;</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeComponent</name>
+    <message>
+        <location filename="../src/declarative/qml/qdeclarativecomponent.cpp" line="+459"/>
+        <source>Invalid empty URL</source>
+        <translation>Neplátná prázdná adresa (URL)</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeCompositeTypeManager</name>
+    <message>
+        <location filename="../src/declarative/qml/qdeclarativecompositetypemanager.cpp" line="+475"/>
+        <location line="+266"/>
+        <source>Resource %1 unavailable</source>
+        <translation>Zdroj %1 nedostupný</translation>
+    </message>
+    <message>
+        <location line="-122"/>
+        <source>Namespace %1 cannot be used as a type</source>
+        <translation>Jmenný prostor %1 nelze použít jako typ</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>%1 %2</source>
+        <translation>%1 %2</translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <source>Type %1 unavailable</source>
+        <translation>Typ %1 nedostupný</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeConnections</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativeconnections.cpp" line="+209"/>
+        <location line="+60"/>
+        <source>Cannot assign to non-existent property &quot;%1&quot;</source>
+        <translation>Nelze provést žádné přiřazení, neboť neexistuje výchozí vlastnost pojmenovaná jako &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <location line="-50"/>
+        <source>Connections: nested objects not allowed</source>
+        <translation>Spojení: vkládané předměty nejsou povoleny</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Connections: syntax error</source>
+        <translation>Spojení: chyba ve skladbě</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Connections: script expected</source>
+        <translation>Spojení: očekáván skript</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeEngine</name>
+    <message>
+        <location filename="../src/declarative/qml/qdeclarativesqldatabase.cpp" line="+204"/>
+        <source>executeSql called outside transaction()</source>
+        <translation>&apos;executeSql&apos; byl vyvolán mimo &apos;transaction()&apos;</translation>
+    </message>
+    <message>
+        <location line="+58"/>
+        <source>Read-only Transaction</source>
+        <translation>Transakce pouze pro čtení</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>Version mismatch: expected %1, found %2</source>
+        <translation>Verzi %2 nelze používat; je třeba %1</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>SQL transaction failed</source>
+        <translation>Transakce SQL se nezdařila</translation>
+    </message>
+    <message>
+        <location line="+21"/>
+        <source>transaction: missing callback</source>
+        <translation>Transakce: chybí callback (zavolat znovu)</translation>
+    </message>
+    <message>
+        <location line="+57"/>
+        <location line="+16"/>
+        <source>SQL: database version mismatch</source>
+        <translation>SQL: Verze databáze neodpovídá očekávané verzi</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeFlipable</name>
+    <message>
+        <location filename="../src/declarative/graphicsitems/qdeclarativeflipable.cpp" line="+129"/>
+        <source>front is a write-once property</source>
+        <translation>&apos;front&apos; lze přidělit pouze jednou</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>back is a write-once property</source>
+        <translation>&apos;back&apos; lze přidělit pouze jednou</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeImportDatabase</name>
+    <message>
+        <location filename="../src/declarative/qml/qdeclarativeimport.cpp" line="+294"/>
+        <source>module &quot;%1&quot; definition &quot;%2&quot; not readable</source>
+        <translation>Modul &quot;%1&quot; vymezení &quot;%2&quot; nečitelné</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <source>plugin cannot be loaded for module &quot;%1&quot;: %2</source>
+        <translation>Nelze nahrát přídavný modul pro modul &quot;%1&quot;: %2</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>module &quot;%1&quot; plugin &quot;%2&quot; not found</source>
+        <translation>Modul &quot;%1&quot; přídavný modul &quot;%2&quot; nenalezen</translation>
+    </message>
+    <message>
+        <location line="+79"/>
+        <location line="+55"/>
+        <source>module &quot;%1&quot; version %2.%3 is not installed</source>
+        <translation>Modul &quot;%1&quot; verze %2.%3 není nainstalován</translation>
+    </message>
+    <message>
+        <location line="-53"/>
+        <source>module &quot;%1&quot; is not installed</source>
+        <translation>Modul &quot;%1&quot; není nainstalován</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <location line="+19"/>
+        <source>&quot;%1&quot;: no such directory</source>
+        <translation>&quot;%1&quot;: žádný takový adresář není</translation>
+    </message>
+    <message>
+        <location line="-2"/>
+        <source>import &quot;%1&quot; has no qmldir and no namespace</source>
+        <translation>Zavedení &quot;%1&quot; nemá žádný qmldir a nemá žádný jmenný prostor</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>- %1 is not a namespace</source>
+        <translation>- %1 jmenným prostorem</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>- nested namespaces not allowed</source>
+        <translation>- vkládané jmenné prostory nejsou povoleny</translation>
+    </message>
+    <message>
+        <location line="+47"/>
+        <location line="+4"/>
+        <source>local directory</source>
+        <translation>Místní adresář</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>is ambiguous. Found in %1 and in %2</source>
+        <translation>je dvojznačný. Nalezen v %1 a v %2</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>is ambiguous. Found in %1 in version %2.%3 and %4.%5</source>
+        <translation>je dvojznačný. Nalezen v %1 ve verzi %2.%3 a %4.%5</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>is instantiated recursively</source>
+        <translation>je doložen příkladem rekurzivně</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>is not a type</source>
+        <translation>není typ</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeKeyNavigationAttached</name>
+    <message>
+        <location filename="../src/declarative/graphicsitems/qdeclarativeitemsmodule.cpp" line="+70"/>
+        <source>KeyNavigation is only available via attached properties</source>
+        <translation>Klávesové navádění (KeyNavigation) je dostupné pouze pomocí připojených vlastností</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeKeysAttached</name>
+    <message>
+        <location line="+1"/>
+        <source>Keys is only available via attached properties</source>
+        <translation>Keys je dostupné pouze pomocí připojených vlastností</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeListModel</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativelistmodel.cpp" line="+399"/>
+        <source>remove: index %1 out of range</source>
+        <translation>odstranit (remove): Index %1 je mimo platnou oblast</translation>
+    </message>
+    <message>
+        <location line="+33"/>
+        <source>insert: value is not an object</source>
+        <translation>vložit (insert): Hodnota není předmětem</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>insert: index %1 out of range</source>
+        <translation>vložit (insert): Index %1 je mimo platnou oblast</translation>
+    </message>
+    <message>
+        <location line="+30"/>
+        <source>move: out of range</source>
+        <translation>přesunout (move): je mimo platnou oblast</translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>append: value is not an object</source>
+        <translation>připojit (append): Hodnota není předmětem</translation>
+    </message>
+    <message>
+        <location line="+55"/>
+        <source>set: value is not an object</source>
+        <translation>nastavit (set): Hodnota není předmětem</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <location line="+34"/>
+        <source>set: index %1 out of range</source>
+        <translation>nastavit (set): Index %1 je mimo platnou oblast</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <location line="+15"/>
+        <source>ListElement: cannot contain nested elements</source>
+        <translation>ListElement: nelze obsahovat vkládané prvky</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>ListElement: cannot use reserved &quot;id&quot; property</source>
+        <translation>ListElement: nelze používat vlastnost &quot;ID&quot;</translation>
+    </message>
+    <message>
+        <location line="+49"/>
+        <source>ListElement: cannot use script for property value</source>
+        <translation>ListElement: nelze používat skript pro hodnotu vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>ListModel: undefined property &apos;%1&apos;</source>
+        <translation>ListModel: Vlastnost &apos;%1&apos; není vymezena</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeLoader</name>
+    <message>
+        <location filename="../src/declarative/graphicsitems/qdeclarativeloader.cpp" line="+323"/>
+        <source>Loader does not support loading non-visual elements.</source>
+        <translation>Nahrávání neviditelných prvků není podporováno.</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeParentAnimation</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativeanimation.cpp" line="-169"/>
+        <source>Unable to preserve appearance under complex transform</source>
+        <translation>Při složité proměně nelze zachovat vzhled</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <location line="+7"/>
+        <source>Unable to preserve appearance under non-uniform scale</source>
+        <translation>Při nejednotné změně velikosti nelze zachovat vzhled</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Unable to preserve appearance under scale of 0</source>
+        <translation>Při změně velikosti s 0 nelze zachovat vzhled</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeParentChange</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativestateoperations.cpp" line="+95"/>
+        <source>Unable to preserve appearance under complex transform</source>
+        <translation>Při složité proměně nelze zachovat vzhled</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <location line="+7"/>
+        <source>Unable to preserve appearance under non-uniform scale</source>
+        <translation>Při nejednotné změně velikosti nelze zachovat vzhled</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Unable to preserve appearance under scale of 0</source>
+        <translation>Při změně velikosti s 0 nelze zachovat vzhled</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeParser</name>
+    <message>
+        <location filename="../src/declarative/qml/parser/qdeclarativejslexer.cpp" line="+542"/>
+        <location line="+123"/>
+        <location line="+54"/>
+        <source>Illegal unicode escape sequence</source>
+        <translation>Neplatná úniková posloupnost unicode</translation>
+    </message>
+    <message>
+        <location line="-140"/>
+        <source>Illegal character</source>
+        <translation>Neplatný znak</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Unclosed string at end of line</source>
+        <translation>Neuzavřený řetězec na konci řádku</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Illegal escape squence</source>
+        <translation>Neplatná úniková posloupnost</translation>
+    </message>
+    <message>
+        <location line="+72"/>
+        <source>Unclosed comment at end of file</source>
+        <translation>Neuzavřená poznámka na konci souboru</translation>
+    </message>
+    <message>
+        <location line="+102"/>
+        <source>Illegal syntax for exponential number</source>
+        <translation>Neplatná skladba exponenciálního čísla</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>Identifier cannot start with numeric literal</source>
+        <translation>Identifikátor nemůže začínat s číselným překlepem</translation>
+    </message>
+    <message>
+        <location line="+338"/>
+        <source>Unterminated regular expression literal</source>
+        <translation>Neuzavřený regulární výraz</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Invalid regular expression flag &apos;%0&apos;</source>
+        <translation>Neplatný příznak &apos;%0&apos; u regulárního výrazu</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <location line="+22"/>
+        <source>Unterminated regular expression backslash sequence</source>
+        <translation>Neuzavřená posloupnost se zpětným lomítkem u regulárního výrazu</translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Unterminated regular expression class</source>
+        <translation>Neuzavřená třída u neuzavřeného regulárního výrazu</translation>
+    </message>
+    <message>
+        <location filename="../src/declarative/qml/parser/qdeclarativejsparser.cpp" line="+1828"/>
+        <location line="+67"/>
+        <source>Syntax error</source>
+        <translation>Chyba ve skladbě</translation>
+    </message>
+    <message>
+        <location line="-65"/>
+        <source>Unexpected token `%1&apos;</source>
+        <translation>Neočekávaný symbol `%1&apos;</translation>
+    </message>
+    <message>
+        <location line="+28"/>
+        <location line="+24"/>
+        <source>Expected token `%1&apos;</source>
+        <translation>Očekávaný symbol `%1&apos;</translation>
+    </message>
+    <message>
+        <location filename="../src/declarative/qml/qdeclarativescriptparser.cpp" line="+260"/>
+        <location line="+431"/>
+        <location line="+59"/>
+        <source>Property value set multiple times</source>
+        <translation>Vícenásobné přiřazení hodnoty k vlastnosti</translation>
+    </message>
+    <message>
+        <location line="-479"/>
+        <source>Expected type name</source>
+        <translation>Očekávaný název typu</translation>
+    </message>
+    <message>
+        <location line="+136"/>
+        <source>Invalid import qualifier ID</source>
+        <translation>Neplatný údaj o ID při zavádění</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Reserved name &quot;Qt&quot; cannot be used as an qualifier</source>
+        <translation>Zamluvený název &quot;Qt&quot; nemůže být použit jako kvalifikant</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Script import qualifiers must be unique.</source>
+        <translation>Kvalifikanty zadané pro zavedení skriptu musí být jednoznačné.</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Script import requires a qualifier</source>
+        <translation>Zavedení skriptu vyžaduje údaj o kvalifikantu</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Library import requires a version</source>
+        <translation>Zavedení knihovny vyžaduje údaj o verzi</translation>
+    </message>
+    <message>
+        <location line="+59"/>
+        <source>Expected parameter type</source>
+        <translation>Očekáván typ parametru</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Invalid property type modifier</source>
+        <translation>Neplatný modifikátor pro typ vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Unexpected property type modifier</source>
+        <translation>Neočekávaný modifikátor pro typ vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Expected property type</source>
+        <translation>Očekáván typ vlastnosti</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Readonly not yet supported</source>
+        <translation>&quot;Pouze pro čtení&quot; není na tomto místě ještě nepodporováno</translation>
+    </message>
+    <message>
+        <location line="+215"/>
+        <source>JavaScript declaration outside Script element</source>
+        <translation>Prohlášení JavaScriptu není mimo prvek skriptu přípustné</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativePauseAnimation</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativeanimation.cpp" line="-1990"/>
+        <source>Cannot set a duration of &lt; 0</source>
+        <translation>Nelze nastavit dobu trvání &lt; 0</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativePixmapCache</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativepixmapcache.cpp" line="+190"/>
+        <source>Error decoding: %1: %2</source>
+        <translation>Chba při dekódování: %1: %2</translation>
+    </message>
+    <message>
+        <location line="+70"/>
+        <source>Failed to get image from provider: %1</source>
+        <translation>Obrazová data se od poskytovatele nepodařilo získat: %1</translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <location line="+345"/>
+        <source>Cannot open: %1</source>
+        <translation>Nelze otevřít: %1</translation>
+    </message>
+    <message>
+        <location line="+37"/>
+        <source>Unknown Error loading %1</source>
+        <translation>Neznámá chyba při nahrávání %1</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativePropertyAnimation</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativeanimation.cpp" line="+1113"/>
+        <source>Cannot set a duration of &lt; 0</source>
+        <translation>Nelze nastavit dobu trvání &lt; 0</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativePropertyChanges</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativepropertychanges.cpp" line="+267"/>
+        <source>PropertyChanges does not support creating state-specific objects.</source>
+        <translation>PropertyChanges nepodporuje vytváření předmětů, které jsou přiřazeny jednomu stavu.</translation>
+    </message>
+    <message>
+        <location line="+157"/>
+        <source>Cannot assign to non-existent property &quot;%1&quot;</source>
+        <translation>Nelze provést žádné přiřazení, neboť neexistuje výchozí vlastnost pojmenovaná jako &quot;%1&quot;</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Cannot assign to read-only property &quot;%1&quot;</source>
+        <translation>Vlastnost &apos;%1&quot; je pouze pro čtení a nelze ji proto přiřadit</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeTextInput</name>
+    <message>
+        <location filename="../src/declarative/graphicsitems/qdeclarativetextinput.cpp" line="+793"/>
+        <location line="+8"/>
+        <source>Could not load cursor delegate</source>
+        <translation>Nepodařilo se nahrát zástupce kurzoru</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Could not instantiate cursor delegate</source>
+        <translation>Zástupce kurzoru se nepodařilo doložit příkladem</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeVME</name>
+    <message>
+        <location filename="../src/declarative/qml/qdeclarativevme.cpp" line="+194"/>
+        <source>Unable to create object of type %1</source>
+        <translation>Nepodařilo se vytvořit žádný předmět typu %1</translation>
+    </message>
+    <message>
+        <location line="+390"/>
+        <source>Cannot assign value %1 to property %2</source>
+        <translation>Hodnotu &apos;%1&apos; nelze přiřadit vlastnosti %2</translation>
+    </message>
+    <message>
+        <location line="+22"/>
+        <source>Cannot assign object type %1 with no default method</source>
+        <translation>Typ předmětu %1 nelze přiřadit, protože neexistuje žádná výchozí metoda</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Cannot connect mismatched signal/slot %1 %vs. %2</source>
+        <translation>Nelze vytvořit žádné spojení mezi signálem %1 a otvorem %2, protože se k sobě nehodí</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Cannot assign an object to signal property %1</source>
+        <translation>Vlastnosti signálu %1 nelze přiřadit žádný předmět</translation>
+    </message>
+    <message>
+        <location line="+146"/>
+        <source>Cannot assign object to list</source>
+        <translation>Přiřazení předmětu k seznamu je nepřípustné</translation>
+    </message>
+    <message>
+        <location line="+41"/>
+        <source>Cannot assign object to interface property</source>
+        <translation>Vlastnosti rozhraní nelze přiřadit žádný předmět</translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Unable to create attached object</source>
+        <translation>Nepodařilo se vytvořit žádný připojený předmět (typu &apos;attached&apos;)</translation>
+    </message>
+    <message>
+        <location line="+32"/>
+        <source>Cannot set properties on %1 as it is null</source>
+        <translation>Vlastnosti nelze nastavit na %1, protože jsou &apos;null&apos;</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeVisualDataModel</name>
+    <message>
+        <location filename="../src/declarative/graphicsitems/qdeclarativevisualitemmodel.cpp" line="+1090"/>
+        <source>Delegate component must be Item type.</source>
+        <translation>Součástka zástupce musí být typu &apos;item&apos;.</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeXmlListModel</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativeutilmodule.cpp" line="-12"/>
+        <location line="+2"/>
+        <source>Qt was built without support for xmlpatterns</source>
+        <translation>Qt bylo sestaveno bez podpory pro xmlpatterns</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeXmlListModelRole</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativexmllistmodel_p.h" line="+174"/>
+        <source>An XmlRole query must not start with &apos;/&apos;</source>
+        <translation>Vyhledávání XmlRole nesmí začínat s &apos;/&apos;</translation>
+    </message>
+</context>
+<context>
+    <name>QDeclarativeXmlRoleList</name>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativexmllistmodel.cpp" line="+712"/>
+        <source>An XmlListModel query must start with &apos;/&apos; or &quot;//&quot;</source>
+        <translation>Vyhledávání XmlListModel musí začínat s &apos;/&apos; nebo &quot;//&quot;</translation>
+    </message>
+</context>
+<context>
     <name>QDial</name>
     <message>
         <location filename="../src/plugins/accessible/widgets/rangecontrols.cpp" line="+951"/>
@@ -1313,12 +2806,12 @@ na
 <context>
     <name>QDialog</name>
     <message>
-        <location filename="../src/gui/dialogs/qdialog.cpp" line="+501"/>
+        <location filename="../src/gui/dialogs/qdialog.cpp" line="+523"/>
         <source>Done</source>
         <translation>Hotovo</translation>
     </message>
     <message>
-        <location line="+135"/>
+        <location line="+122"/>
         <source>What&apos;s This?</source>
         <translation>Co je toto?</translation>
     </message>
@@ -1326,9 +2819,9 @@ na
 <context>
     <name>QDialogButtonBox</name>
     <message>
-        <location filename="../src/gui/dialogs/qmessagebox.cpp" line="+1872"/>
+        <location filename="../src/gui/dialogs/qmessagebox.cpp" line="+1920"/>
         <location line="+464"/>
-        <location filename="../src/gui/widgets/qdialogbuttonbox.cpp" line="+606"/>
+        <location filename="../src/gui/widgets/qdialogbuttonbox.cpp" line="+649"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -1548,7 +3041,7 @@ na
 <context>
     <name>QFile</name>
     <message>
-        <location filename="../src/corelib/io/qfile.cpp" line="+905"/>
+        <location filename="../src/corelib/io/qfile.cpp" line="+911"/>
         <source>Cannot create %1 for output</source>
         <translation>%1 se nepodařilo zřídit pro výstup</translation>
     </message>
@@ -1593,7 +3086,7 @@ na
         <translation>Zpět</translation>
     </message>
     <message>
-        <location filename="../src/gui/itemviews/qfileiconprovider.cpp" line="+464"/>
+        <location filename="../src/gui/itemviews/qfileiconprovider.cpp" line="+467"/>
         <location line="+1"/>
         <source>File</source>
         <translation>Soubor</translation>
@@ -1628,15 +3121,15 @@ na
         <translation>Otevřít</translation>
     </message>
     <message>
-        <location line="+691"/>
-        <location line="+50"/>
-        <location line="+1528"/>
+        <location line="+711"/>
+        <location line="+55"/>
+        <location line="+1532"/>
         <source>&amp;Open</source>
         <translation>&amp;Otevřít</translation>
     </message>
     <message>
-        <location line="-1578"/>
-        <location line="+50"/>
+        <location line="-1587"/>
+        <location line="+55"/>
         <source>&amp;Save</source>
         <translation>&amp;Uložit</translation>
     </message>
@@ -1646,25 +3139,25 @@ na
         <translation>Disková jednotka</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="-714"/>
+        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="-739"/>
         <source>Show </source>
         <translation>Ukázat </translation>
     </message>
     <message>
-        <location line="+2091"/>
+        <location line="+2120"/>
         <source>&apos;%1&apos; is write protected.
 Do you want to delete it anyway?</source>
         <translation>&apos;%1&apos; je chráněn proti zápisu.
 Přesto chcete soubor smazat?</translation>
     </message>
     <message>
-        <location line="-2077"/>
-        <location line="+663"/>
+        <location line="-2106"/>
+        <location line="+683"/>
         <source>File &amp;name:</source>
         <translation>Název &amp;souboru:</translation>
     </message>
     <message>
-        <location line="+1286"/>
+        <location line="+1295"/>
         <source>New Folder</source>
         <translation>Nová složka</translation>
     </message>
@@ -1675,7 +3168,7 @@ Přesto chcete soubor smazat?</translation>
         <translation>Nadřazený adresář</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="-1956"/>
+        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="-1985"/>
         <source>&amp;New Folder</source>
         <translation>&amp;Nová složka</translation>
     </message>
@@ -1712,17 +3205,17 @@ Přesto chcete soubor smazat?</translation>
         <translation>&amp;Ukázat skryté soubory</translation>
     </message>
     <message>
-        <location line="+2090"/>
+        <location line="+2119"/>
         <source>Are sure you want to delete &apos;%1&apos;?</source>
         <translation>Jste si jistý, že %1 chcete smazat?</translation>
     </message>
     <message>
-        <location line="-2121"/>
+        <location line="-2150"/>
         <source>Save As</source>
         <translation>Uložit jako</translation>
     </message>
     <message>
-        <location line="+1472"/>
+        <location line="+1501"/>
         <location line="+862"/>
         <source>%1
 Directory not found.
@@ -1738,45 +3231,45 @@ Ověřte, prosím, že byl zadán správný název adresáře.</translation>
         <translation>Pohled se seznamem</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="-1635"/>
-        <location line="+38"/>
+        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="-1644"/>
+        <location line="+43"/>
         <source>&amp;Choose</source>
         <translation>&amp;Vybrat</translation>
     </message>
     <message>
-        <location line="-707"/>
+        <location line="-732"/>
         <source>&amp;Delete</source>
         <translation>&amp;Smazat</translation>
     </message>
     <message>
         <location line="-15"/>
-        <location line="+450"/>
+        <location line="+481"/>
         <source>All Files (*)</source>
         <translation>Všechny soubory (*)</translation>
     </message>
     <message>
-        <location line="+227"/>
+        <location line="+216"/>
         <source>Directories</source>
         <translation>Adresáře</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfiledialog_win.cpp" line="+174"/>
+        <location filename="../src/gui/dialogs/qfiledialog_win.cpp" line="+148"/>
         <source>All Files (*.*)</source>
         <translation>Všechny soubory (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="-663"/>
+        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="-683"/>
         <source>&amp;Rename</source>
         <translation>&amp;Přejmenovat</translation>
     </message>
     <message>
-        <location line="+2107"/>
+        <location line="+2136"/>
         <source>Could not delete directory.</source>
         <translation>Adresář se nepodařilo smazat.</translation>
     </message>
     <message>
-        <location line="-2099"/>
-        <location line="+659"/>
+        <location line="-2128"/>
+        <location line="+679"/>
         <source>Directory:</source>
         <translation>Adresář:</translation>
     </message>
@@ -1786,7 +3279,7 @@ Ověřte, prosím, že byl zadán správný název adresáře.</translation>
         <translation>Neznámý</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="+810"/>
+        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="+819"/>
         <source>%1 already exists.
 Do you want to replace it?</source>
         <translation>Soubor %1 již existuje.
@@ -1799,7 +3292,7 @@ Chcete jej nahradit?</translation>
         <translation>Dopředu</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="+1040"/>
+        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="+1034"/>
         <source>Recent Places</source>
         <translation>Naposledy navštívené</translation>
     </message>
@@ -1816,13 +3309,43 @@ Chcete jej nahradit?</translation>
         <translation>Podrobný pohled</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="-1020"/>
+        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="-1014"/>
         <source>%1
 File not found.
 Please verify the correct file name was given.</source>
         <translation>%1
 Soubor se nepodařilo nalézt.
 Ověřte, prosím, že byl zadán správný název souboru.</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/dialogs/qfiledialog.ui"/>
+        <source>Go back</source>
+        <translation>Jít zpět</translation>
+    </message>
+    <message>
+        <location/>
+        <source>Go forward</source>
+        <translation>Jít dopředu</translation>
+    </message>
+    <message>
+        <location/>
+        <source>Go to the parent directory</source>
+        <translation>Jít do rodičovského adresáře</translation>
+    </message>
+    <message>
+        <location/>
+        <source>Create a New Folder</source>
+        <translation>Vytvořit novou složku</translation>
+    </message>
+    <message>
+        <location/>
+        <source>Change to list view mode</source>
+        <translation>Změnit na režim pohledu se seznamem</translation>
+    </message>
+    <message>
+        <location/>
+        <source>Change to detail view mode</source>
+        <translation>Změnit na režim s podrobným pohledem</translation>
     </message>
 </context>
 <context>
@@ -1832,7 +3355,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation type="obsolete">Druh</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfilesystemmodel.cpp" line="+893"/>
+        <location filename="../src/gui/dialogs/qfilesystemmodel.cpp" line="+901"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
@@ -1846,8 +3369,8 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation type="obsolete">Typ</translation>
     </message>
     <message>
-        <location line="-149"/>
-        <location filename="../src/gui/itemviews/qdirmodel.cpp" line="+478"/>
+        <location line="-161"/>
+        <location filename="../src/gui/itemviews/qdirmodel.cpp" line="+484"/>
         <source>%1 GB</source>
         <translation>%1 GB</translation>
     </message>
@@ -1870,18 +3393,17 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>%1 TB</translation>
     </message>
     <message>
-        <location line="+85"/>
+        <location line="+97"/>
         <source>&lt;b&gt;The name &quot;%1&quot; can not be used.&lt;/b&gt;&lt;p&gt;Try using another name, with fewer characters or no punctuations marks.</source>
         <translation>&lt;b&gt;Název &quot;%1&quot; nelze použít.&lt;/b&gt;&lt;p&gt;Zkuste použít jiný název, s menším počtem znaků nebo bez zvláštních znaků.</translation>
     </message>
     <message>
-        <location line="-78"/>
-        <location filename="../src/gui/itemviews/qdirmodel.cpp" line="+7"/>
+        <location line="-90"/>
         <source>%1 bytes</source>
         <translation>%1 bytů</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfilesystemmodel_p.h" line="+258"/>
+        <location filename="../src/gui/dialogs/qfilesystemmodel_p.h" line="+261"/>
         <source>My Computer</source>
         <translation>Můj počítač</translation>
     </message>
@@ -1891,7 +3413,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Počítač</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfilesystemmodel.cpp" line="+77"/>
+        <location filename="../src/gui/dialogs/qfilesystemmodel.cpp" line="+89"/>
         <source>Invalid filename</source>
         <translation>Neplatný název souboru</translation>
     </message>
@@ -1912,11 +3434,16 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <source>Date Modified</source>
         <translation>Datum změny</translation>
     </message>
+    <message>
+        <location filename="../src/gui/itemviews/qdirmodel.cpp" line="+7"/>
+        <source>%1 byte(s)</source>
+        <translation>%1 byt(ů)</translation>
+    </message>
 </context>
 <context>
     <name>QFontDatabase</name>
     <message>
-        <location filename="../src/gui/text/qfontdatabase.cpp" line="+2137"/>
+        <location filename="../src/gui/text/qfontdatabase.cpp" line="+2145"/>
         <source>Any</source>
         <translation>Všechna</translation>
     </message>
@@ -1926,31 +3453,31 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Laoské</translation>
     </message>
     <message>
-        <location line="-2092"/>
+        <location line="-2100"/>
         <location line="+12"/>
-        <location line="+1308"/>
+        <location line="+1315"/>
         <source>Bold</source>
         <translation>Tučné</translation>
     </message>
     <message>
-        <location line="-1306"/>
+        <location line="-1313"/>
         <source>Demi</source>
         <translation>Polotučné</translation>
     </message>
     <message>
-        <location line="+2075"/>
+        <location line="+2083"/>
         <source>Thai</source>
         <translation>Thajské</translation>
     </message>
     <message>
-        <location line="-2083"/>
+        <location line="-2091"/>
         <location line="+18"/>
-        <location line="+1294"/>
+        <location line="+1301"/>
         <source>Black</source>
         <translation>Černé</translation>
     </message>
     <message>
-        <location line="+720"/>
+        <location line="+721"/>
         <source>Greek</source>
         <translation>Řecké</translation>
     </message>
@@ -1965,13 +3492,13 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Latinské</translation>
     </message>
     <message>
-        <location line="-2015"/>
-        <location line="+1304"/>
+        <location line="-2023"/>
+        <location line="+1311"/>
         <source>Light</source>
         <translation>Lehké</translation>
     </message>
     <message>
-        <location line="+801"/>
+        <location line="+802"/>
         <source>Ogham</source>
         <translation>Ogamské</translation>
     </message>
@@ -2011,13 +3538,18 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Zjednodušená čínština</translation>
     </message>
     <message>
-        <location line="-2104"/>
-        <location line="+1319"/>
+        <location line="+24"/>
+        <source>N&apos;Ko</source>
+        <translation>N&apos;Ko</translation>
+    </message>
+    <message>
+        <location line="-2136"/>
+        <location line="+1326"/>
         <source>Demi Bold</source>
         <translation>Polotučné</translation>
     </message>
     <message>
-        <location line="+728"/>
+        <location line="+729"/>
         <source>Arabic</source>
         <translation>Arabské</translation>
     </message>
@@ -2032,30 +3564,30 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Myanmar</translation>
     </message>
     <message>
-        <location line="-1932"/>
-        <location line="+1161"/>
+        <location line="-1940"/>
+        <location line="+1168"/>
         <source>Italic</source>
         <translation>Itala</translation>
     </message>
     <message>
-        <location line="+789"/>
+        <location line="+790"/>
         <source>Korean</source>
         <translation>Korejské</translation>
     </message>
     <message>
-        <location line="-2119"/>
-        <location line="+1335"/>
+        <location line="-2127"/>
+        <location line="+1342"/>
         <source>Normal</source>
         <translation>Obvyklé</translation>
     </message>
     <message>
-        <location line="-1163"/>
-        <location line="+1160"/>
+        <location line="-1170"/>
+        <location line="+1167"/>
         <source>Oblique</source>
         <translation>Nakloněné</translation>
     </message>
     <message>
-        <location line="+748"/>
+        <location line="+749"/>
         <source>Telugu</source>
         <translation>Telugu</translation>
     </message>
@@ -2133,7 +3665,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QFontDialog</name>
     <message>
-        <location filename="../src/gui/dialogs/qfontdialog.cpp" line="+776"/>
+        <location filename="../src/gui/dialogs/qfontdialog.cpp" line="+768"/>
         <source>&amp;Font</source>
         <translation>&amp;Písmo</translation>
     </message>
@@ -2158,13 +3690,12 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Způsob &amp;psaní</translation>
     </message>
     <message>
-        <location line="-609"/>
-        <location line="+257"/>
+        <location line="-596"/>
         <source>Select Font</source>
         <translation>Vybrat písmo</translation>
     </message>
     <message>
-        <location line="+350"/>
+        <location line="+594"/>
         <source>&amp;Underline</source>
         <translation>&amp;Podtrhnout</translation>
     </message>
@@ -2182,7 +3713,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QFtp</name>
     <message>
-        <location filename="../src/network/access/qftp.cpp" line="+2333"/>
+        <location filename="../src/network/access/qftp.cpp" line="+2339"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="+2021"/>
         <source>Listing directory failed:
 %1</source>
@@ -2198,7 +3729,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 %1</translation>
     </message>
     <message>
-        <location line="-1525"/>
+        <location line="-1531"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="-1353"/>
         <source>Not connected</source>
         <translation>Žádné spojení</translation>
@@ -2210,7 +3741,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Odmítnuto spojení spojení pro data</translation>
     </message>
     <message>
-        <location line="+1102"/>
+        <location line="+1108"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="+1003"/>
         <source>Login failed:
 %1</source>
@@ -2231,7 +3762,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Spojení s počítačem navázáno</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qftp.cpp" line="-1437"/>
+        <location filename="../src/network/access/qftp.cpp" line="-1443"/>
         <source>Connection timed out to host %1</source>
         <translation>Časový limit pro spojení s počítačem &apos;%1&apos; byl překročen</translation>
     </message>
@@ -2243,7 +3774,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Spojeno s počítačem %1</translation>
     </message>
     <message>
-        <location line="+1317"/>
+        <location line="+1323"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="-290"/>
         <source>Connecting to host failed:
 %1</source>
@@ -2251,13 +3782,13 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 %1</translation>
     </message>
     <message>
-        <location line="-1429"/>
+        <location line="-1435"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="-1267"/>
         <source>Host %1 not found</source>
         <translation>Počítač %1 se nepodařilo nalézt</translation>
     </message>
     <message>
-        <location line="+1449"/>
+        <location line="+1455"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="+1282"/>
         <source>Uploading file failed:
 %1</source>
@@ -2286,7 +3817,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 %1</translation>
     </message>
     <message>
-        <location line="-1457"/>
+        <location line="-1463"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="-1287"/>
         <source>Connection refused to host %1</source>
         <translation>Spojení s počítačem %1 odmítnuto</translation>
@@ -2297,7 +3828,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Spojení s %1 ukončeno</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qftp.cpp" line="+1449"/>
+        <location filename="../src/network/access/qftp.cpp" line="+1455"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="-274"/>
         <source>Removing file failed:
 %1</source>
@@ -2310,7 +3841,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Počítač %1 byl nalezen</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qftp.cpp" line="-944"/>
+        <location filename="../src/network/access/qftp.cpp" line="-950"/>
         <location line="+29"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="-1093"/>
         <location line="+728"/>
@@ -2318,7 +3849,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Neznámá chyba</translation>
     </message>
     <message>
-        <location line="+951"/>
+        <location line="+957"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="+126"/>
         <location line="+250"/>
         <source>Connection closed</source>
@@ -2328,17 +3859,22 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QHostInfo</name>
     <message>
-        <location filename="../src/network/kernel/qhostinfo_p.h" line="+183"/>
+        <location filename="../src/network/kernel/qhostinfo_p.h" line="+103"/>
         <source>Unknown error</source>
         <translation>Neznámá chyba</translation>
+    </message>
+    <message>
+        <location filename="../src/network/kernel/qhostinfo.cpp" line="+171"/>
+        <source>No host name given</source>
+        <translation>Nebyl zadán název pro hostitelský počítač</translation>
     </message>
 </context>
 <context>
     <name>QHostInfoAgent</name>
     <message>
-        <location filename="../src/network/kernel/qhostinfo_unix.cpp" line="+257"/>
+        <location filename="../src/network/kernel/qhostinfo_unix.cpp" line="+260"/>
         <location line="+32"/>
-        <location filename="../src/network/kernel/qhostinfo_win.cpp" line="+220"/>
+        <location filename="../src/network/kernel/qhostinfo_win.cpp" line="+215"/>
         <location line="+27"/>
         <source>Host not found</source>
         <translation>Nepodařilo se najít počítač</translation>
@@ -2359,12 +3895,14 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Neznámá chyba</translation>
     </message>
     <message>
+        <location line="-98"/>
         <location filename="../src/network/kernel/qhostinfo_win.cpp" line="-67"/>
         <source>No host name given</source>
         <translation>Nebyl zadán název pro hostitelský počítač</translation>
     </message>
     <message>
-        <location line="+0"/>
+        <location line="+1"/>
+        <location filename="../src/network/kernel/qhostinfo_win.cpp" line="+0"/>
         <source>Invalid hostname</source>
         <translation>Neplatný název pro hostitelský počítač</translation>
     </message>
@@ -2377,7 +3915,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Spojení bylo odmítnuto (nebo byl překročen časový limit)</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="+584"/>
+        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="+9"/>
         <source>Data corrupted</source>
         <translation>Data jsou poškozena</translation>
     </message>
@@ -2436,14 +3974,12 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
     </message>
     <message>
         <location filename="../src/network/access/qhttp.cpp" line="-132"/>
-        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="-12"/>
-        <location line="+19"/>
         <location filename="../src/qt3support/network/q3http.cpp" line="+6"/>
         <source>HTTP request failed</source>
         <translation>HTTP dotaz se nezdařil</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="-16"/>
+        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="-9"/>
         <source>Proxy requires authentication</source>
         <translation>Proxy server požaduje autentizaci</translation>
     </message>
@@ -2689,7 +4225,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QIODevice</name>
     <message>
-        <location filename="../src/corelib/global/qglobal.cpp" line="+2064"/>
+        <location filename="../src/corelib/global/qglobal.cpp" line="+2126"/>
         <source>No such file or directory</source>
         <translation>Nepodařilo se najít žádný takový soubor nebo adresář</translation>
     </message>
@@ -2704,7 +4240,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Na zařízení není žádný volný úložný prostor</translation>
     </message>
     <message>
-        <location filename="../src/corelib/io/qiodevice.cpp" line="+1561"/>
+        <location filename="../src/corelib/io/qiodevice.cpp" line="+1598"/>
         <source>Unknown error</source>
         <translation>Neznámá chyba</translation>
     </message>
@@ -2717,7 +4253,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QInputContext</name>
     <message>
-        <location filename="../src/gui/inputmethod/qinputcontextfactory.cpp" line="+256"/>
+        <location filename="../src/gui/inputmethod/qinputcontextfactory.cpp" line="+301"/>
         <source>XIM</source>
         <translation>XIM</translation>
     </message>
@@ -2775,7 +4311,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Knihovnu %1 nelze nahrát: %2</translation>
     </message>
     <message>
-        <location filename="../src/corelib/plugin/qlibrary.cpp" line="+341"/>
+        <location filename="../src/corelib/plugin/qlibrary.cpp" line="+375"/>
         <source>The plugin &apos;%1&apos; uses incompatible Qt library. (%2.%3.%4) [%5]</source>
         <translation>Přídavný modul &apos;%1&apos; používá neslučitelnou Qt knihovnu. (%2.%3.%4) [%5]</translation>
     </message>
@@ -2786,12 +4322,12 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Symbol &quot;%1&quot; nelze v %2 vyřešit: %3</translation>
     </message>
     <message>
-        <location filename="../src/corelib/plugin/qlibrary.cpp" line="-347"/>
+        <location filename="../src/corelib/plugin/qlibrary.cpp" line="-381"/>
         <source>Plugin verification data mismatch in &apos;%1&apos;</source>
         <translation>Ověřovací data přídavného nesouhlasí v &apos;%1&apos;</translation>
     </message>
     <message>
-        <location line="+375"/>
+        <location line="+409"/>
         <source>The plugin &apos;%1&apos; uses incompatible Qt library. (Cannot mix debug and release libraries.)</source>
         <translation>Přídavný modul &apos;%1&apos; používá neslučitelnou Qt knihovnu. (Knihovny vytvořené v režimu ladění a vydání nemohou být používány společně.)</translation>
     </message>
@@ -2801,7 +4337,8 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Soubor &apos;%1&apos; není platným přídavným modulem Qt.</translation>
     </message>
     <message>
-        <location line="-2"/>
+        <location line="-140"/>
+        <location line="+138"/>
         <location filename="../src/corelib/plugin/qpluginloader.cpp" line="+343"/>
         <source>The shared library was not found.</source>
         <translation>Nepodařilo se nalézt sdílenou knihovnu.</translation>
@@ -2817,7 +4354,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Přídavný modul &apos;%1&apos; používá neslučitelnou Qt knihovnu. Potřebný byl zvláštní klíč pro sestavení &quot;%2&quot;, obdržen &quot;%3&quot;</translation>
     </message>
     <message>
-        <location line="-389"/>
+        <location line="-423"/>
         <source>Could not mmap &apos;%1&apos;: %2</source>
         <translation>Operace mmap se nezdařila u &apos;%1&apos;: %2</translation>
     </message>
@@ -2825,17 +4362,17 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QLineEdit</name>
     <message>
-        <location filename="../src/gui/widgets/qlineedit.cpp" line="+1991"/>
+        <location filename="../src/gui/widgets/qlineedit.cpp" line="+2089"/>
         <source>Cu&amp;t</source>
         <translation>&amp;Vyjmout</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+6"/>
         <source>&amp;Copy</source>
         <translation>&amp;Kopírovat</translation>
     </message>
     <message>
-        <location line="-12"/>
+        <location line="-15"/>
         <source>&amp;Redo</source>
         <translation>&amp;Znovu</translation>
     </message>
@@ -2845,17 +4382,17 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>&amp;Zpět</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+25"/>
         <source>&amp;Paste</source>
         <translation>&amp;Vložit</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+7"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+8"/>
         <source>Select All</source>
         <translation>Vybrat vše</translation>
     </message>
@@ -2864,7 +4401,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
     <name>QLocalServer</name>
     <message>
         <location filename="../src/network/socket/qlocalserver.cpp" line="+224"/>
-        <location filename="../src/network/socket/qlocalserver_unix.cpp" line="+256"/>
+        <location filename="../src/network/socket/qlocalserver_unix.cpp" line="+246"/>
         <source>%1: Name error</source>
         <translation>%1: Chybný název</translation>
     </message>
@@ -2889,7 +4426,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
     <message>
         <location filename="../src/network/socket/qlocalsocket_tcp.cpp" line="+153"/>
         <location filename="../src/network/socket/qlocalsocket_unix.cpp" line="+160"/>
-        <location filename="../src/network/socket/qlocalsocket_win.cpp" line="+75"/>
+        <location filename="../src/network/socket/qlocalsocket_win.cpp" line="+74"/>
         <source>%1: Connection error</source>
         <translation>%1: Chyba spojení</translation>
     </message>
@@ -2927,7 +4464,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <location line="-18"/>
         <location filename="../src/network/socket/qlocalsocket_unix.cpp" line="-18"/>
         <location filename="../src/network/socket/qlocalsocket_win.cpp" line="-5"/>
-        <location line="+45"/>
+        <location line="+59"/>
         <source>%1: Invalid name</source>
         <translation>%1: Neplatný název</translation>
     </message>
@@ -2958,12 +4495,12 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QMYSQLDriver</name>
     <message>
-        <location filename="../src/sql/drivers/mysql/qsql_mysql.cpp" line="+1440"/>
+        <location filename="../src/sql/drivers/mysql/qsql_mysql.cpp" line="+1465"/>
         <source>Unable to commit transaction</source>
         <translation>Transakci se nepodařilo provést (operace &apos;commit&apos;, odeslání, se nezdařila)</translation>
     </message>
     <message>
-        <location line="-179"/>
+        <location line="-178"/>
         <source>Unable to open database &apos;</source>
         <translation>Nepodařilo se otevřít spojení s databází &apos;</translation>
     </message>
@@ -2973,7 +4510,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Nepodařilo se navázat spojení</translation>
     </message>
     <message>
-        <location line="+185"/>
+        <location line="+184"/>
         <source>Unable to rollback transaction</source>
         <translation>Transakci se nepodařilo zvrátit (operace &apos;rollback&apos;, zvrácení, se nezdařila)</translation>
     </message>
@@ -2986,7 +4523,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QMYSQLResult</name>
     <message>
-        <location line="-413"/>
+        <location line="-412"/>
         <source>Unable to execute statement</source>
         <translation>Příkaz se nepodařilo provést</translation>
     </message>
@@ -3012,12 +4549,13 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Další výsledek nelze uložit</translation>
     </message>
     <message>
-        <location line="-302"/>
+        <location line="-311"/>
+        <location line="+31"/>
         <source>Unable to fetch data</source>
         <translation>Nepodařilo se natáhnout žádná data</translation>
     </message>
     <message>
-        <location line="+380"/>
+        <location line="+358"/>
         <location line="+8"/>
         <source>Unable to prepare statement</source>
         <translation>Příkaz se nepodařilo připravit</translation>
@@ -3169,7 +4707,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QMenuBar</name>
     <message>
-        <location filename="../src/gui/widgets/qmenu_symbian.cpp" line="+410"/>
+        <location filename="../src/gui/widgets/qmenu_symbian.cpp" line="+456"/>
         <source>Actions</source>
         <translation>Činnosti</translation>
     </message>
@@ -3190,26 +4728,30 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Nápověda</translation>
     </message>
     <message>
+        <location line="+481"/>
+        <source>&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across MS&amp;nbsp;Windows, Mac&amp;nbsp;OS&amp;nbsp;X, Linux, and all major commercial Unix variants. Qt is also available for embedded devices as Qt for Embedded Linux and Qt for Windows CE.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;&lt;p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 2.1 or GNU GPL version 3.0.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 2.1 is appropriate for the development of Qt applications (proprietary or open source) provided you can comply with the terms and conditions of the GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU General Public License version 3.0 is appropriate for the development of Qt applications where you wish to use such applications in combination with software subject to the terms of the GNU GPL version 3.0 or where you are otherwise willing to comply with the terms of the GNU GPL version 3.0.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://qt.nokia.com/products/licensing&quot;&gt;qt.nokia.com/products/licensing&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).&lt;/p&gt;&lt;p&gt;Qt is a Nokia product. See &lt;a href=&quot;http://qt.nokia.com/&quot;&gt;qt.nokia.com&lt;/a&gt; for more information.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Qt je sadou softwarových nástrojů C++ určených pro vývoj aplikací napříč platformami.&lt;/p&gt;&lt;p&gt;Qt poskytuje jednoduchou přenositelnost přes MS&amp;nbsp;Windows, Mac&amp;nbsp;OS&amp;nbsp;X, Linux, a všechny hlavní obchodní varianty systému Unix. Qt je rovněž dostupný pro vložená zařízení jako Qt pro Embedded Linux a Qt pro Windows CE.&lt;/p&gt;&lt;p&gt;Qt je dostupné pod třemi rozdílnými licenčními volbami navrženými pro přizpůsobení se potřebám našich různých uživatelů.&lt;/p&gt;Qt licencované pod naší obchodní licenční smlouvou je vhodné pro vývoj soukromého/obchodního software, kde si nepřejete sdílet jakýkoli zdrojový kód se třetími stranami, nebo jinak řečeno, když nemůžete vyhovět podmínkám GNU LGPL ve verzi 2.1 nebo GNU GPL ve verzi 3.0.&lt;/p&gt;&lt;p&gt;Qt licencované pod GNU LGPL ve verzi 2.1 je vhodné pro vývoj Qt aplikací (soukromých nebo s otevřeným zdrojovým kódem), za předpokladu že můžete souhlasit s požadavky a podmínkami GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licencované pod GNU General Public License ve verzi 3.0 je vhodné pro vývoj aplikací Qt, u nichž si přejete použít takovou aplikaci ve spojení se software, který podléhá požadavkům GNU GPL ve verzi 3.0, nebo kde jste jinak ochoten souhlasit s podmínkami GNU GPL ve verzi 3.0.&lt;/p&gt;&lt;p&gt;Podívejte se, prosím, na &lt;a href=&quot;http://qt.nokia.com/products/licensing&quot;&gt;qt.nokia.com/products/licensing&lt;/a&gt; kvůli přehledu licencování Qt.&lt;/p&gt;&lt;p&gt;Autorské právo (C) 2010 Nokia Corporation a/nebo její dceřinná(é) společnost(i).&lt;/p&gt;&lt;p&gt;Qt je výrobkem společnosti Nokia. Podívejte se na &lt;a href=&quot;http://qt.nokia.com/&quot;&gt;qt.nokia.com&lt;/a&gt;kvůli více informacím.&lt;/p&gt;</translation>
+    </message>
+    <message>
         <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across MS&amp;nbsp;Windows, Mac&amp;nbsp;OS&amp;nbsp;X, Linux, and all major commercial Unix variants. Qt is also available for embedded devices as Qt for Embedded Linux and Qt for Windows CE.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 2.1 or GNU GPL version 3.0.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 2.1 is appropriate for the development of Qt applications (proprietary or open source) provided you can comply with the terms and conditions of the GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU General Public License version 3.0 is appropriate for the development of Qt applications where you wish to use such applications in combination with software subject to the terms of the GNU GPL version 3.0 or where you are otherwise willing to comply with the terms of the GNU GPL version 3.0.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://qt.nokia.com/products/licensing&quot;&gt;qt.nokia.com/products/licensing&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).&lt;/p&gt;&lt;p&gt;Qt is a Nokia product. See &lt;a href=&quot;http://qt.nokia.com/&quot;&gt;qt.nokia.com&lt;/a&gt; for more information.&lt;/p&gt;</source>
         <translation type="obsolete">&lt;h3&gt;O Qt&lt;/h3&gt;&lt;p&gt;Tento program používá Qt ve verzi %1.&lt;/p&gt;&lt;p&gt;Qt je sadou softwarových nástrojů C++ určených pro vývoj aplikací napříč platformami.&lt;/p&gt;&lt;p&gt;Qt poskytuje jednoduchou přenositelnost přes MS&amp;nbsp;Windows, Mac&amp;nbsp;OS&amp;nbsp;X, Linux, a všechny hlavní obchodní varianty systému Unix. Qt je rovněž dostupný pro vložená zařízení jako Qt pro Embedded Linux a Qt pro Windows CE.&lt;/p&gt;&lt;p&gt;Qt je dostupné pod třemi rozdílnými licenčními volbami navrženými pro přizpůsobení se potřebám našich různých uživatelů.&lt;/p&gt;Qt licencované pod naší obchodní licenční smlouvou je vhodné pro vývoj soukromého/obchodního software, kde si nepřejete sdílet jakýkoli zdrojový kód se třetími stranami, nebo jinak řečeno, když nemůžete vyhovět podmínkám GNU LGPL ve verzi 2.1 nebo GNU GPL ve verzi 3.0.&lt;/p&gt;&lt;p&gt;Qt licencované pod GNU LGPL ve verzi 2.1 je vhodné pro vývoj Qt aplikací (soukromých nebo s otevřeným zdrojovým kódem), za předpokladu že můžete souhlasit s požadavky a podmínkami GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licencované pod GNU General Public License ve verzi 3.0 je vhodné pro vývoj aplikací Qt, u nichž si přejete použít takovou aplikaci ve spojení se software, který podléhá požadavkům GNU GPL ve verzi 3.0, nebo kde jste jinak ochoten souhlasit s podmínkami GNU GPL ve verzi 3.0.&lt;/p&gt;&lt;p&gt;Podívejte se, prosím, na &lt;a href=&quot;http://qt.nokia.com/products/licensing&quot;&gt;qt.nokia.com/products/licensing&lt;/a&gt; kvůli přehledu licencování Qt.&lt;/p&gt;&lt;p&gt;Copyright (C) 2009 Nokia Corporation a/nebo její dceřinná(é) společnost(i).&lt;/p&gt;&lt;p&gt;Qt je výrobkem společnosti Nokia. Podívejte se na &lt;a href=&quot;http://qt.nokia.com/&quot;&gt;qt.nokia.com&lt;/a&gt;kvůli více informacím.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="-1099"/>
+        <location line="-1610"/>
         <source>Show Details...</source>
         <translation>Ukázat podrobnosti...</translation>
     </message>
     <message>
-        <location line="+1575"/>
+        <location line="+1605"/>
         <source>&lt;h3&gt;About Qt&lt;/h3&gt;&lt;p&gt;This program uses Qt version %1.&lt;/p&gt;</source>
         <translation>&lt;h3&gt;O Qt&lt;/h3&gt;&lt;p&gt;Tento program používá Qt-verze %1.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>&lt;p&gt;Qt is a C++ toolkit for cross-platform application development.&lt;/p&gt;&lt;p&gt;Qt provides single-source portability across MS&amp;nbsp;Windows, Mac&amp;nbsp;OS&amp;nbsp;X, Linux, and all major commercial Unix variants. Qt is also available for embedded devices as Qt for Embedded Linux and Qt for Windows CE.&lt;/p&gt;&lt;p&gt;Qt is available under three different licensing options designed to accommodate the needs of our various users.&lt;/p&gt;&lt;p&gt;Qt licensed under our commercial license agreement is appropriate for development of proprietary/commercial software where you do not want to share any source code with third parties or otherwise cannot comply with the terms of the GNU LGPL version 2.1 or GNU GPL version 3.0.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU LGPL version 2.1 is appropriate for the development of Qt applications (proprietary or open source) provided you can comply with the terms and conditions of the GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licensed under the GNU General Public License version 3.0 is appropriate for the development of Qt applications where you wish to use such applications in combination with software subject to the terms of the GNU GPL version 3.0 or where you are otherwise willing to comply with the terms of the GNU GPL version 3.0.&lt;/p&gt;&lt;p&gt;Please see &lt;a href=&quot;http://qt.nokia.com/products/licensing&quot;&gt;qt.nokia.com/products/licensing&lt;/a&gt; for an overview of Qt licensing.&lt;/p&gt;&lt;p&gt;Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).&lt;/p&gt;&lt;p&gt;Qt is a Nokia product. See &lt;a href=&quot;http://qt.nokia.com/&quot;&gt;qt.nokia.com&lt;/a&gt; for more information.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Qt je sadou softwarových nástrojů C++ určených pro vývoj aplikací napříč platformami.&lt;/p&gt;&lt;p&gt;Qt poskytuje jednoduchou přenositelnost přes MS&amp;nbsp;Windows, Mac&amp;nbsp;OS&amp;nbsp;X, Linux, a všechny hlavní obchodní varianty systému Unix. Qt je rovněž dostupný pro vložená zařízení jako Qt pro Embedded Linux a Qt pro Windows CE.&lt;/p&gt;&lt;p&gt;Qt je dostupné pod třemi rozdílnými licenčními volbami navrženými pro přizpůsobení se potřebám našich různých uživatelů.&lt;/p&gt;Qt licencované pod naší obchodní licenční smlouvou je vhodné pro vývoj soukromého/obchodního software, kde si nepřejete sdílet jakýkoli zdrojový kód se třetími stranami, nebo jinak řečeno, když nemůžete vyhovět podmínkám GNU LGPL ve verzi 2.1 nebo GNU GPL ve verzi 3.0.&lt;/p&gt;&lt;p&gt;Qt licencované pod GNU LGPL ve verzi 2.1 je vhodné pro vývoj Qt aplikací (soukromých nebo s otevřeným zdrojovým kódem), za předpokladu že můžete souhlasit s požadavky a podmínkami GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licencované pod GNU General Public License ve verzi 3.0 je vhodné pro vývoj aplikací Qt, u nichž si přejete použít takovou aplikaci ve spojení se software, který podléhá požadavkům GNU GPL ve verzi 3.0, nebo kde jste jinak ochoten souhlasit s podmínkami GNU GPL ve verzi 3.0.&lt;/p&gt;&lt;p&gt;Podívejte se, prosím, na &lt;a href=&quot;http://qt.nokia.com/products/licensing&quot;&gt;qt.nokia.com/products/licensing&lt;/a&gt; kvůli přehledu licencování Qt.&lt;/p&gt;&lt;p&gt;Copyright (C) 2009 Nokia Corporation a/nebo její dceřinná(é) společnost(i).&lt;/p&gt;&lt;p&gt;Qt je výrobkem společnosti Nokia. Podívejte se na &lt;a href=&quot;http://qt.nokia.com/&quot;&gt;qt.nokia.com&lt;/a&gt;kvůli více informacím.&lt;/p&gt;</translation>
+        <translation type="obsolete">&lt;p&gt;Qt je sadou softwarových nástrojů C++ určených pro vývoj aplikací napříč platformami.&lt;/p&gt;&lt;p&gt;Qt poskytuje jednoduchou přenositelnost přes MS&amp;nbsp;Windows, Mac&amp;nbsp;OS&amp;nbsp;X, Linux, a všechny hlavní obchodní varianty systému Unix. Qt je rovněž dostupný pro vložená zařízení jako Qt pro Embedded Linux a Qt pro Windows CE.&lt;/p&gt;&lt;p&gt;Qt je dostupné pod třemi rozdílnými licenčními volbami navrženými pro přizpůsobení se potřebám našich různých uživatelů.&lt;/p&gt;Qt licencované pod naší obchodní licenční smlouvou je vhodné pro vývoj soukromého/obchodního software, kde si nepřejete sdílet jakýkoli zdrojový kód se třetími stranami, nebo jinak řečeno, když nemůžete vyhovět podmínkám GNU LGPL ve verzi 2.1 nebo GNU GPL ve verzi 3.0.&lt;/p&gt;&lt;p&gt;Qt licencované pod GNU LGPL ve verzi 2.1 je vhodné pro vývoj Qt aplikací (soukromých nebo s otevřeným zdrojovým kódem), za předpokladu že můžete souhlasit s požadavky a podmínkami GNU LGPL version 2.1.&lt;/p&gt;&lt;p&gt;Qt licencované pod GNU General Public License ve verzi 3.0 je vhodné pro vývoj aplikací Qt, u nichž si přejete použít takovou aplikaci ve spojení se software, který podléhá požadavkům GNU GPL ve verzi 3.0, nebo kde jste jinak ochoten souhlasit s podmínkami GNU GPL ve verzi 3.0.&lt;/p&gt;&lt;p&gt;Podívejte se, prosím, na &lt;a href=&quot;http://qt.nokia.com/products/licensing&quot;&gt;qt.nokia.com/products/licensing&lt;/a&gt; kvůli přehledu licencování Qt.&lt;/p&gt;&lt;p&gt;Copyright (C) 2009 Nokia Corporation a/nebo její dceřinná(é) společnost(i).&lt;/p&gt;&lt;p&gt;Qt je výrobkem společnosti Nokia. Podívejte se na &lt;a href=&quot;http://qt.nokia.com/&quot;&gt;qt.nokia.com&lt;/a&gt;kvůli více informacím.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+36"/>
         <source>About Qt</source>
         <translation>O Qt</translation>
     </message>
@@ -3218,7 +4760,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation type="obsolete">&lt;p&gt;Tento program používá Qt Open Source Edition verze %1.&lt;/p&gt;&lt;p&gt;Qt Open Source Edition je zamýšlena pro vývoj Open Source aplikací. Pro vývoj vlastnických aplikací (uzavřené zdrojové kódy) potřebujete Qt licenci.&lt;/p&gt;&lt;p&gt;Podívejte se, prosím, na &lt;a href=&quot;http://www.trolltech.com/company/model/&quot;&gt;www.trolltech.com/company/model/&lt;/a&gt; kvůli přehledu licencování Qt.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location line="-1610"/>
+        <location line="-1641"/>
         <source>Hide Details...</source>
         <translation>Skrýt podrobnosti...</translation>
     </message>
@@ -3251,7 +4793,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QNativeSocketEngine</name>
     <message>
-        <location filename="../src/network/socket/qnativesocketengine.cpp" line="+269"/>
+        <location filename="../src/network/socket/qnativesocketengine.cpp" line="+272"/>
         <source>The proxy type is invalid for this operation</source>
         <translation>Tuto operaci nelze s tímto typem proxy provést</translation>
     </message>
@@ -3390,37 +4932,63 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
     </message>
 </context>
 <context>
+    <name>QNetworkAccessDataBackend</name>
+    <message>
+        <location filename="../src/network/access/qnetworkaccessdatabackend.cpp" line="+76"/>
+        <source>Operation not supported on %1</source>
+        <translation>Tato operace není %1 podporována</translation>
+    </message>
+    <message>
+        <location line="+25"/>
+        <source>Invalid URI: %1</source>
+        <translation>Neplátná URI: %1</translation>
+    </message>
+</context>
+<context>
     <name>QNetworkAccessDebugPipeBackend</name>
     <message>
         <location filename="../src/network/access/qnetworkaccessdebugpipebackend.cpp" line="+195"/>
         <source>Write error writing to %1: %2</source>
         <translation>Při zápisu do souboru %1: %2 nastala chyba</translation>
     </message>
+    <message>
+        <location line="+60"/>
+        <source>Socket error on %1: %2</source>
+        <translation>Chyba zásuvky (socketu) u %1: %2</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Remote host closed the connection prematurely on %1</source>
+        <translation>Vzdálený počítač předčasně ukončil spojení s %1</translation>
+    </message>
 </context>
 <context>
     <name>QNetworkAccessFileBackend</name>
     <message>
+        <location filename="../src/network/access/qfilenetworkreply.cpp" line="+85"/>
         <location filename="../src/network/access/qnetworkaccessfilebackend.cpp" line="+100"/>
         <source>Request for opening non-local file %1</source>
         <translation>Požadavek na otevření souboru přes síť %1</translation>
     </message>
     <message>
-        <location line="+152"/>
+        <location filename="../src/network/access/qnetworkaccessfilebackend.cpp" line="+152"/>
         <source>Read error reading from %1: %2</source>
         <translation>Při čtení ze souboru %1 nastala chyba: %2</translation>
     </message>
     <message>
-        <location line="-21"/>
+        <location filename="../src/network/access/qfilenetworkreply.cpp" line="+20"/>
+        <location filename="../src/network/access/qnetworkaccessfilebackend.cpp" line="-21"/>
         <source>Cannot open %1: Path is a directory</source>
         <translation>%1 nelze otevřít: Jedná se o adresář</translation>
     </message>
     <message>
-        <location line="-86"/>
+        <location line="+13"/>
+        <location filename="../src/network/access/qnetworkaccessfilebackend.cpp" line="-86"/>
         <source>Error opening %1: %2</source>
         <translation>%1 se nepodařilo otevřít: %2</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location filename="../src/network/access/qnetworkaccessfilebackend.cpp" line="+38"/>
         <source>Write error writing to %1: %2</source>
         <translation>Při zápisu do souboru %1: %2 nastala chyba</translation>
     </message>
@@ -3456,37 +5024,111 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QNetworkAccessHttpBackend</name>
     <message>
-        <location filename="../src/network/access/qnetworkaccesshttpbackend.cpp" line="+585"/>
+        <location filename="../src/network/access/qnetworkaccesshttpbackend.cpp" line="+652"/>
         <source>No suitable proxy found</source>
         <translation>Nepodařilo se najít žádný vhodný proxy server</translation>
     </message>
 </context>
 <context>
+    <name>QNetworkAccessManager</name>
+    <message>
+        <location filename="../src/network/access/qnetworkreplyimpl.cpp" line="+942"/>
+        <source>Network access is disabled.</source>
+        <translation>Přístup k síti není dovolen.</translation>
+    </message>
+</context>
+<context>
     <name>QNetworkReply</name>
     <message>
-        <location line="+95"/>
+        <location filename="../src/network/access/qnetworkaccesshttpbackend.cpp" line="+100"/>
         <source>Error downloading %1 - server replied: %2</source>
         <translation>Beim Herunterladen von %1 trat ein Fehler auf - Die Antwort des Servers ist: %2</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qnetworkreplyimpl.cpp" line="+77"/>
+        <location filename="../src/network/access/qnetworkreplyimpl.cpp" line="-860"/>
         <source>Protocol &quot;%1&quot; is unknown</source>
         <translation>Protokol &quot;%1&quot; není znám</translation>
+    </message>
+    <message>
+        <location line="+192"/>
+        <source>Network session error.</source>
+        <translation>Chyba při spojení přes síť.</translation>
+    </message>
+    <message>
+        <location line="+352"/>
+        <source>Temporary network failure.</source>
+        <translation>Síť dočasně vypadla.</translation>
     </message>
 </context>
 <context>
     <name>QNetworkReplyImpl</name>
     <message>
-        <location line="+519"/>
+        <location line="+120"/>
         <location line="+28"/>
         <source>Operation canceled</source>
         <translation>Operace byla zrušena</translation>
     </message>
 </context>
 <context>
+    <name>QNetworkSession</name>
+    <message>
+        <location filename="../src/network/bearer/qnetworksession.cpp" line="+449"/>
+        <source>Invalid configuration.</source>
+        <translation>Neplatné nastavení.</translation>
+    </message>
+</context>
+<context>
+    <name>QNetworkSessionPrivateImpl</name>
+    <message>
+        <location filename="../src/plugins/bearer/icd/qnetworksession_impl.cpp" line="+1005"/>
+        <source>Roaming error</source>
+        <translation>Chyba při toulání se (roaming)</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Session aborted by user or system</source>
+        <translation>Spojení bylo zrušeno buď uživatelem nebo operačním systémem</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Unidentified Error</source>
+        <translation>Neznámá chyba</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/bearer/qnetworksession_impl.cpp" line="+272"/>
+        <location filename="../src/plugins/bearer/symbian/qnetworksession_impl.cpp" line="+271"/>
+        <source>Unknown session error.</source>
+        <translation>Neznámá chyba při spojení přes síť.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location filename="../src/plugins/bearer/symbian/qnetworksession_impl.cpp" line="+2"/>
+        <source>The session was aborted by the user or system.</source>
+        <translation>Spojení bylo zrušeno buď uživatelem nebo operačním systémem.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location filename="../src/plugins/bearer/symbian/qnetworksession_impl.cpp" line="+2"/>
+        <source>The requested operation is not supported by the system.</source>
+        <translation>Požadovaná operace není systémem podporována.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location filename="../src/plugins/bearer/symbian/qnetworksession_impl.cpp" line="+2"/>
+        <source>The specified configuration cannot be used.</source>
+        <translation>Zadané nastavení nelze použít.</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <location filename="../src/plugins/bearer/symbian/qnetworksession_impl.cpp" line="+2"/>
+        <source>Roaming was aborted or is not possible.</source>
+        <translation>Toulání se (roaming) bylo buď zrušeno, nebo zde není možné.</translation>
+    </message>
+</context>
+<context>
     <name>QOCIDriver</name>
     <message>
-        <location filename="../src/sql/drivers/oci/qsql_oci.cpp" line="+2166"/>
+        <location filename="../src/sql/drivers/oci/qsql_oci.cpp" line="+2178"/>
         <source>Unable to commit transaction</source>
         <translation>Transakci se nepodařilo provést (operace &apos;commit&apos;, odeslání, se nezdařila)</translation>
     </message>
@@ -3539,8 +5181,8 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Příkaz se nepodařilo provést</translation>
     </message>
     <message>
-        <location line="-634"/>
-        <location line="+161"/>
+        <location line="-641"/>
+        <location line="+168"/>
         <location line="+15"/>
         <source>Unable to bind column for batch execute</source>
         <translation>Nepodařilo se spojit sloupec pro provedení příkazu dávkového zpracování</translation>
@@ -3568,7 +5210,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QODBCDriver</name>
     <message>
-        <location filename="../src/sql/drivers/odbc/qsql_odbc.cpp" line="+2045"/>
+        <location filename="../src/sql/drivers/odbc/qsql_odbc.cpp" line="+2174"/>
         <source>Unable to commit transaction</source>
         <translation>Transakci se nepodařilo provést (operace &apos;commit&apos;, odeslání, se nezdařila)</translation>
     </message>
@@ -3587,7 +5229,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>&apos;autocommit&apos;, automatické odeslání, se nepodařilo zastavit</translation>
     </message>
     <message>
-        <location line="-238"/>
+        <location line="-269"/>
         <source>Unable to connect</source>
         <translation>Nepodařilo se navázat spojení</translation>
     </message>
@@ -3597,7 +5239,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Nepodařilo se navázat spojení, protože ovladač nutnou funkcionalitu plně nepodporuje</translation>
     </message>
     <message>
-        <location line="+266"/>
+        <location line="+297"/>
         <source>Unable to rollback transaction</source>
         <translation>Transakci se nepodařilo zvrátit (operace &apos;rollback&apos;, zvrácení, se nezdařila)</translation>
     </message>
@@ -3605,30 +5247,30 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QODBCResult</name>
     <message>
-        <location line="-566"/>
+        <location line="-602"/>
         <source>Unable to bind variable</source>
         <translation>Proměnnou se nepodařilo provést</translation>
     </message>
     <message>
-        <location line="-615"/>
-        <location line="+623"/>
+        <location line="-619"/>
+        <location line="+627"/>
         <source>Unable to execute statement</source>
         <translation>Příkaz se nepodařilo provést</translation>
     </message>
     <message>
-        <location line="-547"/>
+        <location line="-546"/>
         <source>Unable to fetch next</source>
         <translation>Další datový záznam se nepodařilo natáhnout</translation>
     </message>
     <message>
-        <location filename="../src/sql/drivers/db2/qsql_db2.cpp" line="+190"/>
+        <location filename="../src/sql/drivers/db2/qsql_db2.cpp" line="+189"/>
         <location filename="../src/sql/drivers/odbc/qsql_odbc.cpp" line="+72"/>
-        <location line="+576"/>
+        <location line="+578"/>
         <source>Unable to fetch last</source>
         <translation>Poslední datový záznam se nepodařilo natáhnout</translation>
     </message>
     <message>
-        <location filename="../src/sql/drivers/odbc/qsql_odbc.cpp" line="-377"/>
+        <location filename="../src/sql/drivers/odbc/qsql_odbc.cpp" line="-379"/>
         <source>Unable to prepare statement</source>
         <translation>Příkaz se nepodařilo spustit</translation>
     </message>
@@ -3643,8 +5285,8 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Nepodařilo se natáhnout žádná data</translation>
     </message>
     <message>
-        <location line="-71"/>
-        <location line="+346"/>
+        <location line="-76"/>
+        <location line="+351"/>
         <source>QODBCResult::reset: Unable to set &apos;SQL_CURSOR_STATIC&apos; as statement attribute. Please check your ODBC driver configuration</source>
         <translation>QODBCResult::reset: &apos;SQL_CURSOR_STATIC&apos; se nepodařilo nastavit jako příkaz vlastnosti . Ověřte, prosím, nastavení svého ODBC ovladače</translation>
     </message>
@@ -3657,9 +5299,8 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../src/network/kernel/qhostinfo_unix.cpp" line="-97"/>
         <source>Invalid hostname</source>
-        <translation>Neplatný název pro hostitelský počítač</translation>
+        <translation type="obsolete">Neplatný název pro hostitelský počítač</translation>
     </message>
     <message>
         <source>Home</source>
@@ -3670,44 +5311,55 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation type="obsolete">Chyba v zápisu: Byl přijat paket o nulové velikosti</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qnetworkaccessdatabackend.cpp" line="+131"/>
         <source>Invalid URI: %1</source>
-        <translation>Neplátná URI: %1</translation>
+        <translation type="obsolete">Neplátná URI: %1</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qnetworkaccessdebugpipebackend.cpp" line="+60"/>
         <source>Socket error on %1: %2</source>
-        <translation>Chyba zásuvky (socketu) u %1: %2</translation>
+        <translation type="obsolete">Chyba zásuvky (socketu) u %1: %2</translation>
     </message>
     <message>
-        <location filename="../src/network/kernel/qhostinfo.cpp" line="+175"/>
-        <location filename="../src/network/kernel/qhostinfo_unix.cpp" line="+0"/>
         <source>No host name given</source>
-        <translation>Nebyl zadán název pro hostitelský počítač</translation>
+        <translation type="obsolete">Nebyl zadán název pro hostitelský počítač</translation>
     </message>
     <message>
         <source>Read error reading from %1: %2</source>
         <translation type="obsolete">Při čtení ze souboru %1 nastala chyba: %2</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qnetworkaccessdebugpipebackend.cpp" line="+15"/>
         <source>Remote host closed the connection prematurely on %1</source>
-        <translation>Vzdálený počítač předčasně ukončil spojení s %1</translation>
+        <translation type="obsolete">Vzdálený počítač předčasně ukončil spojení s %1</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qnetworkaccessdatabackend.cpp" line="-57"/>
         <source>Operation not supported on %1</source>
-        <translation>Tato operace není %1 podporována</translation>
+        <translation type="obsolete">Tato operace není %1 podporována</translation>
     </message>
     <message>
         <source>Write error writing to %1: %2</source>
         <translation type="obsolete">Při zápisu do souboru %1: %2 nastala chyba</translation>
     </message>
+    <message>
+        <location filename="../src/3rdparty/phonon/phonon/pulsesupport.cpp" line="+162"/>
+        <location line="+11"/>
+        <source>PulseAudio Sound Server</source>
+        <translation>Zvukový server PulseAudio</translation>
+    </message>
+    <message>
+        <location filename="../src/declarative/util/qdeclarativexmllistmodel.cpp" line="-241"/>
+        <source>&quot;%1&quot; duplicates a previous role name and will be disabled.</source>
+        <translation>&quot;%1&quot; je již zadán jako název předchozí úlohy, a je proto vypnut.</translation>
+    </message>
+    <message>
+        <location line="+515"/>
+        <location line="+4"/>
+        <source>invalid query: &quot;%1&quot;</source>
+        <translation>Neplátný dotaz: &quot;%1&quot;</translation>
+    </message>
 </context>
 <context>
     <name>QPPDOptionsModel</name>
     <message>
-        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="+1198"/>
+        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="+1238"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
@@ -3982,7 +5634,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>B9</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qprintdialog_win.cpp" line="+266"/>
+        <location filename="../src/gui/dialogs/qprintdialog_win.cpp" line="+272"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -4002,7 +5654,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>DLE</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qprintdialog_qws.cpp" line="+335"/>
+        <location filename="../src/gui/dialogs/qprintdialog_qws.cpp" line="+339"/>
         <source>A6 (105 x 148 mm)</source>
         <translation>A6 (105 x 148 mm)</translation>
     </message>
@@ -4027,14 +5679,14 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Tisknout vše</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qabstractprintdialog.cpp" line="+112"/>
+        <location filename="../src/gui/dialogs/qabstractprintdialog.cpp" line="+113"/>
         <location line="+13"/>
         <location filename="../src/gui/dialogs/qprintdialog_win.cpp" line="-2"/>
         <source>Print</source>
         <translation>Tisk</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="-733"/>
+        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="-772"/>
         <source>&amp;Options &lt;&lt;</source>
         <translation>&amp;Nastavení &lt;&lt; </translation>
     </message>
@@ -4110,7 +5762,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>Tisk výběru</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="+321"/>
+        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="+328"/>
         <source>Print to File (Postscript)</source>
         <translation>Tisk do souboru (Postscript)</translation>
     </message>
@@ -4120,7 +5772,7 @@ Ověřte, prosím, že byl zadán správný název souboru.</translation>
         <translation>B4 (250 x 353 mm)</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="+206"/>
+        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="+205"/>
         <source>%1 already exists.
 Do you want to overwrite it?</source>
         <translation>Soubor %1 již existuje.
@@ -4177,17 +5829,22 @@ Má se přepsat?</translation>
         <translation>Tisková oblast</translation>
     </message>
     <message>
-        <location line="-229"/>
+        <location line="+1"/>
+        <source>Print current page</source>
+        <translation>Vytisknout tuto stranu</translation>
+    </message>
+    <message>
+        <location line="-234"/>
         <source>File exists</source>
         <translation>Soubor již existuje</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="-158"/>
+        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="-157"/>
         <source>Write %1 file</source>
         <translation>Zapsat %1 soubor</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qprintdialog_qws.cpp" line="+181"/>
+        <location filename="../src/gui/dialogs/qprintdialog_qws.cpp" line="+185"/>
         <source>A0 (841 x 1189 mm)</source>
         <translation>A0 (841 x 1189 mm)</translation>
     </message>
@@ -4197,7 +5854,7 @@ Má se přepsat?</translation>
         <translation>Místní soubor</translation>
     </message>
     <message>
-        <location filename="../src/gui/painting/qprinterinfo_unix.cpp" line="+108"/>
+        <location filename="../src/gui/painting/qprinterinfo_unix.cpp" line="+110"/>
         <source>locally connected</source>
         <translation>přímo spojeno</translation>
     </message>
@@ -4218,7 +5875,7 @@ Má se přepsat?</translation>
         <translation>Tisk do souboru (PDF)</translation>
     </message>
     <message>
-        <location line="+123"/>
+        <location line="+120"/>
         <source>Print To File ...</source>
         <translation>Tisk do souboru...</translation>
     </message>
@@ -4243,18 +5900,18 @@ Má se přepsat?</translation>
         <translation>Prováděcí</translation>
     </message>
     <message>
-        <location filename="../src/gui/painting/qprinterinfo_unix.cpp" line="+223"/>
+        <location filename="../src/gui/painting/qprinterinfo_unix.cpp" line="+225"/>
         <location line="+199"/>
         <source>unknown</source>
         <translation>Neznámý</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qprintdialog_qws.cpp" line="-184"/>
+        <location filename="../src/gui/dialogs/qprintdialog_qws.cpp" line="-188"/>
         <source>&lt;qt&gt;Do you want to overwrite it?&lt;/qt&gt;</source>
         <translation>&lt;qt&gt;Chcete jej přepsat?&lt;/qt&gt;</translation>
     </message>
     <message>
-        <location line="+203"/>
+        <location line="+207"/>
         <source>Executive (7.5 x 10 inches, 191 x 254 mm)</source>
         <translation>Prováděcí (7,5 x 10 palců, 191 x 254 mm)</translation>
     </message>
@@ -4274,7 +5931,7 @@ Má se přepsat?</translation>
         <translation>US běžná #10 obálka</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="+76"/>
+        <location filename="../src/gui/dialogs/qprintdialog_unix.cpp" line="+78"/>
         <source>%1 is a directory.
 Please choose a different file name.</source>
         <translation>%1 je adresář.
@@ -4311,21 +5968,22 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QPrintPreviewDialog</name>
     <message>
-        <location filename="../src/gui/dialogs/qprintpreviewdialog.cpp" line="+246"/>
+        <location filename="../src/gui/dialogs/qprintpreviewdialog.cpp" line="+249"/>
         <source>%1%</source>
         <translation>%1%</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+84"/>
         <source>Print Preview</source>
         <translation>Náhled tisku</translation>
     </message>
     <message>
+        <location line="+96"/>
         <source>Close</source>
-        <translation type="obsolete">Zavřít</translation>
+        <translation>Zavřít</translation>
     </message>
     <message>
-        <location line="+89"/>
+        <location line="-7"/>
         <source>Print</source>
         <translation>Tisk</translation>
     </message>
@@ -4391,12 +6049,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Ukázat jednotlivé strany</translation>
     </message>
     <message>
-        <location line="+168"/>
+        <location line="+172"/>
         <source>Export to PDF</source>
         <translation>Vyvést do PDF</translation>
     </message>
     <message>
-        <location line="-209"/>
+        <location line="-213"/>
         <source>Previous page</source>
         <translation>Předchozí strana</translation>
     </message>
@@ -4411,7 +6069,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Ukázat strany ležící naproti</translation>
     </message>
     <message>
-        <location line="+170"/>
+        <location line="+174"/>
         <source>Export to PostScript</source>
         <translation>Vyvést do PostScriptu</translation>
     </message>
@@ -4531,6 +6189,11 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <source>Duplex Printing</source>
         <translation>Zdvojený tisk</translation>
     </message>
+    <message>
+        <location/>
+        <source>Current Page</source>
+        <translation>Nynější strana</translation>
+    </message>
 </context>
 <context>
     <name>QPrintWidget</name>
@@ -4583,7 +6246,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QProcess</name>
     <message>
-        <location filename="../src/corelib/io/qprocess.cpp" line="+954"/>
+        <location filename="../src/corelib/io/qprocess.cpp" line="+965"/>
         <location line="+826"/>
         <location filename="../src/corelib/io/qprocess_win.cpp" line="+763"/>
         <source>Error writing to process</source>
@@ -4595,7 +6258,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Nestanoven žádný program</translation>
     </message>
     <message>
-        <location filename="../src/corelib/io/qprocess_unix.cpp" line="+653"/>
+        <location filename="../src/corelib/io/qprocess_unix.cpp" line="+657"/>
         <source>Resource error (fork failure): %1</source>
         <translation>Potíže se zdroji (selhání rozcestí - &quot;fork failure&quot;): %1</translation>
     </message>
@@ -4624,7 +6287,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Výstupní přesměrování se nepodařilo otevřít pro zápis</translation>
     </message>
     <message>
-        <location line="+491"/>
+        <location line="+497"/>
         <location line="+52"/>
         <location line="+74"/>
         <location line="+66"/>
@@ -4732,7 +6395,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QSQLite2Driver</name>
     <message>
-        <location filename="../src/sql/drivers/sqlite2/qsql_sqlite2.cpp" line="+449"/>
+        <location filename="../src/sql/drivers/sqlite2/qsql_sqlite2.cpp" line="+457"/>
         <source>Unable to commit transaction</source>
         <translation>Transakci se nepodařilo provést (operace &apos;commit&apos;, odeslání, se nezdařila)</translation>
     </message>
@@ -4768,7 +6431,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Příkaz se nepodařilo provést</translation>
     </message>
     <message>
-        <location line="-143"/>
+        <location line="-150"/>
         <source>Unable to fetch results</source>
         <translation>Výsledek se nepodařilo natáhnout</translation>
     </message>
@@ -4776,7 +6439,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QSQLiteDriver</name>
     <message>
-        <location filename="../src/sql/drivers/sqlite/qsql_sqlite.cpp" line="+590"/>
+        <location filename="../src/sql/drivers/sqlite/qsql_sqlite.cpp" line="+585"/>
         <source>Unable to commit transaction</source>
         <translation>Transakci se nepodařilo provést (operace &apos;commit&apos;, odeslání, se nezdařila)</translation>
     </message>
@@ -4804,19 +6467,19 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QSQLiteResult</name>
     <message>
-        <location line="-378"/>
-        <location line="+66"/>
+        <location line="-366"/>
+        <location line="+63"/>
         <location line="+8"/>
         <source>Unable to fetch row</source>
         <translation>Řádek se nepodařilo natáhnout</translation>
     </message>
     <message>
-        <location line="-73"/>
+        <location line="-70"/>
         <source>No query</source>
         <translation>Žádný požadavek</translation>
     </message>
     <message>
-        <location line="+132"/>
+        <location line="+129"/>
         <source>Unable to execute statement</source>
         <translation>Příkaz se nepodařilo provést</translation>
     </message>
@@ -5062,7 +6725,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QScriptDebuggerLocalsModel</name>
     <message>
-        <location filename="../src/scripttools/debugging/qscriptdebuggerlocalsmodel.cpp" line="+872"/>
+        <location filename="../src/scripttools/debugging/qscriptdebuggerlocalsmodel.cpp" line="+897"/>
         <source>Name</source>
         <translation>Název</translation>
     </message>
@@ -5262,7 +6925,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QSharedMemory</name>
     <message>
-        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="+88"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="+89"/>
         <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="+74"/>
         <source>%1: doesn&apos;t exist</source>
         <translation>%1: Neexistuje</translation>
@@ -5378,22 +7041,22 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QShortcut</name>
     <message>
-        <location filename="../src/gui/kernel/qkeysequence.cpp" line="+1143"/>
+        <location filename="../src/gui/kernel/qkeysequence.cpp" line="+1331"/>
         <source>+</source>
         <translation>+</translation>
     </message>
     <message>
-        <location line="-664"/>
+        <location line="-753"/>
         <source>No</source>
         <translation>Ne</translation>
     </message>
     <message>
-        <location line="-71"/>
+        <location line="-167"/>
         <source>Up</source>
         <translation>Nahoru</translation>
     </message>
     <message>
-        <location line="+644"/>
+        <location line="+829"/>
         <location line="+135"/>
         <source>Alt</source>
         <translation>Alt</translation>
@@ -5404,7 +7067,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>F%1</translation>
     </message>
     <message>
-        <location line="-803"/>
+        <location line="-988"/>
         <source>Del</source>
         <translation>Delete</translation>
     </message>
@@ -5429,38 +7092,39 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Tab</translation>
     </message>
     <message>
-        <location line="+83"/>
+        <location line="+179"/>
         <source>Yes</source>
         <translation>Ano</translation>
     </message>
     <message>
-        <location line="-58"/>
+        <location line="-152"/>
         <source>Back</source>
         <translation>Zpět</translation>
     </message>
     <message>
-        <location line="+67"/>
+        <location line="+162"/>
         <source>Call</source>
+        <extracomment>Button to start a call (note: a separate button is used to end the call)</extracomment>
         <translation>Volání</translation>
     </message>
     <message>
-        <location line="+563"/>
+        <location line="+651"/>
         <location line="+135"/>
         <source>Ctrl</source>
         <translation>Ctrl</translation>
     </message>
     <message>
-        <location line="-775"/>
+        <location line="-960"/>
         <source>Down</source>
         <translation>Dolů</translation>
     </message>
     <message>
-        <location line="+79"/>
+        <location line="+179"/>
         <source>Flip</source>
         <translation>Obrátit</translation>
     </message>
     <message>
-        <location line="-72"/>
+        <location line="-172"/>
         <source>Help</source>
         <translation>Nápověda</translation>
     </message>
@@ -5480,35 +7144,215 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Menu</translation>
     </message>
     <message>
-        <location line="+637"/>
+        <location line="+172"/>
+        <source>Toggle Call/Hangup</source>
+        <extracomment>Button that will hang up if we&apos;re in call, or make a call if we&apos;re not.</extracomment>
+        <translation>Přepnout volat/zavěsit</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Voice Dial</source>
+        <extracomment>Button to trigger voice dialling</extracomment>
+        <translation>Hlasové vytáčení</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Last Number Redial</source>
+        <extracomment>Button to redial the last number called</extracomment>
+        <translation>Opakované vytáčení posledního čísla</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Camera Shutter</source>
+        <extracomment>Button to trigger the camera shutter (take a picture)</extracomment>
+        <translation>Závěrka kamery</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Camera Focus</source>
+        <extracomment>Button to focus the camera</extracomment>
+        <translation>Zaostření kamery</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Kanji</source>
+        <translation>Kandži</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Muhenkan</source>
+        <translation>Muhenkan</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Henkan</source>
+        <translation>Henkan</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Romaji</source>
+        <translation>Romaji</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hiragana</source>
+        <translation>Hiragana</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Katakana</source>
+        <translation>Katakana</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hiragana Katakana</source>
+        <translation>Hiragana Katakana</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zenkaku</source>
+        <translation>Zenkaku</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hankaku</source>
+        <translation>Hankaku</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zenkaku Hankaku</source>
+        <translation>Zenkaku Hankaku</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Touroku</source>
+        <translation>Touroku</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Massyo</source>
+        <translation>Massyo</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Kana Lock</source>
+        <translation>Kana Zámek</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Kana Shift</source>
+        <translation>Kany Posun</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Eisu Shift</source>
+        <translation>Eisu Posun</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Eisu toggle</source>
+        <translation>Eisu Přepínač</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Code input</source>
+        <translation>Vstup pro kód</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Multiple Candidate</source>
+        <translation>Více návrhů</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Previous Candidate</source>
+        <translation>Předchozí návrh</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Hangul</source>
+        <translation>Hangul</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hangul Start</source>
+        <translation>Hangul začátek</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hangul End</source>
+        <translation>Hangul konec</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hangul Hanja</source>
+        <translation>Hangul Hanja</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hangul Jamo</source>
+        <translation>Hangul Jamo</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hangul Romaja</source>
+        <translation>Hangul Romaja</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hangul Jeonja</source>
+        <translation>Hangul Jeonja</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hangul Banja</source>
+        <translation>Hangul Banja</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hangul PreHanja</source>
+        <translation>Hangul PreHanja</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hangul PostHanja</source>
+        <translation>Hangul PostHanja</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hangul Special</source>
+        <translation>Hangul zvláštní</translation>
+    </message>
+    <message>
+        <location line="+605"/>
         <location line="+130"/>
         <source>Meta</source>
         <translation>Meta</translation>
     </message>
     <message>
-        <location line="-772"/>
+        <location line="-957"/>
         <source>PgUp</source>
-        <translation>PgUp</translation>
+        <translation>O stranu nahoru (PgUp)</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+13"/>
         <source>Stop</source>
-        <translation>Stop</translation>
+        <translation>Zastavit</translation>
     </message>
     <message>
-        <location line="-23"/>
+        <location line="-25"/>
         <source>Enter</source>
-        <translation>Enter</translation>
+        <translation>zadat (Enter)</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Pause</source>
-        <translation>Pause</translation>
+        <translation>Pozastavit (Pause)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Print</source>
-        <translation>Print</translation>
+        <translation>Tisk</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -5516,38 +7360,39 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Vpravo</translation>
     </message>
     <message>
-        <location line="+642"/>
+        <location line="+827"/>
         <location line="+138"/>
         <source>Shift</source>
-        <translation>Shift</translation>
+        <translation>Přepínač (Shift)</translation>
     </message>
     <message>
-        <location line="-796"/>
+        <location line="-981"/>
         <source>Space</source>
+        <extracomment>This and all following &quot;incomprehensible&quot; strings in QShortcut context are key names. Please use the localized names appearing on actual keyboards or whatever is commonly used.</extracomment>
         <translation>Mezerník</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+45"/>
         <source>Media Record</source>
         <translation>Nahrát</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+121"/>
         <source>Print Screen</source>
-        <translation>Print Screen</translation>
+        <translation>Vytisknout obrazovku (Print Screen)</translation>
     </message>
     <message>
-        <location line="-32"/>
+        <location line="-126"/>
         <source>Treble Down</source>
         <translation>Výšky -</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+132"/>
         <source>Scroll Lock</source>
-        <translation>Scroll Lock</translation>
+        <translation>Zamknutí posunování obrazu (Scroll Lock)</translation>
     </message>
     <message>
-        <location line="-45"/>
+        <location line="-139"/>
         <source>Volume Down</source>
         <translation>Hlasitost -</translation>
     </message>
@@ -5562,17 +7407,17 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Předchozí</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+7"/>
         <source>Home Page</source>
         <translation>Domovská stránka</translation>
     </message>
     <message>
-        <location line="-11"/>
+        <location line="-15"/>
         <source>Volume Up</source>
         <translation>Hlasitost +</translation>
     </message>
     <message>
-        <location line="+24"/>
+        <location line="+28"/>
         <source>Launch (6)</source>
         <translation>Spustit (6)</translation>
     </message>
@@ -5652,34 +7497,35 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Spustit (A)</translation>
     </message>
     <message>
-        <location line="+17"/>
+        <location line="+107"/>
         <source>Delete</source>
-        <translation>Delete</translation>
+        <translation>Smazat (Delete)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Escape</source>
-        <translation>Escape</translation>
+        <translation>Uniknout (Escape)</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+18"/>
         <source>Hangup</source>
+        <extracomment>Button to end a call (note: a separate button is used to start the call)</extracomment>
         <translation>Pověsit</translation>
     </message>
     <message>
-        <location line="-18"/>
+        <location line="-20"/>
         <source>Insert</source>
-        <translation>Insert</translation>
+        <translation>Vložit (Insert)</translation>
     </message>
     <message>
-        <location line="-43"/>
+        <location line="-137"/>
         <source>Bass Boost</source>
         <translation>Zesílení basů</translation>
     </message>
     <message>
-        <location line="-15"/>
+        <location line="-17"/>
         <source>PgDown</source>
-        <translation>PgDown</translation>
+        <translation>O stranu dolů (PgDown)</translation>
     </message>
     <message>
         <location line="-14"/>
@@ -5687,32 +7533,490 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Return</translation>
     </message>
     <message>
-        <location line="+41"/>
+        <location line="+47"/>
         <source>Search</source>
         <translation>Hledat</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+106"/>
+        <location line="+22"/>
         <source>Select</source>
         <translation>Vybrat</translation>
     </message>
     <message>
-        <location line="-73"/>
+        <location line="-169"/>
         <source>SysReq</source>
         <translation>SysReq</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>NumLock</source>
-        <translation>NumLock</translation>
+        <translation>Zamknutí číselné klávesnice (NumLock)</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>ScrollLock</source>
-        <translation>ScrollLock</translation>
+        <translation>Zamknutí posunování obrazu (ScrollLock)</translation>
     </message>
     <message>
-        <location line="+68"/>
+        <location line="+25"/>
+        <source>Media Pause</source>
+        <extracomment>Media player pause button</extracomment>
+        <translation>Pozastavení přehrávání</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Toggle Media Play/Pause</source>
+        <extracomment>Media player button to toggle between playing and paused</extracomment>
+        <translation>Přepnout přehrávat/pozastavit</translation>
+    </message>
+    <message>
+        <location line="+24"/>
+        <source>Monitor Brightness Up</source>
+        <translation>Zvýšit jas obrazovky</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Monitor Brightness Down</source>
+        <translation>Snížit jas obrazovky</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Keyboard Light On/Off</source>
+        <translation>Zapnout/Vypnout podsvícení klávesnice</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Keyboard Brightness Up</source>
+        <translation>Zvýšit jas klávesnice</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Keyboard Brightness Down</source>
+        <translation>Snížit jas klávesnice</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Power Off</source>
+        <translation>Vypnout</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Wake Up</source>
+        <translation>Probudit</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Eject</source>
+        <translation>Vysunout</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Screensaver</source>
+        <translation>Spořič/Šetřič obrazovky</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>WWW</source>
+        <translation>Internet</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Sleep</source>
+        <translation>Režim spánku</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>LightBulb</source>
+        <translation>Osvětlení</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Shop</source>
+        <translation>Obchod</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>History</source>
+        <translation>Průběh</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Add Favorite</source>
+        <translation>Přidat záložku</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hot Links</source>
+        <translation>Doporučené odkazy</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Adjust Brightness</source>
+        <translation>Upravit jas</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Finance</source>
+        <translation>Finance</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Community</source>
+        <translation>Společenství</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Audio Rewind</source>
+        <translation>Zvuk přetočit zpět</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Back Forward</source>
+        <translation>Zpět dopředu</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Application Left</source>
+        <translation>Aplikace vlevo</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Application Right</source>
+        <translation>Aplikace vpravo</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Book</source>
+        <translation>Kniha</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>CD</source>
+        <translation>CD</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Calculator</source>
+        <translation>Kalkulačka</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Clear</source>
+        <translation>Smazat</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Clear Grab</source>
+        <translation>Smazat přístup</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Close</source>
+        <translation>Zavřít</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Copy</source>
+        <translation>Kopírovat</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Cut</source>
+        <translation>Vyjmout</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Display</source>
+        <translation>Zobrazit</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>DOS</source>
+        <translation>DOS</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Documents</source>
+        <translation>Dokumenty</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Spreadsheet</source>
+        <translation>Tabulkový dokument</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Browser</source>
+        <translation>Prohlížeč</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Game</source>
+        <translation>Hra</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Go</source>
+        <translation>Do toho</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>iTouch</source>
+        <translation>iTouch</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Logoff</source>
+        <translation>Odhlásit se</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Market</source>
+        <translation>Trh</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Meeting</source>
+        <translation>Schůze</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Keyboard Menu</source>
+        <translation>Nabídka klávesnice</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Menu PB</source>
+        <translation>Nabídka PB</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>My Sites</source>
+        <translation>Moje místa</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>News</source>
+        <translation>Zprávy</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Home Office</source>
+        <translation>Domácí kancelář</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Option</source>
+        <translation>Volba</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Paste</source>
+        <translation>Vložit</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Phone</source>
+        <translation>Telefon</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Reply</source>
+        <translation>Odpovědět</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Reload</source>
+        <translation>Nahrát znovu</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Rotate Windows</source>
+        <translation>Otáčet okny</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Rotation PB</source>
+        <translation>Otáčení PB</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Rotation KB</source>
+        <translation>Otáčení KB</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Save</source>
+        <translation>Uložit</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Send</source>
+        <translation>Poslat</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Spellchecker</source>
+        <translation>Ověření pravopisu</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Split Screen</source>
+        <translation>Rozdělit obrazovku</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Support</source>
+        <translation>Podpora</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Task Panel</source>
+        <translation>Panel s úkoly</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Terminal</source>
+        <translation>Terminál</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Tools</source>
+        <translation>Nástroje</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Travel</source>
+        <translation>Cestování</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Video</source>
+        <translation>Video</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Word Processor</source>
+        <translation>Zpracování textu</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>XFer</source>
+        <translation>XFer</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zoom In</source>
+        <translation>Přiblížit</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zoom Out</source>
+        <translation>Oddálit</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Away</source>
+        <translation>Pryč</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Messenger</source>
+        <translation>Posel</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>WebCam</source>
+        <translation>Internetová kamera</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Mail Forward</source>
+        <translation>Předání dál</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Pictures</source>
+        <translation>Obrázky</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Music</source>
+        <translation>Hudba</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Battery</source>
+        <translation>Baterie</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Bluetooth</source>
+        <translation>Modrozub</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Wireless</source>
+        <translation>Bezdrát</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Ultra Wide Band</source>
+        <translation>Ultra široké pásmo</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Audio Forward</source>
+        <translation>Zvuk přetočit dopředu</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Audio Repeat</source>
+        <translation>Opakovat zvuk</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Audio Random Play</source>
+        <translation>Zvuk přehrávat náhodně</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Subtitle</source>
+        <translation>Titulky</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Audio Cycle Track</source>
+        <translation>Změnit zvukovou stopu</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Time</source>
+        <translation>Čas</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>View</source>
+        <translation>Pohled</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Top Menu</source>
+        <translation>Hlavní nabídka</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Suspend</source>
+        <translation>Pozastavit</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Hibernate</source>
+        <translation>Přezimovat</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>Context1</source>
         <translation>Kontext1</translation>
     </message>
@@ -5737,12 +8041,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Page Up</translation>
     </message>
     <message>
-        <location line="-23"/>
+        <location line="-113"/>
         <source>Open URL</source>
         <translation>Otevřít URL</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+115"/>
         <source>Caps Lock</source>
         <translation>Caps Lock</translation>
     </message>
@@ -5752,7 +8056,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Žádost systému</translation>
     </message>
     <message>
-        <location line="-60"/>
+        <location line="-156"/>
         <source>CapsLock</source>
         <translation>CapsLock</translation>
     </message>
@@ -5762,7 +8066,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Zpět-Tab</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+34"/>
         <source>Bass Up</source>
         <translation>Basy +</translation>
     </message>
@@ -5772,32 +8076,32 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Obnovit</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+23"/>
         <source>Launch Mail</source>
         <translation>Spustit e-mail</translation>
     </message>
     <message>
-        <location line="-45"/>
+        <location line="-51"/>
         <source>Backspace</source>
         <translation>Backspace</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+34"/>
         <source>Bass Down</source>
         <translation>Basy -</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+15"/>
         <source>Standby</source>
         <translation>V pohotovosti</translation>
     </message>
     <message>
-        <location line="-10"/>
+        <location line="-14"/>
         <source>Treble Up</source>
         <translation>Výšky +</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+131"/>
         <source>Num Lock</source>
         <translation>Num Lock</translation>
     </message>
@@ -5807,22 +8111,22 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Zahlen-Feststelltaste</translation>
     </message>
     <message>
-        <location line="-30"/>
+        <location line="-120"/>
         <source>Favorites</source>
         <translation>Oblíbené</translation>
     </message>
     <message>
-        <location line="-17"/>
+        <location line="-21"/>
         <source>Forward</source>
         <translation>Dopředu</translation>
     </message>
     <message>
-        <location line="+44"/>
+        <location line="+138"/>
         <source>Page Down</source>
         <translation>Obraz dolů</translation>
     </message>
     <message>
-        <location line="-33"/>
+        <location line="-127"/>
         <source>Media Play</source>
         <translation>Přehrávání</translation>
     </message>
@@ -5837,7 +8141,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Další</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location line="+12"/>
         <source>Launch Media</source>
         <translation>Spustit přehrávač</translation>
     </message>
@@ -5873,12 +8177,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QSocks5SocketEngine</name>
     <message>
-        <location filename="../src/network/socket/qsocks5socketengine.cpp" line="+710"/>
+        <location filename="../src/network/socket/qsocks5socketengine.cpp" line="+714"/>
         <source>Network operation timed out</source>
         <translation>Časový limit pro síťovou operaci byl překročen</translation>
     </message>
     <message>
-        <location line="-773"/>
+        <location line="-777"/>
         <source>Connection to proxy closed prematurely</source>
         <translation>Proxy server předčasně ukončil spojení</translation>
     </message>
@@ -5946,7 +8250,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QSoftKeyManager</name>
     <message>
-        <location filename="../src/gui/kernel/qsoftkeymanager.cpp" line="+78"/>
+        <location filename="../src/gui/kernel/qsoftkeymanager.cpp" line="+63"/>
         <source>Ok</source>
         <translation>OK</translation>
     </message>
@@ -5971,7 +8275,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Zrušit</translation>
     </message>
     <message>
-        <location line="+151"/>
+        <location filename="../src/gui/kernel/qsoftkeymanager_s60.cpp" line="+321"/>
         <source>Exit</source>
         <translation>Ukončit</translation>
     </message>
@@ -6049,7 +8353,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QSslSocket</name>
     <message>
-        <location filename="../src/network/ssl/qsslsocket_openssl.cpp" line="+362"/>
+        <location filename="../src/network/ssl/qsslsocket_openssl.cpp" line="+366"/>
         <source>Error creating SSL session: %1</source>
         <translation>Nepodařilo se vytvořit sezení SSL: %1</translation>
     </message>
@@ -6059,22 +8363,32 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Nepodařilo se vytvořit sezení SSL, %1</translation>
     </message>
     <message>
-        <location line="-46"/>
+        <location line="-49"/>
         <source>Cannot provide a certificate with no key, %1</source>
         <translation>Bez klíče nelze poskytnout žádné osvědčení k volnému použití, %1</translation>
     </message>
     <message>
-        <location line="+245"/>
+        <location line="+29"/>
+        <source>Private key does not certify public key, %1</source>
+        <translation>Soukromý klíč nedosvědčuje veřejný klíč, %1</translation>
+    </message>
+    <message>
+        <location line="+219"/>
         <source>Unable to write data: %1</source>
         <translation>Data se nepodařilo zapsat: %1</translation>
     </message>
     <message>
-        <location line="+215"/>
+        <location line="+63"/>
+        <source>Unable to decrypt data: %1</source>
+        <translation>Data se nepodařilo rozluštit: %1</translation>
+    </message>
+    <message>
+        <location line="+172"/>
         <source>Error during SSL handshake: %1</source>
         <translation>Během startu SSL protokolu se vyskytla chyba: %1</translation>
     </message>
     <message>
-        <location line="-453"/>
+        <location line="-476"/>
         <source>Error loading local certificate, %1</source>
         <translation>Nepodařilo se nahrát místní osvědčení, %1</translation>
     </message>
@@ -6084,30 +8398,144 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Neplatný či prázdný seznam se šifrovacími klíči (%1)</translation>
     </message>
     <message>
-        <location line="+42"/>
         <source>Private key does not certificate public key, %1</source>
-        <translation>Vystavení osvědčení k veřejnému klíči přes soukromý klíč se nezdařilo, %1</translation>
+        <translation type="obsolete">Vystavení osvědčení k veřejnému klíči přes soukromý klíč se nezdařilo, %1</translation>
     </message>
     <message>
-        <location line="-67"/>
+        <location line="-25"/>
         <source>Error creating SSL context (%1)</source>
         <translation>Nepodařilo se vytvořit žádný kontext SSL (%1)</translation>
     </message>
     <message>
-        <location line="+405"/>
+        <location line="+428"/>
         <source>Error while reading: %1</source>
         <translation>Při čtení se vyskytla chyba: %1</translation>
     </message>
     <message>
-        <location line="-345"/>
+        <location line="-365"/>
         <source>Error loading private key, %1</source>
         <translation>Soukromý klíč se nepodařilo nahrát, %1</translation>
+    </message>
+    <message>
+        <location filename="../src/network/ssl/qsslerror.cpp" line="+213"/>
+        <source>No error</source>
+        <translation>Žádná chyba</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The issuer certificate could not be found</source>
+        <translation>Osvědčení od vydavatele se nepodařilo nalézt</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The certificate signature could not be decrypted</source>
+        <translation>Podpis osvědčení se nepodařilo rozluštit</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The public key in the certificate could not be read</source>
+        <translation>Veřejný klíč v osvědčení se nepodařilo přečíst</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The signature of the certificate is invalid</source>
+        <translation>Podpis osvědčení je neplatný</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The certificate is not yet valid</source>
+        <translation>Osvědčení ještě není platné</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The certificate has expired</source>
+        <translation>Platnost osvědčení uplynula</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The certificate&apos;s notBefore field contains an invalid time</source>
+        <translation>Pole osvědčení &apos;notBefore&apos; obsahuje neplatný čas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The certificate&apos;s notAfter field contains an invalid time</source>
+        <translation>Pole osvědčení &apos;notAfter&apos; obsahuje neplatný čas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The certificate is self-signed, and untrusted</source>
+        <translation>Osvědčení je podepsáno samo sebou, a proto není důvěryhodné</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The root certificate of the certificate chain is self-signed, and untrusted</source>
+        <translation>Kořenové osvědčení řetězce osvědčení je podepsáno samo sebou, a proto není důvěryhodné</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The issuer certificate of a locally looked up certificate could not be found</source>
+        <translation>Osvědčení od vydavatele místně nalezeného osvědčení se nepodařilo najít</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>No certificates could be verified</source>
+        <translation>Žádný z osvědčení se nepodařilo ověřit</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>One of the CA certificates is invalid</source>
+        <translation>Jedno z osvědčení osvědčovacího místa (CA) je neplatné</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The basicConstraints path length parameter has been exceeded</source>
+        <translation>Délka cesty &apos;basicConstraints&apos;byla překročena</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The supplied certificate is unsuitable for this purpose</source>
+        <translation>Poskytnuté osvědčení nelze v tomto případě použít; není vhodné pro tento účel</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The root CA certificate is not trusted for this purpose</source>
+        <translation>Kořenové osvědčení osvědčovacího místa není pro tento případ důvěryhodné</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The root CA certificate is marked to reject the specified purpose</source>
+        <translation>Kořenové osvědčení osvědčovacího místa odmítá tento případ na základě zvláštního označení</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The current candidate issuer certificate was rejected because its subject name did not match the issuer name of the current certificate</source>
+        <translation>Osvědčení sledovaného vydavatele bylo odmítnuto, protože jeho předmětný název neodpovídá názvu vydavatele současného osvědčení</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>The current candidate issuer certificate was rejected because its issuer name and serial number was present and did not match the authority key identifier of the current certificate</source>
+        <translation>Osvědčení sledovaného vydavatele bylo odmítnuto, protože název vydavatele a sériové číslo jsou přítomny a neodpovídají identifikátoru osvědčovacího místa současného osvědčení</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>The peer did not present any certificate</source>
+        <translation>Protější místo neudalo žádné osvědčení</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The host name did not match any of the valid hosts for this certificate</source>
+        <translation>Název hostitelského počítače neodpovídá žádnému z hostitelů platných pro toto osvědčení, kteří jsou na seznamu</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>Unknown error</source>
+        <translation>Neznámá chyba</translation>
     </message>
 </context>
 <context>
     <name>QStateMachine</name>
     <message>
-        <location filename="../src/corelib/statemachine/qstatemachine.cpp" line="+998"/>
+        <location filename="../src/corelib/statemachine/qstatemachine.cpp" line="+1028"/>
         <source>Missing initial state in compound state &apos;%1&apos;</source>
         <translation>Chybí počáteční stav složeného stavu &apos;%1&apos;</translation>
     </message>
@@ -6161,7 +8589,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QTDSDriver</name>
     <message>
-        <location filename="../src/sql/drivers/tds/qsql_tds.cpp" line="+584"/>
+        <location filename="../src/sql/drivers/tds/qsql_tds.cpp" line="+595"/>
         <source>Unable to open connection</source>
         <translation>Nepodařilo se otevřít spojení s databází</translation>
     </message>
@@ -6187,7 +8615,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QTcpServer</name>
     <message>
-        <location filename="../src/network/socket/qtcpserver.cpp" line="+282"/>
+        <location filename="../src/network/socket/qtcpserver.cpp" line="+292"/>
         <source>Operation on socket is not supported</source>
         <translation>Tato zásuvková (socket) operace není podporována</translation>
     </message>
@@ -6195,7 +8623,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QTextControl</name>
     <message>
-        <location filename="../src/gui/text/qtextcontrol.cpp" line="+2013"/>
+        <location filename="../src/gui/text/qtextcontrol.cpp" line="+2052"/>
         <source>Cu&amp;t</source>
         <translation>Vyj&amp;mout</translation>
     </message>
@@ -6253,7 +8681,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QUdpSocket</name>
     <message>
-        <location filename="../src/network/socket/qudpsocket.cpp" line="+179"/>
+        <location filename="../src/network/socket/qudpsocket.cpp" line="+189"/>
         <source>This platform does not support IPv6</source>
         <translation>Tato patforma nepodpotuje IPv6</translation>
     </message>
@@ -6295,7 +8723,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QUnicodeControlCharacterMenu</name>
     <message>
-        <location filename="../src/gui/text/qtextcontrol.cpp" line="+906"/>
+        <location filename="../src/gui/text/qtextcontrol.cpp" line="+921"/>
         <source>RLE Start of right-to-left embedding</source>
         <translation>RLE Začátek zapuštění zprava doleva (right-to-left embedding)</translation>
     </message>
@@ -6353,7 +8781,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QWebFrame</name>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp" line="+730"/>
+        <location filename="../src/3rdparty/webkit/WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp" line="+772"/>
         <source>Request blocked</source>
         <translation>Požadavek byl odmítnut</translation>
     </message>
@@ -6443,7 +8871,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Provést prohlídku</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/Api/qwebpage.cpp" line="+2213"/>
+        <location filename="../src/3rdparty/webkit/WebKit/qt/Api/qwebpage.cpp" line="+2556"/>
         <source>Select to the start of the block</source>
         <translation>Vybrat až po začátek bloku</translation>
     </message>
@@ -6453,22 +8881,22 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Ukazatel polohy posunout až na konec bloku</translation>
     </message>
     <message>
-        <location line="-469"/>
+        <location line="-485"/>
         <source>JavaScript Alert - %1</source>
         <translation>Upozornění od JavaScriptu - %1</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+17"/>
         <source>JavaScript Confirm - %1</source>
         <translation>Potvrzení od JavaScriptu - %1</translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+20"/>
         <source>JavaScript Prompt - %1</source>
         <translation>Výzva od JavaScriptu - %1</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+26"/>
         <source>JavaScript Problem - %1</source>
         <translation>Potíže s JavaScriptem - %1</translation>
     </message>
@@ -6478,7 +8906,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Vypadá to na to, že skript na této straně má potíže. Chcete tento skript zastavit?</translation>
     </message>
     <message>
-        <location line="+419"/>
+        <location line="+431"/>
         <source>Select all</source>
         <translation>Vybrat vše</translation>
     </message>
@@ -6653,7 +9081,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Poslat</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp" line="+167"/>
+        <location filename="../src/3rdparty/webkit/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp" line="+256"/>
         <source>Web Inspector - %2</source>
         <translation>Web Inspektor - %2</translation>
     </message>
@@ -6679,7 +9107,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Nebyl vybrán žádný soubor</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebCore/platform/qt/Localizations.cpp" line="+42"/>
+        <location filename="../src/3rdparty/webkit/WebCore/platform/qt/Localizations.cpp" line="+44"/>
         <source>Submit</source>
         <comment>default label for Submit buttons in forms on web pages</comment>
         <translation>Poslat</translation>
@@ -6931,7 +9359,13 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Zprava doleva</translation>
     </message>
     <message>
-        <location line="+105"/>
+        <location line="+100"/>
+        <source>Missing Plug-in</source>
+        <comment>Label text to be used when a plug-in is missing</comment>
+        <translation>Chybějící přídavný modul</translation>
+    </message>
+    <message>
+        <location line="+20"/>
         <source>Loading...</source>
         <comment>Media controller status message when the media is loading</comment>
         <translation>Nahrává se...</translation>
@@ -7175,7 +9609,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Zprava doleva</translation>
     </message>
     <message>
-        <location line="-210"/>
+        <location line="-225"/>
         <source>Inspect</source>
         <comment>Inspect Element context menu item</comment>
         <translation>Provést prohlídku</translation>
@@ -7199,7 +9633,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Smazat naposledy hledané výrazy</translation>
     </message>
     <message>
-        <location line="+75"/>
+        <location line="+90"/>
         <source>Unknown</source>
         <comment>Unknown filesize FTP directory listing item</comment>
         <translation>Neznámý</translation>
@@ -7279,7 +9713,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Vybrat až po začátek řádku</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebCore/platform/qt/Localizations.cpp" line="-307"/>
+        <location filename="../src/3rdparty/webkit/WebCore/platform/qt/Localizations.cpp" line="-322"/>
         <source>Submit</source>
         <comment>Submit (input element) alt text for &lt;input&gt; elements with no alt, title, or value</comment>
         <translation>Poslat</translation>
@@ -7343,7 +9777,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Otevřít adresu odkazu</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebCore/platform/network/qt/QNetworkReplyHandler.cpp" line="+406"/>
+        <location filename="../src/3rdparty/webkit/WebCore/platform/network/qt/QNetworkReplyHandler.cpp" line="+347"/>
+        <source>Redirection limit reached</source>
+        <translation>Dosaženo krajní meze pro přesměrování</translation>
+    </message>
+    <message>
+        <location line="+121"/>
         <source>Bad HTTP request</source>
         <translation>Neplatný požadavek HTTP</translation>
     </message>
@@ -7451,7 +9890,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QWidget</name>
     <message>
-        <location filename="../src/gui/kernel/qwidget.cpp" line="+5672"/>
+        <location filename="../src/gui/kernel/qwidget.cpp" line="+5849"/>
         <source>*</source>
         <translation>*</translation>
     </message>
@@ -7459,7 +9898,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
 <context>
     <name>QWizard</name>
     <message>
-        <location filename="../src/gui/dialogs/qwizard.cpp" line="+659"/>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="+699"/>
         <source>Done</source>
         <translation>Hotovo</translation>
     </message>
@@ -7700,6 +10139,34 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <location line="-9"/>
         <source>error occurred while parsing document type definition</source>
         <translation>při vyhodnocení definice typu dokumentu se vyskytla chyba</translation>
+    </message>
+</context>
+<context>
+    <name>QXmlPatternistCLI</name>
+    <message>
+        <location filename="../src/xmlpatterns/api/qcoloringmessagehandler.cpp" line="+87"/>
+        <source>Warning in %1, at line %2, column %3: %4</source>
+        <translation>Varování v %1, na řádku %2, sloupec %3: %4</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Warning in %1: %2</source>
+        <translation>Varování v %1: %2</translation>
+    </message>
+    <message>
+        <location line="+16"/>
+        <source>Unknown location</source>
+        <translation>Neznámé umístění</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Error %1 in %2, at line %3, column %4: %5</source>
+        <translation>Chyba %1 v %2, na řádku %3, sloupec %4: %5</translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>Error %1 in %2: %3</source>
+        <translation>Chyba %1 v %2: %3</translation>
     </message>
 </context>
 <context>
@@ -8033,9 +10500,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Již byla vytvořena jedna vlastnost s názvem %1.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-204"/>
         <source>An argument by name %1 has already been declared. Every argument name must be unique.</source>
-        <translation>Již existuje jeden argument s názvem %1. Názvy argumentů musí být jednoznačné.</translation>
+        <translation type="obsolete">Již existuje jeden argument s názvem %1. Názvy argumentů musí být jednoznačné.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/functions/qpatternplatform.cpp" line="+236"/>
@@ -8058,7 +10524,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Na psaní velkých/malých písmen není brán zřetel</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+3057"/>
+        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+2853"/>
         <source>The name of an extension expression must be in a namespace.</source>
         <translation>Název výrazu rozšíření se musí nacházet ve jmenném prostoru.</translation>
     </message>
@@ -8189,14 +10655,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">byla zjištěna cirkulární závislost</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+3971"/>
         <source>A variable by name %1 has already been declared.</source>
-        <translation>Proměnná s názvem %1 již byla prohlášena.</translation>
+        <translation type="obsolete">Proměnná s názvem %1 již byla prohlášena.</translation>
     </message>
     <message>
-        <location line="-312"/>
         <source>The prefix %1 can not be bound. By default, it is already bound to the namespace %2.</source>
-        <translation>Předpona %1 nemůže být spojena. Ve výchozím nastavení je již spojena se jmenným prostorem %2.</translation>
+        <translation type="obsolete">Předpona %1 nemůže být spojena. Ve výchozím nastavení je již spojena se jmenným prostorem %2.</translation>
     </message>
     <message>
         <source>An %1-attribute must have a valid %2 as value, which %3 isn&apos;t.</source>
@@ -8208,7 +10672,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Prvek %1 nesmí mít vlastnost %3 nebo %4, pokud nemá vlastnost %2.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+511"/>
+        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+4170"/>
         <source>A function already exists with the signature %1.</source>
         <translation>Již existuje funkce s podpisem %1.</translation>
     </message>
@@ -8227,14 +10691,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">S typem %1 nemohou být prováděny žádné srovnávací operace.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-160"/>
         <source>No value is available for the external variable by name %1.</source>
-        <translation>Pro vnější proměnnou s názvem %1 není dostupná žádná hodnota.</translation>
+        <translation type="obsolete">Pro vnější proměnnou s názvem %1 není dostupná žádná hodnota.</translation>
     </message>
     <message>
-        <location line="-426"/>
         <source>The value of attribute %1 must of type %2, which %3 isn&apos;t.</source>
-        <translation>Hodnota vlastnosti %1 musí být typu %2. %3 není platnou hodnotou.</translation>
+        <translation type="obsolete">Hodnota vlastnosti %1 musí být typu %2. %3 není platnou hodnotou.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/janitors/qitemverifier.cpp" line="+67"/>
@@ -8257,7 +10719,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>jeden nebo více</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-289"/>
+        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-875"/>
         <source>The encoding %1 is invalid. It must contain Latin characters only, must not contain whitespace, and must match the regular expression %2.</source>
         <translation>Kódování %1 je neplatné; smí sestávat pouze z latinských písmen a musí odpovídat pravidelnéu výrazu %2.</translation>
     </message>
@@ -8271,9 +10733,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/expr/qncnameconstructor_p.h" line="+113"/>
         <source>The target name in a processing instruction cannot be %1 in any combination of upper and lower case. Therefore, is %2 invalid.</source>
-        <translation>%2 není platným cílovým názvem pokynu pro zpracování, protože tento nesmí být %1 (nehledě na psaní velkých/malých písmen).</translation>
+        <translation type="obsolete">%2 není platným cílovým názvem pokynu pro zpracování, protože tento nesmí být %1 (nehledě na psaní velkých/malých písmen).</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/type/qtypechecker.cpp" line="+156"/>
@@ -8331,7 +10792,17 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Osa %1 není v XQuery podporována</translation>
     </message>
     <message>
-        <location line="+644"/>
+        <location line="+333"/>
+        <source>No function with name %1 is available.</source>
+        <translation>Neexistuje žádná funkce s názvem %1.</translation>
+    </message>
+    <message>
+        <location line="+250"/>
+        <source>An attribute with name %1 has already appeared on this element.</source>
+        <translation>Prvek má již vlastnost s názvem %1.</translation>
+    </message>
+    <message>
+        <location line="+61"/>
         <source>A direct element constructor is not well-formed. %1 is ended with %2.</source>
         <translation>Byl nalezen chybný stavitel přímého prvku. %1 končí %2.</translation>
     </message>
@@ -8361,7 +10832,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>URI jmenného prostoru v názvu vypočítané vlastnosti nesmí být %1.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/expr/qncnameconstructor_p.h" line="+24"/>
+        <location filename="../src/xmlpatterns/expr/qncnameconstructor_p.h" line="+113"/>
+        <source>The target name in a processing instruction cannot be %1 in any combination of upper and lower case. Therefore, %2 is invalid.</source>
+        <translation>Cílový název příkazu pro zpracování nemůže být %1 (nezávisle na psaní velkých/malých písmen). %2 je z toho důvodu neplatný.</translation>
+    </message>
+    <message>
+        <location line="+24"/>
         <source>%1 is not a valid target name in a processing instruction. It must be a %2 value, e.g. %3.</source>
         <translation>%1 není platným cílovým názvem pokynu pro zpracování. Musí to být hodnota %2 jakou je například %3.</translation>
     </message>
@@ -8419,9 +10895,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Prvek %2 musí mít vlastnost %1.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+105"/>
         <source>An attribute by name %1 has already appeared on this element.</source>
-        <translation>Prvek má již vlastnost s názvem %1.</translation>
+        <translation type="obsolete">Prvek má již vlastnost s názvem %1.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/functions/qsequencegeneratingfns.cpp" line="-13"/>
@@ -8453,7 +10928,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Operátor %1 nelze použít na typ %2.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-2361"/>
+        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-2256"/>
         <source>The namespace %1 is reserved; therefore user defined functions may not use it. Try the predefined prefix %2, which exists for these cases.</source>
         <translation>Jmenný prostor %1 je vyhrazen a z toho důvodu jej nemohou používat uživatelem stanovené funkce (pro tento účel je tu předstanovená předpona %2).</translation>
     </message>
@@ -8642,9 +11117,8 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Tento výtvor je přípustný pouze v XQuery.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+771"/>
         <source>No function by name %1 is available.</source>
-        <translation>Neexistuje žádná funkce s názvem %1.</translation>
+        <translation type="obsolete">Neexistuje žádná funkce s názvem %1.</translation>
     </message>
     <message>
         <location filename="../src/xmlpatterns/functions/qunparsedtextfn.cpp" line="+65"/>
@@ -8652,7 +11126,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>URI nesmí obsahovat kousek</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+788"/>
+        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+1559"/>
         <source>%1 is not an atomic type. Casting is only possible to atomic types.</source>
         <translation>%1 není atomárním typem. Operace představení se dají provádět pouze s atomárními typy.</translation>
     </message>
@@ -8722,12 +11196,11 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Časový údaj 24:%1:%2.%3 je neplatný. U hodinového údaje je 24, ale minuty, sekundy a milisekundy musí být všechny 0; </translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-3984"/>
         <source>A template by name %1 has already been declared.</source>
-        <translation>Předloha s názvem %1 už byla prohlášena.</translation>
+        <translation type="obsolete">Předloha s názvem %1 už byla prohlášena.</translation>
     </message>
     <message>
-        <location line="+6376"/>
+        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+2392"/>
         <source>It is not possible to bind to the prefix %1</source>
         <translation>Předponu %1 nelze spojit</translation>
     </message>
@@ -8791,7 +11264,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Narazilo se na výtvor, který v nynějším jazyce není povolen (%1).</translation>
     </message>
     <message>
-        <location line="+520"/>
+        <location line="+119"/>
+        <source>A template with name %1 has already been declared.</source>
+        <translation>Předloha s názvem %1 již existuje.</translation>
+    </message>
+    <message>
+        <location line="+401"/>
         <source>The initialization of variable %1 depends on itself</source>
         <translation>Inicializace proměnné %1 je závislá na její vlastní hodnotě</translation>
     </message>
@@ -8841,7 +11319,37 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Při použití funkce %1 k vyhodnocování uvnitř vyhledávacího vzoru musí být argumentem odkaz na proměnnou nebo řetězec tvořený písmeny.</translation>
     </message>
     <message>
-        <location line="+233"/>
+        <location line="-3971"/>
+        <source>No variable with name %1 exists</source>
+        <translation>Neexistuje žádná proměnná s názvem %1</translation>
+    </message>
+    <message>
+        <location line="+3146"/>
+        <source>The value of attribute %1 must be of type %2, which %3 isn&apos;t.</source>
+        <translation>Hodnota vlastnosti %1 musí být typu %2. %3 není platnou hodnotou.</translation>
+    </message>
+    <message>
+        <location line="+75"/>
+        <source>The prefix %1 cannot be bound. By default, it is already bound to the namespace %2.</source>
+        <translation>Předpona %1 nemůže být spojena. Ve výchozím nastavení je již spojena se jmenným prostorem %2.</translation>
+    </message>
+    <message>
+        <location line="+312"/>
+        <source>A variable with name %1 has already been declared.</source>
+        <translation>Proměnná s názvem %1 již byla prohlášena.</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>No value is available for the external variable with name %1.</source>
+        <translation>Pro vnější proměnnou s názvem %1 není dostupná žádná hodnota.</translation>
+    </message>
+    <message>
+        <location line="+220"/>
+        <source>An argument with name %1 has already been declared. Every argument name must be unique.</source>
+        <translation>Již byl prohlášen jeden argument s názvem %1. Názvy argumentů musí být jednoznačné.</translation>
+    </message>
+    <message>
+        <location line="+412"/>
         <source>%1 is an invalid template mode name.</source>
         <translation>%1 není platným názvem pro řežim předlohy.</translation>
     </message>
@@ -8888,12 +11396,11 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation type="obsolete">Nelze provádět žádnou operaci předvedení od %1 do %2.</translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="-4204"/>
         <source>No variable by name %1 exists</source>
-        <translation>Neexistuje žádná proměnná s názvem %1</translation>
+        <translation type="obsolete">Neexistuje žádná proměnná s názvem %1</translation>
     </message>
     <message>
-        <location line="+5919"/>
+        <location filename="../src/xmlpatterns/parser/qquerytransformparser.cpp" line="+1715"/>
         <source>Namespace %1 can only be bound to %2 (and it is, in either case, pre-declared).</source>
         <translation>Jmenný prostor %1 lze spojit pouze s %2. Toto je stanoveno již dopředu.</translation>
     </message>
@@ -9416,8 +11923,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Omezení hodnoty odvozené vlastnosti %1 neodpovídá omezení hodnoty základní vlastnosti.</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Derived attribute %1 does not exists in the base definition.</source>
+        <translation type="obsolete">Odvozená vlastnost %1 neexistuje v základním vymezení.</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Derived attribute %1 does not exist in the base definition.</source>
         <translation>Odvozená vlastnost %1 neexistuje v základním vymezení.</translation>
     </message>
     <message>
@@ -9476,7 +11987,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Podprvek v oblasti chybí; možnými podprvky jsou: %1.</translation>
     </message>
     <message>
-        <location line="+127"/>
+        <location line="+143"/>
         <source>Document is not a XML schema.</source>
         <translation>Dokument není schématem XML.</translation>
     </message>
@@ -9502,7 +12013,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Cílový jmenný prostor %1 zavedeného schématu se liší od jím vymezeného cílového jmenného prostoru %2.</translation>
     </message>
     <message>
-        <location line="+237"/>
+        <location line="+243"/>
         <source>%1 element is not allowed to have the same %2 attribute value as the target namespace %3.</source>
         <translation>Prvek %1 nemůže stanovit cílový jmenný prostor %3 jako hodnotu vlastnosti %2.</translation>
     </message>
@@ -9512,7 +12023,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Ve schématu bez jmenného prostoru musí mít prvek %1 vlastnost %2.</translation>
     </message>
     <message>
-        <location line="+833"/>
+        <location line="+851"/>
         <location line="+158"/>
         <source>%1 element is not allowed inside %2 element if %3 attribute is present.</source>
         <translation>Když je přítomna vlastnost %3, nesmí se vyskytovat prvek %1 v prvku %2.</translation>
@@ -9647,8 +12158,12 @@ Zvolte, prosím, pro soubor jiný název.</translation>
     </message>
     <message>
         <location line="+131"/>
-        <source>Component with id %1 has been defined previously.</source>
+        <source>Component with ID %1 has been defined previously.</source>
         <translation>Součást s ID %1 je již stanovena.</translation>
+    </message>
+    <message>
+        <source>Component with id %1 has been defined previously.</source>
+        <translation type="obsolete">Součást s ID %1 je již stanovena.</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -9722,13 +12237,13 @@ Zvolte, prosím, pro soubor jiný název.</translation>
     </message>
     <message>
         <location line="+28"/>
-        <location line="+408"/>
+        <location line="+415"/>
         <location line="+30"/>
         <source>Type %1 of %2 element cannot be resolved.</source>
         <translation>Typ %1 prvku %2 nemůže být vyřešen.</translation>
     </message>
     <message>
-        <location line="-416"/>
+        <location line="-423"/>
         <source>Base type %1 of complex type cannot be resolved.</source>
         <translation>Základní typ %1 složitého typu nemůže být vyřešen.</translation>
     </message>
@@ -9738,7 +12253,7 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>%1 nelze mít žádný složitý základní typ, který má %2.</translation>
     </message>
     <message>
-        <location line="+279"/>
+        <location line="+286"/>
         <source>Content model of complex type %1 contains %2 element so it cannot be derived by extension from a non-empty type.</source>
         <translation>Model obsahu složitého typu %1 obsahuje prvek %2; nelze jej proto odvodit pomocí rozšíření z ne-prázdného typu.</translation>
     </message>
@@ -10213,11 +12728,20 @@ Zvolte, prosím, pro soubor jiný název.</translation>
     </message>
     <message>
         <location line="+6"/>
-        <source>Fixed value constrained not allowed if element is nillable.</source>
+        <source>Fixed value constraint not allowed if element is nillable.</source>
         <translation>Pevné omezení hodnoty není dovoleno, pokud je prvek &apos;nillable&apos;.</translation>
     </message>
     <message>
-        <location line="+32"/>
+        <location line="+230"/>
+        <source>Element %1 cannot contain other elements, as it has a fixed content.</source>
+        <translation>Prvek %1 nesmí obsahovat žádné jiné prvky, protože má pevný obsah.</translation>
+    </message>
+    <message>
+        <source>Fixed value constrained not allowed if element is nillable.</source>
+        <translation type="obsolete">Pevné omezení hodnoty není dovoleno, pokud je prvek &apos;nillable&apos;.</translation>
+    </message>
+    <message>
+        <location line="-198"/>
         <source>Specified type %1 is not validly substitutable with element type %2.</source>
         <translation>Zadaný typ %1 není platně nahraditelný typem prvku %2.</translation>
     </message>
@@ -10261,12 +12785,11 @@ Zvolte, prosím, pro soubor jiný název.</translation>
         <translation>Prvek %1 obsahuje nepřípustný textový obsah.</translation>
     </message>
     <message>
-        <location line="+18"/>
         <source>Element %1 can not contain other elements, as it has a fixed content.</source>
-        <translation>Prvek %1 nesmí obsahovat žádné podprvky, protože má pevný obsah.</translation>
+        <translation type="obsolete">Prvek %1 nesmí obsahovat žádné podprvky, protože má pevný obsah.</translation>
     </message>
     <message>
-        <location line="+43"/>
+        <location line="+61"/>
         <source>Element %1 is missing required attribute %2.</source>
         <translation>U prvkuk %1 chybí vyžadovaná vlastnost %2.</translation>
     </message>
