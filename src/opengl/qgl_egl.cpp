@@ -224,7 +224,7 @@ void QGLContext::swapBuffers(const QRegion *region) const
     if (!d->valid || !d->eglContext)
         return;
 
-    if (region != NULL)
+    if (region != 0)
         d->eglContext->swapBuffersRegion2NOK(d->eglSurfaceForDevice(), region);
     else
         d->eglContext->swapBuffers(d->eglSurfaceForDevice());
