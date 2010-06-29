@@ -534,7 +534,6 @@ bool QEglContext::swapBuffersRegion2NOK(EGLSurface surface, const QRegion *regio
     }
 
     bool ok = QEgl::eglSwapBuffersRegion2NOK(QEgl::display(), surface, count, gl_rects);
-    free (gl_rects);
 
     if (!ok)
         qWarning() << "QEglContext::swapBuffersRegion2NOK():" << QEgl::errorString();
