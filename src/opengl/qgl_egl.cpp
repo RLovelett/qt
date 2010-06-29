@@ -218,16 +218,13 @@ void QGLContext::doneCurrent()
 }
 
 
-void QGLContext::swapBuffers(const QRegion *region) const
+void QGLContext::swapBuffers() const
 {
     Q_D(const QGLContext);
     if (!d->valid || !d->eglContext)
         return;
 
-    if (region != 0)
-        d->eglContext->swapBuffersRegion2NOK(d->eglSurfaceForDevice(), region);
-    else
-        d->eglContext->swapBuffers(d->eglSurfaceForDevice());
+    d->eglContext->swapBuffers(d->eglSurfaceForDevice());
 }
 
 void QGLContextPrivate::destroyEglSurfaceForDevice()
@@ -272,6 +269,14 @@ EGLSurface QGLContextPrivate::eglSurfaceForDevice() const
     }
 
     return eglSurface;
+}
+
+void QGLContextPrivate::swapRegion(const QRegion *region)
+{
+    if (!valid || !eglContext)
+        return;
+
+    eglContext->swapBuffersRegion2NOK(eglSurfaceForDevice(), region);
 }
 
 void QGLWidget::setMouseTracking(bool enable)

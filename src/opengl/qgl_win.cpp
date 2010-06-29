@@ -1325,7 +1325,7 @@ void QGLContext::doneCurrent()
     }
 }
 
-void QGLContext::swapBuffers(const QRegion *region) const
+void QGLContext::swapBuffers() const
 {
     Q_D(const QGLContext);
     if (d->dc && d->glFormat.doubleBuffer() && !deviceIsPixmap()) {

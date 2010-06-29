@@ -494,16 +494,13 @@ void QGLWindowSurface::flush(QWidget *widget, const QRegion &rgn, const QPoint &
                 }
             }
 #endif
-            QRegion *swapRegion = &d_ptr->paintedRegion;
             if (d_ptr->paintedRegion.boundingRect() != geometry()) {
-                if (! hasPartialUpdateSupport()) {
-                    swapRegion = NULL;
-                    qWarning() << "Trying to do a partial update but it's not supported!";
-                }
+                // Emits warning if not supported. Should never happen unless
+                // setPartialUpdateSupport(true) has been called.
+                context()->d_func()->swapRegion(&d_ptr->paintedRegion);             
             } else
-                swapRegion = NULL;
+                context()->swapBuffers();
 
-            context()->swapBuffers(swapRegion);
             d_ptr->paintedRegion = QRegion();
         } else {
             glFlush();

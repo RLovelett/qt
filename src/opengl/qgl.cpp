@@ -2066,6 +2066,16 @@ void QGLContextPrivate::syncGlState()
 }
 #undef ctx
 
+#ifdef QT_NO_EGL
+void QGLContextPrivate::swapRegion(const QRegion *region)
+{
+    static bool firstWarning = true;
+    if (firstWarning) {
+        qWarning() << "::swapRegion called but not supported!";
+        firstWarning = false;
+    }
+}
+#endif
 
 /*!
     \overload

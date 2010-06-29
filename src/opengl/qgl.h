@@ -311,7 +311,7 @@ public:
     virtual void makeCurrent();
     virtual void doneCurrent();
 
-    virtual void swapBuffers(const QRegion * = NULL) const;
+    virtual void swapBuffers() const;
 
     enum BindOption {
         NoBindOption                            = 0x0000,
