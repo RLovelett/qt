@@ -95,6 +95,8 @@ private slots:
     void QTBUG5671_layoutChangedWithAllSelected();
     void QTBUG2804_layoutChangedTreeSelection();
 
+    void testDifferentModels();
+
 private:
     QAbstractItemModel *model;
     QItemSelectionModel *selection;
@@ -2351,6 +2353,32 @@ void tst_QItemSelectionModel::QTBUG2804_layoutChangedTreeSelection()
     model.sort(0); //this will provoke a relayout
 
     QCOMPARE(selModel.selectedIndexes().count(), 4);
+}
+
+void tst_QItemSelectionModel::testDifferentModels()
+{
+    QStandardItemModel model1;
+    QStandardItemModel model2;
+    QStandardItem top11("Child1"), top12("Child2"), top13("Child3");
+    QStandardItem top21("Child1"), top22("Child2"), top23("Child3");
+
+    model1.appendColumn(QList<QStandardItem*>() << &top11 << &top12 << &top13);
+    model2.appendColumn(QList<QStandardItem*>() << &top21 << &top22 << &top23);
+
+
+    QModelIndex topIndex1 = model1.index(0, 0);
+    QModelIndex bottomIndex1 = model1.index(2, 0);
+    QModelIndex topIndex2 = model2.index(0, 0);
+
+    QItemSelectionRange range(topIndex1, bottomIndex1);
+
+    QVERIFY(range.intersects(QItemSelectionRange(topIndex1, topIndex1)));
+    QVERIFY(!range.intersects(QItemSelectionRange(topIndex2, topIndex2)));
+
+    QItemSelection newSelection;
+    QItemSelection::split(range, QItemSelectionRange(topIndex2, topIndex2), &newSelection);
+
+    QVERIFY(newSelection.isEmpty());
 }
 
 
