@@ -577,6 +577,12 @@ void QGraphicsGridLayout::removeAt(int index)
     }
 }
 
+void QGraphicsGridLayout::removeItem(QGraphicsLayoutItem *item)
+{
+    Q_D(QGraphicsGridLayout);
+    int index = d->engine.indexOf(item);
+    removeAt(index);
+}
 /*!
     \reimp
 */

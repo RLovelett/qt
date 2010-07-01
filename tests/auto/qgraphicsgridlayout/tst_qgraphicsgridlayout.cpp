@@ -962,8 +962,8 @@ void tst_QGraphicsGridLayout::removeLayoutItems()
 
     populateLayout(l, 3, 2);
     QCOMPARE(l->count(), 6);
-    l->removeGraphicsItem(l->itemAt(5));
-    l->removeGraphicsItem(l->itemAt(4));
+    l->removeItem(l->itemAt(5));
+    l->removeItem(l->itemAt(4));
     QCOMPARE(l->count(), 4);
 }
 
