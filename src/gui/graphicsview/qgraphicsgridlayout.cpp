@@ -577,6 +577,12 @@ void QGraphicsGridLayout::removeAt(int index)
     }
 }
 
+/*!
+    Removes the layout item provided as argument without destroying it. 
+    Ownership of the item is transferred to the caller.
+
+    \sa addItem()
+*/
 void QGraphicsGridLayout::removeItem(QGraphicsLayoutItem *item)
 {
     Q_D(QGraphicsGridLayout);
