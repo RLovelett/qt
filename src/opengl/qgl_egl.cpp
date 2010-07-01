@@ -236,10 +236,8 @@ void QGLContextPrivate::destroyEglSurfaceForDevice()
         // paint device, so make sure this is the one we're operating on
         // (as opposed to a QGLWindowSurface use case).
         if (paintDevice && paintDevice->devType() == QInternal::Widget) {
-            QWidget *w = static_cast<QWidget*>(paintDevice);
-            if (w->metaObject()->className() == "QGLWidget") {
-                QGLWidget* wgl = static_cast<QGLWidget*>(paintDevice);
-
+            QWidget *w = static_cast<QWidget *>(paintDevice);
+            if (QGLWidget *wgl = qobject_cast<QGLWidget *>(w)) {
                 if (wgl->d_func()->eglSurfaceWindowId != wgl->winId()) {
                     qWarning("WARNING: Potential EGL surface leak! Not destroying surface.");
                     return;
