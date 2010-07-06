@@ -960,14 +960,14 @@ QList<QSslCertificate> QSslSocketBackendPrivate::STACKOFX509_to_QSslCertificates
 
 bool QSslSocketBackendPrivate::isMatchingHostname(const QString &cn, const QString &hostname)
 {
-    int wildcard = cn.indexOf(QChar('*', 0));
+    int wildcard = cn.indexOf(QLatin1Char('*'));
 
     // Check this is a wildcard cert, if not then just compare the strings
     if (wildcard < 0)
         return cn == hostname;
 
-    int firstCnDot = cn.indexOf(QChar('.', 0));
-    int secondCnDot = cn.indexOf(QChar('.', 0), firstCnDot+1);
+    int firstCnDot = cn.indexOf(QLatin1Char('.'));
+    int secondCnDot = cn.indexOf(QLatin1Char('.'), firstCnDot+1);
 
     // Check at least 3 components
     if ((-1 == secondCnDot) || (secondCnDot+1 >= cn.length()))
@@ -978,7 +978,7 @@ bool QSslSocketBackendPrivate::isMatchingHostname(const QString &cn, const QStri
         return false;
 
     // Check only one star
-    if (cn.lastIndexOf(QChar('*', 0)) != wildcard)
+    if (cn.lastIndexOf(QLatin1Char('*')) != wildcard)
         return false;
 
     // Check characters preceding * (if any) match
@@ -986,7 +986,7 @@ bool QSslSocketBackendPrivate::isMatchingHostname(const QString &cn, const QStri
         return false;
 
     // Check characters following first . match
-    if (hostname.midRef(hostname.indexOf(QChar('.', 0))) != cn.midRef(firstCnDot))
+    if (hostname.midRef(hostname.indexOf(QLatin1Char('.'))) != cn.midRef(firstCnDot))
         return false;
 
     // Ok, I guess this was a wildcard CN and the hostname matches.
