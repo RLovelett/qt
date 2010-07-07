@@ -820,6 +820,24 @@ void QPrintPreviewWidget::setVisible(bool visible)
     QWidget::setVisible(visible);
 }
 
+QPicture QPrintPreviewWidget::pagePicture (int pageNumber) const {
+    Q_D(const QPrintPreviewWidget);
+
+    // pageNumber is 1-based
+    pageNumber--;
+
+    // Out of Index
+    if (pageNumber < 0 || pageNumber >= d->pages.size())
+        return QPicture();
+
+    return QPicture(*d->pictures[pageNumber]);
+}
+
+QPicture QPrintPreviewWidget::currentPagePicture() const {
+    Q_D(const QPrintPreviewWidget);
+    return pagePicture(d->curPage);
+}
+
 /*!
     \fn void QPrintPreviewWidget::paintRequested(QPrinter *printer)
 

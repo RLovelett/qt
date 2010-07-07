@@ -44,6 +44,7 @@
 
 #include <QtGui/qwidget.h>
 #include <QtGui/qprinter.h>
+#include <QtGui/qpicture.h>
 
 #ifndef QT_NO_PRINTPREVIEWWIDGET
 
@@ -87,6 +88,9 @@ public:
 #endif
     int pageCount() const;
     void setVisible(bool visible);
+
+    QPicture pagePicture (int pageNumber) const;
+    QPicture currentPagePicture() const;
 
 public Q_SLOTS:
     void print();
