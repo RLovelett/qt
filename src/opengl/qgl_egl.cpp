@@ -51,6 +51,8 @@
 
 QT_BEGIN_NAMESPACE
 
+QEglProperties *QGLContextPrivate::extraWindowSurfaceCreationProps = NULL;
+
 void qt_eglproperties_set_glformat(QEglProperties& eglProperties, const QGLFormat& glFormat)
 {
     int redSize     = glFormat.redBufferSize();
@@ -269,6 +271,11 @@ EGLSurface QGLContextPrivate::eglSurfaceForDevice() const
     }
 
     return eglSurface;
+}
+
+void QGLContextPrivate::setExtraWindowSurfaceCreationProps(QEglProperties *props)
+{
+    extraWindowSurfaceCreationProps = props;
 }
 
 void QGLWidget::setMouseTracking(bool enable)
