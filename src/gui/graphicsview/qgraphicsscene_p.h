@@ -219,7 +219,12 @@ public:
 
     void drawItems(QPainter *painter, const QTransform *const viewTransform,
                    QRegion *exposedRegion, QWidget *widget);
-
+    static bool sortItemFrontToBack(QGraphicsItem *item1, QGraphicsItem *item2);
+    static bool sortItemBackToFront(QGraphicsItem *item1, QGraphicsItem *item2);
+    void addItemRecursive(QList<QGraphicsItem*> *, QGraphicsItem*);
+    void drawItemInit(QGraphicsItem *item, QPainter *painter, const QTransform *const viewTransform,
+                      QRegion *exposedRegion, QWidget *widget, qreal parentOpacity = qreal(1.0), 
+                      const QTransform *const effectTransform = 0);    
     void drawSubtreeRecursive(QGraphicsItem *item, QPainter *painter, const QTransform *const,
                               QRegion *exposedRegion, QWidget *widget, qreal parentOpacity = qreal(1.0),
                               const QTransform *const effectTransform = 0);

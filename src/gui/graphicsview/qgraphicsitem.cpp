@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -1374,6 +1375,8 @@ QGraphicsItem::QGraphicsItem(QGraphicsItem *parent
     d_ptr->q_ptr = this;
     setParentItem(parent);
 
+    setFlag(QGraphicsItem::ItemIsOpaque, true);
+
     if (scene && parent && parent->scene() != scene) {
         qWarning("QGraphicsItem::QGraphicsItem: ignoring scene (%p), which is"
                  " different from parent's scene (%p)",
@@ -1393,6 +1396,8 @@ QGraphicsItem::QGraphicsItem(QGraphicsItemPrivate &dd, QGraphicsItem *parent,
 {
     d_ptr->q_ptr = this;
     setParentItem(parent);
+
+    setFlag(QGraphicsItem::ItemIsOpaque, true);
 
     if (scene && parent && parent->scene() != scene) {
         qWarning("QGraphicsItem::QGraphicsItem: ignoring scene (%p), which is"
@@ -5109,7 +5114,9 @@ bool QGraphicsItem::isObscuredBy(const QGraphicsItem *item) const
 */
 QPainterPath QGraphicsItem::opaqueArea() const
 {
-    return QPainterPath();
+    QPainterPath path;
+    path.addRect(boundingRect());
+    return path;
 }
 
 /*!
