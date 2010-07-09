@@ -716,8 +716,10 @@ static void qt_set_windows_updateScrollBar(QWidget *widget)
         if (QWidget *w = static_cast<QWidget *>(o))
             qt_set_windows_updateScrollBar(w);
     }
+#ifndef QT_NO_SCROLLBAR
     if (qobject_cast<QScrollBar*>(widget))
         widget->updateGeometry();
+#endif
 }
 
 
@@ -1498,6 +1500,7 @@ extern "C" LRESULT QT_WIN_CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wPa
     }
 
     switch (message) {
+#ifndef QT_NO_SESSIONMANAGER
 #ifndef Q_WS_WINCE
     case WM_QUERYENDSESSION: {
         if (sm_smActive) // bogus message from windows
@@ -1531,6 +1534,7 @@ extern "C" LRESULT QT_WIN_CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wPa
 
         RETURN(0);
     }
+#endif
     case WM_DISPLAYCHANGE:
         if (QApplication::type() == QApplication::Tty)
             break;
@@ -2236,6 +2240,7 @@ extern "C" LRESULT QT_WIN_CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wPa
             }
             break;
 
+#ifndef QT_NO_CONTEXTMENU
             case WM_CONTEXTMENU:
             {
                 // it's not VK_APPS or Shift+F10, but a click in the NC area
@@ -2263,6 +2268,7 @@ extern "C" LRESULT QT_WIN_CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wPa
                 }
             }
             break;
+#endif
 #endif
 
         case WM_IME_STARTCOMPOSITION:
