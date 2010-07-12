@@ -1500,8 +1500,8 @@ extern "C" LRESULT QT_WIN_CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wPa
     }
 
     switch (message) {
-#ifndef QT_NO_SESSIONMANAGER
 #ifndef Q_WS_WINCE
+#ifndef QT_NO_SESSIONMANAGER
     case WM_QUERYENDSESSION: {
         if (sm_smActive) // bogus message from windows
             RETURN(true);

@@ -5996,7 +5996,7 @@ static const char * const link_xpm[] = {
 
 QPixmap QApplicationPrivate::getPixmapCursor(Qt::CursorShape cshape)
 {
-#if (defined(Q_WS_X11) || defined(Q_WS_WIN))
+#if defined(Q_WS_X11) || defined(Q_WS_WIN)
     if (!move_cursor) {
         move_cursor = new QPixmap((const char **)move_xpm);
         copy_cursor = new QPixmap((const char **)copy_xpm);
