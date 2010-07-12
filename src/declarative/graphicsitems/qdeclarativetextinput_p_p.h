@@ -62,6 +62,8 @@
 //
 // We mean it.
 
+#ifndef QT_NO_LINEEDIT
+
 QT_BEGIN_NAMESPACE
 
 class QDeclarativeTextInputPrivate : public QDeclarativePaintedItemPrivate
@@ -130,6 +132,8 @@ public:
 };
 
 QT_END_NAMESPACE
+
+#endif // QT_NO_LINEEDIT
 
 #endif
 
