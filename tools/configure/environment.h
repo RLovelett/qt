@@ -40,7 +40,9 @@
 ****************************************************************************/
 
 #include <qstring.h>
+#ifdef Q_OS_WINDOWS
 #include <qt_windows.h>
+#endif
 
 QT_BEGIN_NAMESPACE
 

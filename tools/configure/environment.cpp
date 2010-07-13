@@ -41,7 +41,9 @@
 
 #include "environment.h"
 
+#ifdef Q_OS_WINDOWS
 #include <process.h>
+#endif
 #include <iostream>
 #include <qdebug.h>
 #include <QDir>
@@ -152,7 +154,7 @@ QString Environment::detectQMakeSpec()
 Compiler Environment::detectCompiler()
 {
 #ifndef Q_OS_WIN32
-    return MSVC6; // Always generate MSVC 6.0 versions on other platforms
+    return CC_MSVC6; // Always generate MSVC 6.0 versions on other platforms
 #else
     if(detectedCompiler != CC_UNKNOWN)
         return detectedCompiler;
@@ -203,6 +205,7 @@ Compiler Environment::detectCompiler()
 */
 bool Environment::detectExecutable(const QString &executable)
 {
+#ifdef Q_OS_WINDOWS
     PROCESS_INFORMATION procInfo;
     memset(&procInfo, 0, sizeof(procInfo));
 
@@ -221,6 +224,10 @@ bool Environment::detectExecutable(const QString &executable)
         CloseHandle(procInfo.hProcess);
     }
     return couldExecute;
+#else
+#warning "I need to be implemented for non-windows"
+    return false;
+#endif
 }
 
 /*!
@@ -313,6 +320,7 @@ static QByteArray qt_create_environment(const QStringList &environment)
 */
 int Environment::execute(QStringList arguments, const QStringList &additionalEnv, const QStringList &removeEnv)
 {
+#ifdef Q_OS_WINDOWS
 #ifdef CONFIGURE_DEBUG_EXECUTE
     qDebug() << "About to Execute: " << arguments;
     qDebug() << "   " << QDir::currentPath();
@@ -406,6 +414,9 @@ int Environment::execute(QStringList arguments, const QStringList &additionalEnv
         }
     }
     return exitCode;
+#else
+#warning "I have to be implemented for non-windows"
+#endif
 }
 
 bool Environment::cpdir(const QString &srcDir, const QString &destDir)
@@ -436,7 +447,9 @@ bool Environment::cpdir(const QString &srcDir, const QString &destDir)
 #endif
 	    QFile::remove(destFile);
             intermediate = QFile::copy(entry.absoluteFilePath(), destFile);
+#ifdef Q_OS_WINDOWS
             SetFileAttributes((wchar_t*)destFile.utf16(), FILE_ATTRIBUTE_NORMAL);
+#endif
         }
 	if(!intermediate) {
 	    qDebug() << "cpdir: Failure for " << entry.fileName() << entry.isDir();

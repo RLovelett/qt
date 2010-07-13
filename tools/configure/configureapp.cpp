@@ -56,8 +56,14 @@
 #include <qhash.h>
 
 #include <iostream>
+
+#ifdef Q_OS_WINDOWS
 #include <windows.h>
 #include <conio.h>
+#else
+// bit of a hack. write a qgetchar() wrapper?
+#define _getch getchar
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -96,6 +102,8 @@ Configure::Configure(int& argc, char** argv)
     optionIndent = 4;
     descIndent   = 25;
     outputWidth  = 0;
+
+#ifdef Q_OS_WIN
     // Get console buffer output width
     CONSOLE_SCREEN_BUFFER_INFO info;
     HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -104,6 +112,10 @@ Configure::Configure(int& argc, char** argv)
     outputWidth = qMin(outputWidth, 79); // Anything wider gets unreadable
     if (outputWidth < 35) // Insanely small, just use 79
         outputWidth = 79;
+#else
+    // We don't do wrapping, let something else handle it.
+    outputWidth = 9999;
+#endif
     int i;
 
     /*
@@ -116,9 +128,14 @@ Configure::Configure(int& argc, char** argv)
 
 
     // Get the path to the executable
+    QFileInfo sourcePathInfo;
+#ifdef Q_OS_WINDOWS
     wchar_t module_name[MAX_PATH];
     GetModuleFileName(0, module_name, sizeof(module_name) / sizeof(wchar_t));
-    QFileInfo sourcePathInfo = QString::fromWCharArray(module_name);
+    sourcePathInfo = QString::fromWCharArray(module_name);
+#else
+    sourcePathInfo = QString::fromLatin1(argv[0]);
+#endif
     sourcePath = sourcePathInfo.absolutePath();
     sourceDir = sourcePathInfo.dir();
     buildPath = QDir::currentPath();
@@ -3156,7 +3173,9 @@ void Configure::generateConfigfiles()
         tmpFile.flush();
 
         // Replace old qconfig.h with new one
+#ifdef Q_OS_WINDOWS
         ::SetFileAttributes((wchar_t*)outName.utf16(), FILE_ATTRIBUTE_NORMAL);
+#endif
         QFile::remove(outName);
         tmpFile.copy(outName);
         tmpFile.close();
@@ -3192,7 +3211,9 @@ void Configure::generateConfigfiles()
     }
 
     outName = defSpec + "/qmake.conf";
+#ifdef Q_OS_WINDOWS
     ::SetFileAttributes((wchar_t*)outName.utf16(), FILE_ATTRIBUTE_NORMAL);
+#endif
     QFile qmakeConfFile(outName);
     if (qmakeConfFile.open(QFile::Append | QFile::WriteOnly | QFile::Text)) {
         QTextStream qmakeConfStream;
@@ -3267,7 +3288,9 @@ void Configure::generateConfigfiles()
         tmpFile2.flush();
 
         // Replace old qconfig.cpp with new one
+#ifdef Q_OS_WINDOWS
         ::SetFileAttributes((wchar_t*)outName.utf16(), FILE_ATTRIBUTE_NORMAL);
+#endif
         QFile::remove(outName);
         tmpFile2.copy(outName);
         tmpFile2.close();
@@ -3283,7 +3306,9 @@ void Configure::generateConfigfiles()
         tmpFile3.flush();
 
         outName = buildPath + "/src/corelib/global/qconfig_eval.cpp";
+#ifdef Q_OS_WINDOWS
         ::SetFileAttributes((wchar_t*)outName.utf16(), FILE_ATTRIBUTE_NORMAL);
+#endif
         QFile::remove(outName);
 
         if (dictionary["EDITION"] == "Evaluation" || qmakeDefines.contains("QT_EVAL"))
@@ -3901,14 +3926,19 @@ bool Configure::showLicense(QString orgLicenseFile)
                 else
                     licenseFile = orgLicenseFile + "/LICENSE.LGPL";
             }
+
             // Get console line height, to fill the screen properly
             int i = 0, screenHeight = 25; // default
+#ifdef Q_OS_WINDOWS
             CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
             HANDLE stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
             if (GetConsoleScreenBufferInfo(stdOut, &consoleInfo))
                 screenHeight = consoleInfo.srWindow.Bottom
                              - consoleInfo.srWindow.Top
                              - 1; // Some overlap for context
+#else
+#warning "I need to figure out how to get the screen height, probably"
+#endif
 
             // Prompt the license content to the user
             QFile file(licenseFile);
