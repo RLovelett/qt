@@ -1730,6 +1730,10 @@ void tst_QAbstractItemView::QTBUG6407_extendedSelection()
     QCOMPARE(view.currentIndex(), index44);
     QCOMPARE(view.selectedItems().count(), 6); //49 .. 44;
 
+    QModelIndex index43 = view.model()->index(43,0);
+    QTest::keyClick(view.viewport(), Qt::Key_Up, Qt::ShiftModifier);
+    QCOMPARE(view.currentIndex(), index43);
+    QCOMPARE(view.selectedItems().count(), 7); //49 .. 43;
 }
 
 void tst_QAbstractItemView::QTBUG6753_selectOnSelection()
