@@ -775,19 +775,8 @@ QGridLayoutItem *QGridLayoutEngine::itemAt(int index) const
     return q_items.at(index);
 }
 
-int QGridLayoutEngine::indexOf(QGridLayoutItem *item) const
-{
-    Q_ASSERT(item != NULL);
-    for(int i = 0; i < q_items.size(); ++i) {
-        if(item == q_items.at(i))  
-            return i;
-    }
-    return -1;
-}
-
 int QGridLayoutEngine::indexOf(QGraphicsLayoutItem *item) const
 {
-    Q_ASSERT(item != NULL);
     for(int i = 0; i < q_items.size(); ++i) {
         if(item == q_items.at(i)->layoutItem()) 
             return i;
