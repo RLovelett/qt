@@ -223,6 +223,8 @@ private slots:
     void task250754_fontChange();
     void task200665_itemEntered();
     void task257481_emptyEditor();
+    void mouseClickSelection_data();
+    void mouseClickSelection();
     void shiftArrowSelectionAfterScrolling();
     void shiftSelectionAfterRubberbandSelection();
     void ctrlRubberbandSelection();
@@ -331,6 +333,8 @@ tst_QAbstractItemView::~tst_QAbstractItemView()
 
 void tst_QAbstractItemView::initTestCase()
 {
+    qRegisterMetaType<QModelIndexList>("QModelIndexList");
+
 #ifdef Q_OS_WINCE_WM
     qApp->setAutoMaximizeThreshold(-1);
 #endif
@@ -1281,6 +1285,254 @@ void tst_QAbstractItemView::task257481_emptyEditor()
     lineEditors = qFindChildren<QLineEdit *>(treeView.viewport());
     QCOMPARE(lineEditors.count(), 1);
     QVERIFY(!lineEditors.first()->size().isEmpty());
+}
+
+// SelectionTestView provides a QListWidget which is used in the following selection-related unit tests.
+
+class SelectionTestView : public QListWidget {
+
+    Q_OBJECT
+
+public:
+
+    SelectionTestView(int numberOfItems) : QListWidget() {
+        for(int i = 0; i < numberOfItems; ++i)
+            addItem(QString::number(i));
+
+        QFont font = this->font();
+        font.setPixelSize(10);
+            setFont(font);
+    }
+
+Q_SIGNALS:
+    void testSelectionChanged(const QModelIndexList& selected, const QModelIndexList& deselected);
+    void testCurrentChanged(const QModelIndex& current, const QModelIndex& previous);
+
+protected Q_SLOTS:
+
+    // To verify that the following protected slots get called when the selection or the current index changes
+    // (which might be important for classed which inherit QAbstractItemView), we emit signals which we can watch
+    // with a QSignalSpy in the unit tests.
+
+    virtual void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) {
+        QListWidget::selectionChanged(selected, deselected);
+        emit testSelectionChanged(selected.indexes(), deselected.indexes());
+    }
+
+    virtual void currentChanged(const QModelIndex &current, const QModelIndex &previous) {
+        QListWidget::currentChanged(current, previous);
+        emit testCurrentChanged(current, previous);
+    }
+};
+
+Q_DECLARE_METATYPE(QList<Qt::KeyboardModifiers>);
+Q_DECLARE_METATYPE(QAbstractItemView::SelectionMode);
+Q_DECLARE_METATYPE(QModelIndex);
+Q_DECLARE_METATYPE(QModelIndexList);
+
+void tst_QAbstractItemView::mouseClickSelection_data()
+{
+    // The SelectionMode.
+    QTest::addColumn<QAbstractItemView::SelectionMode> ("mode");
+    // This list contains the numbers of the items to be clicked.
+    QTest::addColumn<QList<int> > ("clickedItems");
+    // This list contains the corresponding KeyboardModifiers.
+    QTest::addColumn<QList<Qt::KeyboardModifiers> > ("modifiers");
+    // The selections (in text form) which are expected after each click.
+    QTest::addColumn<QStringList>("expectedSelections");
+
+    QList<int> itemList;
+    QList<Qt::KeyboardModifiers> modifierList;
+    QStringList expected;
+
+    // The first test: some clicks without KeyboardModifiers.
+    itemList.clear();
+    itemList << 0 << 1 << 3 << 50 << 99 << 1 << 50;
+
+    modifierList.clear();
+    modifierList << Qt::NoModifier << Qt::NoModifier << Qt::NoModifier << Qt::NoModifier << Qt::NoModifier << Qt::NoModifier << Qt::NoModifier;
+
+    expected.clear();
+    expected << "0" << "1" << "3" << "50" << "99" << "1" << "50";
+    QTest::newRow("No modifiers, SingleSelection") << QAbstractItemView::SingleSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "0" << "1" << "3" << "50" << "99" << "1" << "50";
+    QTest::newRow("No modifiers, ContiguousSelection") << QAbstractItemView::ContiguousSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "0" << "1" << "3" << "50" << "99" << "1" << "50";
+    QTest::newRow("No modifiers, ExtendedSelection") << QAbstractItemView::ExtendedSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "0" << "0,1" << "0,1,3" << "0,1,3,50" << "0,1,3,50,99" << "0,3,50,99" << "0,3,99";
+    QTest::newRow("No modifiers, MultiSelection") << QAbstractItemView::MultiSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "" << "" << "" << "" << "" << "" << "";
+    QTest::newRow("No modifiers, NoSelection") << QAbstractItemView::NoSelection << itemList << modifierList << expected;
+
+    // Test the behaviour when Shift is pressed during the mouse click. In ContiguousSelection and ExtendedSelection,
+    // all items between the last item which was clicked without modifiers and the Shift-clicked item are selected.
+    // The next click without modifiers (no matter if the clicked item is inside the selection or not) will clear
+    // the previous selection.
+    itemList.clear();
+    itemList << 5 << 6 << 7 << 3 << 4 << 8 << 2 << 5;
+
+    modifierList.clear();
+    modifierList << Qt::NoModifier << Qt::ShiftModifier << Qt::ShiftModifier << Qt::ShiftModifier << Qt::ShiftModifier << Qt::NoModifier << Qt::ShiftModifier << Qt::NoModifier;
+
+    expected.clear();
+    expected << "5" << "6" << "7" << "3" << "4" << "8" << "2" << "5";
+    QTest::newRow("Test ShiftModifier, SingleSelection") << QAbstractItemView::SingleSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "5" << "5,6" << "5,6,7" << "3,4,5" << "4,5" << "8" << "2,3,4,5,6,7,8" << "5";
+    QTest::newRow("Test ShiftModifier, ContiguousSelection") << QAbstractItemView::ContiguousSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "5" << "5,6" << "5,6,7" << "3,4,5" << "4,5" << "8" << "2,3,4,5,6,7,8" << "5";
+    QTest::newRow("Test ShiftModifier, ExtendedSelection") << QAbstractItemView::ExtendedSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "5" << "5,6" << "5,6,7" << "3,5,6,7" << "3,4,5,6,7" << "3,4,5,6,7,8" << "2,3,4,5,6,7,8" << "2,3,4,6,7,8";
+    QTest::newRow("Test ShiftModifier, MultiSelection") << QAbstractItemView::MultiSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "" << "" << "" << "" << "" << "" << "" << "";
+    QTest::newRow("Test ShiftModifier, NoSelection") << QAbstractItemView::NoSelection << itemList << modifierList << expected;
+
+    // Test the behaviour when Control is pressed during the mouse click. In ContiguousSelection, Control is essentially
+    // equivalent to Shift. In ExtendedSelection, Control-clicking an item toggles its selection state.
+    itemList.clear();
+    itemList << 5 << 6 << 5 << 3 << 7 << 3 << 1;
+
+    modifierList.clear();
+    modifierList << Qt::NoModifier << Qt::ControlModifier << Qt::ControlModifier << Qt::ControlModifier << Qt::ControlModifier << Qt::ControlModifier << Qt::NoModifier;
+
+    expected.clear();
+    expected << "5" << "6" << "5" << "3" << "7" << "3" << "1";
+    QTest::newRow("Test ControlModifier, SingleSelection") << QAbstractItemView::SingleSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "5" << "5,6" << "5" << "3,4,5" << "5,6,7" << "3,4,5" << "1";
+    QTest::newRow("Test ControlModifier, ContiguousSelection") << QAbstractItemView::ContiguousSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "5" << "5,6" << "6" << "3,6" << "3,6,7" << "6,7" << "1";
+    QTest::newRow("Test ControlModifier, ExtendedSelection") << QAbstractItemView::ExtendedSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "5" << "5,6" << "6" << "3,6" << "3,6,7" << "6,7" << "1,6,7";
+    QTest::newRow("Test ControlModifier, MultiSelection") << QAbstractItemView::MultiSelection << itemList << modifierList << expected;
+
+    expected.clear();
+    expected << "" << "" << "" << "" << "" << "" << "";
+    QTest::newRow("Test ControlModifier, NoSelection") << QAbstractItemView::NoSelection << itemList << modifierList << expected;
+}
+
+void tst_QAbstractItemView::mouseClickSelection()
+{
+    QFETCH(QAbstractItemView::SelectionMode, mode);
+    QFETCH(QList<int>, clickedItems);
+    QFETCH(QList<Qt::KeyboardModifiers>, modifiers);
+    QFETCH(QStringList, expectedSelections);
+
+    // All test lists should have the same length
+    Q_ASSERT(clickedItems.length() == modifiers.length());
+    Q_ASSERT(clickedItems.length() == expectedSelections.length());
+
+    SelectionTestView view(100);
+    view.setSelectionMode(mode);
+    view.resize(200,240);
+
+    view.show();
+    QApplication::setActiveWindow(&view);
+    QTest::qWaitForWindowShown(&view);
+    QTRY_COMPARE(static_cast<QWidget *>(&view), QApplication::activeWindow());
+
+    QSignalSpy spySelectionChanged(&view, SIGNAL(testSelectionChanged(const QModelIndexList&, const QModelIndexList&)));
+    QSignalSpy spyCurrentChanged(&view, SIGNAL(testCurrentChanged(const QModelIndex&, const QModelIndex&)));
+
+    QModelIndex oldCurrentIndex = view.currentIndex();
+    QSet<QModelIndex> oldSelectionAsSet;
+
+    while(!clickedItems.isEmpty()) {
+        int item = clickedItems.takeFirst();
+
+        // Click the first item in the list.
+
+        QModelIndex clickedIndex = view.model()->index(item, 0);
+        view.scrollTo(clickedIndex);
+        QPoint pos = view.visualRect(clickedIndex).center();
+        QTest::mouseClick(view.viewport(), Qt::LeftButton, modifiers.takeFirst(), pos);
+
+        // Check that the current index is correct and that the view's protected slot
+        // currentChanged(const QModelIndex &current, const QModelIndex &previous) has been called correctly
+
+        QCOMPARE(view.currentIndex(), clickedIndex);
+
+        if(oldCurrentIndex != clickedIndex) {
+            QCOMPARE(spyCurrentChanged.count(), 1);
+            QList<QVariant> arguments = spyCurrentChanged.takeFirst();
+            QCOMPARE(qvariant_cast<QModelIndex>(arguments.at(0)), clickedIndex);
+            QCOMPARE(qvariant_cast<QModelIndex>(arguments.at(1)), oldCurrentIndex);
+            oldCurrentIndex = clickedIndex;
+        }
+        else {
+            QCOMPARE(spyCurrentChanged.count(), 0);
+        }
+
+        // Determine the selection and transform it to a QString
+        // which contains a comma-separated list of the selected numbers.
+
+        QModelIndexList selection = view.selectionModel()->selectedIndexes();
+        QList<int> selectionAsIntList;
+
+        foreach(const QModelIndex& index, selection) {
+            selectionAsIntList<< index.row();
+        }
+
+        qSort(selectionAsIntList.begin(), selectionAsIntList.end());
+        QStringList selectionAsStringList;
+
+        foreach(int i, selectionAsIntList) {
+            selectionAsStringList << QString::number(i);
+        }
+
+        QString selectionAsOneString = selectionAsStringList.join(",");
+
+        // Compare with the expected result
+
+        QCOMPARE(selectionAsOneString, expectedSelections.takeFirst());
+
+        // Now check that the view's protected slot
+        // selectionChanged(const QItemSelection& selected, const QItemSelection& deselected) has been called correctly
+
+        QSet<QModelIndex> selectionAsSet = QSet<QModelIndex>::fromList(selection);
+
+        if(mode != QAbstractItemView::NoSelection) {
+            QCOMPARE(spySelectionChanged.count(), 1);
+            QList<QVariant> arguments = spySelectionChanged.takeFirst();
+
+            QSet<QModelIndex> selectedAsSet = QSet<QModelIndex>::fromList(arguments.at(0).value<QModelIndexList>());
+            QSet<QModelIndex> deselectedAsSet = QSet<QModelIndex>::fromList(arguments.at(1).value<QModelIndexList>());
+
+            QVERIFY(oldSelectionAsSet.contains(deselectedAsSet));
+            QVERIFY(selectionAsSet.contains(selectedAsSet));
+
+            QVERIFY((oldSelectionAsSet & selectedAsSet).isEmpty());
+            QVERIFY((selectionAsSet & deselectedAsSet).isEmpty());
+            QVERIFY((selectedAsSet & deselectedAsSet).isEmpty());
+
+            QCOMPARE(oldSelectionAsSet + selectedAsSet - deselectedAsSet, selectionAsSet);
+        }
+        else {
+            QCOMPARE(spySelectionChanged.count(), 0);
+        }
+
+        oldSelectionAsSet = selectionAsSet;
+    }
 }
 
 void tst_QAbstractItemView::shiftArrowSelectionAfterScrolling()
