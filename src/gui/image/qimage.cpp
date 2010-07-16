@@ -2023,6 +2023,15 @@ void QImage::fill(uint pixel)
 }
 
 /*!
+    \overload
+    \since 4.8
+*/
+void QImage::fill(const QColor &color)
+{
+    fill(color.rgb());
+}
+
+/*!
     Inverts all pixel values in the image.
 
     The given invert \a mode only have a meaning when the image's

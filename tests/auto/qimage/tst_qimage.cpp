@@ -101,6 +101,8 @@ private slots:
 
     void copy();
 
+    void fill();
+
     void setPixel_data();
     void setPixel();
 
@@ -991,6 +993,21 @@ void tst_QImage::copy()
         QImage img(16,16,QImage::Format_ARGB32);
         img.copy(QRect(1000,1,1,1));
     }
+}
+
+void tst_QImage::fill()
+{
+    const int w = 13;
+    const int h = 15;
+    QColor red = Qt::red;
+
+    QImage img(w, h, QImage::Format(QImage::Format_ARGB8565_Premultiplied));
+    QImage img2(w, h, QImage::Format(QImage::Format_ARGB8565_Premultiplied));
+
+    img.fill(red.rgb());
+    img2.fill(red);
+
+    QCOMPARE(img, img2);
 }
 
 void tst_QImage::setPixel_data()
