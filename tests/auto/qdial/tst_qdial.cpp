@@ -54,6 +54,7 @@ private slots:
     void getSetCheck();
     void valueChanged();
     void sliderMoved();
+    void wrappingCheck();
 };
 
 // Testing get/set functions
@@ -141,6 +142,72 @@ void tst_QDial::sliderMoved()
     qApp->sendEvent(&dial, &releaseevent);
     QCOMPARE( valuespy.count(), 1); // valuechanged signal should be called at this point
 
+}
+
+void tst_QDial::wrappingCheck()
+{
+    //This tests if dial will wrap past the maximum value back to the minimum
+    //and vice versa when changing the value with a keypress
+    QDial dial;
+    dial.setMinimum(0);
+    dial.setMaximum(100);
+    dial.setSingleStep(1);
+    dial.setWrapping(true);
+    dial.setValue(99);
+    dial.show();
+
+    { //set value to maximum but do not wrap
+        QKeyEvent keyPress(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyPress);
+        QKeyEvent keyRelease(QEvent::KeyRelease, Qt::Key_Up, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyRelease);
+
+        QCOMPARE( dial.value(), 100);
+    }
+
+    { //step up once more and wrap clockwise to minimum + 1
+        QKeyEvent keyPress(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyPress);
+        QKeyEvent keyRelease(QEvent::KeyRelease, Qt::Key_Up, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyRelease);
+
+        QCOMPARE( dial.value(), 1);
+    }
+
+    { //step down once, and wrap anti-clockwise to minimum, then again to maximum - 1
+        QKeyEvent keyPress(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyPress);
+        QKeyEvent keyRelease(QEvent::KeyRelease, Qt::Key_Down, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyRelease);
+
+        QCOMPARE( dial.value(), 0);
+
+        QKeyEvent keyPress2(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyPress2);
+        QKeyEvent keyRelease2(QEvent::KeyRelease, Qt::Key_Down, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyRelease2);
+
+        QCOMPARE( dial.value(), 99);
+    }
+
+    { //when wrapping property is false no wrapping will occur
+        dial.setWrapping(false);
+        dial.setValue(100);
+        QKeyEvent keyPress(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyPress);
+        QKeyEvent keyRelease(QEvent::KeyRelease, Qt::Key_Up, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyRelease);
+
+        QCOMPARE( dial.value(), 100);
+
+        dial.setValue(0);
+        QKeyEvent keyPress2(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyPress2);
+        QKeyEvent keyRelease2(QEvent::KeyRelease, Qt::Key_Down, Qt::NoModifier);
+        qApp->sendEvent(&dial, &keyRelease2);
+
+        QCOMPARE( dial.value(), 0);
+    }
 }
 
 QTEST_MAIN(tst_QDial)
