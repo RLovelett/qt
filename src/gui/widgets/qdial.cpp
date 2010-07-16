@@ -83,6 +83,7 @@ public:
     int valueFromPoint(const QPoint &) const;
     double angle(const QPoint &, const QPoint &) const;
     void init();
+    virtual int bound(int val) const;
 };
 
 void QDialPrivate::init()
@@ -95,6 +96,25 @@ void QDialPrivate::init()
     QObject::connect(q, SIGNAL(sliderMoved(int)), q, SIGNAL(dialMoved(int)));
     QObject::connect(q, SIGNAL(sliderReleased()), q, SIGNAL(dialReleased()));
 #endif
+}
+
+int QDialPrivate::bound(int val) const
+{
+    if(wrapping)
+    {
+        if(val > maximum)
+        {
+            return minimum + (val - maximum);
+        }
+        else if(val < minimum)
+        {
+            return maximum + (val - minimum);
+        }
+        else
+            return val;
+    }
+    else
+        return QAbstractSliderPrivate::bound(val);
 }
 
 /*!
