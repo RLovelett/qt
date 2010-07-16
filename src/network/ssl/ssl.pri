@@ -33,4 +33,7 @@ symbian {
 
     # Add optional SSL libs
     LIBS_PRIVATE += $$OPENSSL_LIBS
+
+    # OpenSSL 1.0.0 support on windows
+    win32:contains(QT_CONFIG, openssl-linked):LIBS += -lcrypt32 -lgdi32
 }
