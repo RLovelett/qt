@@ -58,8 +58,10 @@
 #ifndef QT_NO_SYSTEMSEMAPHORE
 
 #include "qsharedmemory_p.h"
-#ifndef Q_OS_WINCE
+#ifndef Q_OS_WIN
 #   include <sys/types.h>
+#else
+#   include <windows.h>
 #endif
 
 #ifdef Q_OS_SYMBIAN
