@@ -100,21 +100,16 @@ void QDialPrivate::init()
 
 int QDialPrivate::bound(int val) const
 {
-    if(wrapping)
-    {
-        if(val > maximum)
-        {
+    if (wrapping) {
+        if (val > maximum)
             return minimum + (val - maximum);
-        }
-        else if(val < minimum)
-        {
+        else if (val < minimum)
             return maximum + (val - minimum);
-        }
         else
             return val;
-    }
-    else
+    } else {
         return QAbstractSliderPrivate::bound(val);
+    }
 }
 
 /*!

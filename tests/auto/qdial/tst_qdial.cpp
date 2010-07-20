@@ -157,55 +157,32 @@ void tst_QDial::wrappingCheck()
     dial.show();
 
     { //set value to maximum but do not wrap
-        QKeyEvent keyPress(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyPress);
-        QKeyEvent keyRelease(QEvent::KeyRelease, Qt::Key_Up, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyRelease);
-
+        QTest::keyPress(&dial, Qt::Key_Up);
         QCOMPARE( dial.value(), 100);
     }
 
     { //step up once more and wrap clockwise to minimum + 1
-        QKeyEvent keyPress(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyPress);
-        QKeyEvent keyRelease(QEvent::KeyRelease, Qt::Key_Up, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyRelease);
-
+        QTest::keyPress(&dial, Qt::Key_Up);
         QCOMPARE( dial.value(), 1);
     }
 
     { //step down once, and wrap anti-clockwise to minimum, then again to maximum - 1
-        QKeyEvent keyPress(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyPress);
-        QKeyEvent keyRelease(QEvent::KeyRelease, Qt::Key_Down, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyRelease);
-
+        QTest::keyPress(&dial, Qt::Key_Down);
         QCOMPARE( dial.value(), 0);
 
-        QKeyEvent keyPress2(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyPress2);
-        QKeyEvent keyRelease2(QEvent::KeyRelease, Qt::Key_Down, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyRelease2);
-
+        QTest::keyPress(&dial, Qt::Key_Down);
         QCOMPARE( dial.value(), 99);
     }
 
     { //when wrapping property is false no wrapping will occur
         dial.setWrapping(false);
         dial.setValue(100);
-        QKeyEvent keyPress(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyPress);
-        QKeyEvent keyRelease(QEvent::KeyRelease, Qt::Key_Up, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyRelease);
 
+        QTest::keyPress(&dial, Qt::Key_Up);
         QCOMPARE( dial.value(), 100);
 
         dial.setValue(0);
-        QKeyEvent keyPress2(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyPress2);
-        QKeyEvent keyRelease2(QEvent::KeyRelease, Qt::Key_Down, Qt::NoModifier);
-        qApp->sendEvent(&dial, &keyRelease2);
-
+        QTest::keyPress(&dial, Qt::Key_Down);
         QCOMPARE( dial.value(), 0);
     }
 }
