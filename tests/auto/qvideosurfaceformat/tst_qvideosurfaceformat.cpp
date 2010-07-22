@@ -62,6 +62,7 @@ private slots:
     void construct();
     void frameSize_data();
     void frameSize();
+    void isValid();
     void viewport_data();
     void viewport();
     void scanLineDirection_data();
@@ -192,6 +193,13 @@ void tst_QVideoSurfaceFormat::frameSize()
     QCOMPARE(format.property("frameWidth").toInt(), newSize.width());
     QCOMPARE(format.frameHeight(), newSize.height());
     QCOMPARE(format.property("frameHeight").toInt(), newSize.height());
+}
+
+void tst_QVideoSurfaceFormat::isValid()
+{
+    // QTBUG-12337
+    QVideoSurfaceFormat format(QSize(200, 200), QVideoFrame::Format_RGB32);
+    QVERIFY(format.isValid());
 }
 
 void tst_QVideoSurfaceFormat::viewport_data()
