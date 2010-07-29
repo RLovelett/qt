@@ -4,151 +4,114 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../tools/qtconfig/mainwindow.cpp" line="+204"/>
         <source>Desktop Settings (Default)</source>
         <translation>Налаштування стільниці (Типово)</translation>
     </message>
     <message>
-        <location line="+5"/>
         <source>Choose style and palette based on your desktop settings.</source>
         <translation>Оберіть стиль та палітру відповідно до ваших налаштувань стільниці.</translation>
     </message>
     <message>
-        <location line="+144"/>
         <source>On The Spot</source>
         <translation>У вікні документу</translation>
     </message>
     <message>
-        <location line="+33"/>
-        <location line="+1"/>
-        <location line="+40"/>
-        <location line="+1"/>
         <source>Auto (default)</source>
         <translation>Автоматично (типово)</translation>
     </message>
     <message>
-        <location line="-40"/>
         <source>Choose audio output automatically.</source>
         <translation>Вибрати аудіо вихід автоматично.</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <location line="+1"/>
         <source>aRts</source>
         <translation>aRts</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Experimental aRts support for GStreamer.</source>
         <translation>Експериментальна підтримка aRts для GStreamer.</translation>
     </message>
     <message>
-        <location line="+33"/>
         <source>Phonon GStreamer backend not available.</source>
         <translation>Підтримка GStreamer для Phonon не доступна.</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Choose render method automatically</source>
         <translation>Обрати метод вімальовки автоматично</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <location line="+1"/>
         <source>X11</source>
         <translation>X11</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Use X11 Overlays</source>
         <translation>Використовувати оверлеї X11</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <location line="+1"/>
         <source>OpenGL</source>
         <translation>OpenGL</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Use OpenGL if available</source>
         <translation>Використовувати OpenGL, якщо доступно</translation>
     </message>
     <message>
-        <location line="+2"/>
-        <location line="+1"/>
         <source>Software</source>
         <translation>Програмно</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>Use simple software rendering</source>
         <translation>Використовувати простий програмний рендеринг</translation>
     </message>
     <message>
-        <location line="+27"/>
         <source>No changes to be saved.</source>
         <translation>Немає змін для збереження.</translation>
     </message>
     <message>
-        <location line="+4"/>
         <source>Saving changes...</source>
         <translation>Збереження змін...</translation>
     </message>
     <message>
-        <location line="+48"/>
         <source>Over The Spot</source>
         <translation>Над вікном документу</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Off The Spot</source>
         <translation>В рядку стану</translation>
     </message>
     <message>
-        <location line="+2"/>
         <source>Root</source>
         <translation>В додатковому вікні</translation>
     </message>
     <message>
-        <location line="+466"/>
         <source>Select a Directory</source>
         <translation>Оберіть теку</translation>
     </message>
     <message>
-        <location line="+17"/>
         <source>&lt;h3&gt;%1&lt;/h3&gt;&lt;br/&gt;Version %2&lt;br/&gt;&lt;br/&gt;Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).</source>
         <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;br/&gt;Version %2&lt;br/&gt;&lt;br/&gt;Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).</translation>
     </message>
     <message>
-        <location line="+3"/>
-        <location line="+1"/>
-        <location line="+8"/>
         <source>Qt Configuration</source>
         <translation>Конфігурація Qt</translation>
     </message>
     <message>
-        <location line="+22"/>
         <source>Save Changes</source>
         <translation>Зберегти зміни</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>Save changes to settings?</source>
         <translation>Зберегти зміни до налаштувань?</translation>
     </message>
     <message>
-        <location line="+1"/>
         <source>&amp;Yes</source>
         <translation>&amp;Так</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>&amp;No</source>
         <translation>&amp;Ні</translation>
     </message>
     <message>
-        <location line="+0"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Скасувати</translation>
     </message>
@@ -156,347 +119,278 @@
 <context>
     <name>MainWindowBase</name>
     <message>
-        <location filename="../tools/qtconfig/mainwindowbase.ui"/>
         <source>Qt Configuration</source>
         <translation>Конфігурація Qt</translation>
     </message>
     <message>
-        <location/>
         <source>Appearance</source>
         <translation>Вигляд</translation>
     </message>
     <message>
-        <location/>
         <source>GUI Style</source>
         <translation>Стиль GUI</translation>
     </message>
     <message>
-        <location/>
         <source>Select GUI &amp;Style:</source>
         <translation>Оберіть &amp;стиль GUI:</translation>
     </message>
     <message>
-        <location/>
         <source>Preview</source>
         <translation>Попередній перегляд</translation>
     </message>
     <message>
-        <location/>
         <source>Select &amp;Palette:</source>
         <translation>Виберіть &amp;палітру:</translation>
     </message>
     <message>
-        <location/>
         <source>Active Palette</source>
         <translation>Активна палітра</translation>
     </message>
     <message>
-        <location/>
         <source>Inactive Palette</source>
         <translation>Неактивна палітра</translation>
     </message>
     <message>
-        <location/>
         <source>Disabled Palette</source>
         <translation>Вимкнена палітра</translation>
     </message>
     <message>
-        <location/>
         <source>Build Palette</source>
         <translation>Створити палітру</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;3-D Effects:</source>
         <translation>&amp;3-D ефекти:</translation>
     </message>
     <message>
-        <location/>
         <source>Window Back&amp;ground:</source>
         <translation>Фон &amp;вікна:</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;Tune Palette...</source>
         <translation>&amp;Налаштувати палітру...</translation>
     </message>
     <message>
-        <location/>
         <source>Please use the KDE Control Center to set the palette.</source>
         <translation>Будь-ласка, використовуйте Системні параметри KDE, щоб встановити палітру.</translation>
     </message>
     <message>
-        <location/>
         <source>Fonts</source>
         <translation>Шрифти</translation>
     </message>
     <message>
-        <location/>
         <source>Default Font</source>
         <translation>Типовий шрифт</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;Style:</source>
         <translation>&amp;Стиль:</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;Point Size:</source>
         <translation>&amp;Розмір:</translation>
     </message>
     <message>
-        <location/>
         <source>F&amp;amily:</source>
         <translation>&amp;Шрифт:</translation>
     </message>
     <message>
-        <location/>
         <source>Sample Text</source>
         <translation>Зразок тексту</translation>
     </message>
     <message>
-        <location/>
         <source>Font Substitution</source>
         <translation>Заміна шрифтів</translation>
     </message>
     <message>
-        <location/>
         <source>S&amp;elect or Enter a Family:</source>
         <translation>&amp;Виберіть чи введіть шрифт:</translation>
     </message>
     <message>
-        <location/>
         <source>Current Substitutions:</source>
         <translation>Поточні заміни:</translation>
     </message>
     <message>
-        <location/>
         <source>Up</source>
         <translation>Вгору</translation>
     </message>
     <message>
-        <location/>
         <source>Down</source>
         <translation>Вниз</translation>
     </message>
     <message>
-        <location/>
         <source>Remove</source>
         <translation>Видалити</translation>
     </message>
     <message>
-        <location/>
         <source>Select s&amp;ubstitute Family:</source>
         <translation>&amp;Оберіть шрифт, яким заміняти:</translation>
     </message>
     <message>
-        <location/>
         <source>Add</source>
         <translation>Додати</translation>
     </message>
     <message>
-        <location/>
         <source>Interface</source>
         <translation>Інтерфейс</translation>
     </message>
     <message>
-        <location/>
         <source>Feel Settings</source>
         <translation>Поведінка миші</translation>
     </message>
     <message>
-        <location/>
         <source> ms</source>
         <translation> мс</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;Double Click Interval:</source>
         <translation>&amp;Інтервал подвійного клацання:</translation>
     </message>
     <message>
-        <location/>
         <source>No blinking</source>
         <translation>Без блимання</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;Cursor Flash Time:</source>
         <translation>&amp;Час блимання курсору:</translation>
     </message>
     <message>
-        <location/>
         <source> lines</source>
         <translation> рядків</translation>
     </message>
     <message>
-        <location/>
         <source>Wheel &amp;Scroll Lines:</source>
         <translation>&amp;Коліщатко прокручує:</translation>
     </message>
     <message>
-        <location/>
         <source>Resolve symlinks in URLs</source>
         <translation>Вирішувати символьні посилання в URL</translation>
     </message>
     <message>
-        <location/>
         <source>GUI Effects</source>
         <translation>Ефекти GUI</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;Enable</source>
         <translation>&amp;Увімкнути</translation>
     </message>
     <message>
-        <location/>
         <source>Alt+E</source>
         <translation></translation>
     </message>
     <message>
-        <location/>
         <source>&amp;Menu Effect:</source>
         <translation>Ефект &amp;меню:</translation>
     </message>
     <message>
-        <location/>
         <source>C&amp;omboBox Effect:</source>
         <translation>Ефект випадаючого &amp;списку:</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;ToolTip Effect:</source>
         <translation>Ефект &amp;підказки:</translation>
     </message>
     <message>
-        <location/>
         <source>Tool&amp;Box Effect:</source>
         <translation>Ефект панелі &amp;інструментів:</translation>
     </message>
     <message>
-        <location/>
         <source>Disable</source>
         <translation>Вимкнуто</translation>
     </message>
     <message>
-        <location/>
         <source>Animate</source>
         <translation>Анімація</translation>
     </message>
     <message>
-        <location/>
         <source>Fade</source>
         <translation>Згасання</translation>
     </message>
     <message>
-        <location/>
         <source>Global Strut</source>
         <translation>Мінімальний розмір віджетів</translation>
     </message>
     <message>
-        <location/>
         <source>Minimum &amp;Width:</source>
         <translation>Мінімальна &amp;ширина:</translation>
     </message>
     <message>
-        <location/>
         <source>Minimum Hei&amp;ght:</source>
         <translation>Мінімальна &amp;висота:</translation>
     </message>
     <message>
-        <location/>
         <source> pixels</source>
         <translation> пікселів</translation>
     </message>
     <message>
-        <location/>
         <source>Enhanced support for languages written right-to-left</source>
         <translation>Розширена підтримка для, що пишуться справа наліво</translation>
     </message>
     <message>
-        <location/>
         <source>XIM Input Style:</source>
         <translation>Стиль введення XIM:</translation>
     </message>
     <message>
-        <location/>
         <source>On The Spot</source>
         <translation>У вікні документу</translation>
     </message>
     <message>
-        <location/>
         <source>Over The Spot</source>
         <translation>Над вікном документу</translation>
     </message>
     <message>
-        <location/>
         <source>Off The Spot</source>
         <translation>В рядку стану</translation>
     </message>
     <message>
-        <location/>
         <source>Root</source>
         <translation>В додатковому вікні</translation>
     </message>
     <message>
-        <location/>
         <source>Default Input Method:</source>
         <translation>Типовий метод введення:</translation>
     </message>
     <message>
-        <location/>
         <source>Printer</source>
         <translation>Принтер</translation>
     </message>
     <message>
-        <location/>
         <source>Enable Font embedding</source>
         <translation>Увімкнути вживлення шрифтів</translation>
     </message>
     <message>
-        <location/>
         <source>Font Paths</source>
         <translation>Шляхи до шрифтів</translation>
     </message>
     <message>
-        <location/>
         <source>Browse...</source>
         <translation>Огляд...</translation>
     </message>
     <message>
-        <location/>
         <source>Press the &lt;b&gt;Browse&lt;/b&gt; button or enter a directory and press Enter to add them to the list.</source>
         <translation>Натисніть кнопку &lt;b&gt;Огляд&lt;/b&gt; чи введіть теку та натисніть Enter, щоб додати її до списку.</translation>
     </message>
     <message>
-        <location/>
         <source>Phonon</source>
         <translation>Phonon</translation>
     </message>
     <message>
-        <location/>
         <source>About Phonon</source>
         <translation>Про Phonon</translation>
     </message>
     <message>
-        <location/>
         <source>Current Version:</source>
         <translation>Поточна версія:</translation>
     </message>
     <message>
-        <location/>
         <source>Not available</source>
         <translation>Не доступна</translation>
     </message>
     <message>
-        <location/>
         <source>Website:</source>
         <translation>Веб-сайт:</translation>
     </message>
     <message>
-        <location/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -505,12 +399,10 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location/>
         <source>About GStreamer</source>
         <translation>Про GStreamer</translation>
     </message>
     <message>
-        <location/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -519,22 +411,18 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location/>
         <source>GStreamer backend settings</source>
         <translation>Налаштування модуля GStreamer</translation>
     </message>
     <message>
-        <location/>
         <source>Preferred audio sink:</source>
         <translation>Бажаний аудіо вихід:</translation>
     </message>
     <message>
-        <location/>
         <source>Preferred render method:</source>
         <translation>Бажаний метод рендерингу:</translation>
     </message>
     <message>
-        <location/>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -547,57 +435,46 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Примітка: зміни до цих налаштувань можуть заважати правильному запуску програм.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;Help</source>
         <translation>&amp;Довідка</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;Save</source>
         <translation>&amp;Зберегти</translation>
     </message>
     <message>
-        <location/>
         <source>Save</source>
         <translation>Зберегти</translation>
     </message>
     <message>
-        <location/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location/>
         <source>E&amp;xit</source>
         <translation>Ви&amp;йти</translation>
     </message>
     <message>
-        <location/>
         <source>Exit</source>
         <translation>Вийти</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;About</source>
         <translation>&amp;Про</translation>
     </message>
     <message>
-        <location/>
         <source>About</source>
         <translation>Про</translation>
     </message>
     <message>
-        <location/>
         <source>About &amp;Qt</source>
         <translation>Про &amp;Qt</translation>
     </message>
     <message>
-        <location/>
         <source>About Qt</source>
         <translation>Про Qt</translation>
     </message>
@@ -605,207 +482,166 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PaletteEditorAdvancedBase</name>
     <message>
-        <location filename="../tools/qtconfig/paletteeditoradvancedbase.ui"/>
         <source>Tune Palette</source>
         <translation>Налаштувати палітру</translation>
     </message>
     <message>
-        <location/>
         <source>&lt;b&gt;Edit Palette&lt;/b&gt;&lt;p&gt;Change the palette of the current widget or form.&lt;/p&gt;&lt;p&gt;Use a generated palette or select colors for each color group and each color role.&lt;/p&gt;&lt;p&gt;The palette can be tested with different widget layouts in the preview section.&lt;/p&gt;</source>
         <translation>&lt;b&gt;Редагування палітри&lt;/b&gt;&lt;p&gt;Змінити палітру поточного віджета чи форми.&lt;/p&gt;&lt;p&gt;Використовуйте згенеровану палітру чи оберіть кольори для кожної групи кольорів та кожної кольорової ролі.&lt;/p&gt;&lt;p&gt;Палітру можна протестувати з різними розміщеннями віджетів в секції попереднього перегляду.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location/>
         <source>Select &amp;Palette:</source>
         <translation>Виберіть &amp;палітру:</translation>
     </message>
     <message>
-        <location/>
         <source>Active Palette</source>
         <translation>Активна палітра</translation>
     </message>
     <message>
-        <location/>
         <source>Inactive Palette</source>
         <translation>Неактивна палітра</translation>
     </message>
     <message>
-        <location/>
         <source>Disabled Palette</source>
         <translation>Вимкнена палітра</translation>
     </message>
     <message>
-        <location/>
         <source>Auto</source>
         <translation>Автоматично</translation>
     </message>
     <message>
-        <location/>
         <source>Build inactive palette from active</source>
         <translation>Будувати неактивну палітру з активної</translation>
     </message>
     <message>
-        <location/>
         <source>Build disabled palette from active</source>
         <translation>Будувати вимкнену палітру з активної</translation>
     </message>
     <message>
-        <location/>
         <source>Central color &amp;roles</source>
         <translation>Головні кольорові &amp;ролі</translation>
     </message>
     <message>
-        <location/>
         <source>Choose central color role</source>
         <translation>Оберіть головну кольорову роль</translation>
     </message>
     <message>
-        <location/>
         <source>&lt;b&gt;Select a color role.&lt;/b&gt;&lt;p&gt;Available central roles are: &lt;ul&gt; &lt;li&gt;Window - general background color.&lt;/li&gt; &lt;li&gt;WindowText - general foreground color. &lt;/li&gt; &lt;li&gt;Base - used as background color for e.g. text entry widgets, usually white or another light color. &lt;/li&gt; &lt;li&gt;Text - the foreground color used with Base. Usually this is the same as WindowText, in what case it must provide good contrast both with Window and Base. &lt;/li&gt; &lt;li&gt;Button - general button background color, where buttons need a background different from Window, as in the Macintosh style. &lt;/li&gt; &lt;li&gt;ButtonText - a foreground color used with the Button color. &lt;/li&gt; &lt;li&gt;Highlight - a color to indicate a selected or highlighted item. &lt;/li&gt; &lt;li&gt;HighlightedText - a text color that contrasts to Highlight. &lt;/li&gt; &lt;li&gt;BrightText - a text color that is very different from WindowText and contrasts well with e.g. black. &lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</source>
         <translation>&lt;b&gt;Вибір кольорової ролі.&lt;/b&gt;&lt;p&gt;Доступні наступні головні ролі: &lt;ul&gt; &lt;li&gt;Вікно - загальний колір фону.&lt;/li&gt; &lt;li&gt;Текст вікна - загальний колір переднього плану. &lt;/li&gt; &lt;li&gt;Базовий - використовується як колір фону, наприклад, для віджетів для введення тексту, зазвичай білий або інший світлий колір. &lt;/li&gt; &lt;li&gt;Текст - колір переднього плану, що використовується разом з базовим. Зазвичай співпадає з &quot;Текст вікна&quot;, і в цьому випадку має забезпечувати гарний контраст і з &quot;Вікном&quot;, і з &quot;Базовим&quot;. &lt;/li&gt; &lt;li&gt;Кнопка - загальний колір фону кнопки, там де кнопки потребуються інший від &quot;Вікна&quot; фон, як в стилі Macintosh. &lt;/li&gt; &lt;li&gt;Текст кнопки - колір переднього плану, що застосовується разом з кольором &quot;Кнопки&quot;. &lt;/li&gt; &lt;li&gt;Підсвічений - колір для індикації виділеного чи підсвіченого елементу. &lt;/li&gt; &lt;li&gt;Підсвічений текст - колір тексту, що контрастує з &quot;Підсвіченим&quot;. &lt;/li&gt; &lt;li&gt;Яскравий текст - колір тексту, що суттєво відрізняється від &quot;Тексту вікна&quot; та добре контрастує з чорним, наприклад. &lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
     </message>
     <message>
-        <location/>
         <source>Window</source>
         <translation>Вікно</translation>
     </message>
     <message>
-        <location/>
         <source>WindowText</source>
         <translation>Текст вікна</translation>
     </message>
     <message>
-        <location/>
         <source>Button</source>
         <translation>Кнопка</translation>
     </message>
     <message>
-        <location/>
         <source>Base</source>
         <translation>Базовий</translation>
     </message>
     <message>
-        <location/>
         <source>Text</source>
         <translation>Текст</translation>
     </message>
     <message>
-        <location/>
         <source>BrightText</source>
         <translation>Яскравий текст</translation>
     </message>
     <message>
-        <location/>
         <source>ButtonText</source>
         <translation>Текст кнопки</translation>
     </message>
     <message>
-        <location/>
         <source>Highlight</source>
         <translation>Підсвічений</translation>
     </message>
     <message>
-        <location/>
         <source>HighlightedText</source>
         <translation>Підсвічений текст</translation>
     </message>
     <message>
-        <location/>
         <source>&amp;Select Color:</source>
         <translation>&amp;Оберіть колір:</translation>
     </message>
     <message>
-        <location/>
         <source>Choose a color</source>
         <translation>Оберіть колір</translation>
     </message>
     <message>
-        <location/>
         <source>Choose a color for the selected central color role.</source>
         <translation>Виберіть колір для вказаної головної кольорової ролі.</translation>
     </message>
     <message>
-        <location/>
         <source>3-D shadow &amp;effects</source>
         <translation>3-D &amp;ефекти тіні</translation>
     </message>
     <message>
-        <location/>
         <source>Build &amp;from button color</source>
         <translation>Будувати &amp;з кольору кнопки</translation>
     </message>
     <message>
-        <location/>
         <source>Generate shadings</source>
         <translation>Генерувати тіні</translation>
     </message>
     <message>
-        <location/>
         <source>Check to let 3D-effect colors be calculated from button-color.</source>
         <translation>Увімкніть, щоб кольори 3D-ефектів розраховувались з кольору кнопки.</translation>
     </message>
     <message>
-        <location/>
         <source>Choose 3D-effect color role</source>
         <translation>Оберіть роль для 3D-ефектів</translation>
     </message>
     <message>
-        <location/>
         <source>&lt;b&gt;Select a color role.&lt;/b&gt;&lt;p&gt;Available effect roles are: &lt;ul&gt; &lt;li&gt;Light - lighter than Button color. &lt;/li&gt; &lt;li&gt;Midlight - between Button and Light. &lt;/li&gt; &lt;li&gt;Mid - between Button and Dark. &lt;/li&gt; &lt;li&gt;Dark - darker than Button. &lt;/li&gt; &lt;li&gt;Shadow - a very dark color. &lt;/li&gt; &lt;/ul&gt;</source>
         <translation>&lt;b&gt;Оберіть кольорову роль.&lt;/b&gt;&lt;p&gt;Доступні наступні ролі ефектів: &lt;ul&gt; &lt;li&gt;Світлий - світліше ніж колір кнопки. &lt;/li&gt; &lt;li&gt;Напівсвітлий - між &quot;Кнопкою&quot; та &quot;Світлим&quot;. &lt;/li&gt; &lt;li&gt;Напівтемний - між &quot;Кнопкою&quot; та &quot;Темним&quot;. &lt;/li&gt; &lt;li&gt;Темний - темніший ніж &quot;Кнопка&quot;. &lt;/li&gt; &lt;li&gt;Тінь - дуже темний колір. &lt;/li&gt; &lt;/ul&gt;</translation>
     </message>
     <message>
-        <location/>
         <source>Light</source>
         <translation>Світлий</translation>
     </message>
     <message>
-        <location/>
         <source>Midlight</source>
         <translation>Напівсвітлий</translation>
     </message>
     <message>
-        <location/>
         <source>Mid</source>
         <translation>Напівтемний</translation>
     </message>
     <message>
-        <location/>
         <source>Dark</source>
         <translation>Темний</translation>
     </message>
     <message>
-        <location/>
         <source>Shadow</source>
         <translation>Тінь</translation>
     </message>
     <message>
-        <location/>
         <source>Select Co&amp;lor:</source>
         <translation>Оберіть &amp;колір:</translation>
     </message>
     <message>
-        <location/>
         <source>Choose a color for the selected effect color role.</source>
         <translation>Оберіть колір для вказаної кольорової ролі ефектів.</translation>
     </message>
     <message>
-        <location/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location/>
         <source>Close dialog and apply all changes.</source>
         <translation>Закрити діалог та застосувати усі зміни.</translation>
     </message>
     <message>
-        <location/>
         <source>Cancel</source>
         <translation>Скасувати</translation>
     </message>
     <message>
-        <location/>
         <source>Close dialog and discard all changes.</source>
         <translation>Закрити діалог та відкинути усі зміни.</translation>
     </message>
@@ -813,7 +649,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PreviewFrame</name>
     <message>
-        <location filename="../tools/qtconfig/previewframe.cpp" line="+81"/>
         <source>Desktop settings will only take effect after an application restart.</source>
         <translation>Налаштування стільниці будуть застосовані лише після перезапуску програми.</translation>
     </message>
@@ -821,62 +656,50 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PreviewWidgetBase</name>
     <message>
-        <location filename="../tools/qtconfig/previewwidgetbase.ui"/>
         <source>Preview Window</source>
         <translation>Вікно попереднього перегляду</translation>
     </message>
     <message>
-        <location/>
         <source>ButtonGroup</source>
         <translation>Група кнопок</translation>
     </message>
     <message>
-        <location/>
         <source>RadioButton1</source>
         <translation>Перемикач 1</translation>
     </message>
     <message>
-        <location/>
         <source>RadioButton2</source>
         <translation>Перемикач 2</translation>
     </message>
     <message>
-        <location/>
         <source>RadioButton3</source>
         <translation>Перемикач 3</translation>
     </message>
     <message>
-        <location/>
         <source>ButtonGroup2</source>
         <translation>Група кнопок 2</translation>
     </message>
     <message>
-        <location/>
         <source>CheckBox1</source>
         <translation>Прапорець 1</translation>
     </message>
     <message>
-        <location/>
         <source>CheckBox2</source>
         <translation>Прапорець 2</translation>
     </message>
     <message>
-        <location/>
         <source>LineEdit</source>
         <translation>Поле введення</translation>
     </message>
     <message>
-        <location/>
         <source>ComboBox</source>
         <translation>Випадаючий список</translation>
     </message>
     <message>
-        <location/>
         <source>PushButton</source>
         <translation>Кнопка</translation>
     </message>
     <message>
-        <location/>
         <source>&lt;p&gt;
 &lt;a href=&quot;http://qt.nokia.com&quot;&gt;http://qt.nokia.com&lt;/a&gt;
 &lt;/p&gt;
