@@ -261,9 +261,15 @@ static const HashTableValue JSDocumentPrototypeTableValues[38] =
     { "createNodeIterator", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionCreateNodeIterator), (intptr_t)4 },
     { "createTreeWalker", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionCreateTreeWalker), (intptr_t)4 },
     { "getOverrideStyle", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionGetOverrideStyle), (intptr_t)2 },
+#if ENABLE(XPATH)
     { "createExpression", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionCreateExpression), (intptr_t)2 },
+#endif
+#if ENABLE(XPATH)
     { "createNSResolver", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionCreateNSResolver), (intptr_t)1 },
+#endif
+#if ENABLE(XPATH)
     { "evaluate", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionEvaluate), (intptr_t)5 },
+#endif
     { "execCommand", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionExecCommand), (intptr_t)3 },
     { "queryCommandEnabled", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionQueryCommandEnabled), (intptr_t)1 },
     { "queryCommandIndeterm", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDocumentPrototypeFunctionQueryCommandIndeterm), (intptr_t)1 },
@@ -1911,6 +1917,7 @@ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionGetOverrideStyle(ExecState* exe
     return result;
 }
 
+#if ENABLE(XPATH)
 JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionCreateExpression(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     UNUSED_PARAM(args);
@@ -1934,7 +1941,9 @@ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionCreateExpression(ExecState* exe
     setDOMException(exec, ec);
     return result;
 }
+#endif
 
+#if ENABLE(XPATH)
 JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionCreateNSResolver(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     UNUSED_PARAM(args);
@@ -1948,7 +1957,9 @@ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionCreateNSResolver(ExecState* exe
     JSC::JSValue result = toJS(exec, castedThisObj->globalObject(), WTF::getPtr(imp->createNSResolver(nodeResolver)));
     return result;
 }
+#endif
 
+#if ENABLE(XPATH)
 JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionEvaluate(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     UNUSED_PARAM(args);
@@ -1975,6 +1986,7 @@ JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionEvaluate(ExecState* exec, JSObj
     setDOMException(exec, ec);
     return result;
 }
+#endif
 
 JSValue JSC_HOST_CALL jsDocumentPrototypeFunctionExecCommand(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {

@@ -36,7 +36,9 @@ ASSERT_CLASS_FITS_IN_CELL(JSConsole);
 
 static const HashTableValue JSConsoleTableValues[2] =
 {
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     { "profiles", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsConsoleProfiles), (intptr_t)0 },
+#endif
     { 0, 0, 0, 0 }
 };
 
@@ -62,8 +64,12 @@ static const HashTableValue JSConsolePrototypeTableValues[18] =
     { "assert", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionAssert), (intptr_t)1 },
     { "count", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionCount), (intptr_t)0 },
     { "markTimeline", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionMarkTimeline), (intptr_t)0 },
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     { "profile", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionProfile), (intptr_t)1 },
+#endif
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     { "profileEnd", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionProfileEnd), (intptr_t)1 },
+#endif
     { "time", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionTime), (intptr_t)1 },
     { "timeEnd", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionTimeEnd), (intptr_t)1 },
     { "group", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsConsolePrototypeFunctionGroup), (intptr_t)0 },
@@ -123,11 +129,13 @@ bool JSConsole::getOwnPropertyDescriptor(ExecState* exec, const Identifier& prop
     return getStaticValueDescriptor<JSConsole, Base>(exec, &JSConsoleTable, this, propertyName, descriptor);
 }
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 JSValue jsConsoleProfiles(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSConsole* castedThis = static_cast<JSConsole*>(asObject(slotBase));
     return castedThis->profiles(exec);
 }
+#endif
 
 JSValue JSC_HOST_CALL jsConsolePrototypeFunctionDebug(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
@@ -273,6 +281,7 @@ JSValue JSC_HOST_CALL jsConsolePrototypeFunctionMarkTimeline(ExecState* exec, JS
     return jsUndefined();
 }
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 JSValue JSC_HOST_CALL jsConsolePrototypeFunctionProfile(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     UNUSED_PARAM(args);
@@ -286,7 +295,9 @@ JSValue JSC_HOST_CALL jsConsolePrototypeFunctionProfile(ExecState* exec, JSObjec
     imp->profile(title, &callStack);
     return jsUndefined();
 }
+#endif
 
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 JSValue JSC_HOST_CALL jsConsolePrototypeFunctionProfileEnd(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     UNUSED_PARAM(args);
@@ -300,6 +311,7 @@ JSValue JSC_HOST_CALL jsConsolePrototypeFunctionProfileEnd(ExecState* exec, JSOb
     imp->profileEnd(title, &callStack);
     return jsUndefined();
 }
+#endif
 
 JSValue JSC_HOST_CALL jsConsolePrototypeFunctionTime(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {

@@ -70,7 +70,9 @@ static JSC_CONST_HASHTABLE HashTable JSNavigatorTable =
 static const HashTableValue JSNavigatorPrototypeTableValues[5] =
 {
     { "javaEnabled", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsNavigatorPrototypeFunctionJavaEnabled), (intptr_t)0 },
+#if ENABLE(DOM_STORAGE)
     { "getStorageUpdates", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsNavigatorPrototypeFunctionGetStorageUpdates), (intptr_t)0 },
+#endif
     { "registerProtocolHandler", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsNavigatorPrototypeFunctionRegisterProtocolHandler), (intptr_t)3 },
     { "registerContentHandler", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsNavigatorPrototypeFunctionRegisterContentHandler), (intptr_t)3 },
     { 0, 0, 0, 0 }
@@ -267,6 +269,7 @@ JSValue JSC_HOST_CALL jsNavigatorPrototypeFunctionJavaEnabled(ExecState* exec, J
     return result;
 }
 
+#if ENABLE(DOM_STORAGE)
 JSValue JSC_HOST_CALL jsNavigatorPrototypeFunctionGetStorageUpdates(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     UNUSED_PARAM(args);
@@ -278,6 +281,7 @@ JSValue JSC_HOST_CALL jsNavigatorPrototypeFunctionGetStorageUpdates(ExecState* e
     imp->getStorageUpdates();
     return jsUndefined();
 }
+#endif
 
 JSValue JSC_HOST_CALL jsNavigatorPrototypeFunctionRegisterProtocolHandler(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {

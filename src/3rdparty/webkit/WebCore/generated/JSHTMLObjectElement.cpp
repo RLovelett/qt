@@ -128,7 +128,9 @@ bool JSHTMLObjectElementConstructor::getOwnPropertyDescriptor(ExecState* exec, c
 
 static const HashTableValue JSHTMLObjectElementPrototypeTableValues[2] =
 {
+#if ENABLE(SVG)
     { "getSVGDocument", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsHTMLObjectElementPrototypeFunctionGetSVGDocument), (intptr_t)0 },
+#endif
     { 0, 0, 0, 0 }
 };
 
@@ -480,6 +482,7 @@ JSValue JSHTMLObjectElement::getConstructor(ExecState* exec, JSGlobalObject* glo
     return getDOMConstructor<JSHTMLObjectElementConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
 }
 
+#if ENABLE(SVG)
 JSValue JSC_HOST_CALL jsHTMLObjectElementPrototypeFunctionGetSVGDocument(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     UNUSED_PARAM(args);
@@ -496,6 +499,6 @@ JSValue JSC_HOST_CALL jsHTMLObjectElementPrototypeFunctionGetSVGDocument(ExecSta
     setDOMException(exec, ec);
     return result;
 }
-
+#endif
 
 }

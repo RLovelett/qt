@@ -110,7 +110,9 @@ bool JSHTMLEmbedElementConstructor::getOwnPropertyDescriptor(ExecState* exec, co
 
 static const HashTableValue JSHTMLEmbedElementPrototypeTableValues[2] =
 {
+#if ENABLE(SVG)
     { "getSVGDocument", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsHTMLEmbedElementPrototypeFunctionGetSVGDocument), (intptr_t)0 },
+#endif
     { 0, 0, 0, 0 }
 };
 
@@ -277,6 +279,7 @@ JSValue JSHTMLEmbedElement::getConstructor(ExecState* exec, JSGlobalObject* glob
     return getDOMConstructor<JSHTMLEmbedElementConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
 }
 
+#if ENABLE(SVG)
 JSValue JSC_HOST_CALL jsHTMLEmbedElementPrototypeFunctionGetSVGDocument(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     UNUSED_PARAM(args);
@@ -293,6 +296,6 @@ JSValue JSC_HOST_CALL jsHTMLEmbedElementPrototypeFunctionGetSVGDocument(ExecStat
     setDOMException(exec, ec);
     return result;
 }
-
+#endif
 
 }

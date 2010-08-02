@@ -397,9 +397,15 @@ static const HashTableValue JSDOMWindowTableValues[409] =
     { "document", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowDocument), (intptr_t)0 },
     { "styleMedia", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowStyleMedia), (intptr_t)0 },
     { "devicePixelRatio", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowDevicePixelRatio), (intptr_t)setJSDOMWindowDevicePixelRatio },
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
     { "applicationCache", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowApplicationCache), (intptr_t)0 },
+#endif
+#if ENABLE(DOM_STORAGE)
     { "sessionStorage", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSessionStorage), (intptr_t)0 },
+#endif
+#if ENABLE(DOM_STORAGE)
     { "localStorage", DontDelete|ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowLocalStorage), (intptr_t)0 },
+#endif
     { "console", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowConsole), (intptr_t)setJSDOMWindowConsole },
     { "onabort", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowOnabort), (intptr_t)setJSDOMWindowOnabort },
     { "onbeforeunload", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowOnbeforeunload), (intptr_t)setJSDOMWindowOnbeforeunload },
@@ -659,17 +665,27 @@ static const HashTableValue JSDOMWindowTableValues[409] =
 #endif
     { "MessagePort", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMessagePortConstructor), (intptr_t)setJSDOMWindowMessagePortConstructor },
     { "MessageChannel", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMessageChannelConstructor), (intptr_t)setJSDOMWindowMessageChannelConstructor },
+#if ENABLE(WORKERS)
     { "Worker", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowWorkerConstructor), (intptr_t)setJSDOMWindowWorkerConstructor },
+#endif
+#if ENABLE(SHARED_WORKERS)
     { "SharedWorker", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSharedWorkerConstructor), (intptr_t)setJSDOMWindowSharedWorkerConstructor },
+#endif
+#if ENABLE(WEB_SOCKETS)
     { "WebSocket", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowWebSocketConstructor), (intptr_t)setJSDOMWindowWebSocketConstructor },
+#endif
     { "Plugin", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowPluginConstructor), (intptr_t)setJSDOMWindowPluginConstructor },
     { "PluginArray", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowPluginArrayConstructor), (intptr_t)setJSDOMWindowPluginArrayConstructor },
     { "MimeType", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMimeTypeConstructor), (intptr_t)setJSDOMWindowMimeTypeConstructor },
     { "MimeTypeArray", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMimeTypeArrayConstructor), (intptr_t)setJSDOMWindowMimeTypeArrayConstructor },
     { "ClientRect", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowClientRectConstructor), (intptr_t)setJSDOMWindowClientRectConstructor },
     { "ClientRectList", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowClientRectListConstructor), (intptr_t)setJSDOMWindowClientRectListConstructor },
+#if ENABLE(DOM_STORAGE)
     { "Storage", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowStorageConstructor), (intptr_t)setJSDOMWindowStorageConstructor },
+#endif
+#if ENABLE(DOM_STORAGE)
     { "StorageEvent", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowStorageEventConstructor), (intptr_t)setJSDOMWindowStorageEventConstructor },
+#endif
 #if ENABLE(VIDEO)
     { "Audio", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowAudioConstructor), (intptr_t)setJSDOMWindowAudioConstructor },
 #endif
@@ -685,9 +701,16 @@ static const HashTableValue JSDOMWindowTableValues[409] =
 #if ENABLE(VIDEO)
     { "MediaError", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMediaErrorConstructor), (intptr_t)setJSDOMWindowMediaErrorConstructor },
 #endif
+#if ENABLE(XPATH)
     { "XPathEvaluator", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowXPathEvaluatorConstructor), (intptr_t)setJSDOMWindowXPathEvaluatorConstructor },
+#endif
+#if ENABLE(XPATH)
     { "XPathResult", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowXPathResultConstructor), (intptr_t)setJSDOMWindowXPathResultConstructor },
+#endif
+#if ENABLE(XPATH)
     { "XPathException", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowXPathExceptionConstructor), (intptr_t)setJSDOMWindowXPathExceptionConstructor },
+#endif
+#if ENABLE(SVG)
     { "SVGAElement", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGAElementConstructor), (intptr_t)setJSDOMWindowSVGAElementConstructor },
     { "SVGAngle", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGAngleConstructor), (intptr_t)setJSDOMWindowSVGAngleConstructor },
     { "SVGAnimatedAngle", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGAnimatedAngleConstructor), (intptr_t)setJSDOMWindowSVGAnimatedAngleConstructor },
@@ -805,6 +828,7 @@ static const HashTableValue JSDOMWindowTableValues[409] =
     { "SVGFETileElement", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGFETileElementConstructor), (intptr_t)setJSDOMWindowSVGFETileElementConstructor },
     { "SVGFETurbulenceElement", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGFETurbulenceElementConstructor), (intptr_t)setJSDOMWindowSVGFETurbulenceElementConstructor },
     { "SVGFilterElement", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSVGFilterElementConstructor), (intptr_t)setJSDOMWindowSVGFilterElementConstructor },
+#endif
 #if ENABLE(TOUCH_EVENTS)
     { "TouchEvent", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowTouchEventConstructor), (intptr_t)setJSDOMWindowTouchEventConstructor },
 #endif
@@ -846,7 +870,9 @@ static const HashTableValue JSDOMWindowPrototypeTableValues[37] =
     { "getMatchedCSSRules", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionGetMatchedCSSRules), (intptr_t)3 },
     { "webkitConvertPointFromPageToNode", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionWebkitConvertPointFromPageToNode), (intptr_t)2 },
     { "webkitConvertPointFromNodeToPage", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionWebkitConvertPointFromNodeToPage), (intptr_t)2 },
+#if ENABLE(DATABASE)
     { "openDatabase", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionOpenDatabase), (intptr_t)5 },
+#endif
     { "postMessage", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionPostMessage), (intptr_t)3 },
     { "setTimeout", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionSetTimeout), (intptr_t)2 },
     { "clearTimeout", DontDelete|Function, (intptr_t)static_cast<NativeFunction>(jsDOMWindowPrototypeFunctionClearTimeout), (intptr_t)1 },
@@ -1326,6 +1352,7 @@ JSValue jsDOMWindowDevicePixelRatio(ExecState* exec, JSValue slotBase, const Ide
     return result;
 }
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
 JSValue jsDOMWindowApplicationCache(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -1336,7 +1363,9 @@ JSValue jsDOMWindowApplicationCache(ExecState* exec, JSValue slotBase, const Ide
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->applicationCache()));
     return result;
 }
+#endif
 
+#if ENABLE(DOM_STORAGE)
 JSValue jsDOMWindowSessionStorage(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -1347,7 +1376,9 @@ JSValue jsDOMWindowSessionStorage(ExecState* exec, JSValue slotBase, const Ident
     JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(imp->sessionStorage()));
     return result;
 }
+#endif
 
+#if ENABLE(DOM_STORAGE)
 JSValue jsDOMWindowLocalStorage(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -1359,6 +1390,7 @@ JSValue jsDOMWindowLocalStorage(ExecState* exec, JSValue slotBase, const Identif
     setDOMException(exec, ec);
     return result;
 }
+#endif
 
 JSValue jsDOMWindowConsole(ExecState* exec, JSValue slotBase, const Identifier&)
 {
@@ -3765,6 +3797,7 @@ JSValue jsDOMWindowMessageChannelConstructor(ExecState* exec, JSValue slotBase, 
     return castedThis->messageChannel(exec);
 }
 
+#if ENABLE(WORKERS)
 JSValue jsDOMWindowWorkerConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -3772,7 +3805,9 @@ JSValue jsDOMWindowWorkerConstructor(ExecState* exec, JSValue slotBase, const Id
         return jsUndefined();
     return castedThis->worker(exec);
 }
+#endif
 
+#if ENABLE(SHARED_WORKERS)
 JSValue jsDOMWindowSharedWorkerConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -3780,7 +3815,9 @@ JSValue jsDOMWindowSharedWorkerConstructor(ExecState* exec, JSValue slotBase, co
         return jsUndefined();
     return castedThis->sharedWorker(exec);
 }
+#endif
 
+#if ENABLE(WEB_SOCKETS)
 JSValue jsDOMWindowWebSocketConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -3788,6 +3825,7 @@ JSValue jsDOMWindowWebSocketConstructor(ExecState* exec, JSValue slotBase, const
         return jsUndefined();
     return castedThis->webSocket(exec);
 }
+#endif
 
 JSValue jsDOMWindowPluginConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
@@ -3837,6 +3875,7 @@ JSValue jsDOMWindowClientRectListConstructor(ExecState* exec, JSValue slotBase, 
     return JSClientRectList::getConstructor(exec, castedThis);
 }
 
+#if ENABLE(DOM_STORAGE)
 JSValue jsDOMWindowStorageConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -3844,7 +3883,9 @@ JSValue jsDOMWindowStorageConstructor(ExecState* exec, JSValue slotBase, const I
         return jsUndefined();
     return JSStorage::getConstructor(exec, castedThis);
 }
+#endif
 
+#if ENABLE(DOM_STORAGE)
 JSValue jsDOMWindowStorageEventConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -3852,6 +3893,7 @@ JSValue jsDOMWindowStorageEventConstructor(ExecState* exec, JSValue slotBase, co
         return jsUndefined();
     return JSStorageEvent::getConstructor(exec, castedThis);
 }
+#endif
 
 #if ENABLE(VIDEO)
 JSValue jsDOMWindowAudioConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
@@ -3903,6 +3945,7 @@ JSValue jsDOMWindowMediaErrorConstructor(ExecState* exec, JSValue slotBase, cons
 }
 #endif
 
+#if ENABLE(XPATH)
 JSValue jsDOMWindowXPathEvaluatorConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -3910,7 +3953,9 @@ JSValue jsDOMWindowXPathEvaluatorConstructor(ExecState* exec, JSValue slotBase, 
         return jsUndefined();
     return JSXPathEvaluator::getConstructor(exec, castedThis);
 }
+#endif
 
+#if ENABLE(XPATH)
 JSValue jsDOMWindowXPathResultConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -3918,7 +3963,9 @@ JSValue jsDOMWindowXPathResultConstructor(ExecState* exec, JSValue slotBase, con
         return jsUndefined();
     return JSXPathResult::getConstructor(exec, castedThis);
 }
+#endif
 
+#if ENABLE(XPATH)
 JSValue jsDOMWindowXPathExceptionConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -3926,7 +3973,9 @@ JSValue jsDOMWindowXPathExceptionConstructor(ExecState* exec, JSValue slotBase, 
         return jsUndefined();
     return JSXPathException::getConstructor(exec, castedThis);
 }
+#endif
 
+#if ENABLE(SVG)
 JSValue jsDOMWindowSVGAElementConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -4862,6 +4911,7 @@ JSValue jsDOMWindowSVGFilterElementConstructor(ExecState* exec, JSValue slotBase
         return jsUndefined();
     return JSSVGFilterElement::getConstructor(exec, castedThis);
 }
+#endif
 
 #if ENABLE(TOUCH_EVENTS)
 JSValue jsDOMWindowTouchEventConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
@@ -7043,6 +7093,7 @@ void setJSDOMWindowMessageChannelConstructor(ExecState* exec, JSObject* thisObje
     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "MessageChannel"), value);
 }
 
+#if ENABLE(WORKERS)
 void setJSDOMWindowWorkerConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
@@ -7050,7 +7101,9 @@ void setJSDOMWindowWorkerConstructor(ExecState* exec, JSObject* thisObject, JSVa
     // Shadowing a built-in constructor
     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "Worker"), value);
 }
+#endif
 
+#if ENABLE(SHARED_WORKERS)
 void setJSDOMWindowSharedWorkerConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
@@ -7058,7 +7111,9 @@ void setJSDOMWindowSharedWorkerConstructor(ExecState* exec, JSObject* thisObject
     // Shadowing a built-in constructor
     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "SharedWorker"), value);
 }
+#endif
 
+#if ENABLE(WEB_SOCKETS)
 void setJSDOMWindowWebSocketConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
@@ -7066,6 +7121,7 @@ void setJSDOMWindowWebSocketConstructor(ExecState* exec, JSObject* thisObject, J
     // Shadowing a built-in constructor
     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "WebSocket"), value);
 }
+#endif
 
 void setJSDOMWindowPluginConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
 {
@@ -7115,6 +7171,7 @@ void setJSDOMWindowClientRectListConstructor(ExecState* exec, JSObject* thisObje
     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "ClientRectList"), value);
 }
 
+#if ENABLE(DOM_STORAGE)
 void setJSDOMWindowStorageConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
@@ -7122,7 +7179,9 @@ void setJSDOMWindowStorageConstructor(ExecState* exec, JSObject* thisObject, JSV
     // Shadowing a built-in constructor
     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "Storage"), value);
 }
+#endif
 
+#if ENABLE(DOM_STORAGE)
 void setJSDOMWindowStorageEventConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
@@ -7130,6 +7189,7 @@ void setJSDOMWindowStorageEventConstructor(ExecState* exec, JSObject* thisObject
     // Shadowing a built-in constructor
     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "StorageEvent"), value);
 }
+#endif
 
 #if ENABLE(VIDEO)
 void setJSDOMWindowAudioConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
@@ -7181,6 +7241,7 @@ void setJSDOMWindowMediaErrorConstructor(ExecState* exec, JSObject* thisObject, 
 }
 #endif
 
+#if ENABLE(XPATH)
 void setJSDOMWindowXPathEvaluatorConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
@@ -7188,7 +7249,9 @@ void setJSDOMWindowXPathEvaluatorConstructor(ExecState* exec, JSObject* thisObje
     // Shadowing a built-in constructor
     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "XPathEvaluator"), value);
 }
+#endif
 
+#if ENABLE(XPATH)
 void setJSDOMWindowXPathResultConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
@@ -7196,7 +7259,9 @@ void setJSDOMWindowXPathResultConstructor(ExecState* exec, JSObject* thisObject,
     // Shadowing a built-in constructor
     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "XPathResult"), value);
 }
+#endif
 
+#if ENABLE(XPATH)
 void setJSDOMWindowXPathExceptionConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
@@ -7204,7 +7269,9 @@ void setJSDOMWindowXPathExceptionConstructor(ExecState* exec, JSObject* thisObje
     // Shadowing a built-in constructor
     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "XPathException"), value);
 }
+#endif
 
+#if ENABLE(SVG)
 void setJSDOMWindowSVGAElementConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
 {
     if (!static_cast<JSDOMWindow*>(thisObject)->allowsAccessFrom(exec))
@@ -8140,6 +8207,7 @@ void setJSDOMWindowSVGFilterElementConstructor(ExecState* exec, JSObject* thisOb
     // Shadowing a built-in constructor
     static_cast<JSDOMWindow*>(thisObject)->putDirect(Identifier(exec, "SVGFilterElement"), value);
 }
+#endif
 
 #if ENABLE(TOUCH_EVENTS)
 void setJSDOMWindowTouchEventConstructor(ExecState* exec, JSObject* thisObject, JSValue value)
@@ -8533,6 +8601,7 @@ JSValue JSC_HOST_CALL jsDOMWindowPrototypeFunctionWebkitConvertPointFromNodeToPa
     return result;
 }
 
+#if ENABLE(DATABASE)
 JSValue JSC_HOST_CALL jsDOMWindowPrototypeFunctionOpenDatabase(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
     UNUSED_PARAM(args);
@@ -8543,6 +8612,7 @@ JSValue JSC_HOST_CALL jsDOMWindowPrototypeFunctionOpenDatabase(ExecState* exec, 
         return jsUndefined();
     return castedThisObj->openDatabase(exec, args);
 }
+#endif
 
 JSValue JSC_HOST_CALL jsDOMWindowPrototypeFunctionPostMessage(ExecState* exec, JSObject*, JSValue thisValue, const ArgList& args)
 {
