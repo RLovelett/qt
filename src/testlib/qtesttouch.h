@@ -107,7 +107,7 @@ namespace QTest
 
     private:
         QTouchEventSequence(QWidget *widget, QTouchEvent::DeviceType deviceType)
-            : targetWidget(widget), deviceType(deviceType)
+            : targetWidget(widget), devType(deviceType)
         {
         }
         QTouchEventSequence(const QTouchEventSequence &v);
@@ -127,13 +127,13 @@ namespace QTest
         }
         void commit()
         {
-            qt_translateRawTouchEvent(targetWidget, deviceType, points.values());
+            qt_translateRawTouchEvent(targetWidget, devType, points.values());
             targetWidget = 0;
         }
 
         QMap<int, QTouchEvent::TouchPoint> points;
         QWidget *targetWidget;
-        QTouchEvent::DeviceType deviceType;
+        QTouchEvent::DeviceType devType;
         friend QTouchEventSequence touchEvent(QWidget *, QTouchEvent::DeviceType);
     };
 
