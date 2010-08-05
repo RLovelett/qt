@@ -1035,7 +1035,12 @@ const QString qt_reg_winclass(QWidget *w)        // register window class
     if (winclassNames()->contains(cname))        // already registered in our list
         return cname;
 
+#ifndef Q_WS_WINCE
+    WNDCLASSEX wc;
+    wc.cbSize       = sizeof(WNDCLASSEX);
+#else
     WNDCLASS wc;
+#endif
     wc.style        = style;
     wc.lpfnWndProc  = (WNDPROC)QtWndProc;
     wc.cbClsExtra   = 0;
@@ -1044,11 +1049,20 @@ const QString qt_reg_winclass(QWidget *w)        // register window class
     if (icon) {
         wc.hIcon = (HICON)LoadImage(qWinAppInst(), L"IDI_ICON1", IMAGE_ICON, 0, 0, LR_DEFAULTSIZE);
 #ifndef Q_WS_WINCE
-        if (!wc.hIcon)
+        if (wc.hIcon) {
+            int sw = GetSystemMetrics(SM_CXSMICON);
+            int sh = GetSystemMetrics(SM_CYSMICON);
+            wc.hIconSm = (HICON)LoadImage(qWinAppInst(), L"IDI_ICON1", IMAGE_ICON, sw, sh, 0);
+        } else {
             wc.hIcon = (HICON)LoadImage(0, IDI_APPLICATION, IMAGE_ICON, 0, 0, LR_DEFAULTSIZE | LR_SHARED);
+            wc.hIconSm = 0;
+        }
 #endif
     } else {
         wc.hIcon    = 0;
+#ifndef Q_WS_WINCE
+        wc.hIconSm  = 0;
+#endif
     }
     wc.hCursor      = 0;
 #ifndef Q_WS_WINCE
@@ -1059,7 +1073,11 @@ const QString qt_reg_winclass(QWidget *w)        // register window class
     wc.lpszMenuName  = 0;
     wc.lpszClassName = (wchar_t*)cname.utf16();
 
+#ifndef Q_WS_WINCE
+    ATOM atom = RegisterClassEx(&wc);
+#else
     ATOM atom = RegisterClass(&wc);
+#endif
 
 #ifndef QT_NO_DEBUG
     if (!atom)
