@@ -7378,18 +7378,21 @@ Q3ListViewItemIterator &Q3ListViewItemIterator::operator++()
     if (!curr)
         return *this;
 
-    Q3ListViewItem *item = curr->firstChild();
-    if (!item) {
-        while ((item = curr->nextSibling()) == 0 ) {
-            curr = curr->parent();
-            if (curr == 0)
-                break;
+    Q3ListViewItem *item;
+    do {
+        item = curr->firstChild();
+
+        if (!item) {
+            while ((item = curr->nextSibling()) == 0 ) {
+                curr = curr->parent();
+                if (curr == 0)
+                    break;
+            }
         }
+        curr = item;
     }
-    curr = item;
     // if the next one doesn't match the flags we try one more ahead
-    if (curr && !matchesFlags(curr))
-        ++(*this);
+    while (curr && !matchesFlags(curr));
     return *this;
 }
 
