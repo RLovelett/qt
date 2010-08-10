@@ -121,8 +121,10 @@ public:
     bool sendMouseEventToInputContext(QMouseEvent *e);
 
     QRect adjustedContentsRect() const;
+    void updateScroll(QRect *rect, QRect *lineRect, QPoint *topLeft);
 
     void _q_handleWindowActivate();
+    void _q_updateControlRect(const QRect &rect);
     void _q_textEdited(const QString &);
     void _q_cursorPositionChanged(int, int);
 #ifdef QT_KEYPAD_NAVIGATION

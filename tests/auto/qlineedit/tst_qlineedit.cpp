@@ -272,6 +272,7 @@ private slots:
     void taskQTBUG_4679_moveToStartEndOfBlock();
     void taskQTBUG_4679_selectToStartEndOfBlock();
     void taskQTBUG_7395_readOnlyShortcut();
+    void taskQTBUG_12709_lineEditPartialUpdates();
 
 #ifdef QT3_SUPPORT
     void validateAndSet_data();
@@ -3689,6 +3690,32 @@ void tst_QLineEdit::taskQTBUG_7395_readOnlyShortcut()
 
     QTest::keyClick(0, Qt::Key_P);
     QCOMPARE(spy.count(), 1);
+}
+
+class LineEditRepaintRecorder : public QLineEdit
+{
+public:
+    QList<QRegion> repaintRegions;
+
+protected:
+    void paintEvent(QPaintEvent *event)
+    {
+        repaintRegions << event->region();
+    }
+};
+
+void tst_QLineEdit::taskQTBUG_12709_lineEditPartialUpdates()
+{
+    LineEditRepaintRecorder le;
+    le.show();
+    QTest::qWaitForWindowShown(&le);
+    QApplication::setActiveWindow(&le);
+    le.setFocus();
+    QTRY_VERIFY(le.hasFocus());
+
+    QTest::qWait(1000);
+    QVERIFY(!le.repaintRegions.isEmpty());
+    QVERIFY(le.repaintRegions.last().boundingRect().width() < le.width() / 4);
 }
 
 QTEST_MAIN(tst_QLineEdit)

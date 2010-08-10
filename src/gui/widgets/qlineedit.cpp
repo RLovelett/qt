@@ -1856,36 +1856,21 @@ void QLineEdit::paintEvent(QPaintEvent *)
     QPainter p(this);
 
     QRect r = rect();
+    QRect lineRect;
+    QPoint topLeft;
     QPalette pal = palette();
 
     QStyleOptionFrameV2 panel;
     initStyleOption(&panel);
     style()->drawPrimitive(QStyle::PE_PanelLineEdit, &panel, &p, this);
-    r = style()->subElementRect(QStyle::SE_LineEditContents, &panel, this);
-    r.setX(r.x() + d->leftTextMargin);
-    r.setY(r.y() + d->topTextMargin);
-    r.setRight(r.right() - d->rightTextMargin);
-    r.setBottom(r.bottom() - d->bottomTextMargin);
-    p.setClipRect(r);
 
-    QFontMetrics fm = fontMetrics();
-    Qt::Alignment va = QStyle::visualAlignment(layoutDirection(), QFlag(d->alignment));
-    switch (va & Qt::AlignVertical_Mask) {
-     case Qt::AlignBottom:
-         d->vscroll = r.y() + r.height() - fm.height() - d->verticalMargin;
-         break;
-     case Qt::AlignTop:
-         d->vscroll = r.y() + d->verticalMargin;
-         break;
-     default:
-         //center
-         d->vscroll = r.y() + (r.height() - fm.height() + 1) / 2;
-         break;
-    }
-    QRect lineRect(r.x() + d->horizontalMargin, d->vscroll, r.width() - 2*d->horizontalMargin, fm.height());
+    d->updateScroll(&r, &lineRect, &topLeft);
+
+    p.setClipRect(r);
 
     if (d->control->text().isEmpty()) {
         if (!hasFocus() && !d->placeholderText.isEmpty()) {
+            Qt::Alignment va = QStyle::visualAlignment(layoutDirection(), QFlag(d->alignment));
             QColor col = pal.text().color();
             col.setAlpha(128);
             QPen oldpen = p.pen();
@@ -1895,46 +1880,6 @@ void QLineEdit::paintEvent(QPaintEvent *)
             return;
         }
     }
-
-    int cix = qRound(d->control->cursorToX());
-
-    // horizontal scrolling. d->hscroll is the left indent from the beginning
-    // of the text line to the left edge of lineRect. we update this value
-    // depending on the delta from the last paint event; in effect this means
-    // the below code handles all scrolling based on the textline (widthUsed,
-    // minLB, minRB), the line edit rect (lineRect) and the cursor position
-    // (cix).
-    int minLB = qMax(0, -fm.minLeftBearing());
-    int minRB = qMax(0, -fm.minRightBearing());
-    int widthUsed = qRound(d->control->naturalTextWidth()) + 1 + minRB;
-    if ((minLB + widthUsed) <=  lineRect.width()) {
-        // text fits in lineRect; use hscroll for alignment
-        switch (va & ~(Qt::AlignAbsolute|Qt::AlignVertical_Mask)) {
-        case Qt::AlignRight:
-            d->hscroll = widthUsed - lineRect.width() + 1;
-            break;
-        case Qt::AlignHCenter:
-            d->hscroll = (widthUsed - lineRect.width()) / 2;
-            break;
-        default:
-            // Left
-            d->hscroll = 0;
-            break;
-        }
-        d->hscroll -= minLB;
-    } else if (cix - d->hscroll >= lineRect.width()) {
-        // text doesn't fit, cursor is to the right of lineRect (scroll right)
-        d->hscroll = cix - lineRect.width() + 1;
-    } else if (cix - d->hscroll < 0 && d->hscroll < widthUsed) {
-        // text doesn't fit, cursor is to the left of lineRect (scroll left)
-        d->hscroll = cix;
-    } else if (widthUsed - d->hscroll < lineRect.width()) {
-        // text doesn't fit, text document is to the left of lineRect; align
-        // right
-        d->hscroll = widthUsed - lineRect.width() + 1;
-    }
-    // the y offset is there to keep the baseline constant in case we have script changes in the text.
-    QPoint topLeft = lineRect.topLeft() - QPoint(d->hscroll, d->control->ascent() - fm.ascent());
 
     // draw text, selections and cursors
 #ifndef QT_NO_STYLE_STYLESHEET

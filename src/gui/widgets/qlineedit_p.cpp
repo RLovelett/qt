@@ -100,6 +100,14 @@ void QLineEditPrivate::_q_handleWindowActivate()
         control->deselect();
 }
 
+void QLineEditPrivate::_q_updateControlRect(const QRect &rect)
+{
+    Q_Q(QLineEdit);
+    QPoint topLeft;
+    updateScroll(0, 0, &topLeft);
+    q->update(rect.translated(topLeft));
+}
+
 void QLineEditPrivate::_q_textEdited(const QString &text)
 {
     Q_Q(QLineEdit);
@@ -176,7 +184,7 @@ void QLineEditPrivate::init(const QString& txt)
             q, SLOT(update()));
 
     QObject::connect(control, SIGNAL(updateNeeded(QRect)),
-            q, SLOT(update()));
+            q, SLOT(_q_updateControlRect(QRect)));
 
     QStyleOptionFrameV2 opt;
     q->initStyleOption(&opt);
@@ -208,6 +216,82 @@ QRect QLineEditPrivate::adjustedContentsRect() const
     r.setRight(r.right() - rightTextMargin);
     r.setBottom(r.bottom() - bottomTextMargin);
     return r;
+}
+
+void QLineEditPrivate::updateScroll(QRect *rect, QRect *lineRect, QPoint *topLeft)
+{
+    Q_Q(const QLineEdit);
+    QPalette pal = q->palette();
+
+    QStyleOptionFrameV2 panel;
+    q->initStyleOption(&panel);
+    QRect r = q->style()->subElementRect(QStyle::SE_LineEditContents, &panel, q);
+    r.setX(r.x() + leftTextMargin);
+    r.setY(r.y() + topTextMargin);
+    r.setRight(r.right() - rightTextMargin);
+    r.setBottom(r.bottom() - bottomTextMargin);
+
+    QFontMetrics fm = q->fontMetrics();
+    Qt::Alignment va = QStyle::visualAlignment(q->layoutDirection(), QFlag(alignment));
+    switch (va & Qt::AlignVertical_Mask) {
+     case Qt::AlignBottom:
+         vscroll = r.y() + r.height() - fm.height() - verticalMargin;
+         break;
+     case Qt::AlignTop:
+         vscroll = r.y() + verticalMargin;
+         break;
+     default:
+         //center
+         vscroll = r.y() + (r.height() - fm.height() + 1) / 2;
+         break;
+    }
+    QRect lr(r.x() + horizontalMargin, vscroll, r.width() - 2*horizontalMargin, fm.height());
+
+    int cix = qRound(control->cursorToX());
+
+    // horizontal scrolling. hscroll is the left indent from the beginning
+    // of the text line to the left edge of lineRect (lr). we update this value
+    // depending on the delta from the last paint event; in effect this means
+    // the below code handles all scrolling based on the textline (widthUsed,
+    // minLB, minRB), the line edit rect (lr) and the cursor position
+    // (cix).
+    int minLB = qMax(0, -fm.minLeftBearing());
+    int minRB = qMax(0, -fm.minRightBearing());
+    int widthUsed = qRound(control->naturalTextWidth()) + 1 + minRB;
+    if ((minLB + widthUsed) <=  lr.width()) {
+        // text fits in lineRect; use hscroll for alignment
+        switch (va & ~(Qt::AlignAbsolute|Qt::AlignVertical_Mask)) {
+        case Qt::AlignRight:
+            hscroll = widthUsed - lr.width() + 1;
+            break;
+        case Qt::AlignHCenter:
+            hscroll = (widthUsed - lr.width()) / 2;
+            break;
+        default:
+            // Left
+            hscroll = 0;
+            break;
+        }
+        hscroll -= minLB;
+    } else if (cix - hscroll >= lr.width()) {
+        // text doesn't fit, cursor is to the right of lr (scroll right)
+        hscroll = cix - lr.width() + 1;
+    } else if (cix - hscroll < 0 && hscroll < widthUsed) {
+        // text doesn't fit, cursor is to the left of lr (scroll left)
+        hscroll = cix;
+    } else if (widthUsed - hscroll < lr.width()) {
+        // text doesn't fit, text document is to the left of lr; align
+        // right
+        hscroll = widthUsed - lr.width() + 1;
+    }
+
+    if (rect)
+        *rect = r;
+    if (lineRect)
+        *lineRect = lr;
+    // the y offset is there to keep the baseline constant in case we have script changes in the text.
+    if (topLeft)
+        *topLeft = lr.topLeft() - QPoint(hscroll, control->ascent() - fm.ascent());
 }
 
 void QLineEditPrivate::setCursorVisible(bool visible)
