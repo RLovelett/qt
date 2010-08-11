@@ -7390,9 +7390,8 @@ Q3ListViewItemIterator &Q3ListViewItemIterator::operator++()
             }
         }
         curr = item;
-    }
-    // if the next one doesn't match the flags we try one more ahead
-    while (curr && !matchesFlags(curr));
+	// if the next one doesn't match the flags we try one more ahead
+    } while (curr && !matchesFlags(curr));
     return *this;
 }
 
