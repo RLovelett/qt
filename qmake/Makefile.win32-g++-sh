@@ -78,6 +78,7 @@ QTOBJS= \
 	qtextcodec.o \
 	qutfcodec.o \
 	qstring.o \
+	qstringbuilder.o \
 	qstringlist.o \
 	qtextstream.o \
 	quuid.o \
@@ -166,6 +167,9 @@ qutfcodec.o: $(SOURCE_PATH)/src/corelib/codecs/qutfcodec.cpp
 
 qstring.o: $(SOURCE_PATH)/src/corelib/tools/qstring.cpp
 	$(CXX) $(CXXFLAGS) $(SOURCE_PATH)/src/corelib/tools/qstring.cpp
+
+qstringbuilder.o: $(SOURCE_PATH)/src/corelib/tools/qstringbuilder.cpp
+	$(CXX) $(CXXFLAGS) $(SOURCE_PATH)/src/corelib/tools/qstringbuilder.cpp
 
 qlocale.o: $(SOURCE_PATH)/src/corelib/tools/qlocale.cpp
 	$(CXX) $(CXXFLAGS) $(SOURCE_PATH)/src/corelib/tools/qlocale.cpp

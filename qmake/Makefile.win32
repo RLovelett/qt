@@ -114,6 +114,7 @@ QTOBJS= \
 	qtextcodec.obj \
 	qutfcodec.obj \
 	qstring.obj \
+	qstringbuilder.obj \
 	qstringlist.obj \
 	qtextstream.obj \
 	qdatastream.obj \
@@ -166,6 +167,7 @@ clean::
 	-del qtextcodec.obj
 	-del qutfcodec.obj
 	-del qstring.obj
+	-del qstringbuilder.obj
 	-del qstringlist.obj
 	-del qtextstream.obj
 	-del qdatastream.obj
@@ -285,6 +287,9 @@ qutfcodec.obj: $(SOURCE_PATH)\src\corelib\codecs\qutfcodec.cpp
 
 qstring.obj: $(SOURCE_PATH)\src\corelib\tools\qstring.cpp
 	$(CXX) $(CXXFLAGS) $(SOURCE_PATH)\src\corelib\tools\qstring.cpp
+
+qstringbuilder.obj: $(SOURCE_PATH)\src\corelib\tools\qstringbuilder.cpp
+	$(CXX) $(CXXFLAGS) $(SOURCE_PATH)\src\corelib\tools\qstringbuilder.cpp
 
 qstringmatcher.obj: $(SOURCE_PATH)\src\corelib\tools\qstringmatcher.cpp
 	$(CXX) $(CXXFLAGS) $(SOURCE_PATH)\src\corelib\tools\qstringmatcher.cpp

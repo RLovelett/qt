@@ -73,6 +73,7 @@ bootstrap { #Qt code
         qtextcodec.cpp \
         qutfcodec.cpp \
         qstring.cpp \
+        qstringbuilder.cpp \
         qstringlist.cpp \
         qtemporaryfile.cpp \
         qtextstream.cpp \
@@ -114,6 +115,7 @@ bootstrap { #Qt code
         qtextcodec.h \
         qutfcodec.h \
         qstring.h \
+        qstringbuilder.h \
         qstringlist.h \
         qstringmatcher.h \
         qtemporaryfile.h \

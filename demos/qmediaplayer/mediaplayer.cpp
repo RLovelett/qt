@@ -618,7 +618,7 @@ void MediaPlayer::handleDrop(QDropEvent *e)
                 if (entries.size() > 0) {
                     setFile(fileName + QDir::separator() +  entries[0]);
                     for (int i=1; i< entries.size(); ++i)
-                        m_MediaObject.enqueue(fileName + QDir::separator() + entries[i]);
+                        m_MediaObject.enqueue(QString(fileName + QDir::separator() + entries[i]));
                 }
             } else {
                 setFile(fileName);

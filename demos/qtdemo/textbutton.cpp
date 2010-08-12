@@ -63,7 +63,7 @@ public:
         this->highlighted = highlighted;
         this->pressed = pressed;
         this->logicalSize = logicalSize;
-        useSharedImage(QString(__FILE__) + static_cast<int>(type) + highlighted + pressed);
+        useSharedImage(QString(QString(__FILE__) + QString(static_cast<int>(type)) + QString(highlighted) + QString(pressed)));
     }
 
 protected:

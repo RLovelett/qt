@@ -14,7 +14,7 @@ OBJS=project.o property.o main.o makefile.o unixmake2.o unixmake.o  \
      symbiancommon.o registry.o epocroot.o
 
 #qt code
-QOBJS=qtextcodec.o qutfcodec.o qstring.o qtextstream.o qiodevice.o qmalloc.o qglobal.o \
+QOBJS=qtextcodec.o qutfcodec.o qstring.o qstringbuilder.o qtextstream.o qiodevice.o qmalloc.o qglobal.o \
       qbytearray.o qbytearraymatcher.o qdatastream.o qbuffer.o qlist.o qfile.o \
       qfsfileengine_unix.o qfsfileengine_iterator_unix.o qfsfileengine.o \
       qfsfileengine_iterator.o qregexp.o qvector.o qbitarray.o qdir.o qdiriterator.o quuid.o qhash.o \
@@ -38,7 +38,8 @@ DEPEND_SRC=project.cpp property.cpp meta.cpp main.cpp generators/makefile.cpp ge
 	   generators/symbian/symmake_abld.cpp generators/symbian/symmake_sbsv2.cpp \
            generaters/symbian/symbiancommon.cpp \
 	   $(SOURCE_PATH)/src/corelib/codecs/qtextcodec.cpp $(SOURCE_PATH)/src/corelib/codecs/qutfcodec.cpp \
-	   $(SOURCE_PATH)/src/corelib/tools/qstring.cpp $(SOURCE_PATH)/src/corelib/io/qfile.cpp \
+	   $(SOURCE_PATH)/src/corelib/tools/qstring.cpp $(SOURCE_PATH)/src/corelib/tools/qstringbuilder.cpp \
+	   $(SOURCE_PATH)/src/corelib/io/qfile.cpp \
 	   $(SOURCE_PATH)/src/corelib/io/qtextstream.cpp $(SOURCE_PATH)/src/corelib/io/qiodevice.cpp \
 	   $(SOURCE_PATH)/src/corelib/global/qmalloc.cpp \
 	   $(SOURCE_PATH)/src/corelib/global/qglobal.cpp $(SOURCE_PATH)/src/corelib/tools/qregexp.cpp \
@@ -144,6 +145,9 @@ qtextcodec.o: $(SOURCE_PATH)/src/corelib/codecs/qtextcodec.cpp
 
 qstring.o: $(SOURCE_PATH)/src/corelib/tools/qstring.cpp
 	$(CXX) -c -o $@ $(CXXFLAGS) $(SOURCE_PATH)/src/corelib/tools/qstring.cpp
+
+qstringbuilder.o: $(SOURCE_PATH)/src/corelib/tools/qstringbuilder.cpp
+	$(CXX) -c -o $@ $(CXXFLAGS) $(SOURCE_PATH)/src/corelib/tools/qstringbuilder.cpp
 
 qlocale.o: $(SOURCE_PATH)/src/corelib/tools/qlocale.cpp
 	$(CXX) -c -o $@ $(CXXFLAGS) $(SOURCE_PATH)/src/corelib/tools/qlocale.cpp

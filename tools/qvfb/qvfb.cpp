@@ -599,7 +599,7 @@ void QVFb::findSkins(const QString &currentSkin)
     for (QFileInfoList::const_iterator it = l.begin(); it != l.end(); ++it) {
 	skinnames.append((*it).baseName()); // should perhaps be in file
 	skinfiles.append((*it).filePath());
-	if (((*it).baseName() + ".skin") == currentSkin)
+	if (QString((*it).baseName() + ".skin") == currentSkin)
 	    currentSkinIndex = i;
 	i++;
     }

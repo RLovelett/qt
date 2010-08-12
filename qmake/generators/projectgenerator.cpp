@@ -225,7 +225,7 @@ ProjectGenerator::init()
                                 QString nd = newdir + QDir::separator() + files[i];
                                 fileFixify(nd);
                                 if(files[i] != "." && files[i] != ".." && !subdirs.contains(nd, Qt::CaseInsensitive)) {
-                                    if(newdir + files[i] != Option::output_dir + Option::output.fileName())
+                                    if(QString(newdir + files[i]) != QString(Option::output_dir + Option::output.fileName()))
                                         subdirs.append(nd);
                                 }
                             }

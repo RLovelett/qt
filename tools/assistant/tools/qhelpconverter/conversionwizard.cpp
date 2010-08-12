@@ -126,10 +126,10 @@ void ConversionWizard::initializePage(int id)
     case Output_Page: {
         QFileInfo fi(field(QLatin1String("adpFileName")).toString());
         m_outputPage->setPath(fi.absolutePath());
-        setField(QLatin1String("ProjectFileName"), fi.baseName()
-            + QLatin1String(".qhp"));
-        setField(QLatin1String("CollectionFileName"), fi.baseName()
-            + QLatin1String(".qhcp"));
+        setField(QLatin1String("ProjectFileName"), QString(fi.baseName()
+            + QLatin1String(".qhp")));
+        setField(QLatin1String("CollectionFileName"), QString(fi.baseName()
+            + QLatin1String(".qhcp")));
         break;
         }
     }

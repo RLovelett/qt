@@ -1729,7 +1729,7 @@ AdditiveExpression: AdditiveExpression T_PLUS MultiplicativeExpression ;
 /.
 case $rule_number: {
     if ((sym(1).type() == QVariant::String) || (sym(3).type() == QVariant::String))
-        sym(1) = sym(1).toString() + sym(3).toString();
+        sym(1) = QString(sym(1).toString() + sym(3).toString());
     else
         sym(1) = QVariant();
 } break;

@@ -153,7 +153,7 @@ QString epocRoot()
                                         const QString id = xml.attributes().value("id").toString();
                                         const QString name = xml.attributes().value("name").toString();
                                         const QString alias = xml.attributes().value("alias").toString();
-                                        bool epocDeviceMatch = (id + ":" + name) == epocDeviceValue;
+                                        bool epocDeviceMatch = QString(id + ":" + name) == epocDeviceValue;
                                         if (!alias.isEmpty())
                                             epocDeviceMatch |= alias == epocDeviceValue;
                                         epocDeviceFound |= epocDeviceMatch;
@@ -166,7 +166,7 @@ QString epocRoot()
                                                     epocRootValue = xml.readElementText();
                                                     const QString deviceSource = epocDeviceValue.isEmpty()
                                                         ? "default device"
-                                                        : "EPOCDEVICE (" + epocDeviceValue + ")";
+                                                        : QString("EPOCDEVICE (" + epocDeviceValue + ")");
                                                     checkEpocRootExists(deviceSource);
                                                 }
                                             }

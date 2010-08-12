@@ -1163,7 +1163,7 @@ MakefileGenerator::writeObj(QTextStream &t, const QString &src)
                 use_implicit_rule = false;
             } else {
                 int dot = (*sit).lastIndexOf('.');
-                if(dot == -1 || ((*sit).left(dot) + Option::obj_ext != (*oit)))
+                if(dot == -1 || (QString((*sit).left(dot) + Option::obj_ext) != (*oit)))
                     use_implicit_rule = false;
             }
         }
