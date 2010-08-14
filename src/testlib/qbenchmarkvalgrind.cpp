@@ -189,12 +189,24 @@ QString QBenchmarkValgrindUtils::outFileBase(qint64 pid)
 // Returns true upon success, otherwise false.
 bool QBenchmarkValgrindUtils::runCallgrindSubProcess(const QStringList &origAppArgs, int &exitCode)
 {
+    bool leakCheck = false;
+    for (int i = 1; i < origAppArgs.size(); ++i) {
+        const QString arg(origAppArgs.at(i));
+        if (arg == QLatin1String("-leakcheck")) {
+            leakCheck = true;
+            break;
+        }
+    }
     const QString execFile(origAppArgs.at(0));
     QStringList args;
-    args << QLatin1String("--tool=callgrind") << QLatin1String("--instr-atstart=yes")
-         << QLatin1String("--quiet")
-         << execFile << QLatin1String("-callgrindchild");
-
+    if (leakCheck) {
+        args << QLatin1String("--tool=memcheck");
+    } else {
+        args << QLatin1String("--tool=callgrind");
+        args << QLatin1String("--instr-atstart=yes");
+    }
+    args << QLatin1String("--quiet");
+    args << execFile << QLatin1String("-callgrindchild");
 #if (defined Q_WS_QWS)
     // While running the child process, we aren't processing events, and hence aren't
     // acting as the QWS server. Therefore it's necessary to tell the child to act
@@ -220,7 +232,8 @@ bool QBenchmarkValgrindUtils::runCallgrindSubProcess(const QStringList &origAppA
     exitCode = process.exitCode();
 
     dumpOutput(process.readAllStandardOutput(), stdout);
-    dumpOutput(process.readAllStandardError(), stderr);
+    if (!leakCheck) //ignore valgrind output for memcheck
+        dumpOutput(process.readAllStandardError(), stderr);
 
     return finishedOk;
 }

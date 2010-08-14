@@ -1,0 +1,11 @@
+********* Start testing of tst_MemLeak *********
+Config: Using QTest library 4.6.3, Qt 4.6.3
+PASS   : tst_MemLeak::initTestCase()
+FAIL!  : tst_MemLeak::arrayLeak() memory leaked (16) bytes
+PASS   : tst_MemLeak::arrayLeakIgnore()
+PASS   : tst_MemLeak::arrayNoLeak()
+FAIL!  : tst_MemLeak::qstringLeak() memory leaked (34) bytes
+PASS   : tst_MemLeak::qstringNoLeak()
+PASS   : tst_MemLeak::cleanupTestCase()
+Totals: 5 passed, 2 failed, 0 skipped
+********* Finished testing of tst_MemLeak *********

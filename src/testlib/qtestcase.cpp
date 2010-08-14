@@ -62,6 +62,7 @@
 #include "QtTest/private/qsignaldumper_p.h"
 #include "QtTest/private/qbenchmark_p.h"
 #include "3rdparty/cycle_p.h"
+#include "QtTest/private/qmemcheck_p.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -376,6 +377,18 @@ QT_BEGIN_NAMESPACE
     {Chapter 5: Writing a Benchmark}{Writing a Benchmark}
 */
 
+
+/*!
+    \macro QEXPECT_LEAK(bytes)
+    \since 4.7
+
+    \relates QTest
+
+    The QEXPECT_LEAK() macro marks the memory leak in the following test 
+    as an expected failure. 
+
+    \a bytes number of leaked bytes expected in the test case 
+*/
 
 
 /*! \enum QTest::SkipMode
@@ -848,6 +861,7 @@ namespace QTest
 #if defined(Q_OS_UNIX) && !defined(Q_OS_SYMBIAN)
     static bool noCrashHandler = false;
 #endif
+    static bool leakCheck = false;
 
 void filter_unprintable(char *str)
 {
@@ -985,6 +999,7 @@ static void qParseArgs(int argc, char *argv[])
          " -v1        : Print enter messages for each testfunction\n"
          " -v2        : Also print out each QVERIFY/QCOMPARE/QTEST\n"
          " -vs        : Print every signal emitted\n"
+         " -leakcheck        : Enable memory leak detection\n"
          " -eventdelay ms    : Set default delay for mouse and keyboard simulation to ms milliseconds\n"
          " -keydelay ms      : Set default delay for keyboard simulation to ms milliseconds\n"
          " -mousedelay ms    : Set default delay for mouse simulation to ms milliseconds\n"
@@ -1136,6 +1151,24 @@ static void qParseArgs(int argc, char *argv[])
             } else {
                 ++i;
             }
+        } else if (strcmp(argv[i], "-leakcheck") == 0) {
+#ifdef QTESTLIB_USE_VALGRIND
+            bool inChildProc = false;
+            for (int i = 1; i < argc; ++i) {
+                if (strcmp(argv[i], "-callgrindchild") == 0) { // "private" option
+                    inChildProc = true;
+                    break;
+                }
+            }
+            if (!inChildProc) {
+                if (QBenchmarkValgrindUtils::haveValgrind()) {
+                    QBenchmarkGlobalData::current->setMode(QBenchmarkGlobalData::CallgrindParentProcess);
+                } else {
+                    printf("WARNING: Valgrind not found or too old. Make sure it is installed and in your path. \n");
+                } 
+            }
+#endif
+            QTest::leakCheck = true;
         } else if (argv[i][0] == '-') {
             printf("Unknown option: '%s'\n\n%s", argv[i], testOptions);
             exit(1);
@@ -1232,8 +1265,17 @@ static void qInvokeTestMethodDataEntry(char *slot)
                     QTestResult::currentDataTag()
                     ? QTestResult::currentDataTag() : "");
 
+            //begin memory leak check if required
+            if (QTest::leakCheck) 
+                QTest::beginMemLeakCheck();
+
             invokeOk = QMetaObject::invokeMethod(QTest::currentTestObject, slot,
                                                  Qt::DirectConnection);
+
+            //end memory leak check
+            if (QTest::leakCheck) 
+                QTest::endMemLeakCheck();
+
             if (!invokeOk)
                 QTestResult::addFailure("Unable to execute slot", __FILE__, __LINE__);
 

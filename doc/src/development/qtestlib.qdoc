@@ -197,6 +197,8 @@
     outputs XML formatted results instead of plain text
     \o \c -lightxml \BR
     outputs results as a stream of XML tags
+    \o \c -leakcheck \BR
+    Enable memory leak detection
     \o \c -eventdelay \e ms \BR
     if no delay is specified for keyboard or mouse simulation
     (\l QTest::keyClick(),
@@ -264,6 +266,13 @@
      one-millisecond granularity.
 
     See the chapter 5 in the \l{QTestLib Tutorial} for more benchmarking examples.
+
+    \section2 Using memory leak detection
+    On Linux, QTestLib is using valgrind to check for memory leaks.
+
+    On Windows, QTestLib is using APIs from CrtDbg to check for memory leaks. So this feature is only available if Qt is compiled by MSVC. 
+
+    On Symbian, QTestLib will also check for handler and request leaks in addition to memory leak.
 
     \section1 Using QTestLib remotely on Windows CE
     \c cetest is a convenience application which helps the user to launch an 

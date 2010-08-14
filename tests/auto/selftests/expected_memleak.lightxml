@@ -1,0 +1,29 @@
+<Environment>
+    <QtVersion>4.6.3</QtVersion>
+    <QTestVersion>4.6.3</QTestVersion>
+</Environment>
+<TestFunction name="initTestCase">
+<Incident type="pass" file="" line="0"/>
+</TestFunction>
+<TestFunction name="arrayLeak">
+<Incident type="fail" file="" line="0">
+    <Description><![CDATA[memory leaked (16) bytes]]></Description>
+</Incident>
+</TestFunction>
+<TestFunction name="arrayLeakIgnore">
+<Incident type="pass" file="" line="0"/>
+</TestFunction>
+<TestFunction name="arrayNoLeak">
+<Incident type="pass" file="" line="0"/>
+</TestFunction>
+<TestFunction name="qstringLeak">
+<Incident type="fail" file="" line="0">
+    <Description><![CDATA[memory leaked (34) bytes]]></Description>
+</Incident>
+</TestFunction>
+<TestFunction name="qstringNoLeak">
+<Incident type="pass" file="" line="0"/>
+</TestFunction>
+<TestFunction name="cleanupTestCase">
+<Incident type="pass" file="" line="0"/>
+</TestFunction>

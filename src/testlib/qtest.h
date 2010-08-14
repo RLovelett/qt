@@ -47,6 +47,7 @@
 #include <QtTest/qtestdata.h>
 #include <QtTest/qtestdata.h>
 #include <QtTest/qbenchmark.h>
+#include <QtTest/qmemcheck.h>
 
 #include <QtCore/qbytearray.h>
 #include <QtCore/qstring.h>

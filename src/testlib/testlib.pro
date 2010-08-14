@@ -32,7 +32,8 @@ HEADERS = qbenchmark.h \
     qtestsystem.h \
     qtesttouch.h \
     qtestxmlstreamer.h \
-    qtestxunitstreamer.h
+    qtestxunitstreamer.h \
+    qmemcheck.h
 SOURCES = qtestcase.cpp \
     qtestlog.cpp \
     qtesttable.cpp \
@@ -55,7 +56,8 @@ SOURCES = qtestcase.cpp \
     qtestxmlstreamer.cpp \
     qtestlightxmlstreamer.cpp \
     qtestlogger.cpp \
-    qtestfilelogger.cpp
+    qtestfilelogger.cpp \
+    qmemcheck.cpp
 DEFINES *= QT_NO_CAST_TO_ASCII \
     QT_NO_CAST_FROM_ASCII \
     QTESTLIB_MAKEDLL \

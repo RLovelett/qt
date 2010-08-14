@@ -245,6 +245,9 @@ void tst_Selftests::runSubTest_data()
         << "xunit"
         << "longstring"
         << "badxml"
+#if ((defined Q_OS_WIN) && (defined Q_CC_MSVC)) || (defined Q_OS_SYMBIAN) || defined(Q_OS_LINUX) 
+        << "memleak"
+#endif
     ;
 
     foreach (Logger const& logger, allLoggers()) {
@@ -272,6 +275,9 @@ void tst_Selftests::runSubTest_data()
             }
             else if (subtest == "badxml") {
                 arguments << "-eventcounter";
+            }
+            else if (subtest == "memleak") {
+                arguments << "-leakcheck";
             }
 
             // These tests don't work right with loggers other than plain, usually because

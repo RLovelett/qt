@@ -134,5 +134,9 @@
         <file>expected_xunit.txt</file>
         <file>expected_xunit.xml</file>
         <file>expected_xunit.xunitxml</file>
+        <file>expected_memleak.lightxml</file>
+        <file>expected_memleak.txt</file>
+        <file>expected_memleak.xml</file>
+        <file>expected_memleak.xunitxml</file>
     </qresource>
 </RCC>
