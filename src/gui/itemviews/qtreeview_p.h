@@ -56,7 +56,6 @@
 #include "private/qabstractitemview_p.h"
 #include <QtCore/qvariantanimation.h>
 #include <QtCore/qabstractitemmodel.h>
-#include <PerfMonProfiler.h>
 
 #ifndef QT_NO_TREEVIEW
 
@@ -133,7 +132,7 @@ public:
     };
 
     // A stack for LayoutData to facilitate fast depth-first ordering without
-    // costly recursion.
+    // costly recursion.  DO NOT use this stack for any other purpose.
     class LayoutStack
     {
     public:
@@ -169,7 +168,6 @@ public:
 
     void layout(int item, bool recusiveExpanding = false, bool afterIsUninitialized = false);
     void layoutDFS(QVector<QTreeViewItem> &newViewItems,
-                   //QStack<LayoutData> &unvisitedChildren,
                    const int itemNum,
                    const bool expandBranch);
 
