@@ -766,6 +766,38 @@ void QTreeView::expand(const QModelIndex &index)
 }
 
 /*!
+  \fn void QTreeView::expandBranch(const QModelIndex &index)
+
+  Expands the model item, and all its descendants, specified by the \a index.
+
+  \sa expanded()
+*/
+void QTreeView::expandBranch(const QModelIndex &index)
+{
+    Q_D(QTreeView);
+    if (!d->isIndexValid (index))
+        return;
+    if (d->delayedPendingLayout) {
+        //A complete relayout is going to be performed, just store the expanded index, no need to layout.
+        if (d->storeExpanded (index))
+            emit expanded (index);
+        return;
+    }
+
+    int i = d->viewIndex (index);
+    if (i != -1) { // is visible
+        d->expandBranch (i, true);
+        if (!d->isAnimating()) {
+            updateGeometries();
+            d->viewport->update();
+        }
+    }
+    else if (d->storeExpanded (index)) {
+        emit expanded(index);
+    }
+}
+
+/*!
   \fn void QTreeView::collapse(const QModelIndex &index)
 
   Collapses the model item specified by the \a index.
@@ -789,6 +821,40 @@ void QTreeView::collapse(const QModelIndex &index)
     int i = d->viewIndex(index);
     if (i != -1) { // is visible
         d->collapse(i, true);
+        if (!d->isAnimating()) {
+            updateGeometries();
+            viewport()->update();
+        }
+    } else {
+        if (d->isPersistent(index) && d->expandedIndexes.remove(index))
+            emit collapsed(index);
+    }
+}
+
+/*!
+  \fn void QTreeView::collapseBranch(const QModelIndex &index)
+
+  Collapses the model item, and all its descendants, specified by the \a index.
+
+  \sa collapsed()
+*/
+void QTreeView::collapseBranch(const QModelIndex &index)
+{
+    Q_D(QTreeView);
+    if (!d->isIndexValid(index))
+        return;
+    //if the current item is now invisible, the autoscroll will expand the tree to see it, so disable the autoscroll
+    d->delayedAutoScroll.stop();
+
+    if (d->delayedPendingLayout) {
+        //A complete relayout is going to be performed, just un-store the expanded index, no need to layout.
+        if (d->isPersistent(index) && d->expandedIndexes.remove(index))
+            emit collapsed(index);
+        return;
+    }
+    int i = d->viewIndex(index);
+    if (i != -1) { // is visible
+        d->collapseBranch(i, true);
         if (!d->isAnimating()) {
             updateGeometries();
             viewport()->update();
@@ -1302,7 +1368,7 @@ void QTreeViewPrivate::paintAlternatingRowColors(QPainter *painter, QStyleOption
     }
 }
 
-bool QTreeViewPrivate::expandOrCollapseItemAtPos(const QPoint &pos)
+bool QTreeViewPrivate::expandOrCollapseItemAtPos(const QPoint &pos, const bool branch)
 {
     Q_Q(QTreeView);
     // we want to handle mousePress in EditingState (persistent editors)
@@ -1313,10 +1379,17 @@ bool QTreeViewPrivate::expandOrCollapseItemAtPos(const QPoint &pos)
 
     int i = itemDecorationAt(pos);
     if ((i != -1) && itemsExpandable && hasVisibleChildren(viewItems.at(i).index)) {
-        if (viewItems.at(i).expanded)
-            collapse(i, true);
+        if (viewItems.at(i).expanded) {
+            if (branch)
+                collapseBranch(i, true);
+            else
+                collapse(i, true);
+        }
+        else if (branch)
+            expandBranch(i, true);
         else
             expand(i, true);
+
         if (!isAnimating()) {
             q->updateGeometries();
             viewport->update();
@@ -1493,7 +1566,7 @@ void QTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &option,
     // when the row contains an index widget which has focus,
     // we want to paint the entire row as active
     bool indexWidgetHasFocus = false;
-    if ((current.row() == index.row()) && !d->editors.isEmpty()) {
+    if ((current.row() == index.row()) && !d->editorIndexHash.isEmpty()) {
         const int r = index.row();
         QWidget *fw = QApplication::focusWidget();
         for (int c = 0; c < header->count(); ++c) {
@@ -1669,7 +1742,7 @@ void QTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &option,
             opt.state = oldState;
         }
 
-        if (const QWidget *widget = d->editorForIndex(modelIndex).editor) {
+        if (const QWidget *widget = d->editorForIndex(modelIndex).first) {
             painter->save();
             painter->setClipRect(widget->geometry());
             d->delegateForIndex(modelIndex)->paint(painter, opt, modelIndex);
@@ -1810,11 +1883,13 @@ void QTreeView::drawBranches(QPainter *painter, const QRect &rect,
 */
 void QTreeView::mousePressEvent(QMouseEvent *event)
 {
-	Q_D(QTreeView);
+    Q_D(QTreeView);
     bool handled = false;
-    if (style()->styleHint(QStyle::SH_Q3ListViewExpand_SelectMouseType, 0, this) == QEvent::MouseButtonPress)
-        handled = d->expandOrCollapseItemAtPos(event->pos());
-	if (!handled && d->itemDecorationAt(event->pos()) == -1)
+    if (style()->styleHint(QStyle::SH_Q3ListViewExpand_SelectMouseType, 0, this) == QEvent::MouseButtonPress) {
+        const bool recurse = event->modifiers() == Qt::ShiftModifier;
+        handled = d->expandOrCollapseItemAtPos(event->pos(), recurse);
+    }
+    if (!handled && d->itemDecorationAt(event->pos()) == -1)
         QAbstractItemView::mousePressEvent(event);
 }
 
@@ -1829,8 +1904,10 @@ void QTreeView::mouseReleaseEvent(QMouseEvent *event)
     } else {
         if (state() == QAbstractItemView::DragSelectingState)
             setState(QAbstractItemView::NoState);
-        if (style()->styleHint(QStyle::SH_Q3ListViewExpand_SelectMouseType, 0, this) == QEvent::MouseButtonRelease)
-            d->expandOrCollapseItemAtPos(event->pos());
+        if (style()->styleHint(QStyle::SH_Q3ListViewExpand_SelectMouseType, 0, this) == QEvent::MouseButtonRelease) {
+            const bool recurse = event->modifiers() == Qt::ShiftModifier;
+            d->expandOrCollapseItemAtPos(event->pos(), recurse);
+        }
     }
 }
 
@@ -2395,7 +2472,7 @@ void QTreeView::scrollContentsBy(int dx, int dy)
     int viewCount = d->viewport->height() / itemHeight;
     int maxDeltaY = qMin(d->viewItems.count(), viewCount);
     // no need to do a lot of work if we are going to redraw the whole thing anyway
-    if (qAbs(dy) > qAbs(maxDeltaY) && d->editors.isEmpty()) {
+    if (qAbs(dy) > qAbs(maxDeltaY) && d->editorIndexHash.isEmpty()) {
         verticalScrollBar()->update();
         d->viewport->update();
         return;
@@ -2727,7 +2804,7 @@ int QTreeView::sizeHintForColumn(int column) const
             continue; // we have no good size hint
         QModelIndex index = viewItems.at(i).index;
         index = index.sibling(index.row(), column);
-        QWidget *editor = d->editorForIndex(index).editor;
+        QWidget *editor = d->editorForIndex(index).first;
         if (editor && d->persistent.contains(editor)) {
             w = qMax(w, editor->sizeHint().width());
             int min = editor->minimumSize().width();
@@ -2791,7 +2868,7 @@ int QTreeView::indexRowSizeHint(const QModelIndex &index) const
             continue;
         QModelIndex idx = d->model->index(index.row(), logicalColumn, parent);
         if (idx.isValid()) {
-            QWidget *editor = d->editorForIndex(idx).editor;
+            QWidget *editor = d->editorForIndex(idx).first;
             if (editor && d->persistent.contains(editor)) {
                 height = qMax(height, editor->sizeHint().height());
                 int min = editor->minimumSize().height();
@@ -2889,11 +2966,51 @@ void QTreeViewPrivate::expand(int item, bool emitSignal)
     }
 }
 
+void QTreeViewPrivate::expandBranch(int item, bool emitSignal)
+{
+    Q_Q(QTreeView);
+
+    if (item == -1)
+        return;
+
+#ifndef QT_NO_ANIMATION
+    if (emitSignal && animationsEnabled)
+        prepareAnimatedOperation(item, QVariantAnimation::Forward);
+#endif //QT_NO_ANIMATION
+
+    QAbstractItemView::State oldState = q->state();
+    q->setState(QAbstractItemView::ExpandingState);
+    layout(item, true);
+    q->setState(oldState);
+
+#ifndef QT_NO_ANIMATION
+    if (emitSignal && animationsEnabled)
+        beginAnimatedOperation();
+#endif //QT_NO_ANIMATION
+    
+    int lastDescendant = item + viewItems.at(item).total;
+    for (int i=item; i<=lastDescendant; i++)
+    {
+        QTreeViewItem &childItem = viewItems[i];
+        if (childItem.total > 0)
+        {
+            childItem.expanded = true;
+            const QModelIndex childIndex = childItem.index;
+            storeExpanded(childIndex);
+            if (model->canFetchMore(childIndex))
+                model->fetchMore(childIndex);
+            if (emitSignal)
+                emit q->expanded(childIndex);
+        }
+    }
+}
+
 void QTreeViewPrivate::insertViewItems(int pos, int count, const QTreeViewItem &viewItem)
 {
     viewItems.insert(pos, count, viewItem);
     QTreeViewItem *items = viewItems.data();
-    for (int i = pos + count; i < viewItems.count(); i++)
+    const int numViewItems = viewItems.count();
+    for (int i = pos + count; i < numViewItems; i++)
         if (items[i].parentItem >= pos)
             items[i].parentItem += count;
 }
@@ -2902,7 +3019,8 @@ void QTreeViewPrivate::removeViewItems(int pos, int count)
 {
     viewItems.remove(pos, count);
     QTreeViewItem *items = viewItems.data();
-    for (int i = pos; i < viewItems.count(); i++)
+    const int numViewItems = viewItems.count();
+    for (int i = pos; i < numViewItems; i++)
         if (items[i].parentItem >= pos)
             items[i].parentItem -= count;
 }
@@ -2965,6 +3083,59 @@ void QTreeViewPrivate::collapse(int item, bool emitSignal)
 #endif //QT_NO_ANIMATION
     }
 }
+
+void QTreeViewPrivate::collapseBranch(int item, bool emitSignal)
+{
+    Q_Q(QTreeView);
+
+    if (item == -1 || expandedIndexes.isEmpty())
+        return;
+
+    //if the current item is now invisible, the autoscroll will expand the tree to see it, so disable the autoscroll
+    delayedAutoScroll.stop();
+
+    int total = viewItems.at(item).total;
+    const QModelIndex &modelIndex = viewItems.at(item).index;
+    if (!isPersistent(modelIndex))
+        return; // if the index is not persistent, no chances it is expanded
+
+#ifndef QT_NO_ANIMATION
+    if (emitSignal && animationsEnabled)
+        prepareAnimatedOperation(item, QVariantAnimation::Backward);
+#endif //QT_NO_ANIMATION
+
+    QAbstractItemView::State oldState = q->state();
+    q->setState(QAbstractItemView::CollapsingState);
+
+    int lastDescendant = item + total;
+    for (int i=item; i<lastDescendant; i++)
+    {
+        const QTreeViewItem &viewItem = viewItems.at(i);
+        if (!viewItem.expanded)
+            continue;
+
+        const QModelIndex &modelIndex = viewItem.index;
+        expandedIndexes.remove(modelIndex);
+        if (emitSignal)
+            emit q->collapsed(modelIndex);
+    }
+
+    viewItems[item].expanded = false;
+    int index = item;
+    while (index > -1) {
+        viewItems[index].total -= total;
+        index = viewItems[index].parentItem;
+    }
+
+    removeViewItems(item + 1, total);
+    q->setState(oldState);
+
+#ifndef QT_NO_ANIMATION
+    if (animationsEnabled)
+        beginAnimatedOperation();
+#endif //QT_NO_ANIMATION
+}
+
 
 #ifndef QT_NO_ANIMATION
 void QTreeViewPrivate::prepareAnimatedOperation(int item, QVariantAnimation::Direction direction)
@@ -3040,9 +3211,9 @@ QPixmap QTreeViewPrivate::renderTreeToPixmapForAnimation(const QRect &rect) cons
 
     //and now let's render the editors the editors
     QStyleOptionViewItemV4 option = viewOptionsV4();
-    for (QList<QEditorInfo>::const_iterator it = editors.constBegin(); it != editors.constEnd(); ++it) {
-        QWidget *editor = it->editor;
-        QModelIndex index = it->index;
+    for (QEditorIndexHash::const_iterator it = editorIndexHash.constBegin(); it != editorIndexHash.constEnd(); ++it) {
+        QWidget *editor = it.key();
+        const QModelIndex &index = it.value();
         option.rect = q->visualRect(index);
         if (option.rect.isValid()) {
 
@@ -3092,102 +3263,165 @@ void QTreeViewPrivate::_q_columnsRemoved(const QModelIndex &parent, int start, i
 }
 
 /** \internal
-    creates and initialize the viewItem structure of the children of the element \i
+    creates and initialize the viewItem structure of the children of the element \itemNum
 
-    set \a recursiveExpanding if the function has to expand all the children (called from expandAll)
+    set \a expandBranch if the function has to expand all the children (called from expandAll or expandBranch)
     \a afterIsUninitialized is when we recurse from layout(-1), it means all the items after 'i' are
     not yet initialized and need not to be moved
  */
-void QTreeViewPrivate::layout(int i, bool recursiveExpanding, bool afterIsUninitialized)
+void QTreeViewPrivate::layout(int itemNum, bool expandBranch, bool afterIsUninitialized)
 {
     Q_Q(QTreeView);
-    QModelIndex current;
-    QModelIndex parent = (i < 0) ? (QModelIndex)root : modelIndex(i);
 
-    if (i>=0 && !parent.isValid()) {
-        //modelIndex() should never return something invalid for the real items.
-        //This can happen if columncount has been set to 0.
-        //To avoid infinite loop we stop here.
+    //  modelIndex() will return an index that don't have a parent if column 0 is hidden,
+    // so we must make sure that parent points to the actual parent that has children.
+    int itemParentNum = -1;
+    QModelIndex currentIndex = (itemNum < 0) ? (QModelIndex)root : modelIndex(itemNum);
+    if (currentIndex != root) {
+        currentIndex = model->index(currentIndex.row(), 0, currentIndex.parent());
+        itemParentNum = viewItems[itemNum].parentItem;
+    }
+
+    //  modelIndex() should never return something invalid for the real items.
+    // This can happen if columncount has been set to 0.
+    // To avoid infinite loop we stop here.
+    if (itemNum>=0 && !currentIndex.isValid())
         return;
+
+    if (itemNum < 0 && uniformRowHeights) {
+        QModelIndex index = model->index(0, 0, currentIndex);
+        defaultItemHeight = q->indexRowSizeHint(index);
     }
 
-    int count = 0;
-    if (model->hasChildren(parent)) {
-        if (model->canFetchMore(parent))
-            model->fetchMore(parent);
-        count = model->rowCount(parent);
+    int numChildren = 0;
+    if (model->hasChildren(currentIndex)) {
+        if (model->canFetchMore(currentIndex))
+            model->fetchMore(currentIndex);
+        numChildren = model->rowCount(currentIndex);
     }
 
-    bool expanding = true;
-    if (i == -1) {
-        if (uniformRowHeights) {
-            QModelIndex index = model->index(0, 0, parent);
-            defaultItemHeight = q->indexRowSizeHint(index);
+    //  Prepare to traverse the tree of items in depth-first order by placing
+    // all visible children of 'itemNum' in the stack.
+    unvisitedChildren.clear();
+    int level = (itemNum >= 0) ? viewItems.at(itemNum).level : -1;
+    bool lastVisibleRow = true;
+    for (int row=numChildren-1; row>=0; row--) {
+        QModelIndex childIndex(model->index(row, 0, currentIndex));
+        if (expandBranch || !isRowHidden(childIndex)) {
+            if (lastVisibleRow) {
+                //  The last visible row under a parent does not have any sibs
+                unvisitedChildren.push (LayoutData (childIndex, itemNum, level+1, false));
+                lastVisibleRow = false;
+            } else
+                unvisitedChildren.push (LayoutData (childIndex, itemNum, level+1, true));
         }
-        viewItems.resize(count);
-        afterIsUninitialized = true;
-    } else if (viewItems[i].total != (uint)count) {
-        if (!afterIsUninitialized)
-            insertViewItems(i + 1, count, QTreeViewItem()); // expand
-        else if (count > 0)
-            viewItems.resize(viewItems.count() + count);
-    } else {
-        expanding = false;
     }
 
-    int first = i + 1;
-    int level = (i >= 0 ? viewItems.at(i).level + 1 : 0);
-    int hidden = 0;
-    int last = 0;
-    int children = 0;
-    QTreeViewItem *item = 0;
-    for (int j = first; j < first + count; ++j) {
-        current = model->index(j - first, 0, parent);
-        if (isRowHidden(current)) {
-            ++hidden;
-            last = j - hidden + children;
-        } else {
-            last = j - hidden + children;
-            if (item)
-                item->hasMoreSiblings = true;
-            item = &viewItems[last];
-            item->index = current;
-            item->parentItem = i;
-            item->level = level;
-            item->height = 0;
-            item->spanning = q->isFirstColumnSpanned(current.row(), parent);
-            item->expanded = false;
-            item->total = 0;
-            item->hasMoreSiblings = false;
-            if (recursiveExpanding || isIndexExpanded(current)) {
-                if (recursiveExpanding)
-                    expandedIndexes.insert(current);
-                item->expanded = true;
-                layout(last, recursiveExpanding, afterIsUninitialized);
-                item = &viewItems[last];
-                children += item->total;
-                item->hasChildren = item->total > 0;
-                last = j - hidden + children;
-            } else {
-                item->hasChildren = hasVisibleChildren(current);
+    const int firstNewItem = itemNum + 1;
+    if (viewItems.isEmpty()) {
+        //  If the entire tree is being laid out then we can optimise by operating
+        // directly on 'viewItems'.
+        layoutDFS (viewItems, itemNum, expandBranch);
+    } else {
+        //  But if only a branch or leaf is being laid out then we must use a working
+        // vector and insert into 'viewItems' when finished.
+        branchItems.clear();
+        layoutDFS (branchItems, itemNum, expandBranch);
+
+        const int numBranchItems = branchItems.size();
+        const int numNewItems = numBranchItems - viewItems[itemNum].total;
+        if (numNewItems <= 0)
+            return;
+
+        if (afterIsUninitialized)
+            viewItems.resize(viewItems.count() + numNewItems);
+        else {
+            insertViewItems (firstNewItem, numNewItems, QTreeViewItem());
+            memcpy (&viewItems[firstNewItem], branchItems.data(),
+                    sizeof(QTreeViewItem)*numBranchItems);
+
+            //  Now adjust all the ancestors of this branch with their new deep
+            // descendant count.
+            int parentNum = itemNum;
+            while (parentNum > -1) {
+                viewItems[parentNum].total += numNewItems;
+                parentNum = viewItems[parentNum].parentItem;
             }
         }
     }
+}
 
-    // remove hidden items
-    if (hidden > 0) {
-        if (!afterIsUninitialized)
-            removeViewItems(last + 1, hidden);
-        else
-            viewItems.resize(viewItems.size() - hidden);
+/** \internal
+    Flattens items in unvisitedChildren in depth-first order into newViewItems.
+*/
+void QTreeViewPrivate::layoutDFS (QVector<QTreeViewItem> &newViewItems, const int parentOffset,
+                                  const bool expandBranch)
+{
+    Q_Q(QTreeView);
+
+    QTreeViewItem item;
+    item.height = 0;
+    item.spanning = false;
+    int dfsOffset = newViewItems.size() + 1;
+    bool spannedIndices = !spanningIndexes.isEmpty();
+    while (!unvisitedChildren.empty()) {
+        const LayoutData &child = unvisitedChildren.pop();
+
+        item.index = child.index;
+        item.level = child.depth;
+        item.parentItem = child.parentNum;
+        item.hasMoreSiblings = child.hasMoreSiblings;
+        if (spannedIndices)
+            item.spanning = q->isFirstColumnSpanned(item.index.row(), item.index.parent());
+
+        bool expanded = expandBranch || isIndexExpanded (item.index);
+        if (expanded) {
+            item.expanded = true;
+
+            int numChildren = 0;
+            if (expandBranch)
+                expandedIndexes.insert(item.index);
+            if (model->canFetchMore (item.index)) {
+                model->fetchMore(item.index);
+                numChildren = model->rowCount(item.index);
+            } else if (model->hasChildren(child.index))
+                numChildren = model->rowCount(item.index);
+
+            //  Note that the parent viewItem of this child is referenced by its
+            // "global" index as offset by 'parentOffset'.  This allows the
+            // branch item data we are computing to be moved as a block into
+            // the 'viewItems' vector.
+            item.total = numChildren;
+            int parentItem = parentOffset + dfsOffset++;
+            int lastVisibleRow = true;
+            int childDepth = item.level + 1;
+            for (int row=numChildren-1; row>=0; row--) {
+                QModelIndex childIndex(model->index (row, 0, item.index));
+                if (isRowHidden(childIndex))
+                    item.total--;
+                else if (lastVisibleRow) {
+                    //  The last visible row under a parent does not have any sibs
+                    unvisitedChildren.push(LayoutData(childIndex, parentItem, childDepth, false));
+                    lastVisibleRow = false;
+                } else
+                    unvisitedChildren.push(LayoutData(childIndex, parentItem, childDepth, true));
+            }
+            item.hasChildren = item.total > 0;
+        } else {
+            item.expanded = false;
+            item.total = 0;
+            item.hasChildren = hasVisibleChildren(item.index);
+        }
+
+        newViewItems.push_back(item);
     }
 
-    if (!expanding)
-        return; // nothing changed
-
-    while (i > -1) {
-        viewItems[i].total += count - hidden;
-        i = viewItems[i].parentItem;
+    //  Accumulate the deep descendant count for each new parent.
+    const int firstNewItem = parentOffset + 1;
+    for (int v=newViewItems.size()-2; v>=0; v--) {
+        const QTreeViewItem &item = newViewItems[v];
+        if (item.parentItem > parentOffset && item.total)
+            newViewItems[item.parentItem - firstNewItem].total += item.total;
     }
 }
 
