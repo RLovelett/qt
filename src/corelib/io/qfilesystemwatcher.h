@@ -42,9 +42,11 @@
 #ifndef QFILESYSTEMWATCHER_H
 #define QFILESYSTEMWATCHER_H
 
-#include <QtCore/qobject.h>
-
 #ifndef QT_NO_FILESYSTEMWATCHER
+
+#include <QtCore/qobject.h>
+#include <QtCore/qstringlist.h>
+#include <QtCore/qthread.h>
 
 QT_BEGIN_HEADER
 
@@ -53,6 +55,7 @@ QT_BEGIN_NAMESPACE
 QT_MODULE(Core)
 
 class QFileSystemWatcherPrivate;
+class QFileSystemWatcherEngine;
 
 class Q_CORE_EXPORT QFileSystemWatcher : public QObject
 {
@@ -79,6 +82,47 @@ Q_SIGNALS:
 private:
     Q_PRIVATE_SLOT(d_func(), void _q_fileChanged(const QString &path, bool removed))
     Q_PRIVATE_SLOT(d_func(), void _q_directoryChanged(const QString &path, bool removed))
+};
+
+class Q_CORE_EXPORT QFileSystemWatcherEngineHandler : public QObject
+{
+    Q_OBJECT
+
+public:
+    QFileSystemWatcherEngineHandler();
+    virtual ~QFileSystemWatcherEngineHandler();
+
+    virtual QStringList removeWatchablePaths(const QStringList &paths,
+                                              bool *canWatch) const;
+
+    virtual QFileSystemWatcherEngine *create() const;
+};
+
+class Q_CORE_EXPORT QFileSystemWatcherEngine : public QThread
+{
+    Q_OBJECT
+
+protected:
+    inline QFileSystemWatcherEngine(bool move = true)
+    {
+        if (move)
+            moveToThread(this);
+    }
+
+public:
+    virtual QStringList addPaths(const QStringList &paths,
+                                 QStringList *files,
+                                 QStringList *directories);
+
+    virtual QStringList removePaths(const QStringList &paths,
+                                    QStringList *files,
+                                    QStringList *directories);
+
+    virtual void stop() = 0;
+
+Q_SIGNALS:
+    void fileChanged(const QString &path, bool removed);
+    void directoryChanged(const QString &path, bool removed);
 };
 
 QT_END_NAMESPACE

@@ -235,8 +235,99 @@ void QPollingFileSystemWatcherEngine::timeout()
     }
 }
 
+/*!
+    \class QFileSystemWatcherEngineHandler
+    \reentrant
 
+    \brief The QFileSystemWatcherEngineHandler class provides a way to register
+    custom file system watcher engines with your application.
 
+    \ingroup io
+    \since 4.7
+
+    QFileSystemWatcherEngineHandler is a factory creating 
+    QFileSystemWatcherEngine objects being used for updating file dialog 
+    windows when the directory content changed.
+
+    To add a new file system watcher, you need to create a
+    QFileSystemWatcherEngineHandler subclass as well as a corresponding
+    QFileSystemWatcherEngine subclass and then create an instance of 
+    your handler in the scope you want it to be active in, which can be 
+    specific to single dialogs for example.
+
+    The registered handlers will be asked for removing all paths they 
+    can watch from a list of paths needing a watcher engine. This happens 
+    in the removeWatchablePaths() method of your implementation. They also 
+    return, if they were able to watch any path of the list. If they do, 
+    the QFileSystemWatcherEngine returned in create() will get added to the 
+    list of engines being able to handle paths. These engines will then be 
+    fed with paths. If no handlers are registered, Qt will fall back to its
+    internal native or poller engine.
+
+    \sa QFileSystemWatcherEngine, removeWatchablePaths(), create()
+*/
+
+/*
+    All application-wide handlers are stored in this list. The mutex must be
+    acquired to ensure thread safety.
+ */
+Q_GLOBAL_STATIC_WITH_ARGS(QReadWriteLock, fileSystemWatcherEngineHandlerMutex, (QReadWriteLock::Recursive))
+static bool qt_abstractfilesystemwatcherenginehandlerlist_shutDown = false;
+class QFileSystemWatcherEngineHandlerList : public QList<QFileSystemWatcherEngineHandler *>
+{
+public:
+    ~QFileSystemWatcherEngineHandlerList()
+    {
+        QWriteLocker locker(fileSystemWatcherEngineHandlerMutex());
+        qt_abstractfilesystemwatcherenginehandlerlist_shutDown = true;
+    }
+};
+Q_GLOBAL_STATIC(QFileSystemWatcherEngineHandlerList, fileSystemWatcherEngineHandlers)
+
+/*!
+    Constructs a file system watcher handler and registers it with Qt. 
+    Once created this handler's removeWatchablePaths() function will be 
+    called (along with all the other handlers) for any paths used. All
+    handlers telling they can handle one of the given paths will be fed 
+    with the paths.
+
+    \sa removeWatchablePaths()
+ */
+QFileSystemWatcherEngineHandler::QFileSystemWatcherEngineHandler()
+{
+    QWriteLocker locker(fileSystemWatcherEngineHandlerMutex());
+    fileSystemWatcherEngineHandlers()->prepend(this);
+}
+
+/*!
+    Destroys the engine handler. This will automatically unregister the handler
+    from Qt.
+ */
+QFileSystemWatcherEngineHandler::~QFileSystemWatcherEngineHandler()
+{
+    QWriteLocker locker(fileSystemWatcherEngineHandlerMutex());
+    // Remove this handler from the handler list only if the list is valid.
+    if (!qt_abstractfilesystemwatcherenginehandlerlist_shutDown)
+        fileSystemWatcherEngineHandlers()->removeAll(this);
+}
+
+/*!
+    Sets \a canWatch, depending on if it can watch a path given in
+    \a paths and returns a list of paths this engine can't watch.
+*/
+QStringList QFileSystemWatcherEngineHandler::removeWatchablePaths(const QStringList &paths,
+                                                                    bool *canWatch) const
+{
+    *canWatch = false;
+    return paths;
+}
+/*!
+    returns a new FileSystemWatcherEngine matching this handler
+*/
+QFileSystemWatcherEngine *QFileSystemWatcherEngineHandler::create() const
+{
+    return 0;
+}
 
 QFileSystemWatcherEngine *QFileSystemWatcherPrivate::createNativeEngine()
 {
@@ -400,7 +491,7 @@ void QFileSystemWatcherPrivate::_q_directoryChanged(const QString &path, bool re
     suffer from this issue.
 
 
-    \sa QFile, QDir
+    \sa QFile, QDir, QFileSystemWatcherEngine
 */
 
 
@@ -452,6 +543,14 @@ QFileSystemWatcher::~QFileSystemWatcher()
         d->forced->wait();
         delete d->forced;
         d->forced = 0;
+    }
+    QMapIterator<QString, QFileSystemWatcherEngine*> i(d->existingWatchers);
+    while (i.hasNext()) {
+        i.next();
+        i.value()->stop();
+        i.value()->wait();
+        delete i.value();
+        d->existingWatchers.remove(i.key());
     }
 }
 
@@ -508,15 +607,49 @@ void QFileSystemWatcher::addPaths(const QStringList &paths)
     }
 
     QStringList p = paths;
-    QFileSystemWatcherEngine *engine = 0;
+    QList<QFileSystemWatcherEngine *> engines;
 
     if(!objectName().startsWith(QLatin1String("_qt_autotest_force_engine_"))) {
         // Normal runtime case - search intelligently for best engine
         if(d->native) {
-            engine = d->native;
+            engines.prepend(d->native);
         } else {
             d_func()->initPollerEngine();
-            engine = d->poller;
+            if(d->poller)
+                engines.prepend(d->poller);
+        }
+
+        {
+            QReadLocker locker(fileSystemWatcherEngineHandlerMutex());
+            QStringList test_p = QStringList(p);
+
+            // check for registered handlers that can load the file
+            for (int i = 0; i < fileSystemWatcherEngineHandlers()->size(); i++) {
+                bool canWatch = false;
+                QFileSystemWatcherEngineHandler *currentHandler = fileSystemWatcherEngineHandlers()->at(i);
+
+                test_p = currentHandler->removeWatchablePaths(test_p, &canWatch);
+                if (canWatch) {
+                    QString name = currentHandler->metaObject()->className();
+                    if (!d->existingWatchers.contains(name)) {
+                        d->existingWatchers[name] = currentHandler->create();
+
+                        if (d->existingWatchers[name]) {
+                            QObject::connect(d->existingWatchers[name],
+                                            SIGNAL(fileChanged(QString,bool)),
+                                            this,
+                                            SLOT(_q_fileChanged(QString,bool)));
+                            QObject::connect(d->existingWatchers[name],
+                                            SIGNAL(directoryChanged(QString,bool)),
+                                            this,
+                                            SLOT(_q_directoryChanged(QString,bool)));
+                        }
+                    }
+
+                    if (d->existingWatchers[name])
+                        engines.prepend(d->existingWatchers[name]);
+                }
+            }
         }
 
     } else {
@@ -525,18 +658,21 @@ void QFileSystemWatcher::addPaths(const QStringList &paths)
         if(forceName == QLatin1String("poller")) {
             qDebug() << "QFileSystemWatcher: skipping native engine, using only polling engine";
             d_func()->initPollerEngine();
-            engine = d->poller;
+            if(d->poller)
+                engines.prepend(d->poller);
         } else if(forceName == QLatin1String("native")) {
             qDebug() << "QFileSystemWatcher: skipping polling engine, using only native engine";
-            engine = d->native;
+            if(d->native)
+                engines.prepend(d->native);
         } else {
             qDebug() << "QFileSystemWatcher: skipping polling and native engine, using only explicit" << forceName << "engine";
             d_func()->initForcedEngine(forceName);
-            engine = d->forced;
+            if(d->forced)
+                engines.prepend(d->forced);
         }
     }
 
-    if(engine)
+    foreach (QFileSystemWatcherEngine *engine, engines)
         p = engine->addPaths(p, &d->files, &d->directories);
 
     if (!p.isEmpty())
@@ -571,6 +707,10 @@ void QFileSystemWatcher::removePaths(const QStringList &paths)
     }
     Q_D(QFileSystemWatcher);
     QStringList p = paths;
+
+    foreach (QFileSystemWatcherEngine *engine, d->existingWatchers)
+        p = engine->removePaths(p, &d->files, &d->directories);
+
     if (d->native)
         p = d->native->removePaths(p, &d->files, &d->directories);
     if (d->poller)
@@ -628,6 +768,86 @@ QStringList QFileSystemWatcher::files() const
     Q_D(const QFileSystemWatcher);
     return d->files;
 }
+
+/*!
+    \class QFileSystemWatcherEngine
+    \brief The QFileSystemWatcherEngine implements the monitoring used in QFileSystemWatcher.
+    \ingroup io
+    \since 4.2
+    \reentrant
+
+    QFileSystemWatcherEngine provides a base class for platform 
+    specific implementations for use in QFileSystemWatcher. Qt 
+    already provides different implementations inheriting from 
+    this class.
+
+    In order to create a new Engine, you will need to implement 
+    the addPaths as well as removePaths methods which will be 
+    called if your engine should watch new paths or if they no 
+    longer need to be watched. These methods need to return a 
+    list of paths not being handled by this engine as well as
+    adding to two lists of which paths will be watched as files 
+    respectively directories. These lists are handled by 
+    QFileSystemWatcher and should only be appended or removed 
+    from therefore.
+
+    When you detect a change in the watched paths, you should emit
+    fileChanged or directoryChanged depending on the type of
+    the watched path.
+
+    You may want to implement a stopping method that will be 
+    called upon destructing the QFileSystemWatcher having created 
+    this engine.
+
+    \sa QFileSystemWatcher, QFileSystemWatcherEngineHandler
+*/
+
+/*!
+    fills \a files and \a directories with the \a paths it could
+    watch, and returns a list of paths this engine could not watch
+*/
+QStringList QFileSystemWatcherEngine::addPaths(const QStringList &paths,
+                                 QStringList *files,
+                                 QStringList *directories)
+{
+    Q_UNUSED(files);
+    Q_UNUSED(directories);
+    return paths;
+}
+
+/*!
+    removes \a paths from \a files and \a directories, and returns
+    a list of paths this engine does not know about (either addPath
+    failed or wasn't called)
+*/
+QStringList QFileSystemWatcherEngine::removePaths(const QStringList &paths,
+                                    QStringList *files,
+                                    QStringList *directories)
+{
+    Q_UNUSED(files);
+    Q_UNUSED(directories);
+    return paths;
+}
+
+/*!
+    \fn void QFileSystemWatcherEngine::stop() = 0
+    this method is called before the engine will be destructed in
+    QFileSystemWatcher::~QFileSystemWatcher()
+*/
+
+/*!
+    \fn void QFileSystemWatcherEngine::fileChanged(const QString &path, bool removed)
+    this signal is emitted when the file system watcher engine 
+    detects a change in a watched file \a path. \a removed specifies
+    if the change was the given path being deleted or not.
+*/
+
+/*!
+    \fn void QFileSystemWatcherEngine::directoryChanged(const QString &path, bool removed)
+    this signal is emitted when the file system watcher engine 
+    detects a change in a watched direcotry path. \a removed 
+    specifies if the change was the given \a path being deleted.
+*/
 
 QT_END_NAMESPACE
 

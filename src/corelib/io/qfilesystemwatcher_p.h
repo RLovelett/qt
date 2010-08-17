@@ -53,47 +53,12 @@
 // We mean it.
 //
 
-#include "qfilesystemwatcher.h"
-
 #ifndef QT_NO_FILESYSTEMWATCHER
 
+#include "qfilesystemwatcher.h"
 #include <private/qobject_p.h>
 
-#include <QtCore/qstringlist.h>
-#include <QtCore/qthread.h>
-
 QT_BEGIN_NAMESPACE
-
-class QFileSystemWatcherEngine : public QThread
-{
-    Q_OBJECT
-
-protected:
-    inline QFileSystemWatcherEngine(bool move = true)
-    {
-        if (move)
-            moveToThread(this);
-    }
-
-public:
-    // fills \a files and \a directories with the \a paths it could
-    // watch, and returns a list of paths this engine could not watch
-    virtual QStringList addPaths(const QStringList &paths,
-                                 QStringList *files,
-                                 QStringList *directories) = 0;
-    // removes \a paths from \a files and \a directories, and returns
-    // a list of paths this engine does not know about (either addPath
-    // failed or wasn't called)
-    virtual QStringList removePaths(const QStringList &paths,
-                                    QStringList *files,
-                                    QStringList *directories) = 0;
-
-    virtual void stop() = 0;
-
-Q_SIGNALS:
-    void fileChanged(const QString &path, bool removed);
-    void directoryChanged(const QString &path, bool removed);
-};
 
 class QFileSystemWatcherPrivate : public QObjectPrivate
 {
@@ -109,13 +74,14 @@ public:
 
     QFileSystemWatcherEngine *native, *poller, *forced;
     QStringList files, directories;
+    QMap<QString, QFileSystemWatcherEngine*> existingWatchers;
 
     // private slots
     void _q_fileChanged(const QString &path, bool removed);
     void _q_directoryChanged(const QString &path, bool removed);
 };
 
-
 QT_END_NAMESPACE
+
 #endif // QT_NO_FILESYSTEMWATCHER
 #endif // QFILESYSTEMWATCHER_P_H
