@@ -2,94 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="ja_JP">
 <context>
-    <name></name>
-    <message>
-        <source>The moose in the noose
-ate the goose who was loose.</source>
-        <translation type="obsolete">坊主が屏風に上手に坊主の絵を描いた。</translation>
-    </message>
-    <message>
-        <source>&lt;object&gt;</source>
-        <translation type="obsolete">&lt;オブジェクト&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;signal&gt;</source>
-        <translation type="obsolete">&lt;シグナル&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;slot&gt;</source>
-        <translation type="obsolete">&lt;スロット&gt;</translation>
-    </message>
-</context>
-<context>
-    <name>@default</name>
-    <message>
-        <source>The moose in the noose
-ate the goose who was loose.</source>
-        <translation type="obsolete">坊主が屏風に上手に坊主の絵を描いた。</translation>
-    </message>
-    <message>
-        <source>&lt;object&gt;</source>
-        <translation type="obsolete">&lt;オブジェクト&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;signal&gt;</source>
-        <translation type="obsolete">&lt;シグナル&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;slot&gt;</source>
-        <translation type="obsolete">&lt;スロット&gt;</translation>
-    </message>
-    <message>
-        <source>Solid</source>
-        <translation type="obsolete">塗りつぶし</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation type="obsolete">横</translation>
-    </message>
-    <message>
-        <source>Vertical</source>
-        <translation type="obsolete">縦</translation>
-    </message>
-    <message>
-        <source>Cross</source>
-        <translation type="obsolete">格子</translation>
-    </message>
-    <message>
-        <source>Texture</source>
-        <translation type="obsolete">テクスチャ</translation>
-    </message>
-    <message>
-        <source>Dense 1</source>
-        <translation type="obsolete">密度 1</translation>
-    </message>
-    <message>
-        <source>Dense 2</source>
-        <translation type="obsolete">密度 2</translation>
-    </message>
-    <message>
-        <source>Dense 3</source>
-        <translation type="obsolete">密度 3</translation>
-    </message>
-    <message>
-        <source>Dense 4</source>
-        <translation type="obsolete">密度 4</translation>
-    </message>
-    <message>
-        <source>Dense 5</source>
-        <translation type="obsolete">密度 5</translation>
-    </message>
-    <message>
-        <source>Dense 6</source>
-        <translation type="obsolete">密度 6</translation>
-    </message>
-    <message>
-        <source>Dense 7</source>
-        <translation type="obsolete">密度 7</translation>
-    </message>
-</context>
-<context>
     <name>AbstractFindWidget</name>
     <message>
         <source>&amp;Previous</source>
@@ -297,10 +209,6 @@ ate the goose who was loose.</source>
         <translation>交差する斜線</translation>
     </message>
     <message>
-        <source>Texture</source>
-        <translation type="obsolete">テクスチャ</translation>
-    </message>
-    <message>
         <source>Style</source>
         <translation>スタイル</translation>
     </message>
@@ -428,10 +336,6 @@ ate the goose who was loose.</source>
         <translation>ページを挿入</translation>
     </message>
     <message>
-        <source>tab</source>
-        <translation type="obsolete">タブ</translation>
-    </message>
-    <message>
         <source>Change Tab order</source>
         <translation>タブ順を変更</translation>
     </message>
@@ -456,10 +360,6 @@ ate the goose who was loose.</source>
         <translation>ツールバーを追加</translation>
     </message>
     <message>
-        <source>Set Dock Window Widget</source>
-        <translation type="obsolete">ドックウィンドウウィジェットの設定</translation>
-    </message>
-    <message>
         <source>Add Dock Window</source>
         <translation>ドックウィンドウを追加</translation>
     </message>
@@ -474,10 +374,6 @@ ate the goose who was loose.</source>
     <message>
         <source>Change Layout Item Geometry</source>
         <translation>レイアウトのアイテムの座標を変更</translation>
-    </message>
-    <message>
-        <source>Insert Row</source>
-        <translation type="obsolete">行を挿入</translation>
     </message>
     <message>
         <source>Change Table Contents</source>
@@ -530,56 +426,6 @@ ate the goose who was loose.</source>
     <message>
         <source>Insert Menu</source>
         <translation>メニューを挿入</translation>
-    </message>
-    <message>
-        <source>changed &apos;%1&apos; of &apos;%2&apos;</source>
-        <translation type="obsolete">&apos;%2&apos; の &apos;%1&apos; を変更</translation>
-    </message>
-    <message numerus="yes">
-        <source>changed &apos;%1&apos; of %2 objects</source>
-        <translation type="obsolete">
-            <numerusform>&apos;%2&apos; オブジェクトの &apos;%1&apos; を変更</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>reset &apos;%1&apos; of &apos;%2&apos;</source>
-        <translation type="obsolete">&apos;%2&apos; の &apos;%1&apos; をリセット</translation>
-    </message>
-    <message numerus="yes">
-        <source>reset &apos;%1&apos; of %2 objects</source>
-        <translation type="obsolete">
-            <numerusform>&apos;%2&apos; オブジェクトの &apos;%1&apos; をリセット</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>add dynamic property &apos;%1&apos; to &apos;%2&apos;</source>
-        <translation type="obsolete">ダイナミックプロパティ &apos;%1&apos; を &apos;%2&apos; に追加</translation>
-    </message>
-    <message numerus="yes">
-        <source>add dynamic property &apos;%1&apos; to %2 objects</source>
-        <translation type="obsolete">
-            <numerusform>ダイナミックプロパティ &apos;%1&apos; を &apos;%2&apos; オブジェクトに追加</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>remove dynamic property &apos;%1&apos; from &apos;%2&apos;</source>
-        <translation type="obsolete">ダイナミックプロパティ &apos;%1&apos; を &apos;%2&apos; から削除</translation>
-    </message>
-    <message numerus="yes">
-        <source>remove dynamic property &apos;%1&apos; from %2 objects</source>
-        <translation type="obsolete">
-            <numerusform>ダイナミックプロパティ &apos;%1&apos; を &apos;%2&apos; オブジェクトから削除</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>changed comment of &apos;%1&apos; of &apos;%2&apos;</source>
-        <translation type="obsolete">&apos;%2&apos; の &apos;%1&apos; のコメントを変更</translation>
-    </message>
-    <message numerus="yes">
-        <source>changed comment of &apos;%1&apos; of %2 objects</source>
-        <translation type="obsolete">
-            <numerusform>&apos;%2&apos; オブジェクトの &apos;%1&apos; のコメントを変更</numerusform>
-        </translation>
     </message>
     <message>
         <source>Change signals/slots</source>
@@ -744,10 +590,6 @@ ate the goose who was loose.</source>
         <translation>Qt Designer</translation>
     </message>
     <message>
-        <source>This file contains top level spacers.&lt;br&gt;They have &lt;b&gt;NOT&lt;/b&gt; been saved into the form.&lt;br&gt;Perhaps you forgot to create a layout?</source>
-        <translation type="obsolete">このファイルには、トップレベルのスペーサが含まれています。&lt;br&gt;これらはフォームに保存されて&lt;b&gt;いませんでした&lt;/b&gt;。&lt;br&gt;もしや、レイアウトの指定を忘れていませんか?</translation>
-    </message>
-    <message>
         <source>This file contains top level spacers.&lt;br&gt;They have &lt;b&gt;NOT&lt;/b&gt; been saved into the form.</source>
         <translation>このファイルには、トップレベルのスペーサが含まれています。&lt;br&gt;これらはフォームに保存されて&lt;b&gt;いませんでした&lt;/b&gt;。</translation>
     </message>
@@ -798,16 +640,6 @@ ate the goose who was loose.</source>
         <translation>&lt;b&gt;uic3&amp;nbsp;-convert&lt;/b&gt;コマンドを実行して、Qt-4 の ui ファイルの形式に更新してください。</translation>
     </message>
     <message>
-        <source>This file was created using Designer from Qt-%1 and will be converted to a new form by Qt Designer.
-The old form has been untouched, but you will have to save this form under a new name.</source>
-        <translation type="obsolete">このファイルは Qt-%1 の Designer で作成されたものですが、Qt Designer によって新しいフォームに変換されます。
-古いフォームは放置されてきましたが、新しい名前で保存する必要があります。</translation>
-    </message>
-    <message>
-        <source>This file was created using Designer from Qt-%1 and could not be read:&lt;br&gt;%2&lt;br&gt;Please run it through &lt;b&gt;uic3 -convert&lt;/b&gt; to convert it to Qt-4&apos;s ui format.</source>
-        <translation type="obsolete">このファイルは Qt-%1 の Designer で作成されたものですが、読めませんでした:&lt;br&gt;%2&lt;br&gt;&lt;b&gt;uic3 -convert&lt;/b&gt; を実行して、Qt 4 の UI フォーマットに変換してください。</translation>
-    </message>
-    <message>
         <source>Custom Widgets</source>
         <translation>カスタムウィジェット</translation>
     </message>
@@ -822,27 +654,6 @@ The old form has been untouched, but you will have to save this form under a new
     <message>
         <source>%1 timed out.</source>
         <translation>%1 はタイムアウトしました。</translation>
-    </message>
-    <message>
-        <source>Error opening resource file</source>
-        <translation type="obsolete">リソースファイルのオープンエラー</translation>
-    </message>
-    <message>
-        <source>Failed to open &quot;%1&quot;:
-%2</source>
-        <translation type="obsolete">&quot;%1&quot; のオープンに失敗: %2</translation>
-    </message>
-    <message>
-        <source>file name is empty</source>
-        <translation type="obsolete">ファイル名が空です</translation>
-    </message>
-    <message>
-        <source>XML error on line %1, col %2: %3</source>
-        <translation type="obsolete">%1 行目 %2 カラム目にXMLエラー: %3</translation>
-    </message>
-    <message>
-        <source>no &lt;RCC&gt; root element</source>
-        <translation type="obsolete">&lt;RCC&gt; ルートエレメントがありません</translation>
     </message>
 </context>
 <context>
@@ -950,7 +761,7 @@ The old form has been untouched, but you will have to save this form under a new
     <message>
         <source>&lt;html&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Font&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%1, %2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Style&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Resolution&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%4 x %5&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/html&gt;</source>
         <extracomment>Format embedded device profile description</extracomment>
-        <translation>&lt;html&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;フォント&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%1, %2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;スタイル&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;解像度&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%4 x %5&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;フォント&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%1, %2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;スタイル&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;解像度&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%4 × %5&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -1073,7 +884,7 @@ Parsing grid layout minimum size values</extracomment>
     </message>
     <message>
         <source>&amp;Buddy:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Buddy:</translation>
     </message>
     <message>
         <source>&amp;Row:</source>
@@ -1162,18 +973,11 @@ Parsing grid layout minimum size values</extracomment>
     </message>
 </context>
 <context>
-    <name>LayoutPropertySheet</name>
-    <message>
-        <source>Layout</source>
-        <translation type="obsolete">レイアウト</translation>
-    </message>
-</context>
-<context>
     <name>MainWindowBase</name>
     <message>
         <source>Main</source>
         <extracomment>Not currently used (main tool bar)</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>メイン</translation>
     </message>
     <message>
         <source>File</source>
@@ -1219,14 +1023,6 @@ Parsing grid layout minimum size values</extracomment>
         <translation>最近使用したフォーム(&amp;R)</translation>
     </message>
     <message>
-        <source>Error loading form</source>
-        <translation type="obsolete">フォームのロードエラー</translation>
-    </message>
-    <message>
-        <source>Choose a template for a preview</source>
-        <translation type="obsolete">プレビューのためテンプレートを選択</translation>
-    </message>
-    <message>
         <source>Read error</source>
         <translation>読み込みエラー</translation>
     </message>
@@ -1235,16 +1031,8 @@ Parsing grid layout minimum size values</extracomment>
         <translation>新しいフォーム</translation>
     </message>
     <message>
-        <source>0</source>
-        <translation type="obsolete">0</translation>
-    </message>
-    <message>
         <source>Show this Dialog on Startup</source>
         <translation>起動時にこのダイアログを表示</translation>
-    </message>
-    <message>
-        <source>Custom Widgets</source>
-        <translation type="obsolete">カスタムウィジェット</translation>
     </message>
     <message>
         <source>A temporary form file could not be created in %1.</source>
@@ -1286,53 +1074,6 @@ Parsing grid layout minimum size values</extracomment>
     </message>
 </context>
 <context>
-    <name>Oubliette</name>
-    <message>
-        <source>Inventory</source>
-        <translation type="obsolete">棚卸し</translation>
-    </message>
-    <message>
-        <source>You have &lt;B&gt;No&lt;/B&gt; Items</source>
-        <translation type="obsolete">アイテムが&lt;B&gt;ありません&lt;/B&gt;</translation>
-    </message>
-    <message numerus="yes">
-        <source>You have %1 of %2 items</source>
-        <translation type="obsolete">
-            <numerusform>%2 アイテムのうちの %1 個を持っています</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="obsolete">OK</translation>
-    </message>
-    <message>
-        <source>Easter Egg Found</source>
-        <translation type="obsolete">イースターエッグが見つかりました</translation>
-    </message>
-    <message>
-        <source>Welcome to the Trolltech Business Card Hunt
-Use the direction keys to move around and find the business cards for all the trolls.</source>
-        <translation type="obsolete">Trolltech の名刺捜しゲームへようこそ矢印キーを使って移動し、Trolltech の全社員の名刺を見つけてください。</translation>
-    </message>
-    <message>
-        <source>You Did It!</source>
-        <translation type="obsolete">よくできました!</translation>
-    </message>
-    <message>
-        <source>You&apos;ve collected all the Trolltech cards. It took you %1 steps.
-There&apos;s nothing more here. You should get back to work.</source>
-        <translation type="obsolete">あなたは Trolltech の全ての名刺を集めました。%1 回かかりました。これで終わりです。仕事に戻りましょう。</translation>
-    </message>
-    <message>
-        <source>That&apos;s rather anti-climatic</source>
-        <translation type="obsolete">それは社会の風潮に反することです</translation>
-    </message>
-    <message>
-        <source>Quit</source>
-        <translation type="obsolete">終了</translation>
-    </message>
-</context>
-<context>
     <name>PluginDialog</name>
     <message>
         <source>Plugin Information</source>
@@ -1346,40 +1087,8 @@ There&apos;s nothing more here. You should get back to work.</source>
 <context>
     <name>PreferencesDialog</name>
     <message>
-        <source>Docked Window</source>
-        <translation type="obsolete">ドックウィンドウ</translation>
-    </message>
-    <message>
-        <source>Multiple Top-Level Windows</source>
-        <translation type="obsolete">複数のトップレベルウィンドウ</translation>
-    </message>
-    <message>
-        <source>Toolwindow Font</source>
-        <translation type="obsolete">ツールウィンドウフォント</translation>
-    </message>
-    <message>
-        <source>Default Grid</source>
-        <translation type="obsolete">デフォルトグリッド</translation>
-    </message>
-    <message>
-        <source>Pick a directory to save templates in</source>
-        <translation type="obsolete">テンプレートを保存するディレクトリを選択してください</translation>
-    </message>
-    <message>
         <source>Preferences</source>
         <translation>設定</translation>
-    </message>
-    <message>
-        <source>User Interface Mode</source>
-        <translation type="obsolete">ユーザインターフェースモード</translation>
-    </message>
-    <message>
-        <source>Additional Template Paths</source>
-        <translation type="obsolete">追加のテンプレートパス</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="obsolete">...</translation>
     </message>
 </context>
 <context>
@@ -1471,39 +1180,6 @@ UI ファイルの記述が矛盾しています。</translation>
     <message>
         <source>This version of the uitools library is linked without script support.</source>
         <translation>このバージョンの uitools は、スクリプトがサポートされていないライブラリがリンクされています。</translation>
-    </message>
-</context>
-<context>
-    <name>QActiveXPlugin</name>
-    <message>
-        <source>ActiveX control</source>
-        <translation type="obsolete">ActiveX コントロール</translation>
-    </message>
-    <message>
-        <source>ActiveX control widget</source>
-        <translation type="obsolete">ActiveX コントロールウィジェット</translation>
-    </message>
-</context>
-<context>
-    <name>QActiveXPluginObject</name>
-    <message>
-        <source>Control loaded</source>
-        <translation type="obsolete">コントロールがロードされました</translation>
-    </message>
-</context>
-<context>
-    <name>QActiveXTaskMenu</name>
-    <message>
-        <source>Set Control</source>
-        <translation type="obsolete">コントロールを設定</translation>
-    </message>
-    <message>
-        <source>Licensed Control</source>
-        <translation type="obsolete">ライセンスされたコントロール</translation>
-    </message>
-    <message>
-        <source>The control requires a design-time license</source>
-        <translation type="obsolete">このコントロールを使用するには、開発時ライセンスが必要です</translation>
     </message>
 </context>
 <context>
@@ -1609,57 +1285,14 @@ Script: %3</source>
     </message>
 </context>
 <context>
-    <name>QDesignerActionEditor</name>
-    <message>
-        <source>Action Editor</source>
-        <translation type="obsolete">アクションエディタ</translation>
-    </message>
-</context>
-<context>
     <name>QDesignerActions</name>
     <message>
         <source>Edit Widgets</source>
         <translation>ウィジェットを編集</translation>
     </message>
     <message>
-        <source>&amp;New Form...</source>
-        <translation type="obsolete">新しいフォーム(&amp;N)...</translation>
-    </message>
-    <message>
-        <source>&amp;Open Form...</source>
-        <translation type="obsolete">フォームを開く(&amp;O)...</translation>
-    </message>
-    <message>
-        <source>&amp;Save Form</source>
-        <translation type="obsolete">フォームを保存(&amp;S)</translation>
-    </message>
-    <message>
-        <source>Save Form &amp;As...</source>
-        <translation type="obsolete">名前をつけてフォームを保存(&amp;A)...</translation>
-    </message>
-    <message>
-        <source>Save A&amp;ll Forms</source>
-        <translation type="obsolete">すべてのフォームを保存(&amp;L)</translation>
-    </message>
-    <message>
-        <source>Save Form As &amp;Template...</source>
-        <translation type="obsolete">フォームをテンプレートとして保存(&amp;T)...</translation>
-    </message>
-    <message>
-        <source>&amp;Close Form</source>
-        <translation type="obsolete">フォームを閉じる(&amp;C)</translation>
-    </message>
-    <message>
         <source>&amp;Quit</source>
         <translation>終了(&amp;Q)</translation>
-    </message>
-    <message>
-        <source>&amp;Preview</source>
-        <translation type="obsolete">プレビュー(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Form &amp;Settings...</source>
-        <translation type="obsolete">フォームの設定(&amp;S)...</translation>
     </message>
     <message>
         <source>&amp;Minimize</source>
@@ -1674,48 +1307,16 @@ Script: %3</source>
         <translation>設定...</translation>
     </message>
     <message>
-        <source>CTRL+N</source>
-        <translation type="obsolete">CTRL+N</translation>
-    </message>
-    <message>
-        <source>CTRL+O</source>
-        <translation type="obsolete">CTRL+O</translation>
-    </message>
-    <message>
         <source>Clear &amp;Menu</source>
         <translation>メニューをクリア(&amp;M)</translation>
-    </message>
-    <message>
-        <source>CTRL+S</source>
-        <translation type="obsolete">CTRL+S</translation>
     </message>
     <message>
         <source>CTRL+SHIFT+S</source>
         <translation>CTRL+SHIFT+S</translation>
     </message>
     <message>
-        <source>CTRL+W</source>
-        <translation type="obsolete">CTRL+W</translation>
-    </message>
-    <message>
-        <source>CTRL+Q</source>
-        <translation type="obsolete">CTRL+Q</translation>
-    </message>
-    <message>
-        <source>CTRL+Z</source>
-        <translation type="obsolete">CTRL+Z</translation>
-    </message>
-    <message>
-        <source>CTRL+SHIFT+Z</source>
-        <translation type="obsolete">CTRL+SHIFT+Z</translation>
-    </message>
-    <message>
         <source>CTRL+R</source>
         <translation>CTRL+R</translation>
-    </message>
-    <message>
-        <source>%1 Style</source>
-        <translation type="obsolete">%1 スタイル</translation>
     </message>
     <message>
         <source>CTRL+M</source>
@@ -1754,14 +1355,6 @@ Script: %3</source>
         <translation>Designer UI ファイル(*.%1);;すべてのファイル (*)</translation>
     </message>
     <message>
-        <source>Save form as</source>
-        <translation type="obsolete">名前を付けてフォームを保存</translation>
-    </message>
-    <message>
-        <source>Save</source>
-        <translation type="obsolete">保存</translation>
-    </message>
-    <message>
         <source>%1 already exists.
 Do you want to replace it?</source>
         <translation>%1 は既に存在します。上書きしますか?</translation>
@@ -1776,7 +1369,7 @@ Do you want to replace it?</source>
     </message>
     <message>
         <source>ALT+CTRL+S</source>
-        <translation type="unfinished"></translation>
+        <translation>ALT+CTRL+S</translation>
     </message>
     <message>
         <source>&amp;Recent Forms</source>
@@ -1829,14 +1422,6 @@ Do you want to update the file location or generate a new form?</source>
         <translation>%1 を印刷しました。</translation>
     </message>
     <message>
-        <source>The file, %1, could not be opened
-Reason: %2
-Would you like to retry or change your file?</source>
-        <translation type="obsolete">ファイル %1 はオープンできませんでした
-理由: %2
-リトライしますか、それともファイルを変更しますか?</translation>
-    </message>
-    <message>
         <source>Select New File</source>
         <translation>新しいファイルを選択</translation>
     </message>
@@ -1845,20 +1430,8 @@ Would you like to retry or change your file?</source>
         <translation>ファイルに書き込むことができませんでした</translation>
     </message>
     <message>
-        <source>It was not possible to write the entire file, %1, to disk.
-Reason:%2
-Would you like to retry?</source>
-        <translation type="obsolete">ファイル %1 の全体をディスクに書き込むことができませんでした。
-理由: %2
-リトライしますか?</translation>
-    </message>
-    <message>
         <source>&amp;Close Preview</source>
         <translation>プレビューを閉じる(&amp;C)</translation>
-    </message>
-    <message>
-        <source>Form Settings - %1</source>
-        <translation type="obsolete">フォーム設定 - %1</translation>
     </message>
     <message>
         <source>&amp;New...</source>
@@ -1954,7 +1527,7 @@ Would you like to retry?</source>
     </message>
     <message>
         <source>Assistant</source>
-        <translation type="unfinished"></translation>
+        <translation>Assistant</translation>
     </message>
 </context>
 <context>
@@ -2084,13 +1657,6 @@ Would you like to retry?</source>
     </message>
 </context>
 <context>
-    <name>QDesignerObjectInspector</name>
-    <message>
-        <source>Object Inspector</source>
-        <translation type="obsolete">オブジェクトインスペクタ</translation>
-    </message>
-</context>
-<context>
     <name>QDesignerPluginManager</name>
     <message>
         <source>An XML error was encountered when parsing the XML of the custom widget %1: %2</source>
@@ -2122,22 +1688,7 @@ Would you like to retry?</source>
     </message>
 </context>
 <context>
-    <name>QDesignerPropertyEditor</name>
-    <message>
-        <source>Property Editor</source>
-        <translation type="obsolete">プロパティエディタ</translation>
-    </message>
-    <message>
-        <source>Ctrl+I</source>
-        <translation type="obsolete">Ctrl+I</translation>
-    </message>
-</context>
-<context>
     <name>QDesignerPropertySheet</name>
-    <message>
-        <source>Layout</source>
-        <translation type="obsolete">レイアウト</translation>
-    </message>
     <message>
         <source>Dynamic Properties</source>
         <translation>ダイナミックプロパティ</translation>
@@ -2172,13 +1723,6 @@ Container pages should only be added by specifying them in XML returned by the d
     </message>
 </context>
 <context>
-    <name>QDesignerResourceEditor</name>
-    <message>
-        <source>Resource Editor</source>
-        <translation type="obsolete">リソースエディタ</translation>
-    </message>
-</context>
-<context>
     <name>QDesignerSharedSettings</name>
     <message>
         <source>The template path %1 could not be created.</source>
@@ -2187,145 +1731,6 @@ Container pages should only be added by specifying them in XML returned by the d
     <message>
         <source>An error has been encountered while parsing device profile XML: %1</source>
         <translation>デバイスプロファイルの XML のパース中にエラーが発生しました: %1</translation>
-    </message>
-</context>
-<context>
-    <name>QDesignerSignalSlotEditor</name>
-    <message>
-        <source>Signal/Slot Editor</source>
-        <translation type="obsolete">シグナル/スロットエディタ</translation>
-    </message>
-</context>
-<context>
-    <name>QDesignerStackedWidget</name>
-    <message>
-        <source>Previous Page</source>
-        <translation type="obsolete">前のページ</translation>
-    </message>
-    <message>
-        <source>Next Page</source>
-        <translation type="obsolete">次のページ</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="obsolete">削除</translation>
-    </message>
-    <message>
-        <source>Before Current Page</source>
-        <translation type="obsolete">このページの前</translation>
-    </message>
-    <message>
-        <source>After Current Page</source>
-        <translation type="obsolete">このページの後</translation>
-    </message>
-    <message>
-        <source>Change Page Order...</source>
-        <translation type="obsolete">ページの順序を変更...</translation>
-    </message>
-    <message>
-        <source>Change Page Order</source>
-        <translation type="obsolete">ページの順序を変更</translation>
-    </message>
-    <message>
-        <source>Page %1 of %2</source>
-        <translation type="obsolete">%2 ページのうちの %1 ページ</translation>
-    </message>
-    <message>
-        <source>Insert Page</source>
-        <translation type="obsolete">ページを挿入</translation>
-    </message>
-</context>
-<context>
-    <name>QDesignerTabWidget</name>
-    <message>
-        <source>Delete</source>
-        <translation type="obsolete">削除</translation>
-    </message>
-    <message>
-        <source>Before Current Page</source>
-        <translation type="obsolete">このページの前</translation>
-    </message>
-    <message>
-        <source>After Current Page</source>
-        <translation type="obsolete">このページの後</translation>
-    </message>
-    <message>
-        <source>Page %1 of %2</source>
-        <translation type="obsolete">%2 ページのうちの %1 ページ</translation>
-    </message>
-    <message>
-        <source>Insert Page</source>
-        <translation type="obsolete">ページを挿入</translation>
-    </message>
-</context>
-<context>
-    <name>QDesignerTaskMenu</name>
-    <message>
-        <source>Change objectName...</source>
-        <translation type="obsolete">オブジェクト名を変更...</translation>
-    </message>
-    <message>
-        <source>Change toolTip...</source>
-        <translation type="obsolete">ツールチップを変更...</translation>
-    </message>
-    <message>
-        <source>Change whatsThis...</source>
-        <translation type="obsolete">ヒントを変更...</translation>
-    </message>
-    <message>
-        <source>Change styleSheet...</source>
-        <translation type="obsolete">スタイルシートを変更...</translation>
-    </message>
-    <message>
-        <source>Create Menu Bar</source>
-        <translation type="obsolete">メニューバーを作成</translation>
-    </message>
-    <message>
-        <source>Add Tool Bar</source>
-        <translation type="obsolete">ツールバーを追加</translation>
-    </message>
-    <message>
-        <source>Create Status Bar</source>
-        <translation type="obsolete">ステータスバーを作成</translation>
-    </message>
-    <message>
-        <source>Remove Status Bar</source>
-        <translation type="obsolete">ステータスバーを削除</translation>
-    </message>
-    <message>
-        <source>Change script...</source>
-        <translation type="obsolete">スクリプトを変更...</translation>
-    </message>
-</context>
-<context>
-    <name>QDesignerToolBox</name>
-    <message>
-        <source>Delete Page</source>
-        <translation type="obsolete">ページを削除</translation>
-    </message>
-    <message>
-        <source>Before Current Page</source>
-        <translation type="obsolete">このページの前</translation>
-    </message>
-    <message>
-        <source>After Current Page</source>
-        <translation type="obsolete">このページの後</translation>
-    </message>
-    <message>
-        <source>Change Page Order...</source>
-        <translation type="obsolete">ページの順序を変更...</translation>
-    </message>
-    <message>
-        <source>Change Page Order</source>
-        <translation type="obsolete">ページの順序を変更</translation>
-    </message>
-    <message>
-        <source>Page %1 of %2</source>
-        <translation type="obsolete">%2 ページのうちの %1 ページ</translation>
-    </message>
-    <message>
-        <source>Insert Page</source>
-        <translation type="obsolete">ページを挿入</translation>
     </message>
 </context>
 <context>
@@ -2356,25 +1761,10 @@ Container pages should only be added by specifying them in XML returned by the d
     </message>
 </context>
 <context>
-    <name>QDesignerWidgetBox</name>
-    <message>
-        <source>Widget Box</source>
-        <translation type="obsolete">ウィジェットボックス</translation>
-    </message>
-</context>
-<context>
     <name>QDesignerWorkbench</name>
     <message>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
-    </message>
-    <message>
-        <source>&amp;Recent Forms</source>
-        <translation type="obsolete">最近使用したフォーム(&amp;R)</translation>
-    </message>
-    <message>
-        <source>&amp;Edit</source>
-        <translation type="obsolete">編集(&amp;E)</translation>
     </message>
     <message>
         <source>F&amp;orm</source>
@@ -2385,10 +1775,6 @@ Container pages should only be added by specifying them in XML returned by the d
         <translation>スタイルを指定してプレビュー</translation>
     </message>
     <message>
-        <source>&amp;Tools</source>
-        <translation type="obsolete">ツール(&amp;T)</translation>
-    </message>
-    <message>
         <source>&amp;Window</source>
         <translation>ウィンドウ(&amp;W)</translation>
     </message>
@@ -2397,20 +1783,8 @@ Container pages should only be added by specifying them in XML returned by the d
         <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
-        <source>File</source>
-        <translation type="obsolete">ファイル</translation>
-    </message>
-    <message>
         <source>Edit</source>
         <translation>編集</translation>
-    </message>
-    <message>
-        <source>Tools</source>
-        <translation type="obsolete">ツール</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="obsolete">フォーム</translation>
     </message>
     <message>
         <source>Toolbars</source>
@@ -2421,20 +1795,8 @@ Container pages should only be added by specifying them in XML returned by the d
         <translation>ウィジェットボックス</translation>
     </message>
     <message>
-        <source>Qt Designer</source>
-        <translation type="obsolete">Qt Designer</translation>
-    </message>
-    <message>
         <source>Save Forms?</source>
         <translation>フォームを保存しますか?</translation>
-    </message>
-    <message>
-        <source>There are %1 forms with unsaved changes. Do you want to review these changes before quitting?</source>
-        <translation type="obsolete">変更分を保存されていないフォームが %1 個あります。終了する前に変更を確認しますか?</translation>
-    </message>
-    <message>
-        <source>If you don&apos;t review your documents, all your changes will be lost.</source>
-        <translation type="obsolete">ドキュメントを確認しない場合は、行ったすべての変更は失われます。</translation>
     </message>
     <message>
         <source>&amp;View</source>
@@ -2469,16 +1831,8 @@ Container pages should only be added by specifying them in XML returned by the d
         <translation>ファイル &lt;b&gt;%1&lt;/b&gt; は、無効な Designer の UI ファイルです。</translation>
     </message>
     <message>
-        <source>Designer was not correctly terminated during your last session.There are existing Backup files, do you want to load them?</source>
-        <translation type="obsolete">前回使用したときに Designer は正しく終了されませんでした。バックアップファイルが存在します。ロードしますか?</translation>
-    </message>
-    <message>
         <source>The file &lt;b&gt;%1&lt;/b&gt; could not be opened.</source>
         <translation>ファイル &lt;b&gt;%1&lt;/b&gt; はオープンできませんでした。</translation>
-    </message>
-    <message>
-        <source>The file &lt;b&gt;%1&lt;/b&gt; is not a valid Designer ui file.</source>
-        <translation type="obsolete">ファイル &lt;b&gt;%1&lt;/b&gt; は、有効な Designer の UI ファイルではありません。</translation>
     </message>
     <message numerus="yes">
         <source>There are %n forms with unsaved changes. Do you want to review these changes before quitting?</source>
@@ -2533,243 +1887,6 @@ Empty class name passed to widget factory method</extracomment>
     <message>
         <source>The flag-value &apos;%1&apos; is invalid. Zero will be used instead.</source>
         <translation>フラグの値 &apos;%1&apos; は無効です。代わりに 0 を使用します。</translation>
-    </message>
-</context>
-<context>
-    <name>QFormInternal::QCoreApplication</name>
-    <message>
-        <source>Syntax error.</source>
-        <translation type="obsolete">構文エラー。</translation>
-    </message>
-    <message>
-        <source>Exception at line %1: %2</source>
-        <translation type="obsolete">%1 行目で例外が発生: %2</translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation type="obsolete">不明なエラー</translation>
-    </message>
-    <message>
-        <source>An error occurred while running the script for %1: %2
-Script: %3</source>
-        <translation type="obsolete">%1 のためにスクリプトを実行していてエラーが発生しました: %2
-スクリプト: %3</translation>
-    </message>
-</context>
-<context>
-    <name>QFormInternal::QObject</name>
-    <message>
-        <source>QFormBuilder was unable to create a widget of the class &apos;%1&apos;.</source>
-        <translation type="obsolete">QFormBuilder は、クラス &apos;%1&apos; のウィジェットを作成できませんでした。</translation>
-    </message>
-    <message>
-        <source>The layout type `%1&apos; is not supported.</source>
-        <translation type="obsolete">レイアウトタイプ &apos;%1&apos; は、サポートされていません。</translation>
-    </message>
-    <message>
-        <source>The set-type property %1 could not be read.</source>
-        <translation type="obsolete">Set型のプロパティ %1 を読めませんでした。</translation>
-    </message>
-    <message>
-        <source>The enumeration-type property %1 could not be read.</source>
-        <translation type="obsolete">Enum 型のプロパティ %1 を読めませんでした。</translation>
-    </message>
-    <message>
-        <source>Reading properties of the type %1 is not supported yet.</source>
-        <translation type="obsolete">%1 という型のプロパティの読み込みは、サポートされていません。</translation>
-    </message>
-    <message>
-        <source>The property %1 could not be written. The type %2 is not supported yet.</source>
-        <translation type="obsolete">プロパティ %1 を書き込めませんでした。%2 という型はサポートされていません。</translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <source>Show all signals and slots</source>
-        <translation type="obsolete">全てのシグナルとスロットを表示</translation>
-    </message>
-    <message>
-        <source>Configure Connection</source>
-        <translation type="obsolete">シグナル/スロット接続を設定</translation>
-    </message>
-    <message>
-        <source>A parse error occurred at line %1, column %2 of the XML code specified for the widget %3: %4
-%5</source>
-        <translation type="obsolete">ウィジェット %3 のために指定された XML コードの %1 行目の %2 カラム目でパースエラーが発生しました: %4
-%5</translation>
-    </message>
-    <message>
-        <source>The XML code specified for the widget %1 contains an invalid root element %2.
-%3</source>
-        <translation type="obsolete">ウィジェット %1 のために指定された XML コードは、無効なルートエレメント %2 を含んでいます。
-%3</translation>
-    </message>
-    <message>
-        <source>%1 - warning</source>
-        <translation type="obsolete">%1 - 警告</translation>
-    </message>
-    <message>
-        <source>The backup file %1 could not be written.</source>
-        <translation type="obsolete">バックアップファイル %1 に書き込めませんでした。</translation>
-    </message>
-    <message>
-        <source>The backup directory %1 could not be created.</source>
-        <translation type="obsolete">バックアップディレクトリ %1 を作成できませんでした。</translation>
-    </message>
-    <message>
-        <source>The temporary backup directory %1 could not be created.</source>
-        <translation type="obsolete">バックアップ用の一時ディレクトリ %1 を作成できませんでした。</translation>
-    </message>
-    <message>
-        <source>The template path %1 could not be created.</source>
-        <translation type="obsolete">テンプレートのパス %1 を作成できませんでした。</translation>
-    </message>
-    <message>
-        <source>The plugin &apos;%1&apos; failed to load: %2</source>
-        <translation type="obsolete">プラグイン &apos;%1&apos; をロードできませんでした: %2</translation>
-    </message>
-    <message>
-        <source>Not used</source>
-        <translation type="obsolete">使用されません</translation>
-    </message>
-    <message>
-        <source>Script errors occurred:</source>
-        <translation type="obsolete">スクリプトエラーが発生しました:</translation>
-    </message>
-    <message>
-        <source>Change Object Name</source>
-        <translation type="obsolete">オブジェクト名を変更</translation>
-    </message>
-    <message>
-        <source>Object Name</source>
-        <translation type="obsolete">オブジェクト名</translation>
-    </message>
-    <message>
-        <source>An error occurred while running the scripts for &quot;%1&quot;:
-</source>
-        <translation type="obsolete">&quot;%1&quot; のためにスクリプトを実行していてエラーが発生しました:
-</translation>
-    </message>
-    <message>
-        <source>The creation of a widget of the class &apos;%1&apos; failed.</source>
-        <translation type="obsolete">クラス &apos;%1&apos; のウィジェットの作成に失敗しました。</translation>
-    </message>
-    <message>
-        <source>Flags property are not supported yet.</source>
-        <translation type="obsolete">フラグのプロパティはサポートされていません。</translation>
-    </message>
-    <message>
-        <source>While applying tab stops: The widget &apos;%1&apos; could not be found.</source>
-        <translation type="obsolete">タブストップの適用中: ウィジェット &apos;%1&apos; が見つかりません。</translation>
-    </message>
-    <message>
-        <source>This version of the uitools library is linked without script support.</source>
-        <translation type="obsolete">このバージョンの uitools は、スクリプトがサポートされていないライブラリがリンクされています。</translation>
-    </message>
-    <message>
-        <source>The icon specified by %1 could not be opened: %2</source>
-        <translation type="obsolete">%1 で指定されたアイコンをオープンできませんでした: %2</translation>
-    </message>
-    <message>
-        <source>separator</source>
-        <translation type="obsolete">セパレータ</translation>
-    </message>
-    <message>
-        <source>Object</source>
-        <translation type="obsolete">オブジェクト</translation>
-    </message>
-    <message>
-        <source>Class</source>
-        <translation type="obsolete">クラス</translation>
-    </message>
-    <message>
-        <source>&lt;noname&gt;</source>
-        <translation type="obsolete">&lt;名前なし&gt;</translation>
-    </message>
-    <message>
-        <source>The widgetbox could not load the file %1.</source>
-        <translation type="obsolete">ウィジェットボックスは %1 というファイルをロードできませんでした。</translation>
-    </message>
-    <message>
-        <source>The widgetbox could not parse the file %1. An error occurred at line %2: %3</source>
-        <translation type="obsolete">ウィジェットボックスは、%1 というファイルをパースできません。%2 行目でエラーが発生しました: %3</translation>
-    </message>
-    <message>
-        <source>The file %1 does not appear to be a widgetbox file.</source>
-        <translation type="obsolete">%1 というファイルは、ウィジェットボックスのファイルではないようです。</translation>
-    </message>
-    <message>
-        <source>An error occurred while parsing the file %1: %2 is not a valid child of the root element.</source>
-        <translation type="obsolete">%1 というファイルのパース中にエラーが発生しました: %2 はルートエレメントの有効な子供ではありません。</translation>
-    </message>
-    <message>
-        <source>The class attribute for the class %1 does not match the class name %2.</source>
-        <translation type="obsolete">%1 というクラスのクラス属性は %2 というクラス名と一致しません。</translation>
-    </message>
-    <message>
-        <source>The class attribute for the class %1 is missing.</source>
-        <translation type="obsolete">%1 というクラスのクラス属性がありません。</translation>
-    </message>
-    <message>
-        <source>The style %1 could not be loaded.</source>
-        <translation type="obsolete">%1 というスタイルをロードできませんでした。</translation>
-    </message>
-    <message>
-        <source>The preview failed to build.</source>
-        <translation type="obsolete">プレビューのビルドに失敗しました。</translation>
-    </message>
-    <message>
-        <source>%1 - [Preview]</source>
-        <translation type="obsolete">%1 - [プレビュー]</translation>
-    </message>
-    <message>
-        <source>Designer</source>
-        <translation type="obsolete">Designer</translation>
-    </message>
-    <message>
-        <source>Change script</source>
-        <translation type="obsolete">スクリプトを変更</translation>
-    </message>
-    <message>
-        <source>A custom widget plugin whose class name (%1) matches that of an existing class has been found.</source>
-        <translation type="obsolete">クラス名 (%1) が既存のクラスと同じであるカスタムウィジェットプラグインが見つかりました。</translation>
-    </message>
-    <message>
-        <source>The custom widget factory registered for widgets of class %1 returned 0.</source>
-        <translation type="obsolete">%1 というクラスのウィジェットのために登録されたカスタムウィジェットファクトリーが 0 を返しました。</translation>
-    </message>
-    <message>
-        <source>A class name mismatch occurred when creating a widget using the custom widget factory registered for widgets of class %1. It returned a widget of class %2.</source>
-        <translation type="obsolete">%1 というクラスのウィジェットのために登録されたカスタムウィジェットファクトリーを使ってウィジェットを作成しているときに、クラス名のミスマッチが発生しました。%2 というクラスのウィジェットを返しました。</translation>
-    </message>
-    <message>
-        <source>QFormBuilder was unable to create a widget of the class &apos;%1&apos;.</source>
-        <translation type="obsolete">QFormBuilder は、クラス &apos;%1&apos; のウィジェットを作成できませんでした。</translation>
-    </message>
-    <message>
-        <source>The layout type `%1&apos; is not supported.</source>
-        <translation type="obsolete">レイアウトタイプ &apos;%1&apos; は、サポートされていません。</translation>
-    </message>
-    <message>
-        <source>The set-type property %1 could not be read.</source>
-        <translation type="obsolete">Set型のプロパティ %1 を読めませんでした。</translation>
-    </message>
-    <message>
-        <source>The enumeration-type property %1 could not be read.</source>
-        <translation type="obsolete">Enum 型のプロパティ %1 を読めませんでした。</translation>
-    </message>
-    <message>
-        <source>Reading properties of the type %1 is not supported yet.</source>
-        <translation type="obsolete">%1 という型のプロパティの読み込みは、サポートされていません。</translation>
-    </message>
-    <message>
-        <source>The property %1 could not be written. The type %2 is not supported yet.</source>
-        <translation type="obsolete">プロパティ %1 を書き込めませんでした。%2 という型はサポートされていません。</translation>
-    </message>
-    <message>
-        <source>Color</source>
-        <translation type="obsolete">色</translation>
     </message>
 </context>
 <context>
@@ -3166,10 +2283,6 @@ Script: %3</source>
         <translation>ズーム</translation>
     </message>
     <message>
-        <source>Zoom All</source>
-        <translation type="obsolete">すべてズーム</translation>
-    </message>
-    <message>
         <source>Position</source>
         <translation>位置</translation>
     </message>
@@ -3179,7 +2292,7 @@ Script: %3</source>
     </message>
     <message>
         <source>H</source>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <source>Saturation</source>
@@ -3187,7 +2300,7 @@ Script: %3</source>
     </message>
     <message>
         <source>S</source>
-        <translation type="unfinished"></translation>
+        <translation>S</translation>
     </message>
     <message>
         <source>Sat</source>
@@ -3199,7 +2312,7 @@ Script: %3</source>
     </message>
     <message>
         <source>V</source>
-        <translation type="unfinished"></translation>
+        <translation>V</translation>
     </message>
     <message>
         <source>Val</source>
@@ -3211,7 +2324,7 @@ Script: %3</source>
     </message>
     <message>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation>A</translation>
     </message>
     <message>
         <source>Type</source>
@@ -3259,7 +2372,7 @@ Script: %3</source>
     </message>
     <message>
         <source>&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;</translation>
     </message>
     <message>
         <source>Linear Type</source>
@@ -3333,10 +2446,6 @@ Script: %3</source>
         <translation>縮小</translation>
     </message>
     <message>
-        <source>Zoom All</source>
-        <translation type="obsolete">すべてズーム</translation>
-    </message>
-    <message>
         <source>Reset Zoom</source>
         <translation>ズームをリセット</translation>
     </message>
@@ -3379,10 +2488,6 @@ Script: %3</source>
 <context>
     <name>QtGradientViewDialog</name>
     <message>
-        <source>Edit Gradient</source>
-        <translation type="obsolete">グラデーションを編集</translation>
-    </message>
-    <message>
         <source>Select Gradient</source>
         <translation>グラデーションを選択</translation>
     </message>
@@ -3398,7 +2503,7 @@ Script: %3</source>
     <name>QtLocalePropertyManager</name>
     <message>
         <source>%1, %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1, %2</translation>
     </message>
     <message>
         <source>Language</source>
@@ -3413,56 +2518,56 @@ Script: %3</source>
     <name>QtPointFPropertyManager</name>
     <message>
         <source>(%1, %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>(%1, %2)</translation>
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation>X</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y</translation>
     </message>
 </context>
 <context>
     <name>QtPointPropertyManager</name>
     <message>
         <source>(%1, %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>(%1, %2)</translation>
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation>X</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y</translation>
     </message>
 </context>
 <context>
     <name>QtPropertyBrowserUtils</name>
     <message>
         <source>[%1, %2, %3] (%4)</source>
-        <translation type="unfinished"></translation>
+        <translation>[%1, %2, %3] (%4)</translation>
     </message>
     <message>
         <source>[%1, %2]</source>
-        <translation type="unfinished"></translation>
+        <translation>[%1, %2]</translation>
     </message>
 </context>
 <context>
     <name>QtRectFPropertyManager</name>
     <message>
         <source>[(%1, %2), %3 x %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>[(%1, %2), %3 × %4]</translation>
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation>X</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y</translation>
     </message>
     <message>
         <source>Width</source>
@@ -3477,15 +2582,15 @@ Script: %3</source>
     <name>QtRectPropertyManager</name>
     <message>
         <source>[(%1, %2), %3 x %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>[(%1, %2), %3 × %4]</translation>
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation>X</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y</translation>
     </message>
     <message>
         <source>Width</source>
@@ -3534,7 +2639,7 @@ Do you want to replace it?</source>
     </message>
     <message>
         <source>newPrefix</source>
-        <translation type="unfinished"></translation>
+        <translation>newPrefix</translation>
     </message>
     <message>
         <source>Add Files</source>
@@ -3550,11 +2655,11 @@ Do you want to replace it?</source>
     </message>
     <message>
         <source>Copy As...</source>
-        <translation>形式を指定してコピー...</translation>
+        <translation>名前を指定してコピー...</translation>
     </message>
     <message>
         <source>Keep</source>
-        <translation type="unfinished"></translation>
+        <translation>キープ</translation>
     </message>
     <message>
         <source>Skip</source>
@@ -3572,7 +2677,7 @@ This could for example be a language extension like &quot;_de&quot;.</source>
     </message>
     <message>
         <source>Copy As</source>
-        <translation>形式を指定してコピー</translation>
+        <translation>名前を指定してコピー</translation>
     </message>
     <message>
         <source>&lt;p&gt;The selected file:&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;is outside of the current resource file&apos;s directory:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;Please select another path within this directory.&lt;p&gt;</source>
@@ -3600,11 +2705,11 @@ This could for example be a language extension like &quot;_de&quot;.</source>
     </message>
     <message>
         <source>&lt;p&gt;&lt;b&gt;Warning:&lt;/b&gt; The file&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;is outside of the current resource file&apos;s parent directory.&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;警告:&lt;/b&gt; ファイル&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;は現在のリソースファイルの親ディレクトリにはありません。&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;b&gt;警告:&lt;/b&gt; ファイル&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;は現在のリソースファイルのあるディレクトリ以下とは別のディレクトリツリーにあります。&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;To resolve the issue, press:&lt;/p&gt;&lt;table&gt;&lt;tr&gt;&lt;th align=&quot;left&quot;&gt;Copy&lt;/th&gt;&lt;td&gt;to copy the file to the resource file&apos;s parent directory.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;th align=&quot;left&quot;&gt;Copy As...&lt;/th&gt;&lt;td&gt;to copy the file into a subdirectory of the resource file&apos;s parent directory.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;th align=&quot;left&quot;&gt;Keep&lt;/th&gt;&lt;td&gt;to use its current location.&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;この問題の解決には下記のいずれかのボタンを押してください:&lt;/p&gt;&lt;table&gt;&lt;tr&gt;&lt;th align=&quot;left&quot;&gt;コピー&lt;/th&gt;&lt;td&gt;ファイルをリソースファイルのあるディレクトリにコピーします。&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;th align=&quot;left&quot;&gt;名前を指定してコピー...&lt;/th&gt;&lt;td&gt;ファイルをリソースファイルのあるディレクトリもしくはそのサブディレクトリに名前を指定してコピーします。&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;th align=&quot;left&quot;&gt;キープ&lt;/th&gt;&lt;td&gt;現在のパスをそのまま使用します。&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</translation>
     </message>
     <message>
         <source>Could not copy
@@ -3693,7 +2798,7 @@ to
     </message>
     <message>
         <source>N</source>
-        <translation type="unfinished"></translation>
+        <translation>N</translation>
     </message>
     <message>
         <source>Remove File</source>
@@ -3701,11 +2806,11 @@ to
     </message>
     <message>
         <source>R</source>
-        <translation type="unfinished"></translation>
+        <translation>R</translation>
     </message>
     <message>
         <source>I</source>
-        <translation type="unfinished"></translation>
+        <translation>I</translation>
     </message>
     <message>
         <source>New Resource</source>
@@ -3713,7 +2818,7 @@ to
     </message>
     <message>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation>A</translation>
     </message>
     <message>
         <source>Remove Resource or File</source>
@@ -3771,7 +2876,7 @@ to
     </message>
     <message>
         <source>[%1, %2, %3, %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>[%1, %2, %3, %4]</translation>
     </message>
     <message>
         <source>Horizontal Policy</source>
@@ -4087,10 +3192,6 @@ Do you want overwrite the template?</source>
         <translation>&lt;h3&gt;%1&lt;/h3&gt;&lt;br/&gt;&lt;br/&gt;バージョン %2</translation>
     </message>
     <message>
-        <source> Open Source Edition</source>
-        <translation type="obsolete"> オープンソース版</translation>
-    </message>
-    <message>
         <source>Qt Designer</source>
         <translation>Qt Designer</translation>
     </message>
@@ -4100,19 +3201,7 @@ Do you want overwrite the template?</source>
     </message>
     <message>
         <source>%1&lt;br/&gt;Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This version of Qt Designer is part of the Qt Open Source Edition, for use in the development of Open Source applications. Qt is a comprehensive C++ framework for cross-platform application development.&lt;br/&gt;&lt;br/&gt;You need a commercial Qt license for development of proprietary (closed source) applications. Please see &lt;a href=&quot;http://qt.nokia.com/company/model.html&quot;&gt;http://qt.nokia.com/company/model.html&lt;/a&gt; for an overview of Qt licensing.&lt;br/&gt;</source>
-        <translation type="obsolete">このバージョンの Qt Designer は、オープンソースアプリケーションを開発するための Qt オープンソース版の一部です。Qt は、クロスプラットフォームなアプリケーションを開発するための包括的な C++ のフレームワークです。&lt;br/&gt;&lt;br/&gt;独占的な（ソースが隠された）アプリケーションを開発するには、Qt の商用ライセンスが必要です。Qt のライセンスの概要については &lt;a href=&quot;http://qt.nokia.com/company/model.html&quot;&gt;http://qt.nokia.com/company/model.html&lt;/a&gt; をご覧ください。&lt;br/&gt;</translation>
-    </message>
-    <message>
-        <source>This program is licensed to you under the terms of the Qt Commercial License Agreement. For details, see the file LICENSE that came with this software distribution.&lt;br/&gt;</source>
-        <translation type="obsolete">このプログラムは、Qt 商用ライセンス契約書の定める条件の下であなたの利用が認められています。詳細は、ソフトウェアと一緒に配布される LICENSE ファイルを参照してください。&lt;br/&gt;</translation>
-    </message>
-    <message>
-        <source>%1&lt;br/&gt;%2&lt;br/&gt;Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).&lt;br/&gt;&lt;br/&gt;The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.&lt;br/&gt; </source>
-        <translation type="obsolete">%1&lt;br/&gt;%2&lt;br/&gt;Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies). 全ての権利は保護されています。&lt;br/&gt;&lt;br/&gt;プログラムは「設計」、「市場性」および「特定の目的への適合性」も含む、あらゆる種類の「保証がなく」、「そのままで」提供されます。&lt;br/&gt;</translation>
+        <translation>%1&lt;br/&gt;Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).</translation>
     </message>
 </context>
 <context>
@@ -4158,7 +3247,7 @@ Do you want overwrite the template?</source>
     <name>WidgetDataBase</name>
     <message>
         <source>The file contains a custom widget &apos;%1&apos; whose base class (%2) differs from the current entry in the widget database (%3). The widget database is left unchanged.</source>
-        <translation type="unfinished"></translation>
+        <translation>ファイルに含まれるカスタムウィジェット &apos;%1&apos; の基底クラス(%2)が現在のウィジェットデータベースの基底クラス(%3)と異なります。ウィジェットデータベースは変更していません。</translation>
     </message>
 </context>
 <context>
@@ -4182,14 +3271,6 @@ Do you want overwrite the template?</source>
     <message>
         <source>Edit action</source>
         <translation>アクションを編集</translation>
-    </message>
-    <message>
-        <source>Designer</source>
-        <translation type="obsolete">Designer</translation>
-    </message>
-    <message>
-        <source>Feature not implemented!</source>
-        <translation type="obsolete">その機能は実装されていません!</translation>
     </message>
     <message>
         <source>Edit...</source>
@@ -4238,13 +3319,6 @@ Do you want overwrite the template?</source>
     <message>
         <source>Used In</source>
         <translation>使用元</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::ActionFilterWidget</name>
-    <message>
-        <source>Filter: </source>
-        <translation type="obsolete"> フィルタ: </translation>
     </message>
 </context>
 <context>
@@ -4445,22 +3519,7 @@ Do you want overwrite the template?</source>
     <name>qdesigner_internal::CommandLinkButtonTaskMenu</name>
     <message>
         <source>Change description...</source>
-        <translation type="unfinished">記述を変更...</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::ConnectionDelegate</name>
-    <message>
-        <source>&lt;object&gt;</source>
-        <translation type="obsolete">&lt;オブジェクト&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;signal&gt;</source>
-        <translation type="obsolete">&lt;シグナル&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;slot&gt;</source>
-        <translation type="obsolete">&lt;スロット&gt;</translation>
+        <translation>記述を変更...</translation>
     </message>
 </context>
 <context>
@@ -4520,17 +3579,9 @@ Do you want overwrite the template?</source>
         <source>Signal and Slot Editor</source>
         <translation>シグナルスロットエディタ</translation>
     </message>
-    <message>
-        <source>The connection already exists!&lt;br&gt;SENDER(%1), SIGNAL(%2), RECEIVER(%3), SLOT(%4)</source>
-        <translation type="obsolete">既に接続が存在します!&lt;br&gt;送信者(%1)、シグナル(%2)、受信者(%3)、スロット(%4)</translation>
-    </message>
 </context>
 <context>
     <name>qdesigner_internal::ContainerWidgetTaskMenu</name>
-    <message>
-        <source>Delete Page</source>
-        <translation type="obsolete">ページを削除</translation>
-    </message>
     <message>
         <source>Insert Page Before Current Page</source>
         <translation>このページの前にページを挿入</translation>
@@ -4613,12 +3664,12 @@ Do you want overwrite the template?</source>
     </message>
     <message>
         <source>%1, %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1, %2</translation>
     </message>
     <message numerus="yes">
         <source>Customized (%n roles)</source>
-        <translation type="unfinished">
-            <numerusform>カスタム済み (%n ロール)</numerusform>
+        <translation>
+            <numerusform>カスタムパレット (%n ロール)</numerusform>
         </translation>
     </message>
     <message>
@@ -4765,44 +3816,6 @@ Do you want overwrite the template?</source>
     </message>
 </context>
 <context>
-    <name>qdesigner_internal::EditableResourceModel</name>
-    <message>
-        <source>Invalid files</source>
-        <translation type="obsolete">無効なファイル</translation>
-    </message>
-    <message>
-        <source>Files referenced in a qrc must be in the qrc&apos;s directory or one of its subdirectories:&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;p&gt;Some of the selected files do not comply with this.</source>
-        <translation type="obsolete">qrc から参照されているファイルは、qrc のディレクトリもしくはサブディレクトリのいずれかにある必要があります:&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;p&gt;選択されたファイルの中には、この条件に従わないものがあります。</translation>
-    </message>
-    <message>
-        <source>Only insert files which comply</source>
-        <translation type="obsolete">条件に従うファイルだけを挿入する</translation>
-    </message>
-    <message>
-        <source>Files referenced in a qrc must be in the qrc&apos;s directory or one of its subdirectories:&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;p&gt;The selected files do not comply with this.</source>
-        <translation type="obsolete">qrc から参照されているファイルは、qrc のディレクトリもしくはサブディレクトリのいずれかにある必要があります:&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;p&gt;選択されたファイルは、この条件に従っていません。</translation>
-    </message>
-    <message>
-        <source>Error loading resource file</source>
-        <translation type="obsolete">リソースファイルのロードエラー</translation>
-    </message>
-    <message>
-        <source>Failed to open &quot;%1&quot;:
-%2</source>
-        <translation type="obsolete">&quot;%1&quot; のオープンに失敗: %2</translation>
-    </message>
-    <message>
-        <source>Error saving resource file</source>
-        <translation type="obsolete">リソースファイルの保存エラー</translation>
-    </message>
-    <message>
-        <source>Failed to save &quot;%1&quot;:
-%2</source>
-        <translation type="obsolete">&quot;%1&quot; の保存に失敗: 
-%2</translation>
-    </message>
-</context>
-<context>
     <name>qdesigner_internal::EmbeddedOptionsControl</name>
     <message>
         <source>None</source>
@@ -4857,25 +3870,6 @@ Do you want overwrite the template?</source>
     </message>
 </context>
 <context>
-    <name>qdesigner_internal::FindIconDialog</name>
-    <message>
-        <source>Find Icon</source>
-        <translation type="obsolete">アイコン検索</translation>
-    </message>
-    <message>
-        <source>Specify resource</source>
-        <translation type="obsolete">リソースを指定</translation>
-    </message>
-    <message>
-        <source>Specify image file</source>
-        <translation type="obsolete">イメージファイルを指定</translation>
-    </message>
-    <message>
-        <source>Parent directory</source>
-        <translation type="obsolete">親ディレクトリ</translation>
-    </message>
-</context>
-<context>
     <name>qdesigner_internal::FormEditor</name>
     <message>
         <source>Resource File Changed</source>
@@ -4904,35 +3898,16 @@ Do you want overwrite the template?</source>
         <translation>F2</translation>
     </message>
     <message>
-        <source>Insert widget &apos;%1</source>
-        <translation type="obsolete">ウィジェット &apos;%1 を挿入</translation>
-    </message>
-    <message>
         <source>Resize</source>
         <translation>サイズ変更</translation>
     </message>
     <message>
         <source>Key Move</source>
-        <translation>キーの移動</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation type="obsolete">貼り付け</translation>
+        <translation>移動キー</translation>
     </message>
     <message>
         <source>Paste error</source>
         <translation>貼り付けエラー</translation>
-    </message>
-    <message>
-        <source>Can&apos;t paste widgets. Designer couldn&apos;t find a container
-to paste into which does not contain a layout. Break the layout
-of the container you want to paste into and select this container
-and then paste again.</source>
-        <translation type="obsolete">ウィジェットを貼り付けられません。Designer は、ウィジェットを貼り付けることができる、レイアウトを含まないコンテナを見つけることができませんでした。貼り付け先のコンテナのレイアウトを破棄し、もう一度そのコンテナを選んで貼り付けてください。</translation>
-    </message>
-    <message>
-        <source>Break layout</source>
-        <translation type="obsolete">レイアウトを破棄する</translation>
     </message>
     <message>
         <source>Lay out</source>
@@ -4954,7 +3929,7 @@ and then paste again.</source>
     </message>
     <message>
         <source>Key Resize</source>
-        <translation type="unfinished"></translation>
+        <translation>リサイズキー</translation>
     </message>
     <message numerus="yes">
         <source>Paste %n widget(s)</source>
@@ -4968,11 +3943,11 @@ and then paste again.</source>
     </message>
     <message>
         <source>Cannot paste widgets. Designer could not find a container without a layout to paste into.</source>
-        <translation type="unfinished">ウィジェットを貼り付けできません。</translation>
+        <translation>ウィジェットを貼り付けできません。Designer は貼り付け先となるレイアウトを持たないコンテナを見つけられません。</translation>
     </message>
     <message>
         <source>Break the layout of the container you want to paste into, select this container and then paste again.</source>
-        <translation type="unfinished"></translation>
+        <translation>貼り付け先となるコンテナのレイアウトを破棄して、改めてそのコンテナを選択して貼り付けてください。</translation>
     </message>
     <message>
         <source>Raise widgets</source>
@@ -4984,11 +3959,11 @@ and then paste again.</source>
     </message>
     <message>
         <source>Select Ancestor</source>
-        <translation type="unfinished"></translation>
+        <translation>Ancestor を選択</translation>
     </message>
     <message>
         <source>A QMainWindow-based form does not contain a central widget.</source>
-        <translation type="unfinished">QMainWindow ベースのフォームにセントラルウィジェットが含まれていません。</translation>
+        <translation>QMainWindow ベースのフォームにセントラルウィジェットが含まれていません。</translation>
     </message>
 </context>
 <context>
@@ -5171,21 +4146,6 @@ and then paste again.</source>
     <message>
         <source>Device Profile: %1</source>
         <translation>デバイスプロファイル: %1</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::GraphicsPropertyEditor</name>
-    <message>
-        <source>&lt;no icon&gt;</source>
-        <translation type="obsolete">&lt;アイコンなし&gt;</translation>
-    </message>
-    <message>
-        <source>&lt;no pixmap&gt;</source>
-        <translation type="obsolete">&lt;ピックスマップなし&gt;</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="obsolete">...</translation>
     </message>
 </context>
 <context>
@@ -5394,66 +4354,6 @@ and then paste again.</source>
         <source>New Item</source>
         <translation>新しいアイテム</translation>
     </message>
-    <message>
-        <source>Dialog</source>
-        <translation type="obsolete">ダイアログ</translation>
-    </message>
-    <message>
-        <source>Items List</source>
-        <translation type="obsolete">アイテム一覧</translation>
-    </message>
-    <message>
-        <source>Move Item Down</source>
-        <translation type="obsolete">このアイテムを下へ</translation>
-    </message>
-    <message>
-        <source>D</source>
-        <translation type="obsolete">D</translation>
-    </message>
-    <message>
-        <source>&amp;Pixmap</source>
-        <translation type="obsolete">ピックスマップ(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Set Item Pixmap</source>
-        <translation type="obsolete">このアイテムのピックスマップを設定</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="obsolete">...</translation>
-    </message>
-    <message>
-        <source>Reset Item Pixmap</source>
-        <translation type="obsolete">このアイテムのピックスマップをリセット</translation>
-    </message>
-    <message>
-        <source>&amp;Text</source>
-        <translation type="obsolete">テキスト(&amp;T)</translation>
-    </message>
-    <message>
-        <source>Set Item Text</source>
-        <translation type="obsolete">このアイテムのテキストを設定</translation>
-    </message>
-    <message>
-        <source>Move Item Up</source>
-        <translation type="obsolete">このアイテムを上へ</translation>
-    </message>
-    <message>
-        <source>U</source>
-        <translation type="obsolete">U</translation>
-    </message>
-    <message>
-        <source>&amp;New Item</source>
-        <translation type="obsolete">新しいアイテム(&amp;N)</translation>
-    </message>
-    <message>
-        <source>Delete Item</source>
-        <translation type="obsolete">アイテムを削除</translation>
-    </message>
-    <message>
-        <source>&amp;Delete Item</source>
-        <translation type="obsolete">アイテムを削除(&amp;D)</translation>
-    </message>
 </context>
 <context>
     <name>qdesigner_internal::ListWidgetTaskMenu</name>
@@ -5478,11 +4378,11 @@ and then paste again.</source>
     </message>
     <message>
         <source>Tile</source>
-        <translation>タイトル</translation>
+        <translation>タイル表示</translation>
     </message>
     <message>
         <source>Cascade</source>
-        <translation type="unfinished"></translation>
+        <translation>カスケード表示</translation>
     </message>
 </context>
 <context>
@@ -5545,12 +4445,6 @@ and then paste again.</source>
 Please select another, unique one.</source>
         <translation>現在のオブジェクトには、既に &apos;%1&apos; という名前のプロパティが存在します。
 別のユニークな名前を選んでください。</translation>
-    </message>
-    <message>
-        <source>The &apos;_q_&apos; prefix is reserved for Qt library.
-Please select another name.</source>
-        <translation type="obsolete">&apos;_q_&apos; というプリフィックスは Qt ライブラリのために予約されています。
-別の名前を選んでください。</translation>
     </message>
     <message>
         <source>Create Dynamic Property</source>
@@ -5624,7 +4518,7 @@ Please select another name.</source>
     </message>
     <message>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
     <message>
         <source>Choose a template for a preview</source>
@@ -5677,22 +4571,6 @@ Please select another name.</source>
 <context>
     <name>qdesigner_internal::ObjectInspector</name>
     <message>
-        <source>Object</source>
-        <translation type="obsolete">オブジェクト</translation>
-    </message>
-    <message>
-        <source>Class</source>
-        <translation type="obsolete">クラス</translation>
-    </message>
-    <message>
-        <source>&lt;noname&gt;</source>
-        <translation type="obsolete">&lt;名前なし&gt;</translation>
-    </message>
-    <message>
-        <source>separator</source>
-        <translation type="obsolete">セパレータ</translation>
-    </message>
-    <message>
         <source>Change Current Page</source>
         <translation>現在のページを変更</translation>
     </message>
@@ -5709,7 +4587,7 @@ Please select another name.</source>
     </message>
     <message>
         <source>%1 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 %2</translation>
     </message>
     <message>
         <source>Change Page Order</source>
@@ -5718,14 +4596,6 @@ Please select another name.</source>
     <message>
         <source>Page Order</source>
         <translation>ページの順序</translation>
-    </message>
-    <message>
-        <source>Up</source>
-        <translation type="obsolete">上へ</translation>
-    </message>
-    <message>
-        <source>Down</source>
-        <translation type="obsolete">下へ</translation>
     </message>
     <message>
         <source>Move page up</source>
@@ -5861,14 +4731,6 @@ Please select another name.</source>
         <source>New custom widget plugins have been found.</source>
         <translation>新しいカスタムウィジェットのプラグインが見つかりました。</translation>
     </message>
-    <message>
-        <source>TextLabel</source>
-        <translation type="obsolete">テキストラベル</translation>
-    </message>
-    <message>
-        <source>1</source>
-        <translation type="obsolete">1</translation>
-    </message>
 </context>
 <context>
     <name>qdesigner_internal::PreviewActionGroup</name>
@@ -5889,7 +4751,7 @@ Please select another name.</source>
     </message>
     <message>
         <source>Browse...</source>
-        <translation type="unfinished"></translation>
+        <translation>参照...</translation>
     </message>
     <message>
         <source>Load Custom Device Skin</source>
@@ -5919,13 +4781,6 @@ Please select another name.</source>
     </message>
 </context>
 <context>
-    <name>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate</name>
-    <message>
-        <source>%1 - Error</source>
-        <translation type="obsolete">%1 - エラー</translation>
-    </message>
-</context>
-<context>
     <name>qdesigner_internal::PreviewDeviceSkin</name>
     <message>
         <source>&amp;Portrait</source>
@@ -5952,10 +4807,6 @@ Please select another name.</source>
         <source>%1 - [Preview]</source>
         <translation>%1 - [プレビュー]</translation>
     </message>
-    <message>
-        <source>%1 Style</source>
-        <translation type="obsolete">%1 スタイル</translation>
-    </message>
 </context>
 <context>
     <name>qdesigner_internal::PreviewMdiArea</name>
@@ -5963,7 +4814,8 @@ Please select another name.</source>
         <source>The moose in the noose
 ate the goose who was loose.</source>
         <extracomment>Palette editor background</extracomment>
-        <translation type="unfinished">坊主が屏風に上手に坊主の絵を描いた。</translation>
+        <translation>坊主が屏風に上手に
+坊主の絵を描いた。</translation>
     </message>
 </context>
 <context>
@@ -6079,7 +4931,7 @@ ate the goose who was loose.</source>
     </message>
     <message>
         <source>Drop Down Button View</source>
-        <translation type="unfinished"></translation>
+        <translation>ドロップダウンボタン表示</translation>
     </message>
     <message>
         <source>Configure Property Editor</source>
@@ -6109,45 +4961,6 @@ Class: %2</source>
     <message>
         <source>Insert line break</source>
         <translation>改行を挿入</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::QCoreApplication</name>
-    <message>
-        <source>The base class %1 is invalid.</source>
-        <translation type="obsolete">ベースクラス %1 は無効です。</translation>
-    </message>
-    <message>
-        <source>The class %1 already exists.</source>
-        <translation type="obsolete">%1 というクラスは既に存在します。</translation>
-    </message>
-    <message>
-        <source>Promoted Widgets</source>
-        <translation type="obsolete">格上げされたウィジェット</translation>
-    </message>
-    <message>
-        <source>The class %1 cannot be removed</source>
-        <translation type="obsolete">%1 というクラスを削除できません</translation>
-    </message>
-    <message>
-        <source>The class %1 cannot be removed because it is still referenced.</source>
-        <translation type="obsolete">%1 というクラスは、参照されているため削除できません。</translation>
-    </message>
-    <message>
-        <source>The class %1 cannot be renamed</source>
-        <translation type="obsolete">%1 というクラスをリネームできません</translation>
-    </message>
-    <message>
-        <source>The class %1 cannot be renamed to an empty name.</source>
-        <translation type="obsolete">%1 というクラスを空の名前にリネームすることはできません。</translation>
-    </message>
-    <message>
-        <source>There is already a class named %1.</source>
-        <translation type="obsolete">%1 というクラスは存在します。</translation>
-    </message>
-    <message>
-        <source>Cannot set an empty include file.</source>
-        <translation type="obsolete">空のインクルードファイルを設定できません。</translation>
     </message>
 </context>
 <context>
@@ -6248,8 +5061,8 @@ Class: %2</source>
     </message>
     <message numerus="yes">
         <source>Set size constraint on %n widget(s)</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
+        <translation>
+            <numerusform>%n 個のウィジェットで限界サイズを設定</numerusform>
         </translation>
     </message>
     <message>
@@ -6258,7 +5071,7 @@ Class: %2</source>
     </message>
     <message>
         <source>Size Constraints</source>
-        <translation type="unfinished"></translation>
+        <translation>限界サイズ</translation>
     </message>
     <message>
         <source>Set Minimum Width</source>
@@ -6321,382 +5134,18 @@ Class: %2</source>
     </message>
 </context>
 <context>
-    <name>qdesigner_internal::QObject</name>
-    <message>
-        <source>The icon specified by %1 could not be opened: %2</source>
-        <translation type="obsolete">%1 で指定されたアイコンをオープンできませんでした: %2</translation>
-    </message>
-    <message>
-        <source>The widgetbox could not load the file %1.</source>
-        <translation type="obsolete">ウィジェットボックスは %1 というファイルをロードできませんでした。</translation>
-    </message>
-    <message>
-        <source>The widgetbox could not parse the file %1. An error occurred at line %2: %3</source>
-        <translation type="obsolete">ウィジェットボックスは、%1 というファイルをパースできません。%2 行目でエラーが発生しました: %3</translation>
-    </message>
-    <message>
-        <source>The file %1 does not appear to be a widgetbox file.</source>
-        <translation type="obsolete">%1 というファイルは、ウィジェットボックスのファイルではないようです。</translation>
-    </message>
-    <message>
-        <source>An error occurred while parsing the file %1: %2 is not a valid child of the root element.</source>
-        <translation type="obsolete">%1 というファイルのパース中にエラーが発生しました: %2 はルートエレメントの有効な子供ではありません。</translation>
-    </message>
-    <message>
-        <source>The class attribute for the class %1 does not match the class name %2.</source>
-        <translation type="obsolete">%1 というクラスのクラス属性は %2 というクラス名と一致しません。</translation>
-    </message>
-    <message>
-        <source>The class attribute for the class %1 is missing.</source>
-        <translation type="obsolete">%1 というクラスのクラス属性がありません。</translation>
-    </message>
-    <message>
-        <source>The style %1 could not be loaded.</source>
-        <translation type="obsolete">%1 というスタイルをロードできませんでした。</translation>
-    </message>
-    <message>
-        <source>The preview failed to build.</source>
-        <translation type="obsolete">プレビューのビルドに失敗しました。</translation>
-    </message>
-    <message>
-        <source>%1 - [Preview]</source>
-        <translation type="obsolete">%1 - [プレビュー]</translation>
-    </message>
-    <message>
-        <source>Designer</source>
-        <translation type="obsolete">Designer</translation>
-    </message>
-    <message>
-        <source>Change script</source>
-        <translation type="obsolete">スクリプトを変更</translation>
-    </message>
-    <message>
-        <source>A custom widget plugin whose class name (%1) matches that of an existing class has been found.</source>
-        <translation type="obsolete">クラス名 (%1) が既存のクラスと同じであるカスタムウィジェットプラグインが見つかりました。</translation>
-    </message>
-    <message>
-        <source>The custom widget factory registered for widgets of class %1 returned 0.</source>
-        <translation type="obsolete">%1 というクラスのウィジェットのために登録されたカスタムウィジェットファクトリーが 0 を返しました。</translation>
-    </message>
-    <message>
-        <source>A class name mismatch occurred when creating a widget using the custom widget factory registered for widgets of class %1. It returned a widget of class %2.</source>
-        <translation type="obsolete">%1 というクラスのウィジェットのために登録されたカスタムウィジェットファクトリーを使ってウィジェットを作成しているときに、クラス名のミスマッチが発生しました。%2 というクラスのウィジェットを返しました。</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::QPropertyEditorModel</name>
-    <message>
-        <source>&lt;noname&gt;</source>
-        <translation type="obsolete">&lt;名前なし&gt;</translation>
-    </message>
-    <message>
-        <source>Property</source>
-        <translation type="obsolete">プロパティ</translation>
-    </message>
-    <message>
-        <source>Value</source>
-        <translation type="obsolete">値</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::QtBrushDialog</name>
-    <message>
-        <source>Edit Brush</source>
-        <translation type="obsolete">ブラシを編集</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::QtBrushEditor</name>
-    <message>
-        <source>New Brush</source>
-        <translation type="obsolete">新しいブラシ</translation>
-    </message>
-    <message>
-        <source>Gradient</source>
-        <translation type="obsolete">グラデーション</translation>
-    </message>
-    <message>
-        <source>Texture</source>
-        <translation type="obsolete">テクスチャ</translation>
-    </message>
-    <message>
-        <source>Color Pattern</source>
-        <translation type="obsolete">カラーパターン</translation>
-    </message>
-    <message>
-        <source>Rename	F2</source>
-        <translation type="obsolete">名前の変更	F2</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="obsolete">フォーム</translation>
-    </message>
-    <message>
-        <source>Edit...</source>
-        <translation type="obsolete">編集...</translation>
-    </message>
-    <message>
-        <source>Edit Gradient</source>
-        <translation type="obsolete">グラデーションを編集</translation>
-    </message>
-    <message>
-        <source>Gradient...</source>
-        <translation type="obsolete">グラデーション...</translation>
-    </message>
-    <message>
-        <source>Edit Color Pattern</source>
-        <translation type="obsolete">カラーパターンを編集</translation>
-    </message>
-    <message>
-        <source>Color Pattern...</source>
-        <translation type="obsolete">カラーパターン...</translation>
-    </message>
-    <message>
-        <source>Edit Texture</source>
-        <translation type="obsolete">テクスチャを編集</translation>
-    </message>
-    <message>
-        <source>Texture...</source>
-        <translation type="obsolete">テクスチャ...</translation>
-    </message>
-    <message>
-        <source>Remove From Custom</source>
-        <translation type="obsolete">カスタムカラーから除く</translation>
-    </message>
-    <message>
-        <source>Add To Custom</source>
-        <translation type="obsolete">カスタムカラーに追加</translation>
-    </message>
-    <message>
-        <source>Apply Custom</source>
-        <translation type="obsolete">カスタムカラーに適用</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation type="obsolete">適用</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::QtBrushPatternDialog</name>
-    <message>
-        <source>Edit Color Pattern</source>
-        <translation type="obsolete">カラーパターンを編集</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::QtBrushPatternEditor</name>
-    <message>
-        <source>Hue</source>
-        <translation type="obsolete">色相</translation>
-    </message>
-    <message>
-        <source>Saturation</source>
-        <translation type="obsolete">彩度</translation>
-    </message>
-    <message>
-        <source>Value</source>
-        <translation type="obsolete">明度</translation>
-    </message>
-    <message>
-        <source>Red</source>
-        <translation type="obsolete">赤</translation>
-    </message>
-    <message>
-        <source>Green</source>
-        <translation type="obsolete">緑</translation>
-    </message>
-    <message>
-        <source>Blue</source>
-        <translation type="obsolete">青</translation>
-    </message>
-    <message>
-        <source>No Brush</source>
-        <translation type="obsolete">透明</translation>
-    </message>
-    <message>
-        <source>Solid</source>
-        <translation type="obsolete">塗りつぶし</translation>
-    </message>
-    <message>
-        <source>Dense 1</source>
-        <translation type="obsolete">密度 1</translation>
-    </message>
-    <message>
-        <source>Dense 2</source>
-        <translation type="obsolete">密度 2</translation>
-    </message>
-    <message>
-        <source>Dense 3</source>
-        <translation type="obsolete">密度 3</translation>
-    </message>
-    <message>
-        <source>Dense 4</source>
-        <translation type="obsolete">密度 4</translation>
-    </message>
-    <message>
-        <source>Dense 5</source>
-        <translation type="obsolete">密度 5</translation>
-    </message>
-    <message>
-        <source>Dense 6</source>
-        <translation type="obsolete">密度 6</translation>
-    </message>
-    <message>
-        <source>Dense 7</source>
-        <translation type="obsolete">密度 7</translation>
-    </message>
-    <message>
-        <source>Horizontal</source>
-        <translation type="obsolete">横</translation>
-    </message>
-    <message>
-        <source>Vertical</source>
-        <translation type="obsolete">縦</translation>
-    </message>
-    <message>
-        <source>Cross</source>
-        <translation type="obsolete">格子</translation>
-    </message>
-    <message>
-        <source>Backward Diagonal</source>
-        <translation type="obsolete">左下から右上の斜線</translation>
-    </message>
-    <message>
-        <source>Forward Diagonal</source>
-        <translation type="obsolete">左上から右下への斜線</translation>
-    </message>
-    <message>
-        <source>Crossing Diagonal</source>
-        <translation type="obsolete">交差する斜線</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="obsolete">フォーム</translation>
-    </message>
-    <message>
-        <source>Pattern</source>
-        <translation type="obsolete">パターン</translation>
-    </message>
-    <message>
-        <source>Alpha</source>
-        <translation type="obsolete">アルファ</translation>
-    </message>
-    <message>
-        <source>Color</source>
-        <translation type="obsolete">色</translation>
-    </message>
-    <message>
-        <source>Preview</source>
-        <translation type="obsolete">プレビュー</translation>
-    </message>
-    <message>
-        <source>HSV</source>
-        <translation type="obsolete">HSV</translation>
-    </message>
-    <message>
-        <source>RGB</source>
-        <translation type="obsolete">RGB</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::QtGradientDialog</name>
-    <message>
-        <source>Edit Gradient</source>
-        <translation type="obsolete">グラデーションを編集</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::QtGradientEditor</name>
-    <message>
-        <source>Linear</source>
-        <translation type="obsolete">線状</translation>
-    </message>
-    <message>
-        <source>Radial</source>
-        <translation type="obsolete">放射状</translation>
-    </message>
-    <message>
-        <source>Conical</source>
-        <translation type="obsolete">円錐状</translation>
-    </message>
-    <message>
-        <source>Pad</source>
-        <translation type="obsolete">区切りの色で補充</translation>
-    </message>
-    <message>
-        <source>Repeat</source>
-        <translation type="obsolete">グラデーションの繰り返し</translation>
-    </message>
-    <message>
-        <source>Reflect</source>
-        <translation type="obsolete">グラデーションの反射</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="obsolete">フォーム</translation>
-    </message>
-    <message>
-        <source>Start X</source>
-        <translation type="obsolete">始点の X 座標</translation>
-    </message>
-    <message>
-        <source>Start Y</source>
-        <translation type="obsolete">始点の Y 座標</translation>
-    </message>
-    <message>
-        <source>Final X</source>
-        <translation type="obsolete">終点の X 座標</translation>
-    </message>
-    <message>
-        <source>Final Y</source>
-        <translation type="obsolete">終点の Y 座標</translation>
-    </message>
-    <message>
-        <source>Spread</source>
-        <translation type="obsolete">広がり方</translation>
-    </message>
-    <message>
-        <source>Central Y</source>
-        <translation type="obsolete">中心の Y 座標</translation>
-    </message>
-    <message>
-        <source>Focal X</source>
-        <translation type="obsolete">焦点の X 座標</translation>
-    </message>
-    <message>
-        <source>Focal Y</source>
-        <translation type="obsolete">焦点の Y 座標</translation>
-    </message>
-    <message>
-        <source>Radius</source>
-        <translation type="obsolete">半径</translation>
-    </message>
-    <message>
-        <source>Central X</source>
-        <translation type="obsolete">中心の X 座標</translation>
-    </message>
-    <message>
-        <source>Angle</source>
-        <translation type="obsolete">角度</translation>
-    </message>
-    <message>
-        <source>Type</source>
-        <translation type="obsolete">グラデーションのタイプ</translation>
-    </message>
-</context>
-<context>
     <name>qdesigner_internal::QtGradientStopsController</name>
     <message>
         <source>H</source>
-        <translation type="unfinished"></translation>
+        <translation>H</translation>
     </message>
     <message>
         <source>S</source>
-        <translation type="unfinished"></translation>
+        <translation>S</translation>
     </message>
     <message>
         <source>V</source>
-        <translation type="unfinished"></translation>
+        <translation>V</translation>
     </message>
     <message>
         <source>Hue</source>
@@ -6720,15 +5169,15 @@ Class: %2</source>
     </message>
     <message>
         <source>R</source>
-        <translation type="unfinished"></translation>
+        <translation>R</translation>
     </message>
     <message>
         <source>G</source>
-        <translation type="unfinished"></translation>
+        <translation>G</translation>
     </message>
     <message>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <source>Red</source>
@@ -6741,179 +5190,6 @@ Class: %2</source>
     <message>
         <source>Blue</source>
         <translation>青</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::QtGradientStopsEditor</name>
-    <message>
-        <source>Hue</source>
-        <translation type="obsolete">色相</translation>
-    </message>
-    <message>
-        <source>Saturation</source>
-        <translation type="obsolete">彩度</translation>
-    </message>
-    <message>
-        <source>Value</source>
-        <translation type="obsolete">明度</translation>
-    </message>
-    <message>
-        <source>Red</source>
-        <translation type="obsolete">赤</translation>
-    </message>
-    <message>
-        <source>Green</source>
-        <translation type="obsolete">緑</translation>
-    </message>
-    <message>
-        <source>Blue</source>
-        <translation type="obsolete">青</translation>
-    </message>
-    <message>
-        <source>Form</source>
-        <translation type="obsolete">フォーム</translation>
-    </message>
-    <message>
-        <source>%</source>
-        <translation type="obsolete">%</translation>
-    </message>
-    <message>
-        <source>Position</source>
-        <translation type="obsolete">位置</translation>
-    </message>
-    <message>
-        <source>Zoom</source>
-        <translation type="obsolete">ズーム</translation>
-    </message>
-    <message>
-        <source>Color</source>
-        <translation type="obsolete">色</translation>
-    </message>
-    <message>
-        <source>Zoom All</source>
-        <translation type="obsolete">すべてズーム</translation>
-    </message>
-    <message>
-        <source>Alpha</source>
-        <translation type="obsolete">アルファ</translation>
-    </message>
-    <message>
-        <source>Zoom Out</source>
-        <translation type="obsolete">縮小</translation>
-    </message>
-    <message>
-        <source>Zoom In</source>
-        <translation type="obsolete">拡大</translation>
-    </message>
-    <message>
-        <source>HSV</source>
-        <translation type="obsolete">HSV</translation>
-    </message>
-    <message>
-        <source>RGB</source>
-        <translation type="obsolete">RGB</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::QtGradientStopsWidget</name>
-    <message>
-        <source>New Stop</source>
-        <translation type="obsolete">新しい終点</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="obsolete">削除</translation>
-    </message>
-    <message>
-        <source>Select All</source>
-        <translation type="obsolete">すべてを選択</translation>
-    </message>
-    <message>
-        <source>Zoom In</source>
-        <translation type="obsolete">拡大</translation>
-    </message>
-    <message>
-        <source>Zoom Out</source>
-        <translation type="obsolete">縮小</translation>
-    </message>
-    <message>
-        <source>Zoom All</source>
-        <translation type="obsolete">すべてズーム</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::ResourceEditor</name>
-    <message>
-        <source>&lt;no resource files&gt;</source>
-        <translation type="obsolete">&lt;リソースファイルなし&gt;</translation>
-    </message>
-    <message>
-        <source>Open file</source>
-        <translation type="obsolete">ファイルをオープン</translation>
-    </message>
-    <message>
-        <source>All files (*)</source>
-        <translation type="obsolete">すべてのファイル(*)</translation>
-    </message>
-    <message>
-        <source>Resource Editor</source>
-        <translation type="obsolete">リソースエディタ</translation>
-    </message>
-    <message>
-        <source>Resource Editor: %1</source>
-        <translation type="obsolete">リソースエディタ: %1</translation>
-    </message>
-    <message>
-        <source>New...</source>
-        <translation type="obsolete">新規...</translation>
-    </message>
-    <message>
-        <source>Open...</source>
-        <translation type="obsolete">開く...</translation>
-    </message>
-    <message>
-        <source>Untitled</source>
-        <translation type="obsolete">タイトルなし</translation>
-    </message>
-    <message>
-        <source>Save resource file</source>
-        <translation type="obsolete">リソースファイルを保存</translation>
-    </message>
-    <message>
-        <source>Resource files (*.qrc)</source>
-        <translation type="obsolete">リソースファイル (*.qrc)</translation>
-    </message>
-    <message>
-        <source>New resource file</source>
-        <translation type="obsolete">新しいリソースファイル</translation>
-    </message>
-    <message>
-        <source>Open resource file</source>
-        <translation type="obsolete">リソースファイルを開く</translation>
-    </message>
-    <message>
-        <source>Resource editor</source>
-        <translation type="obsolete">リソースエディタ</translation>
-    </message>
-    <message>
-        <source>Current Resource:</source>
-        <translation type="obsolete">現在のリソース:</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="obsolete">...</translation>
-    </message>
-    <message>
-        <source>+</source>
-        <translation type="obsolete">+</translation>
-    </message>
-    <message>
-        <source>-</source>
-        <translation type="obsolete">-</translation>
-    </message>
-    <message>
-        <source>&amp;Add Files...</source>
-        <translation type="obsolete">ファイルを追加(&amp;A)...</translation>
     </message>
 </context>
 <context>
@@ -6997,10 +5273,6 @@ Class: %2</source>
         <source>Insert &amp;Link</source>
         <translation>リンクを挿入(&amp;L)</translation>
     </message>
-    <message>
-        <source>Color</source>
-        <translation type="obsolete">色</translation>
-    </message>
 </context>
 <context>
     <name>qdesigner_internal::ScriptDialog</name>
@@ -7022,13 +5294,6 @@ Class: %2</source>
     <message>
         <source>Script errors</source>
         <translation>スクリプトのエラー</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::Sentinel</name>
-    <message>
-        <source>New Tool Bar</source>
-        <translation type="obsolete">新しいツールバー</translation>
     </message>
 </context>
 <context>
@@ -7078,10 +5343,6 @@ Class: %2</source>
 <context>
     <name>qdesigner_internal::StringListEditorButton</name>
     <message>
-        <source>Change StringList</source>
-        <translation type="obsolete">文字列リストを変更</translation>
-    </message>
-    <message>
         <source>Change String List</source>
         <translation>文字列のリストを変更</translation>
     </message>
@@ -7115,26 +5376,6 @@ Class: %2</source>
     <message>
         <source>Add Gradient...</source>
         <translation>グラデーションを追加...</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::StyledButton</name>
-    <message>
-        <source>All Pixmaps (</source>
-        <translation type="obsolete">全てのピックスマップ (</translation>
-    </message>
-    <message>
-        <source>%1-Pixmaps (%2)
-</source>
-        <translation type="obsolete">%1-ピックスマップ(%2)</translation>
-    </message>
-    <message>
-        <source>All Files (*.*)</source>
-        <translation type="obsolete">すべてのファイル(*.*)</translation>
-    </message>
-    <message>
-        <source>Open Image</source>
-        <translation type="obsolete">イメージを開く</translation>
     </message>
 </context>
 <context>
@@ -7209,120 +5450,8 @@ Class: %2</source>
         <translation>アイテム(&amp;I)</translation>
     </message>
     <message>
-        <source>Rows</source>
-        <translation type="obsolete">行</translation>
-    </message>
-    <message>
-        <source>Move Row Down</source>
-        <translation type="obsolete">この行を下へ</translation>
-    </message>
-    <message>
-        <source>D</source>
-        <translation type="obsolete">D</translation>
-    </message>
-    <message>
-        <source>Move Row Up</source>
-        <translation type="obsolete">この行を上へ</translation>
-    </message>
-    <message>
-        <source>U</source>
-        <translation type="obsolete">U</translation>
-    </message>
-    <message>
-        <source>Table Rows</source>
-        <translation type="obsolete">テーブルの行</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="obsolete">新規</translation>
-    </message>
-    <message>
-        <source>Rename Row</source>
-        <translation type="obsolete">行の名前を変更</translation>
-    </message>
-    <message>
-        <source>Rename</source>
-        <translation type="obsolete">名前の変更</translation>
-    </message>
-    <message>
-        <source>Delete Row</source>
-        <translation type="obsolete">行を削除</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="obsolete">削除</translation>
-    </message>
-    <message>
-        <source>Pixmap</source>
-        <translation type="obsolete">ピックスマップ</translation>
-    </message>
-    <message>
-        <source>Set Row Pixmap</source>
-        <translation type="obsolete">この行のピックスマップを設定</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="obsolete">...</translation>
-    </message>
-    <message>
-        <source>Reset Row Pixmap</source>
-        <translation type="obsolete">この行のピックスマップをリセット</translation>
-    </message>
-    <message>
         <source>Table Items</source>
         <translation>テーブルのアイテム</translation>
-    </message>
-    <message>
-        <source>&amp;Text</source>
-        <translation type="obsolete">テキスト(&amp;T)</translation>
-    </message>
-    <message>
-        <source>Set Item Text</source>
-        <translation type="obsolete">このアイテムのテキストを設定</translation>
-    </message>
-    <message>
-        <source>Reset Item Pixmap</source>
-        <translation type="obsolete">このアイテムのピックスマップをリセット</translation>
-    </message>
-    <message>
-        <source>Set Item Pixmap</source>
-        <translation type="obsolete">このアイテムのピックスマップを設定</translation>
-    </message>
-    <message>
-        <source>&amp;Pixmap</source>
-        <translation type="obsolete">ピックスマップ(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Columns</source>
-        <translation type="obsolete">列</translation>
-    </message>
-    <message>
-        <source>Rename Column</source>
-        <translation type="obsolete">列の名前を変更</translation>
-    </message>
-    <message>
-        <source>Delete Column</source>
-        <translation type="obsolete">列を削除</translation>
-    </message>
-    <message>
-        <source>Move Column Up</source>
-        <translation type="obsolete">この列を上へ</translation>
-    </message>
-    <message>
-        <source>Move Column Down</source>
-        <translation type="obsolete">この列を下へ</translation>
-    </message>
-    <message>
-        <source>Table Columns</source>
-        <translation type="obsolete">テーブルの列</translation>
-    </message>
-    <message>
-        <source>Set Column Pixmap</source>
-        <translation type="obsolete">この列のピックスマップを設定</translation>
-    </message>
-    <message>
-        <source>Reset Column Pixmap</source>
-        <translation type="obsolete">この列のピックスマップをリセット</translation>
     </message>
 </context>
 <context>
@@ -7413,13 +5542,6 @@ Class: %2</source>
     </message>
 </context>
 <context>
-    <name>qdesigner_internal::ToolBarTaskMenu</name>
-    <message>
-        <source>Customize...</source>
-        <translation type="obsolete">カスタマイズ...</translation>
-    </message>
-</context>
-<context>
     <name>qdesigner_internal::TreeWidgetEditor</name>
     <message>
         <source>&amp;Columns</source>
@@ -7446,10 +5568,6 @@ Class: %2</source>
         <translation>プロパティ &amp;&gt;&gt;</translation>
     </message>
     <message>
-        <source>New Sub Item</source>
-        <translation type="obsolete">新しいサブアイテム</translation>
-    </message>
-    <message>
         <source>New Column</source>
         <translation>新しい列</translation>
     </message>
@@ -7466,34 +5584,6 @@ Class: %2</source>
         <translation>ツリーのアイテム</translation>
     </message>
     <message>
-        <source>&amp;Pixmap</source>
-        <translation type="obsolete">ピックスマップ(&amp;P)</translation>
-    </message>
-    <message>
-        <source>Set Item Pixmap</source>
-        <translation type="obsolete">このアイテムのピックスマップを設定</translation>
-    </message>
-    <message>
-        <source>...</source>
-        <translation type="obsolete">...</translation>
-    </message>
-    <message>
-        <source>Reset Item Pixmap</source>
-        <translation type="obsolete">このアイテムのピックスマップをリセット</translation>
-    </message>
-    <message>
-        <source>&amp;Text</source>
-        <translation type="obsolete">テキスト(&amp;T)</translation>
-    </message>
-    <message>
-        <source>Set Item Text</source>
-        <translation type="obsolete">このアイテムのテキストを設定</translation>
-    </message>
-    <message>
-        <source>&amp;New Item</source>
-        <translation type="obsolete">新しいアイテム(&amp;N)</translation>
-    </message>
-    <message>
         <source>New Subitem</source>
         <translation>新しいサブアイテム</translation>
     </message>
@@ -7504,10 +5594,6 @@ Class: %2</source>
     <message>
         <source>Delete Item</source>
         <translation>アイテムを削除</translation>
-    </message>
-    <message>
-        <source>&amp;Delete Item</source>
-        <translation type="obsolete">アイテムを削除(&amp;D)</translation>
     </message>
     <message>
         <source>&amp;New</source>
@@ -7550,56 +5636,8 @@ Class: %2</source>
         <translation>D</translation>
     </message>
     <message>
-        <source>Columns</source>
-        <translation type="obsolete">列</translation>
-    </message>
-    <message>
-        <source>Pixmap</source>
-        <translation type="obsolete">ピックスマップ</translation>
-    </message>
-    <message>
-        <source>Set Column Pixmap</source>
-        <translation type="obsolete">この列のピックスマップを設定</translation>
-    </message>
-    <message>
-        <source>Reset Column Pixmap</source>
-        <translation type="obsolete">この列のピックスマップをリセット</translation>
-    </message>
-    <message>
-        <source>New</source>
-        <translation type="obsolete">新規</translation>
-    </message>
-    <message>
-        <source>Rename Column</source>
-        <translation type="obsolete">列の名前を変更</translation>
-    </message>
-    <message>
-        <source>Rename</source>
-        <translation type="obsolete">名前の変更</translation>
-    </message>
-    <message>
-        <source>Delete Column</source>
-        <translation type="obsolete">列を削除</translation>
-    </message>
-    <message>
-        <source>Delete</source>
-        <translation type="obsolete">削除</translation>
-    </message>
-    <message>
-        <source>Move Column Up</source>
-        <translation type="obsolete">この列を上へ</translation>
-    </message>
-    <message>
-        <source>Move Column Down</source>
-        <translation type="obsolete">この列を下へ</translation>
-    </message>
-    <message>
-        <source>Tree Columns</source>
-        <translation type="obsolete">ツリーの列</translation>
-    </message>
-    <message>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation>1</translation>
     </message>
 </context>
 <context>
@@ -7614,33 +5652,6 @@ Class: %2</source>
     <message>
         <source>Warning: Widget creation failed in the widget box. This could be caused by invalid custom widget XML.</source>
         <translation>警告: ウィジェットボックス内にウィジェットを作成できません。カスタムウィジェットの XML が無効です。</translation>
-    </message>
-</context>
-<context>
-    <name>qdesigner_internal::WidgetBoxTreeView</name>
-    <message>
-        <source>Scratchpad</source>
-        <translation type="obsolete">スクラッチパッド</translation>
-    </message>
-    <message>
-        <source>Custom Widgets</source>
-        <translation type="obsolete">カスタムウィジェット</translation>
-    </message>
-    <message>
-        <source>Expand all</source>
-        <translation type="obsolete">すべて展開する</translation>
-    </message>
-    <message>
-        <source>Collapse all</source>
-        <translation type="obsolete">すべて折りたたむ</translation>
-    </message>
-    <message>
-        <source>Remove</source>
-        <translation type="obsolete">削除</translation>
-    </message>
-    <message>
-        <source>Edit name</source>
-        <translation type="obsolete">名前を編集</translation>
     </message>
 </context>
 <context>
@@ -7737,7 +5748,7 @@ UI ファイルに矛盾が発生しています。</translation>
     <message>
         <source>%1 %</source>
         <extracomment>Zoom factor</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>%1 %</translation>
     </message>
 </context>
 <context>
