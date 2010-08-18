@@ -70,9 +70,12 @@
 
 QT_BEGIN_NAMESPACE
 
-typedef QPair<QPointer<QWidget>, bool> QEditorInfo;
+//  Fast associativity between Persistent editors and indices.
+typedef QWeakPointer<QWidget> QWidgetRef;
+typedef QPair<QWidgetRef, bool> QEditorInfo;  // bool is true if QEditor isStatic
 typedef QHash<QWidget *, QPersistentModelIndex> QEditorIndexHash;
-typedef QHash<QModelIndex, QEditorInfo > QIndexEditorHash;
+typedef QHash<QPersistentModelIndex, QEditorInfo> QIndexEditorHash;
+
 typedef QPair<QRect, QModelIndex> QItemViewPaintPair;
 typedef QList<QItemViewPaintPair> QItemViewPaintPairs;
 

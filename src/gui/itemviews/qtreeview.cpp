@@ -1669,9 +1669,9 @@ void QTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &option,
             opt.state = oldState;
         }
 
-        if (const QWidget *widget = d->editorForIndex(modelIndex).first) {
+        if (const QWidgetRef widget = d->editorForIndex(modelIndex).first) {
             painter->save();
-            painter->setClipRect(widget->geometry());
+            painter->setClipRect(widget.data()->geometry());
             d->delegateForIndex(modelIndex)->paint(painter, opt, modelIndex);
             painter->restore();
         } else {
@@ -2727,11 +2727,11 @@ int QTreeView::sizeHintForColumn(int column) const
             continue; // we have no good size hint
         QModelIndex index = viewItems.at(i).index;
         index = index.sibling(index.row(), column);
-        QWidget *editor = d->editorForIndex(index).first;
-        if (editor && d->persistent.contains(editor)) {
-            w = qMax(w, editor->sizeHint().width());
-            int min = editor->minimumSize().width();
-            int max = editor->maximumSize().width();
+        QWidgetRef editor = d->editorForIndex(index).first;
+        if (editor && d->persistent.contains(editor.data())) {
+            w = qMax(w, editor.data()->sizeHint().width());
+            int min = editor.data()->minimumSize().width();
+            int max = editor.data()->maximumSize().width();
             w = qBound(min, w, max);
         }
         int hint = d->delegateForIndex(index)->sizeHint(option, index).width();
@@ -2791,11 +2791,11 @@ int QTreeView::indexRowSizeHint(const QModelIndex &index) const
             continue;
         QModelIndex idx = d->model->index(index.row(), logicalColumn, parent);
         if (idx.isValid()) {
-            QWidget *editor = d->editorForIndex(idx).first;
-            if (editor && d->persistent.contains(editor)) {
-                height = qMax(height, editor->sizeHint().height());
-                int min = editor->minimumSize().height();
-                int max = editor->maximumSize().height();
+            QWidgetRef editor = d->editorForIndex(idx).first;
+            if (editor && d->persistent.contains(editor.data())) {
+                height = qMax(height, editor.data()->sizeHint().height());
+                int min = editor.data()->minimumSize().height();
+                int max = editor.data()->maximumSize().height();
                 height = qBound(min, height, max);
             }
             int hint = d->delegateForIndex(idx)->sizeHint(option, idx).height();
