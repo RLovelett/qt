@@ -70,9 +70,22 @@
 
 QT_BEGIN_NAMESPACE
 
-typedef QPair<QPointer<QWidget>, bool> QEditorInfo;
-typedef QHash<QWidget *, QPersistentModelIndex> QEditorIndexHash;
-typedef QHash<QModelIndex, QEditorInfo > QIndexEditorHash;
+struct QEditorInfo
+{
+    QEditorInfo() : isStatic(false)
+    {
+    }
+
+    QEditorInfo(const QPersistentModelIndex &i, QWidget *e, bool b) : index(i), editor(e), isStatic(b)
+    {
+    }
+
+    QPersistentModelIndex index;
+    QPointer<QWidget> editor;
+    bool isStatic; //true when called from setIndexWidget
+
+};
+
 typedef QPair<QRect, QModelIndex> QItemViewPaintPair;
 typedef QList<QItemViewPaintPair> QItemViewPaintPairs;
 
@@ -234,9 +247,9 @@ public:
                       : q->horizontalOffset(), q->verticalOffset());
     }
 
-    const QEditorInfo &editorForIndex(const QModelIndex &index) const;
+    QEditorInfo editorForIndex(const QModelIndex &index) const;
     inline bool hasEditor(const QModelIndex &index) const {
-        return indexEditorHash.find(index) != indexEditorHash.constEnd();
+        return editorForIndex(index).editor != 0;
     }
 
     QModelIndex indexForEditor(QWidget *editor) const;
@@ -339,8 +352,7 @@ public:
     QAbstractItemView::SelectionMode selectionMode;
     QAbstractItemView::SelectionBehavior selectionBehavior;
 
-    QEditorIndexHash editorIndexHash;
-    QIndexEditorHash indexEditorHash;
+    QList<QEditorInfo> editors;
     QSet<QWidget*> persistent;
     QWidget *currentlyCommittingEditor;
 

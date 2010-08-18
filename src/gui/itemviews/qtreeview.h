@@ -159,9 +159,7 @@ public Q_SLOTS:
     void resizeColumnToContents(int column);
     void sortByColumn(int column);
     void expandAll();
-    void expandBranch(const QModelIndex &index);
     void collapseAll();
-    void collapseBranch(const QModelIndex &index);
     void expandToDepth(int depth);
 
 protected Q_SLOTS:

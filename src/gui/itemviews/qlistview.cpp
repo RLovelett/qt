@@ -1033,7 +1033,7 @@ void QListView::paintEvent(QPaintEvent *e)
             previousRow = row;
         }
 
-        if (const QWidget *widget = d->editorForIndex(*it).first) {
+        if (const QWidget *widget = d->editorForIndex(*it).editor) {
             QRegion itemGeometry(option.rect);
             QRegion widgetGeometry(widget->geometry());
             painter.save();

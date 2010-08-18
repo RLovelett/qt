@@ -118,47 +118,8 @@ public:
     void _q_endAnimatedOperation();
 #endif //QT_NO_ANIMATION
 
-    struct LayoutData
-    {
-        LayoutData()
-          : index(QModelIndex()), parentNum(-1), depth(0), hasMoreSiblings(false) {}
-        LayoutData(QModelIndex i, int n, int l, bool s)
-          : index(i), parentNum(n), depth(l), hasMoreSiblings(s) {}
-
-        QModelIndex index;
-        int parentNum;
-        int depth;
-        bool hasMoreSiblings;
-    };
-
-    // A stack for LayoutData to facilitate fast depth-first ordering without
-    // costly recursion.  DO NOT use this stack for any other purpose.
-    class LayoutStack
-    {
-    public:
-      LayoutStack(): _top(-1) {}
-      ~LayoutStack() {}
-
-      inline bool empty() const {return _top == -1;}
-      inline void clear() {_top = -1;}
-      inline int count() const {return _top + 1;}
-      inline const LayoutData &pop() {return _stack[_top--];}
-      inline void push(const LayoutData &data)
-      {
-          if (++_top == (int)_stack.size())
-              _stack.push_back(data);
-          else
-              _stack[_top] = data;
-      }
-    private:
-      QVector<LayoutData> _stack;
-      int _top;
-    };
-
     void expand(int item, bool emitSignal);
-    void expandBranch(int item, bool emitSignal);
     void collapse(int item, bool emitSignal);
-    void collapseBranch(int item, bool emitSignal);
 
     void _q_columnsAboutToBeRemoved(const QModelIndex &, int, int);
     void _q_columnsRemoved(const QModelIndex &, int, int);
@@ -167,9 +128,6 @@ public:
     void _q_modelDestroyed();
 
     void layout(int item, bool recusiveExpanding = false, bool afterIsUninitialized = false);
-    void layoutDFS(QVector<QTreeViewItem> &newViewItems,
-                   const int itemNum,
-                   const bool expandBranch);
 
     int pageUp(int item) const;
     int pageDown(int item) const;
@@ -192,7 +150,7 @@ public:
     int columnAt(int x) const;
     bool hasVisibleChildren( const QModelIndex& parent) const;
 
-    bool expandOrCollapseItemAtPos(const QPoint &pos, const bool branch);
+    bool expandOrCollapseItemAtPos(const QPoint &pos);
 
     void updateScrollBars();
 
@@ -214,8 +172,6 @@ public:
 
     mutable QVector<QTreeViewItem> viewItems;
     mutable int lastViewedItem;
-    QVector<QTreeViewItem> branchItems; // working area for layoutDFS
-    LayoutStack  unvisitedChildren; // for fast depth-first ordering
     int defaultItemHeight; // this is just a number; contentsHeight() / numItems
     bool uniformRowHeights; // used when all rows have the same height
     bool rootDecoration;
@@ -288,7 +244,6 @@ public:
     bool hasRemovedItems;
 };
 
-Q_DECLARE_TYPEINFO(QTreeViewPrivate::LayoutData, Q_PRIMITIVE_TYPE);
 QT_END_NAMESPACE
 
 #endif // QT_NO_TREEVIEW

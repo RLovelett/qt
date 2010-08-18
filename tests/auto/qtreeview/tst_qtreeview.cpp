@@ -173,7 +173,6 @@ private slots:
     void expandAndCollapse();
     void expandAndCollapseAll();
     void expandWithNoChildren();
-    void expandAndCollapseBranch();
     void keyboardNavigation();
     void headerSections();
     void moveCursor_data();
@@ -1566,99 +1565,6 @@ void tst_QTreeView::expandWithNoChildren()
     //this test should not output warnings
     tree.expand(model.index(0,0));
 }
-
-
-void tst_QTreeView::expandAndCollapseBranch()
-{
-    QTreeView view;
-    QStandardItemModel model;
-    view.setModel(&model);
-
-    QSignalSpy expandedSpy(&view, SIGNAL(expanded(const QModelIndex&)));
-    QSignalSpy collapsedSpy(&view, SIGNAL(collapsed(const QModelIndex&)));
-
-    QStandardItem *item0 = new QStandardItem("0");
-    QStandardItem *item00 = new QStandardItem("0.0");
-    QStandardItem *item01 = new QStandardItem("0.1");
-    QStandardItem *item1 = new QStandardItem("1");
-    QStandardItem *item10 = new QStandardItem("1.0");
-    QStandardItem *item100 = new QStandardItem("1.0.0");
-    QStandardItem *item101 = new QStandardItem("1.0.1");
-    QStandardItem *item2 = new QStandardItem("2");
-    QStandardItem *item20 = new QStandardItem("2.0");
-    QStandardItem *item200 = new QStandardItem("2.0.0");
-    QStandardItem *item2000 = new QStandardItem("2.0.0.0");
-    QStandardItem *item201 = new QStandardItem("2.0.1");
-    QStandardItem *item202 = new QStandardItem("2.0.2");
-    QStandardItem *item2020 = new QStandardItem("2.0.2.0");
-    QStandardItem *item20200 = new QStandardItem("2.0.2.0.0");
-    QStandardItem *item3 = new QStandardItem("3");
-
-    model.appendRow(item0);
-     item0->appendRow(item00);
-     item0->appendRow(item01);
-
-    model.appendRow(item1);
-     item1->appendRow(item10);
-      item10->appendRow(item100);
-      item10->appendRow(item101);
-
-    model.appendRow(item2);
-     item2->appendRow(item20);
-      item20->appendRow(item200);
-       item200->appendRow(item2000);
-      item20->appendRow(item201);
-      item20->appendRow(item202);
-       item202->appendRow(item2020);
-        item2020->appendRow(item20200);
-
-    model.appendRow(item3);
-
-    view.show();
-    qApp->setActiveWindow(&view);
-
-    // Test bad args
-    view.expandBranch(QModelIndex());
-    QCOMPARE(view.isExpanded(QModelIndex()), false);
-    view.collapseBranch(QModelIndex());
-    QCOMPARE(expandedSpy.count(), 0);
-    QCOMPARE(collapsedSpy.count(), 0);
-
-    QStack<QModelIndex> items;
-    view.expandBranch(item2->index());
-    qApp->processEvents();
-    QCOMPARE(expandedSpy.count(), 5);
-    items.push(item2->index());
-    while (!items.empty()) {
-        QModelIndex oneChild = items.pop();
-        int numChildren = model.rowCount(oneChild);
-        if (numChildren)
-            QCOMPARE(view.isExpanded(oneChild), true);
-        for (int r=0; r<numChildren; r++)
-            items.push(model.index(r,0,oneChild));
-    }
-
-    view.collapse(item2->index());
-    qApp->processEvents();
-    QCOMPARE(collapsedSpy.count(), 1);
-    QCOMPARE(view.isExpanded(item2->index()), false);
-    QCOMPARE(view.isExpanded(item20->index()), true);
-    view.expand(item2->index());
-    QCOMPARE(view.isExpanded(item2->index()), true);
-
-    view.collapseBranch(item2->index());
-    qApp->processEvents();
-    items.push(item2->index());
-    while (!items.empty()) {
-        QModelIndex oneChild = items.pop();
-        int numChildren = model.rowCount(oneChild);
-        if (numChildren)
-            QCOMPARE(view.isExpanded(oneChild), false);
-        for (int r=0; r<numChildren; r++)
-            items.push(model.index(r,0,oneChild));
-    }
-}
-
 
 void tst_QTreeView::keyboardNavigation()
 {
