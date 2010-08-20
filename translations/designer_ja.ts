@@ -3074,7 +3074,7 @@ Do you want overwrite the template?</source>
     <name>SelectSignalDialog</name>
     <message>
         <source>Go to slot</source>
-        <translation>スロットを作成</translation>
+        <translation>スロットへ移動</translation>
     </message>
     <message>
         <source>Select signal</source>
@@ -3278,7 +3278,7 @@ Do you want overwrite the template?</source>
     </message>
     <message>
         <source>Go to slot...</source>
-        <translation>スロットを作成...</translation>
+        <translation>スロットへ移動...</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -5045,7 +5045,7 @@ Class: %2</source>
     </message>
     <message>
         <source>Go to slot...</source>
-        <translation>スロットを作成...</translation>
+        <translation>スロットへ移動...</translation>
     </message>
     <message>
         <source>Edit ToolTip</source>
