@@ -766,6 +766,7 @@ void QTreeView::expand(const QModelIndex &index)
 }
 
 /*!
+  \since 4.8
   \fn void QTreeView::expandBranch(const QModelIndex &index)
 
   Fast expansion of the model item and all its descendants as specified by the \a index.
@@ -832,6 +833,7 @@ void QTreeView::collapse(const QModelIndex &index)
 }
 
 /*!
+  \since 4.8
   \fn void QTreeView::collapseBranch(const QModelIndex &index)
 
   Collapses the model item, and all its descendants, specified by the \a index.
@@ -3347,8 +3349,8 @@ void QTreeViewPrivate::layout(int itemNum, bool expandBranch, bool afterIsUninit
 /** \internal
     Flattens items in unvisitedChildren to newViewItems in depth-first order.
 */
-void QTreeViewPrivate::layoutDFS (QVector<QTreeViewItem> &newViewItems, const int parentOffset,
-                                  const bool expandBranch)
+void QTreeViewPrivate::layoutDFS(QVector<QTreeViewItem> &newViewItems, const int parentOffset,
+                                 const bool expandBranch)
 {
     Q_Q(QTreeView);
 
