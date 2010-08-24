@@ -1033,9 +1033,9 @@ void QListView::paintEvent(QPaintEvent *e)
             previousRow = row;
         }
 
-        if (const QWidgetRef widget = d->editorForIndex(*it).first) {
+        if (const QWidget *widget = d->editorForIndex(*it).widget.data()) {
             QRegion itemGeometry(option.rect);
-            QRegion widgetGeometry(widget.data()->geometry());
+            QRegion widgetGeometry(widget->geometry());
             painter.save();
             painter.setClipRegion(itemGeometry.subtracted(widgetGeometry));
             d->delegateForIndex(*it)->paint(&painter, option, *it);

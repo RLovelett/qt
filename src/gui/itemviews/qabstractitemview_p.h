@@ -70,9 +70,15 @@
 
 QT_BEGIN_NAMESPACE
 
+struct QEditorInfo {
+    QEditorInfo(QWidget *e, bool s): widget(QWeakPointer<QWidget>(e)), isStatic(s) {}
+    QEditorInfo(): isStatic(false) {}
+
+    QWeakPointer<QWidget> widget;
+    bool isStatic;
+};
+
 //  Fast associativity between Persistent editors and indices.
-typedef QWeakPointer<QWidget> QWidgetRef;
-typedef QPair<QWidgetRef, bool> QEditorInfo;  // bool is true if QEditor isStatic
 typedef QHash<QWidget *, QPersistentModelIndex> QEditorIndexHash;
 typedef QHash<QPersistentModelIndex, QEditorInfo> QIndexEditorHash;
 

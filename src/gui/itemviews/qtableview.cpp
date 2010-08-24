@@ -926,9 +926,9 @@ void QTableViewPrivate::drawCell(QPainter *painter, const QStyleOptionViewItemV4
 
     q->style()->drawPrimitive(QStyle::PE_PanelItemViewRow, &opt, painter, q);
 
-    if (const QWidgetRef widget = editorForIndex(index).first) {
+    if (const QWidget *widget = editorForIndex(index).widget.data()) {
         painter->save();
-        painter->setClipRect(widget.data()->geometry());
+        painter->setClipRect(widget->geometry());
         q->itemDelegate(index)->paint(painter, opt, index);
         painter->restore();
     } else {
@@ -2166,11 +2166,11 @@ int QTableView::sizeHintForRow(int row) const
             option.rect.setWidth(columnWidth(index.column()));
         }
         
-        QWidgetRef editor = d->editorForIndex(index).first;
-        if (editor && d->persistent.contains(editor.data())) {
-            hint = qMax(hint, editor.data()->sizeHint().height());
-            int min = editor.data()->minimumSize().height();
-            int max = editor.data()->maximumSize().height();
+        QWidget *editor = d->editorForIndex(index).widget.data();
+        if (editor && d->persistent.contains(editor)) {
+            hint = qMax(hint, editor->sizeHint().height());
+            int min = editor->minimumSize().height();
+            int max = editor->maximumSize().height();
             hint = qBound(min, hint, max);
         }
         
@@ -2219,11 +2219,11 @@ int QTableView::sizeHintForColumn(int column) const
             continue;
         index = d->model->index(logicalRow, column, d->root);
         
-        QWidgetRef editor = d->editorForIndex(index).first;
-        if (editor && d->persistent.contains(editor.data())) {
-            hint = qMax(hint, editor.data()->sizeHint().width());
-            int min = editor.data()->minimumSize().width();
-            int max = editor.data()->maximumSize().width();
+        QWidget *editor = d->editorForIndex(index).widget.data();
+        if (editor && d->persistent.contains(editor)) {
+            hint = qMax(hint, editor->sizeHint().width());
+            int min = editor->minimumSize().width();
+            int max = editor->maximumSize().width();
             hint = qBound(min, hint, max);
         }
         
