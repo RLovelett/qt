@@ -52,16 +52,20 @@ MySortFilterProxyModel::MySortFilterProxyModel(QObject *parent)
 //! [1]
 void MySortFilterProxyModel::setFilterMinimumDate(const QDate &date)
 {
+    emit layoutAboutToBeChanged();
     minDate = date;
     invalidateFilter();
+    emit layoutChanged();
 }
 //! [1]
 
 //! [2]
 void MySortFilterProxyModel::setFilterMaximumDate(const QDate &date)
 {
+    emit layoutAboutToBeChanged();
     maxDate = date;
     invalidateFilter();
+    emit layoutChanged();
 }
 //! [2]
 

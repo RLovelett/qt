@@ -143,6 +143,7 @@ private slots:
     void taskQTBUG_10287_unnecessaryMapCreation();
 
     void testMultipleProxiesWithSelection();
+    void layoutChangeOnFilterChange();
 
 protected:
     void buildHierarchy(const QStringList &data, QAbstractItemModel *model);
@@ -3133,6 +3134,43 @@ void tst_QSortFilterProxyModel::taskQTBUG_10287_unnecessaryMapCreation()
     Proxy10287 p(&m);
     m.removeChild();
     // No assert failure, it passes.
+}
+
+void tst_QSortFilterProxyModel::layoutChangeOnFilterChange()
+{
+  QStringListModel m(
+    QStringList() << "Aardvark"
+                  << "Alligator"
+                  << "Baboon"
+                  << "Badger"
+                  << "Camel"
+                  << "Cheetah"
+                  << "Deer"
+                  << "Dolphin"
+  );
+  QSortFilterProxyModel p;
+  p.setFilterRegExp("[A|B|C].*");
+  p.setSourceModel(&m);
+
+  QVERIFY(p.rowCount() == 6);
+
+  QPersistentModelIndex pIdx = p.index(5, 0);
+  QVERIFY(pIdx.data().toString() == "Cheetah");
+
+  QSignalSpy aboutToBeChangedSpy(&p, SIGNAL(layoutAboutToBeChanged()));
+  QSignalSpy changedSpy(&p, SIGNAL(layoutChanged()));
+
+  p.setFilterRegExp("[A|C].*");
+
+  QVERIFY(p.rowCount() == 4);
+
+  QVERIFY(pIdx.isValid());
+  QVERIFY(pIdx.row() == 3);
+  QVERIFY(pIdx.data().toString() == "Cheetah");
+
+  QVERIFY(aboutToBeChangedSpy.size() == 1);
+  QVERIFY(changedSpy.size() == 1);
+
 }
 
 QTEST_MAIN(tst_QSortFilterProxyModel)

@@ -2080,8 +2080,10 @@ QRegExp QSortFilterProxyModel::filterRegExp() const
 void QSortFilterProxyModel::setFilterRegExp(const QRegExp &regExp)
 {
     Q_D(QSortFilterProxyModel);
+    emit layoutAboutToBeChanged();
     d->filter_regexp = regExp;
     d->filter_changed();
+    emit layoutChanged();
 }
 
 /*!
@@ -2101,8 +2103,10 @@ int QSortFilterProxyModel::filterKeyColumn() const
 void QSortFilterProxyModel::setFilterKeyColumn(int column)
 {
     Q_D(QSortFilterProxyModel);
+    emit layoutAboutToBeChanged();
     d->filter_column = column;
     d->filter_changed();
+    emit layoutChanged();
 }
 
 /*!
@@ -2126,8 +2130,11 @@ void QSortFilterProxyModel::setFilterCaseSensitivity(Qt::CaseSensitivity cs)
     Q_D(QSortFilterProxyModel);
     if (cs == d->filter_regexp.caseSensitivity())
         return;
+
+    emit layoutAboutToBeChanged();
     d->filter_regexp.setCaseSensitivity(cs);
     d->filter_changed();
+    emit layoutChanged();
 }
 
 /*!
@@ -2191,9 +2198,11 @@ void QSortFilterProxyModel::setSortLocaleAware(bool on)
 void QSortFilterProxyModel::setFilterRegExp(const QString &pattern)
 {
     Q_D(QSortFilterProxyModel);
+    emit layoutAboutToBeChanged();
     d->filter_regexp.setPatternSyntax(QRegExp::RegExp);
     d->filter_regexp.setPattern(pattern);
     d->filter_changed();
+    emit layoutChanged();
 }
 
 /*!
@@ -2205,9 +2214,11 @@ void QSortFilterProxyModel::setFilterRegExp(const QString &pattern)
 void QSortFilterProxyModel::setFilterWildcard(const QString &pattern)
 {
     Q_D(QSortFilterProxyModel);
+    emit layoutAboutToBeChanged();
     d->filter_regexp.setPatternSyntax(QRegExp::Wildcard);
     d->filter_regexp.setPattern(pattern);
     d->filter_changed();
+    emit layoutChanged();
 }
 
 /*!
@@ -2219,9 +2230,11 @@ void QSortFilterProxyModel::setFilterWildcard(const QString &pattern)
 void QSortFilterProxyModel::setFilterFixedString(const QString &pattern)
 {
     Q_D(QSortFilterProxyModel);
+    emit layoutAboutToBeChanged();
     d->filter_regexp.setPatternSyntax(QRegExp::FixedString);
     d->filter_regexp.setPattern(pattern);
     d->filter_changed();
+    emit layoutChanged();
 }
 
 /*!
@@ -2290,8 +2303,10 @@ void QSortFilterProxyModel::setFilterRole(int role)
     Q_D(QSortFilterProxyModel);
     if (d->filter_role == role)
         return;
+    emit layoutAboutToBeChanged();
     d->filter_role = role;
     d->filter_changed();
+    emit layoutChanged();
 }
 
 /*!
@@ -2334,14 +2349,19 @@ void QSortFilterProxyModel::filterChanged()
 }
 
 /*!
-   \since 4.3
+    \since 4.3
 
-   Invalidates the current filtering.
+    Invalidates the current filtering.
 
-   This function should be called if you are implementing custom filtering
-   (e.g. filterAcceptsRow()), and your filter parameters have changed.
+    This function should be called if you are implementing custom filtering
+    (e.g. filterAcceptsRow()), and your filter parameters have changed.
 
-   \sa invalidate()
+    Note that it is the callers responsibility to emit the layoutAboutToBeChanged
+    and layoutChanged signals. For example:
+
+    \snippet examples/itemviews/customsortfiltermodel/mysortfilterproxymodel.cpp 1
+
+    \sa invalidate()
 */
 void QSortFilterProxyModel::invalidateFilter()
 {
