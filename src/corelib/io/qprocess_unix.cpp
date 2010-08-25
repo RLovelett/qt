@@ -194,7 +194,7 @@ QProcessManager::QProcessManager()
     struct sigaction action;
     memset(&action, 0, sizeof(action));
     action.sa_handler = qt_sa_sigchld_handler;
-    action.sa_flags = SA_NOCLDSTOP;
+    action.sa_flags = SA_NOCLDSTOP|SA_RESTART;
     ::sigaction(SIGCHLD, &action, &oldAction);
     if (oldAction.sa_handler != qt_sa_sigchld_handler)
 	qt_sa_old_sigchld_handler = oldAction.sa_handler;
@@ -221,7 +221,7 @@ QProcessManager::~QProcessManager()
     struct sigaction action;
     memset(&action, 0, sizeof(action));
     action.sa_handler = qt_sa_old_sigchld_handler;
-    action.sa_flags = SA_NOCLDSTOP;
+    action.sa_flags = SA_NOCLDSTOP|SA_RESTART;
     ::sigaction(SIGCHLD, &action, &oldAction);
     if (oldAction.sa_handler != qt_sa_sigchld_handler) {
         ::sigaction(SIGCHLD, &oldAction, 0);
