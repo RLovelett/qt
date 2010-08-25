@@ -185,6 +185,26 @@ void tst_QDial::wrappingCheck()
         QTest::keyPress(&dial, Qt::Key_Down);
         QCOMPARE( dial.value(), 0);
     }
+
+    { //When the step is really big or small, wrapping should still behave
+        dial.setWrapping(true);
+        dial.setValue(dial.minimum());
+        dial.setSingleStep(305);
+
+        QTest::keyPress(&dial, Qt::Key_Up);
+        QCOMPARE( dial.value(), 5);
+
+        dial.setValue(dial.minimum());
+        QTest::keyPress(&dial, Qt::Key_Down);
+        QCOMPARE( dial.value(), 95);
+
+        dial.setMinimum(-30);
+        dial.setMaximum(-4);
+        dial.setSingleStep(200);
+        dial.setValue(dial.minimum());
+        QTest::keyPress(&dial, Qt::Key_Down);
+        QCOMPARE( dial.value(), -22);
+    }
 }
 
 QTEST_MAIN(tst_QDial)
