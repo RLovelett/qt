@@ -46,6 +46,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QFile>
 #include <QtCore/QString>
+#include <QtCore/QCoreApplication>
 
 #include <QtXml/QXmlAttributes>
 #include <QtXml/QXmlDefaultHandler>
@@ -54,6 +55,10 @@
 
 
 QT_BEGIN_NAMESPACE
+
+class LU {
+    Q_DECLARE_TR_FUNCTIONS(LUpdate)
+};
 
 class UiReader : public QXmlDefaultHandler
 {
@@ -152,10 +157,9 @@ bool UiReader::characters(const QString &ch)
 
 bool UiReader::fatalError(const QXmlParseException &exception)
 {
-    QString msg;
-    msg.sprintf("XML error: Parse error at line %d, column %d (%s).",
-                 exception.lineNumber(), exception.columnNumber(),
-                 exception.message().toLatin1().data());
+    QString msg=LU::tr("XML error: Parse error at line %1, column %2 (%3).")
+        .arg(exception.lineNumber()).arg(exception.columnNumber())
+        .arg(exception.message());
     m_cd.appendError(msg); 
     return false;
 }
@@ -181,7 +185,7 @@ bool loadUI(Translator &translator, const QString &filename, ConversionData &cd)
     cd.m_sourceFileName = filename;
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
-        cd.appendError(QString::fromLatin1("Cannot open %1: %2")
+        cd.appendError(LU::tr("Cannot open %1: %2")
             .arg(filename, file.errorString()));
         return false;
     }
@@ -196,7 +200,7 @@ bool loadUI(Translator &translator, const QString &filename, ConversionData &cd)
     reader.setErrorHandler(&handler);
     bool result = reader.parse(in);
     if (!result)
-        cd.appendError(QLatin1String("Parse error in UI file"));
+        cd.appendError(LU::tr("Parse error in UI file"));
     reader.setContentHandler(0);
     reader.setErrorHandler(0);
     return result;

@@ -52,7 +52,7 @@ FinishPage::FinishPage(QWidget *parent)
     : QWizardPage(parent)
 {
     setTitle(tr("Converting File"));
-    setSubTitle(QLatin1String("Creating the new Qt help files from the "
+    setSubTitle(tr("Creating the new Qt help files from the "
         "old .adp file."));
     setFinalPage(true);
 

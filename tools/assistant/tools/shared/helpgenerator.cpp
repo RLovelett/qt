@@ -78,7 +78,7 @@ void HelpGenerator::printStatus(const QString &msg)
 
 void HelpGenerator::printWarning(const QString &msg)
 {
-    fprintf(stdout, "Warning: %s\n", qPrintable(msg));
+    fprintf(stdout, qPrintable(tr("Warning: %s\n")), qPrintable(msg));
 }
 
 QT_END_NAMESPACE
