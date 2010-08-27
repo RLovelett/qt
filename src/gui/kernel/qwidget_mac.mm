@@ -3254,7 +3254,7 @@ QWidget *QWidget::keyboardGrabber()
 void QWidget::activateWindow()
 {
     QWidget *tlw = window();
-    if(!tlw->isVisible() || !tlw->isWindow() || (tlw->windowType() == Qt::Desktop))
+    if(tlw->testAttribute(Qt::WA_DontShowOnScreen) || !tlw->isVisible() || !tlw->isWindow() || (tlw->windowType() == Qt::Desktop))
         return;
     qt_event_remove_activate();
 
