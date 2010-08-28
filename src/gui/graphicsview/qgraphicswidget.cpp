@@ -2215,6 +2215,7 @@ void QGraphicsWidget::paintWindowFrame(QPainter *painter, const QStyleOptionGrap
         return;
     QPainter *realPainter = painter;
     QPixmap pm(pixmapSize);
+    pm.fill(Qt::transparent);
     painter = new QPainter(&pm);
 #endif
 
