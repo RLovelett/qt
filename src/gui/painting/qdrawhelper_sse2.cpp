@@ -328,6 +328,78 @@ void QT_FASTCALL comp_func_solid_SourceOver_sse2(uint *destPixels, int length, u
     }
 }
 
+CompositionFunctionSolid qt_functionForModeSolid_SSE2[numCompositionFunctions] = {
+    comp_func_solid_SourceOver_sse2,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+};
+
+CompositionFunction qt_functionForMode_SSE2[numCompositionFunctions] = {
+    comp_func_SourceOver_sse2,
+    comp_func_DestinationOver,
+    comp_func_Clear,
+    comp_func_Source_sse2,
+    comp_func_Destination,
+    comp_func_SourceIn,
+    comp_func_DestinationIn,
+    comp_func_SourceOut,
+    comp_func_DestinationOut,
+    comp_func_SourceAtop,
+    comp_func_DestinationAtop,
+    comp_func_XOR,
+    comp_func_Plus_sse2,
+    comp_func_Multiply,
+    comp_func_Screen,
+    comp_func_Overlay,
+    comp_func_Darken,
+    comp_func_Lighten,
+    comp_func_ColorDodge,
+    comp_func_ColorBurn,
+    comp_func_HardLight,
+    comp_func_SoftLight,
+    comp_func_Difference,
+    comp_func_Exclusion,
+    rasterop_SourceOrDestination,
+    rasterop_SourceAndDestination,
+    rasterop_SourceXorDestination,
+    rasterop_NotSourceAndNotDestination,
+    rasterop_NotSourceOrNotDestination,
+    rasterop_NotSourceXorDestination,
+    rasterop_NotSource,
+    rasterop_NotSourceAndDestination,
+    rasterop_SourceAndNotDestination
+};
+
 void qt_memfill16_sse2(quint16 *dest, quint16 value, int count)
 {
     if (count < 3) {
