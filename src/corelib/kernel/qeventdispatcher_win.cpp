@@ -219,13 +219,13 @@ namespace {
                         tmpMsg = (*it).msg;
                         sock = it.key();
                         if (FD_ISSET(sock, &readS))
-                            ret = SendMessage(handle, tmpMsg, sock, FD_READ);
+                            ret = SendNotifyMessage(handle, tmpMsg, sock, FD_READ);
 
                         if (FD_ISSET(sock, &writeS))
-                            ret = SendMessage(handle, tmpMsg, sock, FD_WRITE);
+                            ret = SendNotifyMessage(handle, tmpMsg, sock, FD_WRITE);
 
                         if (FD_ISSET(sock, &exS))
-                            ret = SendMessage(handle, tmpMsg, sock, FD_OOB);
+                            ret = SendNotifyMessage(handle, tmpMsg, sock, FD_OOB);
                 }
             }
 
