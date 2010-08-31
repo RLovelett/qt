@@ -293,9 +293,9 @@ public:
 
 #ifndef QT_NO_STL
     static inline QVector<T> fromStdVector(const std::vector<T> &vector)
-    { QVector<T> tmp; qCopy(vector.begin(), vector.end(), std::back_inserter(tmp)); return tmp; }
+    { QVector<T> tmp; tmp.reserve(vector.size()); qCopy(vector.begin(), vector.end(), std::back_inserter(tmp)); return tmp; }
     inline std::vector<T> toStdVector() const
-    { std::vector<T> tmp; qCopy(constBegin(), constEnd(), std::back_inserter(tmp)); return tmp; }
+    { std::vector<T> tmp; tmp.reserve(size()); qCopy(constBegin(), constEnd(), std::back_inserter(tmp)); return tmp; }
 #endif
 
 private:
@@ -751,9 +751,10 @@ Q_OUTOFLINE_TEMPLATE QList<T> QVector<T>::toList() const
 template <typename T>
 Q_OUTOFLINE_TEMPLATE QVector<T> QList<T>::toVector() const
 {
-    QVector<T> result(size());
+    QVector<T> result;
+    result.reserve(size());
     for (int i = 0; i < size(); ++i)
-        result[i] = at(i);
+        result.append(at(i));
     return result;
 }
 
