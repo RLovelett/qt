@@ -104,6 +104,7 @@ static QHash<const QWidget *, QHash<int, bool> > *hasStyleRuleCache = 0;
 typedef QHash<int, QHash<quint64, QRenderRule> > QRenderRules;
 static QHash<const QWidget *, QRenderRules> *renderRulesCache = 0;
 static QHash<const QWidget *, QPalette> *customPaletteWidgets = 0; // widgets whose palette we tampered
+static QHash<const QWidget *, bool> *origWidgetPaletteState = 0; // their original palette state
 static QHash<const void *, StyleSheet> *styleSheetCache = 0; // parsed style sheets
 static QSet<const QWidget *> *autoFillDisabledWidgets = 0;
 
@@ -2566,9 +2567,12 @@ void QStyleSheetStyle::setPalette(QWidget *w)
     }
 
     customPaletteWidgets->insert(w, w->palette());
+    origWidgetPaletteState->insert(w, w->testAttribute(Qt::WA_SetPalette));
     w->setPalette(p);
-    if (ew != w)
+    if (ew != w) {
+        origWidgetPaletteState->insert(ew, ew->testAttribute(Qt::WA_SetPalette));
         ew->setPalette(p);
+    }
 }
 
 void QStyleSheetStyle::unsetPalette(QWidget *w)
@@ -2576,10 +2580,15 @@ void QStyleSheetStyle::unsetPalette(QWidget *w)
     if (customPaletteWidgets->contains(w)) {
         QPalette p = customPaletteWidgets->value(w);
         w->setPalette(p);
+        w->setAttribute(Qt::WA_SetPalette, origWidgetPaletteState->value(w));
         QWidget *ew = embeddedWidget(w);
-        if (ew != w)
+        if (ew != w) {
             ew->setPalette(p);
+            w->setAttribute(Qt::WA_SetPalette, origWidgetPaletteState->value(ew));
+            origWidgetPaletteState->remove(ew);
+        }
         customPaletteWidgets->remove(w);
+        origWidgetPaletteState->remove(w);
     }
     QVariant oldFont = w->property("_q_styleSheetWidgetFont");
     if (oldFont.isValid()) {
@@ -2626,6 +2635,7 @@ QStyleSheetStyle::QStyleSheetStyle(QStyle *base)
         hasStyleRuleCache = new QHash<const QWidget *, QHash<int, bool> >;
         renderRulesCache = new QHash<const QWidget *, QRenderRules>;
         customPaletteWidgets = new QHash<const QWidget *, QPalette>;
+        origWidgetPaletteState = new QHash<const QWidget *, bool>;
         styleSheetCache = new QHash<const void *, StyleSheet>;
         autoFillDisabledWidgets = new QSet<const QWidget *>;
     }
@@ -2643,6 +2653,8 @@ QStyleSheetStyle::~QStyleSheetStyle()
         renderRulesCache = 0;
         delete customPaletteWidgets;
         customPaletteWidgets = 0;
+        delete origWidgetPaletteState;
+        origWidgetPaletteState = 0;
         delete styleSheetCache;
         styleSheetCache = 0;
         delete autoFillDisabledWidgets;
@@ -2664,6 +2676,7 @@ void QStyleSheetStyle::widgetDestroyed(QObject *o)
     hasStyleRuleCache->remove((const QWidget *)o);
     renderRulesCache->remove((const QWidget *)o);
     customPaletteWidgets->remove((const QWidget *)o);
+    origWidgetPaletteState->remove((const QWidget *)o);
     styleSheetCache->remove((const QWidget *)o);
     autoFillDisabledWidgets->remove((const QWidget *)o);
 }
