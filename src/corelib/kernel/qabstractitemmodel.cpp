@@ -2545,9 +2545,13 @@ bool QAbstractItemModel::beginMoveRows(const QModelIndex &sourceParent, int sour
         return false;
     }
 
-    d->changes.push(QAbstractItemModelPrivate::Change(sourceParent, sourceFirst, sourceLast));
+    QAbstractItemModelPrivate::Change sourceChange(sourceParent, sourceFirst, sourceLast);
+    sourceChange.needsAdjust = sourceParent.isValid() && sourceParent.row() >= destinationChild && sourceParent.parent() == destinationParent;
+    d->changes.push(sourceChange);
     int destinationLast = destinationChild + (sourceLast - sourceFirst);
-    d->changes.push(QAbstractItemModelPrivate::Change(destinationParent, destinationChild, destinationLast));
+    QAbstractItemModelPrivate::Change destinationChange(destinationParent, destinationChild, destinationLast);
+    destinationChange.needsAdjust = destinationParent.isValid() && destinationParent.row() >= sourceLast && destinationParent.parent() == sourceParent;
+    d->changes.push(destinationChange);
 
     emit rowsAboutToBeMoved(sourceParent, sourceFirst, sourceLast, destinationParent, destinationChild);
     emit layoutAboutToBeChanged();
@@ -2577,7 +2581,17 @@ void QAbstractItemModel::endMoveRows()
 
     d->itemsMoved(removeChange.parent, removeChange.first, removeChange.last, insertChange.parent, insertChange.first, Qt::Vertical);
 
-    emit rowsMoved(removeChange.parent, removeChange.first, removeChange.last, insertChange.parent, insertChange.first);
+    QModelIndex adjustedSource = removeChange.parent;
+    QModelIndex adjustedDestination = insertChange.parent;
+
+    const int numMoved = removeChange.last - removeChange.first + 1;
+    if (insertChange.needsAdjust)
+      adjustedDestination = createIndex(adjustedDestination.row() - numMoved, adjustedDestination.column(), adjustedDestination.internalPointer());
+
+    if (removeChange.needsAdjust)
+      adjustedSource = createIndex(adjustedSource.row() + numMoved, adjustedSource.column(), adjustedSource.internalPointer());
+
+    emit rowsMoved(adjustedSource, removeChange.first, removeChange.last, adjustedDestination, insertChange.first);
     emit layoutChanged();
 }
 
@@ -2748,9 +2762,13 @@ bool QAbstractItemModel::beginMoveColumns(const QModelIndex &sourceParent, int s
         return false;
     }
 
-    d->changes.push(QAbstractItemModelPrivate::Change(sourceParent, sourceFirst, sourceLast));
+    QAbstractItemModelPrivate::Change sourceChange(sourceParent, sourceFirst, sourceLast);
+    sourceChange.needsAdjust = sourceParent.isValid() && sourceParent.row() >= destinationChild && sourceParent.parent() == destinationParent;
+    d->changes.push(sourceChange);
     int destinationLast = destinationChild + (sourceLast - sourceFirst);
-    d->changes.push(QAbstractItemModelPrivate::Change(destinationParent, destinationChild, destinationLast));
+    QAbstractItemModelPrivate::Change destinationChange(destinationParent, destinationChild, destinationLast);
+    destinationChange.needsAdjust = destinationParent.isValid() && destinationParent.row() >= sourceLast && destinationParent.parent() == sourceParent;
+    d->changes.push(destinationChange);
 
     d->itemsAboutToBeMoved(sourceParent, sourceFirst, sourceLast, destinationParent, destinationChild, Qt::Horizontal);
 
@@ -2781,7 +2799,17 @@ void QAbstractItemModel::endMoveColumns()
 
     d->itemsMoved(removeChange.parent, removeChange.first, removeChange.last, insertChange.parent, insertChange.first, Qt::Horizontal);
 
-    emit columnsMoved(removeChange.parent, removeChange.first, removeChange.last, insertChange.parent, insertChange.first);
+    QModelIndex adjustedSource = removeChange.parent;
+    QModelIndex adjustedDestination = insertChange.parent;
+
+    const int numMoved = removeChange.last - removeChange.first + 1;
+    if (insertChange.needsAdjust)
+      adjustedDestination = createIndex(adjustedDestination.row(), adjustedDestination.column() - numMoved, adjustedDestination.internalPointer());
+
+    if (removeChange.needsAdjust)
+      adjustedSource = createIndex(adjustedSource.row(), adjustedSource.column() + numMoved, adjustedSource.internalPointer());
+
+    emit columnsMoved(adjustedSource, removeChange.first, removeChange.last, adjustedDestination, insertChange.first);
     emit layoutChanged();
 }
 
