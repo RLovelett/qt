@@ -123,8 +123,8 @@ void qt_blend_rgb32_on_rgb32_sse2(uchar *destPixels, int dbpl,
                                  int w, int h,
                                  int const_alpha);
 
-extern CompositionFunction qt_functionForMode_SSE2[];
-extern CompositionFunctionSolid qt_functionForModeSolid_SSE2[];
+extern CompositionFunction qt_functionForMode_onlySSE2[];
+extern CompositionFunctionSolid qt_functionForModeSolid_onlySSE2[];
 #endif // QT_HAVE_SSE2
 
 #ifdef QT_HAVE_IWMMXT
