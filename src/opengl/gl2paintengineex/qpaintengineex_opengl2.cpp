@@ -1461,16 +1461,22 @@ void QGL2PaintEngineExPrivate::drawCachedGlyphs(QFontEngineGlyphCache::Type glyp
 
     QOpenGL2PaintEngineState *s = q->state();
 
-    QGLTextureGlyphCache *cache =
-        (QGLTextureGlyphCache *) staticTextItem->fontEngine->glyphCache(ctx, glyphType, QTransform());
-    if (!cache || cache->cacheType() != glyphType) {
-        cache = new QGLTextureGlyphCache(ctx, glyphType, QTransform());
-        staticTextItem->fontEngine->setGlyphCache(ctx, cache);
-    }
+    QGLTextureGlyphCache *cache = NULL;
+    if (device->customGlyphCache &&
+        device->customGlyphCache->hasGlyphs(staticTextItem->numGlyphs, staticTextItem->glyphs)) {
+        cache = device->customGlyphCache;
+        cache->setPaintEnginePrivate(this);
+     } else {
+        cache = (QGLTextureGlyphCache *) staticTextItem->fontEngine->glyphCache(ctx, glyphType, QTransform());
+        if (!cache || cache->cacheType() != glyphType) {
+            cache = new QGLTextureGlyphCache(ctx, glyphType, QTransform());
+            staticTextItem->fontEngine->setGlyphCache(ctx, cache);
+        }
 
-    cache->setPaintEnginePrivate(this);
-    cache->populate(staticTextItem->fontEngine, staticTextItem->numGlyphs, staticTextItem->glyphs,
-                    staticTextItem->glyphPositions);
+        cache->setPaintEnginePrivate(this);
+        cache->populate(staticTextItem->fontEngine, staticTextItem->numGlyphs, staticTextItem->glyphs,
+                        staticTextItem->glyphPositions);
+     }
 
     if (cache->width() == 0 || cache->height() == 0)
         return;
