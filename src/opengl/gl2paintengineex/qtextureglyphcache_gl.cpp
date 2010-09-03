@@ -70,6 +70,21 @@ QGLTextureGlyphCache::QGLTextureGlyphCache(QGLContext *context, QFontEngineGlyph
             SLOT(contextDestroyed(const QGLContext*)));
 }
 
+QGLTextureGlyphCache::QGLTextureGlyphCache(QGLContext *context, QFontEngineGlyphCache::Type type, const QTransform &matrix, GLuint w, GLuint h, GLuint texture, const QHash <glyph_t, Coord> c)
+    : QImageTextureGlyphCache(type, matrix)
+    , m_texture(texture)
+    , ctx(context)
+    , m_width(w)
+    , m_height(h)
+{
+    // Base coord from subclass
+    coords = c;
+
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+}
+
 QGLTextureGlyphCache::~QGLTextureGlyphCache()
 {
     if (ctx) {

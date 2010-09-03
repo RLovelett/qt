@@ -67,7 +67,8 @@ class Q_OPENGL_EXPORT QGLTextureGlyphCache : public QObject, public QImageTextur
     Q_OBJECT
 public:
     QGLTextureGlyphCache(QGLContext *context, QFontEngineGlyphCache::Type type, const QTransform &matrix);
-    ~QGLTextureGlyphCache();
+    QGLTextureGlyphCache(QGLContext *context, QFontEngineGlyphCache::Type type, const QTransform &matrix, GLuint w, GLuint h, GLuint texture, const QHash <glyph_t, Coord> c);
+     ~QGLTextureGlyphCache();
 
     virtual void createTextureData(int width, int height);
     virtual void resizeTextureData(int width, int height);
