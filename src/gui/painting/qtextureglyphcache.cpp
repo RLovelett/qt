@@ -164,6 +164,16 @@ void QTextureGlyphCache::populate(QFontEngine *fontEngine, int numGlyphs, const 
 
 }
 
+bool QTextureGlyphCache::hasGlyphs(int count, glyph_t *glyphs)
+{
+    for (int i = 0; i < count; i++) {
+        if (! coords.contains(glyphs[i]))
+            return false;
+    }
+
+    return true;
+}
+
 QImage QTextureGlyphCache::textureMapForGlyph(glyph_t g) const
 {
 #if defined(Q_WS_X11)

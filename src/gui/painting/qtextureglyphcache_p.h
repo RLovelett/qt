@@ -94,6 +94,7 @@ public:
 
     void populate(QFontEngine *fontEngine, int numGlyphs, const glyph_t *glyphs,
                   const QFixedPoint *positions);
+    bool hasGlyphs(int count, glyph_t *glyphs);
 
     virtual void createTextureData(int width, int height) = 0;
     virtual void resizeTextureData(int width, int height) = 0;
