@@ -60,6 +60,8 @@
 
 QT_BEGIN_NAMESPACE
 
+class QGLTextureGlyphCache;
+
 class Q_OPENGL_EXPORT QGLPaintDevice : public QPaintDevice
 {
 public:
@@ -84,6 +86,9 @@ protected:
     int metric(QPaintDevice::PaintDeviceMetric metric) const;
     GLuint m_previousFBO;
     GLuint m_thisFBO;
+    QGLTextureGlyphCache *customGlyphCache;
+
+    friend class QGL2PaintEngineExPrivate;
 };
 
 
