@@ -1,13 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="sl_SI">
-    <extra-po-header-po_revision_date>2010-08-28 14:05+0200</extra-po-header-po_revision_date>
-    <extra-po-headers>MIME-Version,Content-Type,Content-Transfer-Encoding,Plural-Forms,X-Language,X-Qt-Contexts,Last-Translator,PO-Revision-Date,Project-Id-Version,Language-Team,X-Generator</extra-po-headers>
-    <extra-po-header-x_generator>Lokalize 1.1</extra-po-header-x_generator>
-    <extra-po-header-language_team>Slovenian &lt;lugos-slo@lugos.si&gt;</extra-po-header-language_team>
-    <extra-po-header-project_id_version></extra-po-header-project_id_version>
-    <extra-po-header_comment># Jure Repinc &lt;jlp@holodeck1.com&gt;, 2010.</extra-po-header_comment>
-    <extra-po-header-last_translator>Jure Repinc &lt;jlp@holodeck1.com&gt;</extra-po-header-last_translator>
+<context>
+    <name></name>
+    <message>
+        <source>&lt;Filter&gt;</source>
+        <comment>qdesigner_internal::FilterWidget|</comment>
+        <translation type="obsolete">&lt;filter&gt;</translation>
+    </message>
+    <message>
+        <source>Change Current Page</source>
+        <comment>qdesigner_internal::ObjectInspector::ObjectInspectorPrivate|</comment>
+        <translation type="obsolete">Spreminjanje trenutne strani</translation>
+    </message>
+    <message>
+        <source>Load Custom Device Skin</source>
+        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
+        <translation type="obsolete">Naloži temo za napravo po meri</translation>
+    </message>
+    <message>
+        <source>All QVFB Skins (*.%1)</source>
+        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
+        <translation type="obsolete">Vse teme za QVFB (*.%1)</translation>
+    </message>
+    <message>
+        <source>%1 - Duplicate Skin</source>
+        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
+        <translation type="obsolete">%1 - podvojena tema</translation>
+    </message>
+    <message>
+        <source>The skin &apos;%1&apos; already exists.</source>
+        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
+        <translation type="obsolete">Tema »%1« že obstaja.</translation>
+    </message>
+    <message>
+        <source>%1 - Error</source>
+        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
+        <translation type="obsolete">%1 - napaka</translation>
+    </message>
+    <message>
+        <source>%1 is not a valid skin directory:
+%2</source>
+        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
+        <translation type="obsolete">%1 ni veljavna mapa s temo:
+%2</translation>
+    </message>
+</context>
 <context>
     <name>AbstractFindWidget</name>
     <message>
@@ -29,6 +67,49 @@
     <message>
         <source>&lt;img src=&quot;:/trolltech/shared/images/wrap.png&quot;&gt;&amp;nbsp;Search wrapped</source>
         <translation>&lt;img src=&quot;:/trolltech/shared/images/wrap.png&quot;&gt;&amp;nbsp;Iskanje se nadaljuje na drugem koncu</translation>
+    </message>
+</context>
+<context>
+    <name>AbstractItemEditor</name>
+    <message>
+        <source>Selectable</source>
+        <translation>Moč izbrati</translation>
+    </message>
+    <message>
+        <source>Editable</source>
+        <translation>Moč urejati</translation>
+    </message>
+    <message>
+        <source>DragEnabled</source>
+        <translation>Omogočena vleka</translation>
+    </message>
+    <message>
+        <source>DropEnabled</source>
+        <translation>Omogočeno spuščanje</translation>
+    </message>
+    <message>
+        <source>UserCheckable</source>
+        <translation>Uporabnik lahko omogoči</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>Omogočeno</translation>
+    </message>
+    <message>
+        <source>Tristate</source>
+        <translation>Tri stanja</translation>
+    </message>
+    <message>
+        <source>Unchecked</source>
+        <translation>Neomogočeno</translation>
+    </message>
+    <message>
+        <source>PartiallyChecked</source>
+        <translation>Delno omogočeno</translation>
+    </message>
+    <message>
+        <source>Checked</source>
+        <translation>Omogočeno</translation>
     </message>
 </context>
 <context>
@@ -472,8 +553,7 @@
     </message>
     <message>
         <source>Add &apos;%1&apos; to &apos;%2&apos;</source>
-        <extracomment>Command description for adding buttons to a QButtonGroup
-</extracomment>
+        <extracomment>Command description for adding buttons to a QButtonGroup</extracomment>
         <translation>Dodaj »%1« v »%2«</translation>
     </message>
     <message>
@@ -482,14 +562,12 @@
     </message>
     <message>
         <source>Remove &apos;%1&apos; from &apos;%2&apos;</source>
-        <extracomment>Command description for removing buttons from a QButtonGroup
-</extracomment>
+        <extracomment>Command description for removing buttons from a QButtonGroup</extracomment>
         <translation>Odstrani »%1« iz »%2«</translation>
     </message>
     <message>
         <source>Morph %1/&apos;%2&apos; into %3</source>
-        <extracomment>MorphWidgetCommand description
-</extracomment>
+        <extracomment>MorphWidgetCommand description</extracomment>
         <translation>Pretvori %1/»%2« v %3</translation>
     </message>
     <message>
@@ -591,20 +669,17 @@
     <name>DPI_Chooser</name>
     <message>
         <source>Standard (96 x 96)</source>
-        <extracomment>Embedded device standard screen resolution
-</extracomment>
+        <extracomment>Embedded device standard screen resolution</extracomment>
         <translation>Običajna (96 × 96)</translation>
     </message>
     <message>
         <source>Greenphone (179 x 185)</source>
-        <extracomment>Embedded device screen resolution
-</extracomment>
+        <extracomment>Embedded device screen resolution</extracomment>
         <translation>Greenphone (179 × 185)</translation>
     </message>
     <message>
         <source>High (192 x 192)</source>
-        <extracomment>Embedded device high definition screen resolution
-</extracomment>
+        <extracomment>Embedded device high definition screen resolution</extracomment>
         <translation>Visoka (192 × 192)</translation>
     </message>
 </context>
@@ -703,8 +778,7 @@
     <name>DeviceProfile</name>
     <message>
         <source>&apos;%1&apos; is not a number.</source>
-        <extracomment>Reading a number for an embedded device profile
-</extracomment>
+        <extracomment>Reading a number for an embedded device profile</extracomment>
         <translation>»%1« ni številka.</translation>
     </message>
     <message>
@@ -786,8 +860,7 @@
     <name>EmbeddedOptionsControl</name>
     <message>
         <source>&lt;html&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Font&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%1, %2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Style&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Resolution&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%4 x %5&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/html&gt;</source>
-        <extracomment>Format embedded device profile description
-</extracomment>
+        <extracomment>Format embedded device profile description</extracomment>
         <translation>&lt;html&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Pisava&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%1, %2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Slog&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Ločljivost&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%4 × %5&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/html&gt;</translation>
     </message>
 </context>
@@ -795,14 +868,12 @@
     <name>EmbeddedOptionsPage</name>
     <message>
         <source>Embedded Design</source>
-        <extracomment>Tab in preferences dialog
-</extracomment>
+        <extracomment>Tab in preferences dialog</extracomment>
         <translation>Vgrajena zasnova</translation>
     </message>
     <message>
         <source>Device Profiles</source>
-        <extracomment>EmbeddedOptionsControl group box&quot;
-</extracomment>
+        <extracomment>EmbeddedOptionsControl group box&quot;</extracomment>
         <translation>Profili naprav</translation>
     </message>
 </context>
@@ -856,8 +927,7 @@
 ----------
 Parsing layout stretch values
 ----------
-Parsing layout stretch values
-</extracomment>
+Parsing layout stretch values</extracomment>
         <translation>Neveljavna vrednost razširjanja za »%1«: »%2«</translation>
     </message>
     <message>
@@ -866,8 +936,7 @@ Parsing layout stretch values
 ----------
 Parsing grid layout minimum size values
 ----------
-Parsing grid layout minimum size values
-</extracomment>
+Parsing grid layout minimum size values</extracomment>
         <translation>Neveljavna najmanjša velikost za »%1«: »%2«</translation>
     </message>
 </context>
@@ -887,8 +956,7 @@ Parsing grid layout minimum size values
     </message>
     <message>
         <source>Forms</source>
-        <extracomment>Tab in preferences dialog
-</extracomment>
+        <extracomment>Tab in preferences dialog</extracomment>
         <translation>Obrazci</translation>
     </message>
     <message>
@@ -1000,8 +1068,7 @@ Parsing grid layout minimum size values
     <name>ItemPropertyBrowser</name>
     <message>
         <source>XX Icon Selected off</source>
-        <extracomment>Sample string to determinate the width for the first column of the list item property browser
-</extracomment>
+        <extracomment>Sample string to determinate the width for the first column of the list item property browser</extracomment>
         <translation>XX Ikona Izbrano izklopljeno</translation>
     </message>
 </context>
@@ -1009,8 +1076,7 @@ Parsing grid layout minimum size values
     <name>MainWindowBase</name>
     <message>
         <source>Main</source>
-        <extracomment>Not currently used (main tool bar)
-</extracomment>
+        <extracomment>Not currently used (main tool bar)</extracomment>
         <translation>Glavna</translation>
     </message>
     <message>
@@ -1156,8 +1222,7 @@ Parsing grid layout minimum size values
     <name>PromotionModel</name>
     <message>
         <source>Not used</source>
-        <extracomment>Usage of promoted widgets
-</extracomment>
+        <extracomment>Usage of promoted widgets</extracomment>
         <translation>Ni uporabljeno</translation>
     </message>
 </context>
@@ -1570,8 +1635,7 @@ Ali želite poskusiti znova?</translation>
     <name>QDesignerAppearanceOptionsPage</name>
     <message>
         <source>Appearance</source>
-        <extracomment>Tab in preferences dialog
-</extracomment>
+        <extracomment>Tab in preferences dialog</extracomment>
         <translation>Videz</translation>
     </message>
 </context>
@@ -1745,20 +1809,17 @@ Strani vsebnikov naj bi bile dodane z navedbo v XML-u, ki ga vrne metoda domXml(
     </message>
     <message>
         <source>Unexpected element &lt;%1&gt;</source>
-        <extracomment>Parsing clipboard contents
-</extracomment>
+        <extracomment>Parsing clipboard contents</extracomment>
         <translation>Nepričakovan element &lt;%1&gt;</translation>
     </message>
     <message>
         <source>Error while pasting clipboard contents at line %1, column %2: %3</source>
-        <extracomment>Parsing clipboard contents
-</extracomment>
+        <extracomment>Parsing clipboard contents</extracomment>
         <translation>Napaka pri lepljenju vsebine odložišča v vrstici %1, stolpcu %2: %3</translation>
     </message>
     <message>
         <source>Error while pasting clipboard contents: The root element &lt;ui&gt; is missing.</source>
-        <extracomment>Parsing clipboard contents
-</extracomment>
+        <extracomment>Parsing clipboard contents</extracomment>
         <translation>Napaka pri lepljenju vsebine odložišča: manjka vrhnji element &lt;ui&gt;.</translation>
     </message>
 </context>
@@ -1892,8 +1953,7 @@ Strani vsebnikov naj bi bile dodane z navedbo v XML-u, ki ga vrne metoda domXml(
 ----------
 Empty class name passed to widget factory method
 ----------
-Empty class name passed to widget factory method
-</extracomment>
+Empty class name passed to widget factory method</extracomment>
         <translation>Prazno ime razreda je bilo posredovano do %1 (ime objekta: »%2«).</translation>
     </message>
     <message>
@@ -2546,6 +2606,10 @@ Empty class name passed to widget factory method
 <context>
     <name>QtLocalePropertyManager</name>
     <message>
+        <source>&lt;Invalid&gt;</source>
+        <translation>&lt;neveljavno&gt;</translation>
+    </message>
+    <message>
         <source>%1, %2</source>
         <translation>%1, %2</translation>
     </message>
@@ -3181,8 +3245,7 @@ Ali želite nadomestiti predlogo?</translation>
     <name>TemplateOptionsPage</name>
     <message>
         <source>Template Paths</source>
-        <extracomment>Tab in preferences dialog
-</extracomment>
+        <extracomment>Tab in preferences dialog</extracomment>
         <translation>Poti za predloge</translation>
     </message>
 </context>
@@ -3658,7 +3721,7 @@ Ali želite nadomestiti predlogo?</translation>
     </message>
     <message>
         <source>Page</source>
-        <translation>Stran %1</translation>
+        <translation>Stran</translation>
     </message>
     <message>
         <source>Page %1 of %2</source>
@@ -3669,8 +3732,7 @@ Ali želite nadomestiti predlogo?</translation>
     <name>qdesigner_internal::DPI_Chooser</name>
     <message>
         <source>System (%1 x %2)</source>
-        <extracomment>System resolution
-</extracomment>
+        <extracomment>System resolution</extracomment>
         <translation>Sistemska (%1 x %2)</translation>
     </message>
     <message>
@@ -3679,8 +3741,7 @@ Ali želite nadomestiti predlogo?</translation>
     </message>
     <message>
         <source> x </source>
-        <extracomment>DPI X/Y separator
-</extracomment>
+        <extracomment>DPI X/Y separator</extracomment>
         <translation> x </translation>
     </message>
 </context>
@@ -3843,7 +3904,7 @@ Ali želite nadomestiti predlogo?</translation>
     </message>
     <message>
         <source>Delete String</source>
-        <translation>Z&amp;briši niz</translation>
+        <translation>Zbriši niz</translation>
     </message>
     <message>
         <source>&amp;Delete</source>
@@ -3962,7 +4023,7 @@ Ali želite nadomestiti predlogo?</translation>
     </message>
     <message>
         <source>Key Resize</source>
-        <translation type="unfinished"></translation>
+        <translation>Sprememba velikosti s tipko</translation>
     </message>
     <message>
         <source>Cannot paste widgets. Designer could not find a container without a layout to paste into.</source>
@@ -4552,8 +4613,7 @@ Please select another name.</source>
     </message>
     <message>
         <source>Widgets</source>
-        <extracomment>New Form Dialog Categories
-</extracomment>
+        <extracomment>New Form Dialog Categories</extracomment>
         <translation>Gradniki</translation>
     </message>
     <message>
@@ -4632,7 +4692,7 @@ Please select another name.</source>
     <name>qdesigner_internal::ObjectInspector</name>
     <message>
         <source>Change Current Page</source>
-        <translation type="unfinished">Spreminjanje trenutne strani</translation>
+        <translation>Spremeni trenutno stran</translation>
     </message>
     <message>
         <source>&amp;Find in Text...</source>
@@ -4780,6 +4840,14 @@ Please select another name.</source>
         <translation>Preveri razpoložljivost na novo nameščenih vstavkov za gradnike po meri.</translation>
     </message>
     <message>
+        <source>Loaded Plugins</source>
+        <translation>Naloženi vstavki</translation>
+    </message>
+    <message>
+        <source>Failed Plugins</source>
+        <translation>Neuspeli vstavki</translation>
+    </message>
+    <message>
         <source>Qt Designer couldn&apos;t find any plugins</source>
         <translation>Qt Designer ni našel nobenega vstavka</translation>
     </message>
@@ -4815,7 +4883,7 @@ Please select another name.</source>
     </message>
     <message>
         <source>Load Custom Device Skin</source>
-        <translation type="unfinished">Naloži temo za napravo po meri</translation>
+        <translation>Naloži temo za napravo po meri</translation>
     </message>
     <message>
         <source>All QVFB Skins (*.%1)</source>
@@ -4848,14 +4916,12 @@ Please select another name.</source>
     </message>
     <message>
         <source>Landscape (&amp;CCW)</source>
-        <extracomment>Rotate form preview counter-clockwise
-</extracomment>
+        <extracomment>Rotate form preview counter-clockwise</extracomment>
         <translation>L&amp;ežeče (v nasprotni smeri ure)</translation>
     </message>
     <message>
         <source>&amp;Landscape (CW)</source>
-        <extracomment>Rotate form preview clockwise
-</extracomment>
+        <extracomment>Rotate form preview clockwise</extracomment>
         <translation>&amp;Ležeče (v smeri ure)</translation>
     </message>
     <message>
@@ -4875,8 +4941,7 @@ Please select another name.</source>
     <message>
         <source>The moose in the noose
 ate the goose who was loose.</source>
-        <extracomment>Palette editor background
-</extracomment>
+        <extracomment>Palette editor background</extracomment>
         <translation>Šerif bo za vajo spet
 skuhal domače žgance.</translation>
     </message>
@@ -5814,8 +5879,7 @@ To nakazuje na neskladnost v datoteki *.ui.</translation>
     <name>qdesigner_internal::ZoomMenu</name>
     <message>
         <source>%1 %</source>
-        <extracomment>Zoom factor
-</extracomment>
+        <extracomment>Zoom factor</extracomment>
         <translation>%1 %</translation>
     </message>
 </context>
@@ -5824,51 +5888,6 @@ To nakazuje na neskladnost v datoteki *.ui.</translation>
     <message>
         <source>&amp;Zoom</source>
         <translation>&amp;Povečava</translation>
-    </message>
-</context>
-<context>
-    <name></name>
-    <message>
-        <source>&lt;Filter&gt;</source>
-        <comment>qdesigner_internal::FilterWidget|</comment>
-        <translation type="obsolete">&lt;filter&gt;</translation>
-    </message>
-    <message>
-        <source>Change Current Page</source>
-        <comment>qdesigner_internal::ObjectInspector::ObjectInspectorPrivate|</comment>
-        <translation type="obsolete">Spreminjanje trenutne strani</translation>
-    </message>
-    <message>
-        <source>Load Custom Device Skin</source>
-        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
-        <translation type="obsolete">Naloži temo za napravo po meri</translation>
-    </message>
-    <message>
-        <source>All QVFB Skins (*.%1)</source>
-        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
-        <translation type="obsolete">Vse teme za QVFB (*.%1)</translation>
-    </message>
-    <message>
-        <source>%1 - Duplicate Skin</source>
-        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
-        <translation type="obsolete">%1 - podvojena tema</translation>
-    </message>
-    <message>
-        <source>The skin &apos;%1&apos; already exists.</source>
-        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
-        <translation type="obsolete">Tema »%1« že obstaja.</translation>
-    </message>
-    <message>
-        <source>%1 - Error</source>
-        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
-        <translation type="obsolete">%1 - napaka</translation>
-    </message>
-    <message>
-        <source>%1 is not a valid skin directory:
-%2</source>
-        <comment>qdesigner_internal::PreviewConfigurationWidget::PreviewConfigurationWidgetPrivate|</comment>
-        <translation type="obsolete">%1 ni veljavna mapa s temo:
-%2</translation>
     </message>
 </context>
 </TS>

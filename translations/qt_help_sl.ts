@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="sl">
-    <extra-po-header-po_revision_date>2010-08-28 13:32+0200</extra-po-header-po_revision_date>
-    <extra-po-headers>MIME-Version,Content-Type,Content-Transfer-Encoding,Plural-Forms,X-Language,X-Qt-Contexts,Last-Translator,PO-Revision-Date,Project-Id-Version,Language-Team,X-Generator</extra-po-headers>
-    <extra-po-header-x_generator>Lokalize 1.1</extra-po-header-x_generator>
-    <extra-po-header-language_team>Slovenian &lt;lugos-slo@lugos.si&gt;</extra-po-header-language_team>
-    <extra-po-header-project_id_version></extra-po-header-project_id_version>
-    <extra-po-header_comment># Jure Repinc &lt;jlp@holodeck1.com&gt;, 2010.</extra-po-header_comment>
-    <extra-po-header-last_translator>Jure Repinc &lt;jlp@holodeck1.com&gt;</extra-po-header-last_translator>
 <context>
     <name>QCLuceneResultWidget</name>
     <message>
@@ -105,8 +98,7 @@
     <name>QHelpDBReader</name>
     <message>
         <source>Cannot open database &apos;%1&apos; &apos;%2&apos;: %3</source>
-        <extracomment>The placeholders are: %1 - The name of the database which cannot be opened %2 - The unique id for the connection %3 - The actual error string
-</extracomment>
+        <extracomment>The placeholders are: %1 - The name of the database which cannot be opened %2 - The unique id for the connection %3 - The actual error string</extracomment>
         <translation>Podatkovne zbirke »%1« »%2« ni moč odpreti: %3</translation>
     </message>
 </context>
@@ -177,7 +169,7 @@
     </message>
     <message>
         <source>The referenced file %1 must be inside or within a subdirectory of (%2). Skipping it.</source>
-        <translation>Sklicana datoteka %1 se mora nahajti v mapi (%1) ali njeni podmapi. Preskakujem jo.</translation>
+        <translation>Sklicana datoteka %1 se mora nahajti v mapi (%2) ali njeni podmapi. Preskakujem jo.</translation>
     </message>
     <message>
         <source>The file %1 does not exist! Skipping it.</source>

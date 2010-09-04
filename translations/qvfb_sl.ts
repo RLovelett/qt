@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="sl">
-    <extra-po-header-po_revision_date>2010-08-28 16:47+0200</extra-po-header-po_revision_date>
-    <extra-po-headers>MIME-Version,Content-Type,Content-Transfer-Encoding,Plural-Forms,X-Language,X-Qt-Contexts,Last-Translator,PO-Revision-Date,Project-Id-Version,Language-Team,X-Generator</extra-po-headers>
-    <extra-po-header-x_generator>Lokalize 1.1</extra-po-header-x_generator>
-    <extra-po-header-language_team>Slovenian &lt;lugos-slo@lugos.si&gt;</extra-po-header-language_team>
-    <extra-po-header-project_id_version></extra-po-header-project_id_version>
-    <extra-po-header_comment># Jure Repinc &lt;jlp@holodeck1.com&gt;, 2010.</extra-po-header_comment>
-    <extra-po-header-last_translator>Jure Repinc &lt;jlp@holodeck1.com&gt;</extra-po-header-last_translator>
 <context>
     <name>AnimationSaveWidget</name>
     <message>
