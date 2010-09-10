@@ -1,4 +1,5 @@
-load(qttest_p4)
+#load(qttest_p4)
+CONFIG += qtestlib console
 SOURCES += tst_qcryptographichash.cpp
 QT = core
 

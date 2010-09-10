@@ -41,6 +41,8 @@
 
 
 #include <QtTest/QtTest>
+#include <QFile>
+#include <QTextStream>
 
 class tst_QCryptographicHash : public QObject
 {
@@ -51,6 +53,9 @@ private slots:
     void intermediary_result_data();
     void intermediary_result();
     void sha1();
+    void sha256();
+    void sha512();
+    void sha384();
 };
 #include <QtCore>
 
@@ -129,6 +134,7 @@ void tst_QCryptographicHash::intermediary_result()
 
 void tst_QCryptographicHash::sha1()
 {
+    QCOMPARE(2,(int) QCryptographicHash::Sha1);
 //  SHA1("abc") =
 //      A9993E36 4706816A BA3E2571 7850C26C 9CD0D89D
     QCOMPARE(QCryptographicHash::hash("abc", QCryptographicHash::Sha1).toHex().toUpper(),
@@ -149,6 +155,152 @@ void tst_QCryptographicHash::sha1()
              QByteArray("34AA973CD4C4DAA4F61EEB2BDBAD27316534016F"));
 }
 
+void tst_QCryptographicHash::sha256()
+{
+   QFile d1("data/SHA256ShortMsg.txt");
+   QFile d2("../data/SHA256ShortMsg.txt");
+   QFile *df;
+
+   if (d1.exists()) df= &d1;
+   else if(d2.exists()) df=&d2;
+   else QFAIL("SHA256ShortMsg.txt not found");
+
+   df->open(QFile::ReadOnly);
+   QTextStream d(df);
+
+   int msgLen=(-1);
+   QByteArray msg;
+   QString expectedResult;
+
+   do {
+       QString oneline = d.readLine();
+       if (oneline.left(6)=="Len = ") {
+            bool ok;
+            msgLen = oneline.mid(6).toInt(&ok);
+            QCOMPARE(true,ok);
+       }
+       if (oneline.left(6)=="Msg = ") {
+           QByteArray msgInHex = oneline.mid(6).toAscii();
+           msg = QByteArray::fromHex(msgInHex);
+
+       }
+       if (oneline.left(5)=="MD = ") {
+           // expectedResult is hex coded
+           expectedResult = oneline.mid(5);
+
+           // now we should have everything for successfull testing
+           QCryptographicHash h(QCryptographicHash::Sha256);
+           h.reset();
+           if (msgLen>0) {
+               h.addData(msg);
+               QCOMPARE(msg.length()*8,msgLen);
+           }
+           QByteArray result = h.result();
+
+           QString resultInhex =  QString::fromAscii(result.toHex().toLower());
+           QCOMPARE(resultInhex,expectedResult);
+       }
+   } while (!d.atEnd());
+
+}
+
+void tst_QCryptographicHash::sha512()
+{
+   QFile d1("data/SHA512ShortMsg.txt");
+   QFile d2("../data/SHA512ShortMsg.txt");
+   QFile *df;
+
+   if (d1.exists()) df= &d1;
+   else if(d2.exists()) df=&d2;
+   else QFAIL("SHA512ShortMsg.txt not found");
+
+   df->open(QFile::ReadOnly);
+   QTextStream d(df);
+
+   int msgLen=(-1);
+   QByteArray msg;
+   QString expectedResult;
+
+   do {
+       QString oneline = d.readLine();
+       if (oneline.left(6)=="Len = ") {
+            bool ok;
+            msgLen = oneline.mid(6).toInt(&ok);
+            QCOMPARE(true,ok);
+       }
+       if (oneline.left(6)=="Msg = ") {
+           QByteArray msgInHex = oneline.mid(6).toAscii();
+           msg = QByteArray::fromHex(msgInHex);
+
+       }
+       if (oneline.left(5)=="MD = ") {
+           // expectedResult is hex coded
+           expectedResult = oneline.mid(5);
+
+           // now we should have everything for successfull testing
+           QCryptographicHash h(QCryptographicHash::Sha512);
+           h.reset();
+           if (msgLen>0) {
+               h.addData(msg);
+               QCOMPARE(msg.length()*8,msgLen);
+           }
+           QByteArray result = h.result();
+
+           QString resultInhex =  QString::fromAscii(result.toHex().toLower());
+           QCOMPARE(resultInhex,expectedResult);
+       }
+   } while (!d.atEnd());
+
+}
+
+void tst_QCryptographicHash::sha384()
+{
+   QFile d1("data/SHA384ShortMsg.txt");
+   QFile d2("../data/SHA384ShortMsg.txt");
+   QFile *df;
+
+   if (d1.exists()) df= &d1;
+   else if(d2.exists()) df=&d2;
+   else QFAIL("SHA512ShortMsg.txt not found");
+
+   df->open(QFile::ReadOnly);
+   QTextStream d(df);
+
+   int msgLen=(-1);
+   QByteArray msg;
+   QString expectedResult;
+
+   do {
+       QString oneline = d.readLine();
+       if (oneline.left(6)=="Len = ") {
+            bool ok;
+            msgLen = oneline.mid(6).toInt(&ok);
+            QCOMPARE(true,ok);
+       }
+       if (oneline.left(6)=="Msg = ") {
+           QByteArray msgInHex = oneline.mid(6).toAscii();
+           msg = QByteArray::fromHex(msgInHex);
+
+       }
+       if (oneline.left(5)=="MD = ") {
+           // expectedResult is hex coded
+           expectedResult = oneline.mid(5);
+
+           // now we should have everything for successfull testing
+           QCryptographicHash h(QCryptographicHash::Sha384);
+           h.reset();
+           if (msgLen>0) {
+               h.addData(msg);
+               QCOMPARE(msg.length()*8,msgLen);
+           }
+           QByteArray result = h.result();
+
+           QString resultInhex =  QString::fromAscii(result.toHex().toLower());
+           QCOMPARE(resultInhex,expectedResult);
+       }
+   } while (!d.atEnd());
+
+}
 
 QTEST_MAIN(tst_QCryptographicHash)
 #include "tst_qcryptographichash.moc"

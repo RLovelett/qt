@@ -41,6 +41,7 @@
 
 #include <qcryptographichash.h>
 
+
 #ifdef Q_OS_SYMBIAN
 #define _MD5_H_ // Needed to disable system header
 #endif
@@ -50,6 +51,7 @@
 #include "../../3rdparty/md4/md4.h"
 #include "../../3rdparty/md4/md4.cpp"
 #include "../../3rdparty/sha1/sha1.cpp"
+#include "../../3rdparty/sha2/sha2.cpp"
 
 
 QT_BEGIN_NAMESPACE
@@ -62,6 +64,8 @@ public:
         MD5Context md5Context;
         md4_context md4Context;
         Sha1State sha1Context;
+        _SHA256_CTX sha256Context;
+        _SHA512_CTX sha512Context;    
     };
     QByteArray result;
 };
@@ -87,6 +91,10 @@ public:
   \value Md4 Generate an MD4 hash sum
   \value Md5 Generate an MD5 hash sum
   \value Sha1 Generate an SHA1 hash sum
+  \value Sha256 Generate an SHA-256 hash sum
+  \value Sha384 Generate an SHA-384 hash sum
+  \value Sha512 Generate an SHA-512 hash sum
+
 */
 
 /*!
@@ -122,6 +130,15 @@ void QCryptographicHash::reset()
     case Sha1:
         sha1InitState(&d->sha1Context);
         break;
+    case Sha256:
+        SHA256_Init(&d->sha256Context);
+        break;
+    case Sha384:
+        SHA384_Init(&d->sha512Context); // 384 and 512 has same context structure
+        break;
+    case Sha512:
+        SHA512_Init(&d->sha512Context);
+        break;
     }
     d->result.clear();
 }
@@ -141,6 +158,15 @@ void QCryptographicHash::addData(const char *data, int length)
         break;
     case Sha1:
         sha1Update(&d->sha1Context, (const unsigned char *)data, length);
+        break;
+    case Sha256:
+        SHA256_Update(&d->sha256Context,(const sha2_byte *)data,length);
+        break;	
+    case Sha384:
+        SHA384_Update(&d->sha512Context,(const sha2_byte *)data,length);
+        break;
+    case Sha512:
+        SHA512_Update(&d->sha512Context,(const sha2_byte *)data,length);
         break;
     }    
     d->result.clear();
@@ -182,6 +208,26 @@ QByteArray QCryptographicHash::result() const
         d->result.resize(20);
         sha1FinalizeState(&copy);
         sha1ToHash(&copy, (unsigned char *)d->result.data());
+        break;
+    }
+
+    case Sha256: {
+        _SHA256_CTX copy = d->sha256Context;
+        d->result.resize(SHA256_DIGEST_LENGTH);
+        SHA256_Final((sha2_byte *)d->result.data(), &copy);
+        break;
+    }
+    case Sha384: {
+        _SHA512_CTX copy = d->sha512Context;
+        d->result.resize(SHA384_DIGEST_LENGTH);
+        SHA384_Final(( sha2_byte *)d->result.data(), &copy);
+        break;
+    }
+    case Sha512: {
+        _SHA512_CTX copy = d->sha512Context;
+        d->result.resize(SHA512_DIGEST_LENGTH);
+        SHA512_Final(( sha2_byte *)d->result.data(), &copy);
+        break;
     }
     }
     return d->result;
