@@ -405,22 +405,22 @@ have libgstreamer-plugins-base installed.</source>
     <message>
         <location filename="../src/3rdparty/phonon/mmf/abstractvideoplayer.cpp" line="+110"/>
         <source>Pause failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile mettere in pausa</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Seek failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile impostare la posizione</translation>
     </message>
     <message>
         <location line="+60"/>
         <source>Getting position failed</source>
-        <translation type="unfinished">Impossibile ottenere la posizione</translation>
+        <translation>Impossibile ottenere la posizione</translation>
     </message>
     <message>
         <location line="+68"/>
         <source>Opening clip failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire il clip video</translation>
     </message>
 </context>
 <context>
@@ -8273,107 +8273,109 @@ Selezionare un altro file.</translation>
     <message>
         <location line="+3"/>
         <source>The issuer certificate could not be found</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile trovare il certificato dell&apos;emittente</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The certificate signature could not be decrypted</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile decifrare la firma del certificato</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The public key in the certificate could not be read</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile leggere la chiave pubblica del certificato</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The signature of the certificate is invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>La firma del certificato non è valida</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The certificate is not yet valid</source>
-        <translation type="unfinished"></translation>
+        <translation>Il certificato non è ancora valido</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The certificate has expired</source>
-        <translation type="unfinished"></translation>
+        <translation>Il certificato è scaduto</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The certificate&apos;s notBefore field contains an invalid time</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Should &quot;notBefore&quot; be translated?</translatorcomment>
+        <translation>Il campo notBefore del certificato contiene una data non valida</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The certificate&apos;s notAfter field contains an invalid time</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Should &quot;notAfter&quot; be translated?</translatorcomment>
+        <translation>Il campo notAfter del certificato contiene una data non valida</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The certificate is self-signed, and untrusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Il certificato è auto-firmato, e non fidato</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The root certificate of the certificate chain is self-signed, and untrusted</source>
-        <translation type="unfinished"></translation>
+        <translation>Il certificato radice della catena di certificati è auto-firmato, e non fidato</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The issuer certificate of a locally looked up certificate could not be found</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile trovare il certificato dell&apos;emittente di un certificato cercato localmente</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>No certificates could be verified</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile verificare i certificati</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>One of the CA certificates is invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Uno dei certificati della CA è invalido</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The basicConstraints path length parameter has been exceeded</source>
-        <translation type="unfinished"></translation>
+        <translation>Il parametro di lunghezza percorso basicConstraints è stato superato</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The supplied certificate is unsuitable for this purpose</source>
-        <translation type="unfinished"></translation>
+        <translation>Il certificato fornito non è adatto per questo scopo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The root CA certificate is not trusted for this purpose</source>
-        <translation type="unfinished"></translation>
+        <translation>Il certificato della CA radice non è fidato per questo scopo</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The root CA certificate is marked to reject the specified purpose</source>
-        <translation type="unfinished"></translation>
+        <translation>Il certificato della CA radice è impostato per rifiutare lo scopo specificato</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The current candidate issuer certificate was rejected because its subject name did not match the issuer name of the current certificate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La candidata emittente del certificato è stata rifiutata poiché il suo nome non corrisponde a quello dell&apos;emittente del certificato corrente</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>The current candidate issuer certificate was rejected because its issuer name and serial number was present and did not match the authority key identifier of the current certificate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La candidata emittente del certificato è stata rifiutata poiché i suoi nome e numero di serie sono presenti e non corrispondono alla chiave identificativa del certificato corrente</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>The peer did not present any certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Il peer non ha presentato nessun certificato</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>The host name did not match any of the valid hosts for this certificate</source>
-        <translation type="unfinished"></translation>
+        <translation>Il nome host non corrisponde a nessun host valido per questo certificato</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -10121,14 +10123,12 @@ Selezionare un altro file.</translation>
         <source>%1 requires at least %n argument(s). %2 is therefore invalid.</source>
         <translation type="unfinished">
             <numerusform></numerusform>
-            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <location line="-11"/>
         <source>%1 takes at most %n argument(s). %2 is therefore invalid.</source>
         <translation type="unfinished">
-            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
