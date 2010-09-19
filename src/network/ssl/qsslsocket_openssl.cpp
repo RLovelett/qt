@@ -772,14 +772,45 @@ QList<QSslCertificate> QSslSocketPrivate::systemCaCertificates()
         }
     }
 #elif defined(Q_OS_UNIX) && !defined(Q_OS_SYMBIAN)
-    systemCerts.append(QSslCertificate::fromPath(QLatin1String("/var/ssl/certs/*.pem"), QSsl::Pem, QRegExp::Wildcard)); // AIX
-    systemCerts.append(QSslCertificate::fromPath(QLatin1String("/usr/local/ssl/certs/*.pem"), QSsl::Pem, QRegExp::Wildcard)); // Solaris
-    systemCerts.append(QSslCertificate::fromPath(QLatin1String("/opt/openssl/certs/*.pem"), QSsl::Pem, QRegExp::Wildcard)); // HP-UX
-    systemCerts.append(QSslCertificate::fromPath(QLatin1String("/etc/ssl/certs/*.pem"), QSsl::Pem, QRegExp::Wildcard)); // (K)ubuntu, OpenSUSE, Mandriva, ...
-    systemCerts.append(QSslCertificate::fromPath(QLatin1String("/etc/pki/tls/certs/ca-bundle.crt"), QSsl::Pem)); // Fedora
-    systemCerts.append(QSslCertificate::fromPath(QLatin1String("/usr/lib/ssl/certs/*.pem"), QSsl::Pem, QRegExp::Wildcard)); // Gentoo, Mandrake
-    systemCerts.append(QSslCertificate::fromPath(QLatin1String("/usr/share/ssl/*.pem"), QSsl::Pem, QRegExp::Wildcard)); // Centos, Redhat, SuSE
-    systemCerts.append(QSslCertificate::fromPath(QLatin1String("/usr/local/ssl/*.pem"), QSsl::Pem, QRegExp::Wildcard)); // Normal OpenSSL Tarball
+    // unixCertPats_string[] is a string table generated from the list of strings below -
+    // surrounding whitespace and comment markers removed.
+
+    // /var/ssl/certs/*.pem             // AIX
+    // /usr/local/ssl/certs/*.pem       // Solaris
+    // /opt/openssl/certs/*.pem         // HP-UX
+    // /etc/ssl/certs/*.pem             // (K)ubuntu, OpenSUSE, Mandriva, ...
+    // /etc/pki/tls/certs/ca-bundle.crt // Fedora
+    // /usr/lib/ssl/certs/*.pem         // Gentoo, Mandrake
+    // /usr/share/ssl/*.pem             // CentOS, Redhat, SuSE
+    // /usr/local/ssl/*.pem             // Vanilla OpenSSL Tarball
+
+    // begin generated
+    static const char unixCertPaths_string[] =
+        "/var/ssl/certs/*.pem\0"
+        "/usr/local/ssl/certs/*.pem\0"
+        "/opt/openssl/certs/*.pem\0"
+        "/etc/ssl/certs/*.pem\0"
+        "/etc/pki/tls/certs/ca-bundle.crt\0"
+        "/usr/lib/ssl/certs/*.pem\0"
+        "/usr/share/ssl/*.pem\0"
+        "/usr/local/ssl/*.pem\0"
+        "\0";
+
+    static const int unixCertPaths_indices[] = {
+            0,   21,   48,   73,   94,  127,  152,  173,
+           -1
+    };
+    // end generated
+    static const int unixCertPaths_count = (sizeof unixCertPaths_indices - 1) /
+                                           (sizeof unixCertPaths_indices[0]);
+
+    for (int i = 0; i < unixCertPaths_count; i++) {
+        if (!systemCerts.isEmpty())
+            break;
+        const char *path = unixCertPaths_string + unixCertPaths_indices[i];
+        systemCerts.append(QSslCertificate::fromPath(QLatin1String(path), QSsl::Pem,
+                                                     QRegExp::Wildcard));
+    }
 #elif defined(Q_OS_SYMBIAN)
     QList<QByteArray> certs;
     QScopedPointer<CSymbianCertificateRetriever> retriever(CSymbianCertificateRetriever::NewL());
