@@ -664,16 +664,65 @@ QByteArray QSslCertificatePrivate::QByteArray_from_X509(X509 *x509, QSsl::Encodi
     return BEGINCERTSTRING "\n" + tmp + ENDCERTSTRING "\n";
 }
 
+static inline bool isHexDigit(register const QChar &ch)
+{
+    register ushort u = ch.unicode();
+    return (u >= '0' && u <= '9') ||
+           ((u|0x20) >= 'a' && (u|0x20) <= 'f');
+}
+
+static inline uchar hexNibble(register const QChar &ch)
+{
+    register ushort u = ch.unicode();
+    return u <= '9' ? u - '0' : (u|0x20) - 'a' + 0xa;
+}
+
+static QString decodeEscapedString(const QString &input)
+{
+    QByteArray output;
+    bool simple = true;
+    const QChar *in = input.constData();
+    const QChar *end = in + input.length();
+    for (; in < end; ++in) {
+        if (in[0].unicode() > 0x7f)
+            return input;    // it's not escaped!
+
+        if (in[0].unicode() != '\\' || in + 3 >= end ||
+            in[1].unicode() != 'x' || !isHexDigit(in[2]) || !isHexDigit(in[3])) {
+            if (!simple)
+                output.append(in->unicode());
+        } else {
+            if (simple) {
+                // initialise the output up to here
+                const QChar *begin = input.constData();
+                int pos = in - begin;
+                output.reserve(input.length());
+                output.resize(pos);
+
+                while (--pos >= 0) {
+                    output[pos] = begin[pos].unicode();
+                }
+                simple = false;
+            }
+            in += 2;
+            output.append((hexNibble(in[0]) << 4) | hexNibble(in[1]));
+            ++in;
+        }
+    }
+    return output.isEmpty() ? input : QString::fromUtf8(output, output.length());
+}
+
 static QMap<QString, QString> _q_mapFromOnelineName(char *name)
 {
     QMap<QString, QString> info;
     QString infoStr = QString::fromLocal8Bit(name);
     q_CRYPTO_free(name);
 
-    // ### The right-hand encoding seems to allow hex (Regulierungsbeh\xC8orde)
-    //entry.replace(QLatin1String("\\x"), QLatin1String("%"));
-    //entry = QUrl::fromPercentEncoding(entry.toLatin1());
-    // ### See RFC-4630 for more details!
+    // The right-hand side may contain hex-encoded chars ("Regulierungsbeh\xc3\xb6rde") inside and
+    // outside the ASCII range. According to RFC 4630 the charset can vary, however for new
+    // certificates issued since 2003 it MUST be UTF-8, unless the new certificate is an updated
+    // version of a previously existing certificate.
+    // ### We just assume UTF-8.
 
     QRegExp rx(QLatin1String("/([A-Za-z]+)=(.+)"));
 
@@ -681,7 +730,7 @@ static QMap<QString, QString> _q_mapFromOnelineName(char *name)
     while ((pos = rx.indexIn(infoStr, pos)) != -1) {
         const QString name = rx.cap(1);
 
-        QString value = rx.cap(2);
+        QString value = decodeEscapedString(rx.cap(2));
         const int valuePos = rx.pos(2);
 
         const int next = rx.indexIn(value);

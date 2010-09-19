@@ -85,7 +85,8 @@ done
 #--- Subjet Alternative Name extension ----------------------------------------------------
 echo -e "\n generating self signed root cert. with Subject Alternative Name extension (X509v3) ..."
 outname=cert-ss-san.pem
-openssl req -out req-san.pem -new -key rsa-pri-1024.pem -subj "/CN=Johnny GuitarC=NO"
+subject="/O=HĕĂƲÿ ʍếʈặḻ Récördŝ/OU=㈧A㉁ｫBC/CN=Johnny GuitarC=NO"
+openssl req -out req-san.pem -new -key rsa-pri-1024.pem -subj "$subject"
 openssl req -x509 -in req-san.pem -out $outname -key rsa-pri-1024.pem \
     -config san.cnf -extensions subj_alt_name
 /bin/cp san.cnf $outname.san
