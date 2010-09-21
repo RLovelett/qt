@@ -248,17 +248,17 @@ static int q_SelectClientCertificateCallback(SSL *ssl, X509 **x509, EVP_PKEY **p
         return 0;
     QSslSocketBackendPrivate *socketBackendPrivate = (QSslSocketBackendPrivate *)q_SSL_CTX_get_ex_data(ssl->ctx, q_SocketBackendIndex);
     if (socketBackendPrivate)
-        return socketBackendPrivate->selectClientCertificate(ssl, x509, pkey);    
+        return socketBackendPrivate->clientCertificateRequired(ssl, x509, pkey);    
     return 0;
 }
 
-int QSslSocketBackendPrivate::selectClientCertificate(SSL *ssl, X509 **x509, EVP_PKEY **pkey)
+bool QSslSocketBackendPrivate::clientCertificateRequired(SSL *ssl, X509 **x509, EVP_PKEY **pkey)
 {
     Q_Q(QSslSocket);
     QSslCertificate localCertificate = QSslCertificate();
     QSslKey privateKey = QSslKey();  
 
-    emit q->selectClientCertificate(localCertificate, privateKey);
+    emit q->clientCertificateRequired(q->peerCertificateChain(), &localCertificate, &privateKey);
  
     if (!localCertificate.isNull()) {
         q->setLocalCertificate(localCertificate);

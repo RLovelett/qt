@@ -186,7 +186,7 @@ Q_SIGNALS:
     void sslErrors(const QList<QSslError> &errors);
     void modeChanged(QSslSocket::SslMode newMode);
     void encryptedBytesWritten(qint64 totalBytes);
-    void selectClientCertificate(QSslCertificate &sslCertificate, QSslKey &sslKey);
+    void clientCertificateRequired(QList<QSslCertificate> serverCertificateChain, QSslCertificate *clientCertificate, QSslKey *clientPrivateKey);
 
 protected Q_SLOTS:
     void connectToHostImplementation(const QString &hostName, quint16 port,
