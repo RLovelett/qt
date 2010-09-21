@@ -293,6 +293,10 @@ int q_SSL_CTX_use_PrivateKey(SSL_CTX *a, EVP_PKEY *b);
 int q_SSL_CTX_use_RSAPrivateKey(SSL_CTX *a, RSA *b);
 int q_SSL_CTX_use_PrivateKey_file(SSL_CTX *a, const char *b, int c);
 void q_SSL_free(SSL *a);
+void q_SSL_CTX_set_client_cert_cb(SSL_CTX *ctx, int (*a)(SSL *, X509 **, EVP_PKEY **));
+int q_SSL_CTX_get_ex_new_index(long argl, void *argp, CRYPTO_EX_new *new_func, CRYPTO_EX_dup *dup_func, CRYPTO_EX_free *free_func);
+int q_SSL_CTX_set_ex_data(SSL_CTX *a, int idx, void *arg);
+void *q_SSL_CTX_get_ex_data(SSL_CTX *a, int idx);
 #if OPENSSL_VERSION_NUMBER >= 0x00908000L
 // 0.9.8 broke SC and BC by changing this function's signature.
 STACK_OF(SSL_CIPHER) *q_SSL_get_ciphers(const SSL *a);

@@ -178,6 +178,8 @@ QSslSocketBackendPrivate::QSslSocketBackendPrivate()
 
 QSslSocketBackendPrivate::~QSslSocketBackendPrivate()
 {
+    if (ctx)
+        q_SSL_CTX_set_client_cert_cb(ctx, 0);
 }
 
 QSslCipher QSslSocketBackendPrivate::QSslCipher_from_SSL_CIPHER(SSL_CIPHER *cipher)
@@ -238,6 +240,41 @@ static int q_X509Callback(int ok, X509_STORE_CTX *ctx)
     return 1;
 }
 
+static int q_SocketBackendIndex = -1;
+
+static int q_SelectClientCertificateCallback(SSL *ssl, X509 **x509, EVP_PKEY **pkey)
+{
+    if (q_SocketBackendIndex == -1)
+        return 0;
+    QSslSocketBackendPrivate *socketBackendPrivate = (QSslSocketBackendPrivate *)q_SSL_CTX_get_ex_data(ssl->ctx, q_SocketBackendIndex);
+    if (socketBackendPrivate)
+        return socketBackendPrivate->selectClientCertificate(ssl, x509, pkey);    
+    return 0;
+}
+
+int QSslSocketBackendPrivate::selectClientCertificate(SSL *ssl, X509 **x509, EVP_PKEY **pkey)
+{
+    Q_Q(QSslSocket);
+    QSslCertificate localCertificate = QSslCertificate();
+    QSslKey privateKey = QSslKey();  
+
+    emit q->selectClientCertificate(localCertificate, privateKey);
+ 
+    if (!localCertificate.isNull()) {
+        q->setLocalCertificate(localCertificate);
+        q->setPrivateKey(privateKey);
+        *x509 = (X509 *)localCertificate.handle();
+        EVP_PKEY *newPrivateKey = q_EVP_PKEY_new();
+        if (privateKey.algorithm() == QSsl::Rsa)
+            q_EVP_PKEY_assign_RSA(newPrivateKey, (RSA *)privateKey.handle());
+        else
+            q_EVP_PKEY_assign_DSA(newPrivateKey, (DSA *)privateKey.handle());
+        *pkey = newPrivateKey;
+        return true;
+    }
+    return false;
+}
+
 bool QSslSocketBackendPrivate::initSslContext()
 {
     Q_Q(QSslSocket);
@@ -280,6 +317,14 @@ init_context:
 
     // Enable all bug workarounds.
     q_SSL_CTX_set_options(ctx, SSL_OP_ALL);
+    
+    if (q_SocketBackendIndex == -1)
+        q_SocketBackendIndex = q_SSL_CTX_get_ex_new_index(0, NULL, NULL, NULL, NULL);
+    if (q_SocketBackendIndex != -1)
+    {
+        q_SSL_CTX_set_ex_data(ctx, q_SocketBackendIndex, this);    
+        q_SSL_CTX_set_client_cert_cb(ctx, q_SelectClientCertificateCallback);
+    }
 
     // Initialize ciphers
     QByteArray cipherString;

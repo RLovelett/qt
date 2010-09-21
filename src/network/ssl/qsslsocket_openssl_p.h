@@ -113,6 +113,7 @@ public:
     void disconnectFromHost();
     void disconnected();
     QSslCipher sessionCipher() const;
+    int selectClientCertificate(SSL *ssl, X509 **x509, EVP_PKEY **pkey);
 
     static QSslCipher QSslCipher_from_SSL_CIPHER(SSL_CIPHER *cipher);
     static QList<QSslCertificate> STACKOFX509_to_QSslCertificates(STACK_OF(X509) *x509);
