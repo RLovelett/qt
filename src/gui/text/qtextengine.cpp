@@ -1485,9 +1485,19 @@ void QTextEngine::itemize() const
 
     const ushort *uc = reinterpret_cast<const ushort *>(layoutData->string.unicode());
     const ushort *e = uc + length;
+
+    uint ucs4;
     int lastScript = QUnicodeTables::Common;
     while (uc < e) {
-        int script = QUnicodeTables::script(*uc);
+        ucs4 = *uc;
+        if (QChar(ucs4).isHighSurrogate() && uc + 1 < e) {
+            ushort low = uc[1];
+            if (QChar(low).isLowSurrogate()) {
+                ucs4 = QChar::surrogateToUcs4(ucs4, low);
+                ++uc;
+            }
+        }
+        int script = QUnicodeTables::script(ucs4);
         if (script == QUnicodeTables::Inherited)
             script = lastScript;
         analysis->flags = QScriptAnalysis::None;
