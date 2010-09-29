@@ -116,7 +116,25 @@ static const float qt_paperSizes[][2] = {
     {110, 220}, // DLE
     {210, 330}, // Folio
     {431.8f, 279.4f}, // Ledger
-    {279.4f, 431.8f} // Tabloid
+    {279.4f, 431.8f}, // Tabloid
+    {1030, 1456}, // JIS B0
+    {728, 1030}, // JIS B1
+    {515, 728}, // JIS B2
+    {364, 515}, // JIS B3
+    {257, 364}, // JIS B4
+    {182, 257}, // JIS B5
+    {128, 182}, // JIS B6
+    {91, 128}, // JIS B7
+    {64, 91}, // JIS B8
+    {45, 64}, // JIS B9
+    {32, 45}, // JIS B10
+    {22, 32}, // JIS B11
+    {16, 22}, // JIS B12
+    {264, 379}, // JIS Shiroku-ban4
+    {189, 262}, // JIS Shiroku-ban5
+    {127, 188}, // JIS Shiroku-ban6
+    {227, 306}, // JIS Kiku4
+    {151, 227} // JIS Kiku5
 };
 
 /// return the multiplier of converting from the unit value to postscript-points.
@@ -414,26 +432,44 @@ void QPrinterPrivate::addToManualSetList(QPrintEngine::PrintEnginePropertyKey ke
   \value A7 74 x 105 mm
   \value A8 52 x 74 mm
   \value A9 37 x 52 mm
-  \value B0 1030 x 1456 mm
-  \value B1 728 x 1030 mm
-  \value B10 32 x 45 mm
-  \value B2 515 x 728 mm
-  \value B3 364 x 515 mm
-  \value B4 257 x 364 mm
-  \value B5 182 x 257 mm, 7.17 x 10.13 inches
-  \value B6 128 x 182 mm
-  \value B7 91 x 128 mm
-  \value B8 64 x 91 mm
-  \value B9 45 x 64 mm
+  \value B0 1000 x 1414 mm
+  \value B1 707 x 1000 mm
+  \value B2 500 x 707 mm
+  \value B3 353 x 500 mm
+  \value B4 250 x 353 mm
+  \value B5 176 x 250 mm, 6.93 x 9.84 inches
+  \value B6 125 x 176 mm
+  \value B7 88 x 125 mm
+  \value B8 62 x 88 mm
+  \value B9 33 x 62 mm
+  \value B10 31 x 44 mm
   \value C5E 163 x 229 mm
   \value Comm10E 105 x 241 mm, U.S. Common 10 Envelope
   \value DLE 110 x 220 mm
-  \value Executive 7.5 x 10 inches, 191 x 254 mm
+  \value Executive 7.5 x 10 inches, 190.5 x 254 mm
   \value Folio 210 x 330 mm
-  \value Ledger 432 x 279 mm
-  \value Legal 8.5 x 14 inches, 216 x 356 mm
-  \value Letter 8.5 x 11 inches, 216 x 279 mm
-  \value Tabloid 279 x 432 mm
+  \value Ledger 431.8 x 279.4 mm
+  \value Legal 8.5 x 14 inches, 215.9 x 355.6 mm
+  \value Letter 8.5 x 11 inches, 215.9 x 279.4 mm
+  \value Tabloid 279.4 x 431.8 mm
+  \value JIS_B0 1030 × 1456 mm
+  \value JIS_B1 728 × 1030 mm
+  \value JIS_B2 515 × 728 mm
+  \value JIS_B3 364 × 515 mm
+  \value JIS_B4 257 × 364 mm
+  \value JIS_B5 182 × 257 mm
+  \value JIS_B6 128 × 182 mm
+  \value JIS_B7 91 × 128 mm
+  \value JIS_B8 64 × 91 mm
+  \value JIS_B9 45 × 64 mm
+  \value JIS_B10 32 × 45 mm
+  \value JIS_B11 22 × 32 mm
+  \value JIS_B12 16 × 22 mm
+  \value JIS_Shiban4 264 × 379 mm, JIS Shiroku-ban 4
+  \value JIS_Shiban5 189 × 262 mm, JIS Shiroku-ban 5
+  \value JIS_Shiban6 127 × 188 mm, JIS Shiroku-ban 6
+  \value JIS_Kiku4 227 × 306 mm
+  \value JIS Kiku5 151 × 227 mm
   \value Custom Unknown, or a user defined size.
 
   \omitvalue NPageSize
@@ -480,6 +516,24 @@ void QPrinterPrivate::addToManualSetList(QPrintEngine::PrintEnginePropertyKey ke
   \value Legal 8.5 x 14 inches, 215.9 x 355.6 mm
   \value Letter 8.5 x 11 inches, 215.9 x 279.4 mm
   \value Tabloid 279.4 x 431.8 mm
+  \value JIS_B0 1030 × 1456 mm
+  \value JIS_B1 728 × 1030 mm
+  \value JIS_B2 515 × 728 mm
+  \value JIS_B3 364 × 515 mm
+  \value JIS_B4 257 × 364 mm
+  \value JIS_B5 182 × 257 mm
+  \value JIS_B6 128 × 182 mm
+  \value JIS_B7 91 × 128 mm
+  \value JIS_B8 64 × 91 mm
+  \value JIS_B9 45 × 64 mm
+  \value JIS_B10 32 × 45 mm
+  \value JIS_B11 22 × 32 mm
+  \value JIS_B12 16 × 22 mm
+  \value JIS_Shiban4 264 × 379 mm, JIS Shiroku-ban 4
+  \value JIS_Shiban5 189 × 262 mm, JIS Shiroku-ban 5
+  \value JIS_Shiban6 127 × 188 mm, JIS Shiroku-ban 6
+  \value JIS_Kiku4 227 × 306 mm
+  \value JIS Kiku5 151 × 227 mm
   \value Custom Unknown, or a user defined size.
 
   With setFullPage(false) (the default), the metrics will be a bit

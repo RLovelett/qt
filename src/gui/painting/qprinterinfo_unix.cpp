@@ -1078,6 +1078,42 @@ QPrinter::PaperSize QPrinterInfoPrivate::string2PaperSize(const QString& str)
         return QPrinter::Ledger;
     } else if (str == QLatin1String("Tabloid")) {
         return QPrinter::Tabloid;
+    } else if (str == QLatin1String("JIS_B0")) {
+        return QPrinter::JIS_B0;
+    } else if (str == QLatin1String("JIS_B1")) {
+        return QPrinter::JIS_B1;
+    } else if (str == QLatin1String("JIS_B2")) {
+        return QPrinter::JIS_B2;
+    } else if (str == QLatin1String("JIS_B3")) {
+        return QPrinter::JIS_B3;
+    } else if (str == QLatin1String("JIS_B4")) {
+        return QPrinter::JIS_B4;
+    } else if (str == QLatin1String("JIS_B5")) {
+        return QPrinter::JIS_B5;
+    } else if (str == QLatin1String("JIS_B6")) {
+        return QPrinter::JIS_B6;
+    } else if (str == QLatin1String("JIS_B7")) {
+        return QPrinter::JIS_B7;
+    } else if (str == QLatin1String("JIS_B8")) {
+        return QPrinter::JIS_B8;
+    } else if (str == QLatin1String("JIS_B9")) {
+        return QPrinter::JIS_B9;
+    } else if (str == QLatin1String("JIS_B10")) {
+        return QPrinter::JIS_B10;
+    } else if (str == QLatin1String("JIS_B11")) {
+        return QPrinter::JIS_B11;
+    } else if (str == QLatin1String("JIS_B12")) {
+        return QPrinter::JIS_B12;
+    } else if (str == QLatin1String("JIS_Shiban4")) {
+        return QPrinter::JIS_Shiban4;
+    } else if (str == QLatin1String("JIS_Shiban5")) {
+        return QPrinter::JIS_Shiban5;
+    } else if (str == QLatin1String("JIS_Shiban6")) {
+        return QPrinter::JIS_Shiban6;
+    } else if (str == QLatin1String("JIS_Kiku4")) {
+        return QPrinter::JIS_Kiku4;
+    } else if (str == QLatin1String("JIS_Kiku5")) {
+        return QPrinter::JIS_Kiku5;
     } else {
         return QPrinter::Custom;
     }

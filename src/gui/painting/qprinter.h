@@ -81,17 +81,29 @@ public:
     enum PageSize { A4, B5, Letter, Legal, Executive,
                     A0, A1, A2, A3, A5, A6, A7, A8, A9, B0, B1,
                     B10, B2, B3, B4, B6, B7, B8, B9, C5E, Comm10E,
-                    DLE, Folio, Ledger, Tabloid, Custom, NPageSize = Custom, NPaperSize = Custom };
+                    DLE, Folio, Ledger, Tabloid, JIS_B0, JIS_B1,
+                    JIS_B2, JIS_B3, JIS_B4, JIS_B5, JIS_B6, JIS_B7,
+                    JIS_B8, JIS_B9, JIS_B10, JIS_B11, JIS_B12,
+                    JIS_Shiban4, JIS_Shiban5, JIS_Shiban6, JIS_Kiku4,
+                    JIS_Kiku5, Custom, NPageSize = Custom, NPaperSize = Custom };
     typedef PageSize PaperSize;
 #else
     enum PageSize { A4, B5, Letter, Legal, Executive,
                     A0, A1, A2, A3, A5, A6, A7, A8, A9, B0, B1,
                     B10, B2, B3, B4, B6, B7, B8, B9, C5E, Comm10E,
-                    DLE, Folio, Ledger, Tabloid, Custom, NPageSize = Custom };
+                    DLE, Folio, Ledger, Tabloid, JIS_B0, JIS_B1,
+                    JIS_B2, JIS_B3, JIS_B4, JIS_B5, JIS_B6, JIS_B7,
+                    JIS_B8, JIS_B9, JIS_B10, JIS_B11, JIS_B12,
+                    JIS_Shiban4, JIS_Shiban5, JIS_Shiban6, JIS_Kiku4,
+                    JIS_Kiku5, Custom, NPageSize = Custom };
     enum PaperSize { A4, B5, Letter, Legal, Executive,
                      A0, A1, A2, A3, A5, A6, A7, A8, A9, B0, B1,
                      B10, B2, B3, B4, B6, B7, B8, B9, C5E, Comm10E,
-                     DLE, Folio, Ledger, Tabloid, Custom, NPageSize = Custom, NPaperSize = Custom };
+                     DLE, Folio, Ledger, Tabloid, JIS_B0, JIS_B1,
+                     JIS_B2, JIS_B3, JIS_B4, JIS_B5, JIS_B6, JIS_B7,
+                     JIS_B8, JIS_B9, JIS_B10, JIS_B11, JIS_B12,
+                     JIS_Shiban4, JIS_Shiban5, JIS_Shiban6, JIS_Kiku4,
+                     JIS_Kiku5, Custom, NPageSize = Custom, NPaperSize = Custom };
 #endif
 
     enum PageOrder   { FirstPageFirst,

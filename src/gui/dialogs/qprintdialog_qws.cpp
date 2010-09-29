@@ -360,6 +360,24 @@ void QPrintDialogPrivate::setupPaper()
     isc(this, QPrintDialog::tr("Letter (8.5 x 11 inches, 216 x 279 mm)"), QPrinter::Letter);
     isc(this, QPrintDialog::tr("Tabloid (279 x 432 mm)"), QPrinter::Tabloid);
     isc(this, QPrintDialog::tr("US Common #10 Envelope (105 x 241 mm)"), QPrinter::Comm10E);
+    isc(this, QPrintDialog::tr("JIS B0 (1030 × 1456 mm)"), QPrinter::JIS_B0);
+    isc(this, QPrintDialog::tr("JIS B1 (728 × 1030 mm)"), QPrinter::JIS_B1);
+    isc(this, QPrintDialog::tr("JIS B2 (515 × 728 mm)"), QPrinter::JIS_B2);
+    isc(this, QPrintDialog::tr("JIS B3 (364 × 515 mm)"), QPrinter::JIS_B3);
+    isc(this, QPrintDialog::tr("JIS B4 (257 × 364 mm)"), QPrinter::JIS_B4);
+    isc(this, QPrintDialog::tr("JIS B5 (182 × 257 mm)"), QPrinter::JIS_B5);
+    isc(this, QPrintDialog::tr("JIS B6 (128 × 182 mm)"), QPrinter::JIS_B6);
+    isc(this, QPrintDialog::tr("JIS B7 (91 × 128 mm)"), QPrinter::JIS_B7);
+    isc(this, QPrintDialog::tr("JIS B8 (64 × 91 mm)"), QPrinter::JIS_B8);
+    isc(this, QPrintDialog::tr("JIS B9 (45 × 64 mm)"), QPrinter::JIS_B9);
+    isc(this, QPrintDialog::tr("JIS B10 (32 × 45 mm)"), QPrinter::JIS_B10);
+    isc(this, QPrintDialog::tr("JIS B11 (22 × 32 mm)"), QPrinter::JIS_B11);
+    isc(this, QPrintDialog::tr("JIS B12 (16 × 22 mm)"), QPrinter::JIS_B12);
+    isc(this, QPrintDialog::tr("JIS Shiroku-ban 4 (264 × 379 mm)"), QPrinter::JIS_Shiban4);
+    isc(this, QPrintDialog::tr("JIS Shiroku-ban 5 (189 × 262 mm)"), QPrinter::JIS_Shiban5);
+    isc(this, QPrintDialog::tr("JIS Shiroku-ban 6 (127 × 188 mm)"), QPrinter::JIS_Shiban6);
+    isc(this, QPrintDialog::tr("JIS Kiku 4 (227 × 306 mm)"), QPrinter::JIS_Kiku4);
+    isc(this, QPrintDialog::tr("JIS Kiku 5 (151 × 227 mm)"), QPrinter::JIS_Kiku5);
 
     QObject::connect(sizeCombo, SIGNAL(activated(int)),
              q, SLOT(_q_paperSizeSelected(int)));

@@ -99,6 +99,24 @@ static void populatePaperSizes(QComboBox* cb)
     cb->addItem(QPrintDialog::tr("Letter"), QPrinter::Letter);
     cb->addItem(QPrintDialog::tr("Tabloid"), QPrinter::Tabloid);
     cb->addItem(QPrintDialog::tr("US Common #10 Envelope"), QPrinter::Comm10E);
+    cb->addItem(QPrintDialog::tr("JIS B0"), QPrinter::JIS_B0);
+    cb->addItem(QPrintDialog::tr("JIS B1"), QPrinter::JIS_B1);
+    cb->addItem(QPrintDialog::tr("JIS B2"), QPrinter::JIS_B2);
+    cb->addItem(QPrintDialog::tr("JIS B3"), QPrinter::JIS_B3);
+    cb->addItem(QPrintDialog::tr("JIS B4"), QPrinter::JIS_B4);
+    cb->addItem(QPrintDialog::tr("JIS B5"), QPrinter::JIS_B5);
+    cb->addItem(QPrintDialog::tr("JIS B6"), QPrinter::JIS_B6);
+    cb->addItem(QPrintDialog::tr("JIS B7"), QPrinter::JIS_B7);
+    cb->addItem(QPrintDialog::tr("JIS B8"), QPrinter::JIS_B8);
+    cb->addItem(QPrintDialog::tr("JIS B9"), QPrinter::JIS_B9);
+    cb->addItem(QPrintDialog::tr("JIS B10"), QPrinter::JIS_B10);
+    cb->addItem(QPrintDialog::tr("JIS B11"), QPrinter::JIS_B11);
+    cb->addItem(QPrintDialog::tr("JIS B12"), QPrinter::JIS_B12);
+    cb->addItem(QPrintDialog::tr("JIS Shiroku-ban 4"), QPrinter::JIS_Shiban4);
+    cb->addItem(QPrintDialog::tr("JIS Shiroku-ban 5"), QPrinter::JIS_Shiban5);
+    cb->addItem(QPrintDialog::tr("JIS Shiroku-ban 6"), QPrinter::JIS_Shiban6);
+    cb->addItem(QPrintDialog::tr("JIS Kiku 4"), QPrinter::JIS_Kiku4);
+    cb->addItem(QPrintDialog::tr("JIS Kiku 5"), QPrinter::JIS_Kiku5);
     cb->addItem(QPrintDialog::tr("Custom"), QPrinter::Custom);
 }
 
