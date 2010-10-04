@@ -672,7 +672,7 @@ UnixMakefileGenerator::processPrlFiles()
                         lflags[arch].append(opt);
                     }
                 } else if(!opt.isNull()) {
-                    if(lit == 0 || l.lastIndexOf(opt, lit-1) == -1)
+                    if(lit == 0 || !lflags[arch].contains(opt))
                         lflags[arch].append(opt);
                 }
             }
