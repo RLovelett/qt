@@ -571,8 +571,8 @@ qargb8565::qargb8565(quint32p v)
     const int r = qRed(v);
     const int g = qGreen(v);
     const int b = qBlue(v);
-    data[1] = ((g << 3) & 0xe0) | (b >> 3);
-    data[2] = (r & 0xf8) | (g >> 5);
+	data[1] = (r & 0xf8) | (g >> 5);
+    data[2] = ((g << 3) & 0xe0) | (b >> 3);
 }
 
 qargb8565::qargb8565(const qargb8565 &v)
