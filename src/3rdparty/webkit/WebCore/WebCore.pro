@@ -137,7 +137,7 @@ RESOURCES += \
     RESOURCES += $$PWD/../WebCore/inspector/front-end/WebKit.qrc
 }
 
-maemo5|symbian|embedded {
+maemo5|symbian {
     DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 }
 
