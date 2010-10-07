@@ -242,6 +242,7 @@ private slots:
     void dragAndDrop_simple();
     void dragAndDrop_disabledOrInvisible();
     void dragAndDrop_propagate();
+    void dragAndDrop_acceptProposedAction();
 #endif
     void render_data();
     void render();
@@ -2608,6 +2609,40 @@ void tst_QGraphicsScene::dragAndDrop_propagate()
     // Dummy drop event to keep the Mac from crashing.
     QDropEvent dropEvent(QPoint(0, 0), Qt::CopyAction, &mimeData, Qt::LeftButton, 0);
     QApplication::sendEvent(view.viewport(), &dropEvent);
+}
+
+class AcceptProposedActionScene : public QGraphicsScene
+{
+protected:
+    void dragMoveEvent(QGraphicsSceneDragDropEvent * event)
+    {
+        QGraphicsScene::dragMoveEvent(event);
+        event->acceptProposedAction();
+    }
+};
+
+void tst_QGraphicsScene::dragAndDrop_acceptProposedAction()
+{
+    AcceptProposedActionScene scene;
+
+    QGraphicsView view(&scene);
+    view.setFixedSize(100, 100);
+
+    QMimeData mimeData;
+
+    // Initial drag enter for the scene
+    QDragEnterEvent dragEnter(QPoint(0, 0), Qt::CopyAction, &mimeData, Qt::LeftButton, 0);
+    QApplication::sendEvent(view.viewport(), &dragEnter);
+    QVERIFY(dragEnter.isAccepted());
+    QCOMPARE(dragEnter.dropAction(), Qt::CopyAction);
+
+    {
+        // Move inside the scene
+        QDragMoveEvent dragMove(QPoint(0, 0), Qt::CopyAction, &mimeData, Qt::LeftButton, 0);
+        QApplication::sendEvent(view.viewport(), &dragMove);
+        QVERIFY(dragMove.isAccepted());
+        QCOMPARE(dragMove.dropAction(), Qt::CopyAction);
+    }
 }
 #endif
 

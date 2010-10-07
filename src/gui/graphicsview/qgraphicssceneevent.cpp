@@ -1463,6 +1463,7 @@ void QGraphicsSceneDragDropEvent::acceptProposedAction()
 {
     Q_D(QGraphicsSceneDragDropEvent);
     d->dropAction = d->proposedAction;
+    accept();
 }
 
 /*!
