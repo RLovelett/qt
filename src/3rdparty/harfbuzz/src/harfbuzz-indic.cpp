@@ -1784,6 +1784,10 @@ static int indic_nextSyllableBoundary(HB_Script script, const HB_UChar16 *s, int
         case Matra:
             if (state == Consonant || state == Nukta)
                 break;
+            if (state == Matra) {
+                // ### needs proper testing for correct two/three part matras
+                break;
+            }
             // ### not sure if this is correct. If it is, does it apply only to Bengali or should
             // it work for all Indic languages?
             // the combination Independent_A + Vowel Sign AA is allowed.
