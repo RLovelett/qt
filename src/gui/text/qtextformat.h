@@ -373,7 +373,8 @@ public:
         AlignSubScript,
         AlignMiddle,
         AlignTop,
-        AlignBottom
+        AlignBottom,
+        AlignDescent
     };
     enum UnderlineStyle { // keep in sync with Qt::PenStyle!
         NoUnderline,

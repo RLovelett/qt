@@ -2974,6 +2974,10 @@ void QTextDocumentLayout::resizeInlineObject(QTextInlineObject item, int posInDo
     if (f.verticalAlignment() == QTextCharFormat::AlignMiddle) {
         item.setDescent(inlineSize.height() / 2);
         item.setAscent(inlineSize.height() / 2 - 1);
+    } else if(f.verticalAlignment() == QTextCharFormat::AlignDescent) {
+        QFontMetricsF fm(f.font());
+        item.setDescent(fm.descent());
+        item.setAscent(inlineSize.height() -fm.descent() - 1);
     } else {
         item.setDescent(0);
         item.setAscent(inlineSize.height() - 1);
