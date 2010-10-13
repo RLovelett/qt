@@ -166,13 +166,6 @@
         widget->update();
 }
 
-// Override this method so that the movie doesn't stop if
-// the window becomes invisible
-- (void)viewWillMoveToWindow:(NSWindow *)newWindow
-{
-    Q_UNUSED(newWindow);
-}
-
 - (CIImage *) view:(QTMovieView *)view willDisplayImage:(CIImage *)img
 {
 	// This method is called from QTMovieView just
