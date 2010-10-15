@@ -19,7 +19,6 @@ class TestCircularBuffer : public QObject
     Q_OBJECT
 public:
     TestCircularBuffer( QObject* parent = 0 );
-    virtual ~TestCircularBuffer();
 
 private slots:
     // Run before any tests

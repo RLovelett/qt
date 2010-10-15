@@ -2,14 +2,8 @@
 
 #include <qcircularbuffer.h>
 
-#include <QDebug>
-
 TestCircularBuffer::TestCircularBuffer( QObject* parent )
     : QObject( parent )
-{
-}
-
-TestCircularBuffer::~TestCircularBuffer()
 {
 }
 
@@ -383,7 +377,6 @@ void TestCircularBuffer::erase()
     QVERIFY( circ.size() == circ.capacity() - 1 );
     for ( int i = 0; i < circ.size(); ++i )
     {
-        //qDebug() << i << circ.at( i );
         if ( i < 2 )
             QVERIFY( circ.at( i ) == i + 1 );
         else
@@ -798,7 +791,6 @@ void TestCircularBuffer::insert()
         circ12.insert( circ12.size(), ( i + 1 ) * 10 );
     for ( int i = 0; i < circ12.size(); ++i )
     {
-        //qDebug() << i << circ12.at( i );
         if ( i < 5 )
             QVERIFY( circ12.at( i ) == i + 1 );
         else
@@ -813,7 +805,6 @@ void TestCircularBuffer::insert()
         circ13.insert( circ13.size(), ( i + 1 ) * 10 );
     for ( int i = 0; i < circ13.size(); ++i )
     {
-        //qDebug() << i << circ13.at( i ).m_x;
         if ( i < 5 )
             QVERIFY( circ13.at( i ).m_x == i + 1 );
         else
@@ -827,7 +818,6 @@ void TestCircularBuffer::insert()
     circ14.insert( circ14.size(), 7, 100 );
     for ( int i = 0; i < circ14.size(); ++i )
     {
-        //qDebug() << i << circ14.at( i );
         if ( i < 3 )
             QVERIFY( circ14.at( i ) == i + 3 );
         else
@@ -841,7 +831,6 @@ void TestCircularBuffer::insert()
     circ15.insert( circ15.size(), 7, 100 );
     for ( int i = 0; i < circ15.size(); ++i )
     {
-        //qDebug() << i << circ15.at( i ).m_x;
         if ( i < 3 )
             QVERIFY( circ15.at( i ).m_x == i + 3 );
         else
@@ -856,7 +845,6 @@ void TestCircularBuffer::insert()
         circ16.insert( 0, 20 );
     for ( int i = 0; i < circ16.size(); ++i )
     {
-        //qDebug() << i << circ16.at( i );
         if ( i < 5 )
             QVERIFY( circ16.at( i ) == 20 );
         else
@@ -871,7 +859,6 @@ void TestCircularBuffer::insert()
         circ17.insert( 0, 20 );
     for ( int i = 0; i < circ17.size(); ++i )
     {
-        //qDebug() << i << circ17.at( i ).m_x;
         if ( i < 5 )
             QVERIFY( circ17.at( i ).m_x == 20 );
         else
@@ -885,7 +872,6 @@ void TestCircularBuffer::insert()
     circ18.insert( 0, 5, 20 );
     for ( int i = 0; i < circ18.size(); ++i )
     {
-        //qDebug() << i << circ18.at( i );
         if ( i < 5 )
             QVERIFY( circ18.at( i ) == 20 );
         else
@@ -899,7 +885,6 @@ void TestCircularBuffer::insert()
     circ19.insert( 0, 5, 20 );
     for ( int i = 0; i < circ19.size(); ++i )
     {
-        //qDebug() << i << circ19.at( i ).m_x;
         if ( i < 5 )
             QVERIFY( circ19.at( i ).m_x == 20 );
         else
@@ -918,7 +903,6 @@ void TestCircularBuffer::insertIterator()
     QCircularBuffer<int>::iterator it2 = circ.insert( it, 3, 10 );
     for ( int i = 0; i < circ.size(); ++i )
     {
-        //qDebug() << i << circ.at( i );
         if ( i < 2 )
             QVERIFY( circ.at( i ) == i + 1 );
         else if ( i > 4 )
@@ -1134,7 +1118,6 @@ void TestCircularBuffer::removeStaticLinearised()
     for ( int i = 0; i < 10; ++i )
     {
         MyComplexType value = circ2.first();
-        //qDebug() << "Popped value =" << value.m_x;
         QVERIFY( value.m_x == i );
         circ2.remove( 0 );
     }
@@ -1717,7 +1700,6 @@ void TestCircularBuffer::const_iterator()
     int i = 0;
     while ( it != circ.constEnd() )
     {
-        //qDebug() << *it;
         QVERIFY( *it == circ.at( i++ ) );
         ++it;
     }
@@ -1894,5 +1876,5 @@ void TestCircularBuffer::iterator()
     }
 }
 
-// Auto generate a main() Fitter
-QTEST_MAIN(TestCircularBuffer);
+// Auto generate a main()
+QTEST_APPLESS_MAIN(TestCircularBuffer);
