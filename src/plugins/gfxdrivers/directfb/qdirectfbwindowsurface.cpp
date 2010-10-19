@@ -55,7 +55,6 @@ QT_BEGIN_NAMESPACE
 
 QDirectFBWindowSurface::QDirectFBWindowSurface(DFBSurfaceFlipFlags flip, QDirectFBScreen *scr)
     : QDirectFBPaintDevice(scr)
-    , sibling(0)
 #ifndef QT_NO_DIRECTFB_WM
     , dfbWindow(0)
 #endif
@@ -75,7 +74,6 @@ QDirectFBWindowSurface::QDirectFBWindowSurface(DFBSurfaceFlipFlags flip, QDirect
 
 QDirectFBWindowSurface::QDirectFBWindowSurface(DFBSurfaceFlipFlags flip, QDirectFBScreen *scr, QWidget *widget)
     : QWSWindowSurface(widget), QDirectFBPaintDevice(scr)
-    , sibling(0)
 #ifndef QT_NO_DIRECTFB_WM
     , dfbWindow(0)
 #endif
@@ -123,7 +121,7 @@ void QDirectFBWindowSurface::raise()
 
 IDirectFBWindow *QDirectFBWindowSurface::directFBWindow() const
 {
-    return (dfbWindow ? dfbWindow : (sibling ? sibling->dfbWindow : 0));
+    return dfbWindow;
 }
 
 void QDirectFBWindowSurface::createWindow(const QRect &rect)
@@ -287,17 +285,15 @@ void QDirectFBWindowSurface::setGeometry(const QRect &rect)
 
 QByteArray QDirectFBWindowSurface::permanentState() const
 {
-    QByteArray state(sizeof(this), 0);
-    *reinterpret_cast<const QDirectFBWindowSurface**>(state.data()) = this;
+    QByteArray state(sizeof(SurfaceFlags), 0);
+    *reinterpret_cast<SurfaceFlags*>(state.data()) = surfaceFlags();
     return state;
 }
 
 void QDirectFBWindowSurface::setPermanentState(const QByteArray &state)
 {
-    if (state.size() == sizeof(this)) {
-        sibling = *reinterpret_cast<QDirectFBWindowSurface *const*>(state.constData());
-        Q_ASSERT(sibling);
-        setSurfaceFlags(sibling->surfaceFlags());
+    if (state.size() == sizeof(SurfaceFlags)) {
+        setSurfaceFlags(*reinterpret_cast<const SurfaceFlags*>(state.constData()));
     }
 }
 
@@ -397,8 +393,6 @@ void QDirectFBWindowSurface::endPaint(const QRegion &)
 
 IDirectFBSurface *QDirectFBWindowSurface::directFBSurface() const
 {
-    if (!dfbSurface && sibling && sibling->dfbSurface)
-        return sibling->dfbSurface;
     return dfbSurface;
 }
 
@@ -406,11 +400,8 @@ IDirectFBSurface *QDirectFBWindowSurface::directFBSurface() const
 IDirectFBSurface *QDirectFBWindowSurface::surfaceForWidget(const QWidget *widget, QRect *rect) const
 {
     Q_ASSERT(widget);
-    if (!dfbSurface) {
-        if (sibling && (!sibling->sibling || sibling->dfbSurface))
-            return sibling->surfaceForWidget(widget, rect);
+    if (!dfbSurface)
         return 0;
-    }
     QWidget *win = window();
     Q_ASSERT(win);
     if (rect) {
