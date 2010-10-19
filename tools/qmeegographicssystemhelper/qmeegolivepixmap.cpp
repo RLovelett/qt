@@ -40,15 +40,12 @@
 ****************************************************************************/
 
 #include "qmeegolivepixmap.h"
-#include <private/qimage_p.h>
-#include <private/qpixmap_raster_p.h>
 #include "qmeegolivepixmap_p.h"
 #include "qmeegoruntime.h"
-#include <QSharedMemory>
 
 /* QMeeGoLivePixmapPrivate */
 
-QMeeGoLivePixmapPrivate::QMeeGoLivePixmapPrivate(Qt::HANDLE h) : handle(h)
+QMeeGoLivePixmapPrivate::QMeeGoLivePixmapPrivate()
 {
 }
 
@@ -70,16 +67,16 @@ QMeeGoLivePixmap* QMeeGoLivePixmap::livePixmapWithSize(int w, int h, Format form
             return 0;
     }
     
-    Qt::HANDLE liveTextureHandle = QMeeGoRuntime::createLiveTexture(w, h, qtFormat);
-    if (! liveTextureHandle) {
+    QPixmapData *pmd = QMeeGoRuntime::pixmapDataWithNewLiveTexture(w, h, qtFormat);
+    if (! pmd) {
         qWarning("Failed to create a live texture with given size!");
         return NULL;
     }
 
-    return QMeeGoLivePixmap::fromHandle(liveTextureHandle);
+    return new QMeeGoLivePixmap(pmd);
 }
 
-QMeeGoLivePixmap::QMeeGoLivePixmap(QPixmapData *p, Qt::HANDLE h) : QPixmap(p), d_ptr(new QMeeGoLivePixmapPrivate(h))
+QMeeGoLivePixmap::QMeeGoLivePixmap(QPixmapData *p) : QPixmap(p), d_ptr(new QMeeGoLivePixmapPrivate())
 {
     Q_D(QMeeGoLivePixmap);
     d->q_ptr = this;
@@ -87,25 +84,19 @@ QMeeGoLivePixmap::QMeeGoLivePixmap(QPixmapData *p, Qt::HANDLE h) : QPixmap(p), d
 
 QMeeGoLivePixmap* QMeeGoLivePixmap::fromHandle(Qt::HANDLE liveTextureHandle)
 {
-    Qt::HANDLE eglImage = QMeeGoRuntime::liveTextureToEGLImage(liveTextureHandle);
-    if (! eglImage) {
-        qWarning("Failed to bind the live texture as an egl image!");
-        return NULL;
-    }
-
-    QPixmapData *pmd = QMeeGoRuntime::pixmapDataFromEGLImage(eglImage);
+    QPixmapData *pmd = QMeeGoRuntime::pixmapDataFromLiveTextureHandle(liveTextureHandle);
     if (! pmd) {
-        qWarning("Failed to allocate a pixmap data from a given live texture egl image!");
+        qWarning("Failed to create a live texture from given handle!");
         return NULL;
     }
     
-    return new QMeeGoLivePixmap(pmd, liveTextureHandle);
+    return new QMeeGoLivePixmap(pmd);
 }
 
 Qt::HANDLE QMeeGoLivePixmap::handle()
 {
     Q_D(QMeeGoLivePixmap);
-    return d->handle;
+    return QMeeGoRuntime::getLiveTextureHandle(this);
 }
 
 QMeeGoLivePixmap::~QMeeGoLivePixmap()
@@ -115,29 +106,12 @@ QMeeGoLivePixmap::~QMeeGoLivePixmap()
 QImage* QMeeGoLivePixmap::lock()
 {
     Q_D(QMeeGoLivePixmap);
+    return QMeeGoRuntime::lockLiveTexture(this);
 
-    void *data = NULL; 
-    int pitch = 0;
-    QImage::Format format;
-
-    if (! QMeeGoRuntime::lockLiveTexture(d->handle)) {
-        qWarning("Failed to lock a live texture!");
-        return new QImage();    
-    }
-
-    QMeeGoRuntime::queryLiveTexture(d->handle, &data, &pitch, &format);
-    if (data == NULL || pitch == 0) {
-        qWarning("Failed to query the live texture!");
-        return new QImage();
-    }
-
-    return new QImage((uchar *) data, width(), height(), format);
 }
     
 void QMeeGoLivePixmap::release(QImage *img)
 {
     Q_D(QMeeGoLivePixmap);
-    // FIXME Make sure we're locked!
-    QMeeGoRuntime::unlockLiveTexture(d->handle);
-    delete img;
+    QMeeGoRuntime::releaseLiveTexture(this, img);
 }
