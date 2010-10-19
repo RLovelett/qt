@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//#define DIRECT_ENABLE_DEBUG
+
 #include "qdirectfbpixmap.h"
 
 #ifndef QT_NO_QWS_DIRECTFB
@@ -50,6 +52,14 @@
 #include <QtCore/qfile.h>
 #include <directfb.h>
 
+
+extern "C" {
+#include <direct/debug.h>
+}
+
+D_DEBUG_DOMAIN( QDFB_Pixmap, "QDFB/Pixmap", "Qt/DirectFB Pixmaps" );
+
+/**********************************************************************************************************************/
 
 QT_BEGIN_NAMESPACE
 
@@ -296,11 +306,16 @@ void QDirectFBPixmapData::fromImage(const QImage &img, Qt::ImageConversionFlags 
 {
     alpha = QDirectFBPixmapData::hasAlphaChannel(img, flags);
     imageFormat = alpha ? screen->alphaPixmapFormat() : screen->pixelFormat();
+
+    D_DEBUG_AT( QDFB_Pixmap, "%s( %dx%d, alpha = %d, imageFormat = %d )\n", __func__, img.width(), img.height(), alpha, imageFormat );
+
     QImage image;
     if ((flags & ~Qt::NoOpaqueDetection) != Qt::AutoColor) {
         image = img.convertToFormat(imageFormat, flags);
         flags = Qt::AutoColor;
     } else if (img.format() == QImage::Format_RGB32 || img.depth() == 1) {
+        image = img.convertToFormat(imageFormat, flags);
+	} else if (img.format() != imageFormat) {
         image = img.convertToFormat(imageFormat, flags);
     } else {
         image = img;
@@ -320,7 +335,10 @@ void QDirectFBPixmapData::fromImage(const QImage &img, Qt::ImageConversionFlags 
         return;
     }
 
-    if (image.hasAlphaChannel()) {
+    if (image.hasAlphaChannel() &&
+        (!screen->isPremultiplied( image.format() ) &&
+          screen->isPremultiplied( imageFormat )))
+    {
         dfbSurface->Clear(dfbSurface, 0, 0, 0, 0);
         dfbSurface->SetBlittingFlags(dfbSurface, DSBLIT_BLEND_ALPHACHANNEL);
     } else {
