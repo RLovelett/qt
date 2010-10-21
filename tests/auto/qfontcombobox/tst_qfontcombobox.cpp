@@ -64,6 +64,8 @@ private slots:
     void writingSystem_data();
     void writingSystem();
     void currentFontChanged();
+    void sampleText_data();
+    void sampleText();
 };
 
 // Subclass that exposes the protected functions.
@@ -296,6 +298,27 @@ void tst_QFontComboBox::currentFontChanged()
         QCOMPARE(spy0.count(), 2);
     } else
         qWarning("Not enough fonts installed on test system. Consider adding some");
+}
+
+void tst_QFontComboBox::sampleText_data()
+{
+    QTest::addColumn<QFontDatabase::WritingSystem>("writingSystem");
+    QTest::addColumn<QString>("sampleText");
+    QTest::newRow("All=null") << QFontDatabase::Any << QString();
+    QTest::newRow("Japanese=Sample") << QFontDatabase::Japanese << QString("Sample");
+}
+
+void tst_QFontComboBox::sampleText()
+{
+    QFETCH(QFontDatabase::WritingSystem, writingSystem);
+    QFETCH(QString, sampleText);
+
+    SubQFontComboBox box;
+    QString original = box.sampleText(writingSystem);
+    box.setSampleText(sampleText, writingSystem);
+    QCOMPARE(box.sampleText(writingSystem), sampleText);
+    box.setSampleText(QString(), writingSystem);
+    QCOMPARE(box.sampleText(writingSystem), original);
 }
 
 QTEST_MAIN(tst_QFontComboBox)

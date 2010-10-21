@@ -86,6 +86,9 @@ public:
     QFont currentFont() const;
     QSize sizeHint() const;
 
+    QString sampleText(QFontDatabase::WritingSystem writingSystem = QFontDatabase::Any) const;
+    void setSampleText(const QString &sampleText, QFontDatabase::WritingSystem writingSystem = QFontDatabase::Any);
+
 public Q_SLOTS:
     void setCurrentFont(const QFont &f);
 

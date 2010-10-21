@@ -115,6 +115,7 @@ public:
     QIcon truetype;
     QIcon bitmap;
     QFontDatabase::WritingSystem writingSystem;
+    QHash<QFontDatabase::WritingSystem, QString> sampleText;
 };
 
 QFontFamilyDelegate::QFontFamilyDelegate(QObject *parent)
@@ -169,10 +170,18 @@ void QFontFamilyDelegate::paint(QPainter *painter,
     if (writingSystem != QFontDatabase::Any)
         system = writingSystem;
 
-    if (system != QFontDatabase::Any) {
+    if (system != QFontDatabase::Any || sampleText.contains(system) || sampleText.contains(QFontDatabase::Any)) {
         int w = painter->fontMetrics().width(text + QLatin1String("  "));
         painter->setFont(font2);
-        QString sample = QFontDatabase().writingSystemSample(system);
+
+        QString sample;
+        if (sampleText.contains(system))
+            sample = sampleText[system];
+        else if (sampleText.contains(QFontDatabase::Any))
+            sample = sampleText[QFontDatabase::Any];
+        else
+            sample = QFontDatabase().writingSystemSample(system);
+
         if (option.direction == Qt::RightToLeft)
             r.setRight(r.right() - w);
         else
@@ -464,6 +473,53 @@ QSize QFontComboBox::sizeHint() const
     QFontMetrics fm(font());
     sz.setWidth(fm.width(QLatin1Char('m'))*14);
     return sz;
+}
+
+/*!
+    Returns sample text for the \a writingSystem
+
+    Sample text is shown along with font name in popup window.
+
+    Value from QFontDatabase::writingSystemSample() is used by default.
+
+    \sa setSampleText()
+*/
+QString QFontComboBox::sampleText(QFontDatabase::WritingSystem writingSystem) const
+{
+    QFontFamilyDelegate *delegate = qobject_cast<QFontFamilyDelegate *>(view()->itemDelegate());
+    if (delegate && delegate->sampleText.contains(writingSystem))
+        return delegate->sampleText[writingSystem];
+    if (writingSystem == QFontDatabase::Any)
+        return QString();
+    return QFontDatabase().writingSystemSample(writingSystem);
+}
+
+/*!
+    Sets the text \a sampleText for sample text on the given \a writingSystem in the combobox.
+
+    If \a sampleText is null string, sample text is reset to the text from QFontDatabase::writingSystemSample().
+    When \a sampleText is empty string, sample text disappears.
+
+    Use QFontDatabase::Any to set sample text for all writing systems.
+    Sample text shown along with font name in popup window is determined in the order:
+
+    \list 1
+    \o sample text set for its own writing system
+    \o sample text set for QFontDatabase::Any
+    \o sample text from QFontDatabase::writingSystemSample()
+    \endlist
+
+    \sa sampleText()
+*/
+void QFontComboBox::setSampleText(const QString &sampleText, QFontDatabase::WritingSystem writingSystem)
+{
+    QFontFamilyDelegate *delegate = qobject_cast<QFontFamilyDelegate *>(view()->itemDelegate());
+    if (delegate) {
+        if (sampleText.isNull())
+            delegate->sampleText.remove(writingSystem);
+        else
+            delegate->sampleText[writingSystem] = sampleText;
+    }
 }
 
 QT_END_NAMESPACE
