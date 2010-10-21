@@ -788,22 +788,25 @@ inline QString QString::section(QChar asep, int astart, int aend, SectionFlags a
 { return section(QString(asep), astart, aend, aflags); }
 
 
-class Q_CORE_EXPORT QCharRef {
-    QString &s;
-    int i;
-    inline QCharRef(QString &str, int idx)
-        : s(str),i(idx) {}
+class Q_CORE_EXPORT QCharRef
+{
     friend class QString;
-public:
 
+public:
     // most QChar operations repeated here
 
     // all this is not documented: We just say "like QChar" and let it be.
     inline operator QChar() const
-        { return i < s.d->size ? s.d->data[i] : 0; }
+    { return i < s.d->size ? s.d->data[i] : 0; }
     inline QCharRef &operator=(const QChar &c)
-        { if (i >= s.d->size) s.expand(i); else s.detach();
-          s.d->data[i] = c.unicode();  return *this; }
+    {
+        if (i >= s.d->size)
+            s.expand(i);
+        else
+            s.detach();
+        s.d->data[i] = c.unicode();
+        return *this;
+    }
 
     // An operator= for each QChar cast constructors
 #ifndef QT_NO_CAST_FROM_ASCII
@@ -876,6 +879,11 @@ public:
     QT3_SUPPORT char ascii() const { return QChar(*this).toAscii(); }
 #endif
 #endif
+private:
+    inline QCharRef(QString &str, int idx) : s(str), i(idx) {}
+
+    QString &s;
+    int i;
 };
 
 inline void QCharRef::setRow(uchar arow) { QChar(*this).setRow(arow); }

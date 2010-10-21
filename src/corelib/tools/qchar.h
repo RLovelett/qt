@@ -69,7 +69,8 @@ private:
 };
 
 
-class Q_CORE_EXPORT QChar {
+class Q_CORE_EXPORT QChar
+{
 public:
     QChar();
 #ifndef QT_NO_CAST_FROM_ASCII
@@ -103,8 +104,7 @@ public:
 
     // Unicode information
 
-    enum Category
-    {
+    enum Category {
         NoCategory,
 
         Mark_NonSpacing,          //   Mn
@@ -147,14 +147,16 @@ public:
         Punctuation_Dask = Punctuation_Dash // oops
     };
 
-    enum Direction
-    {
+    enum Direction {
         DirL, DirR, DirEN, DirES, DirET, DirAN, DirCS, DirB, DirS, DirWS, DirON,
         DirLRE, DirLRO, DirAL, DirRLE, DirRLO, DirPDF, DirNSM, DirBN
     };
 
-    enum Decomposition
-    {
+    enum Joining {
+        OtherJoining, Dual, Right, Center
+    };
+
+    enum Decomposition {
         NoDecomposition,
         Canonical,
         Font,
@@ -179,13 +181,7 @@ public:
 #endif
     };
 
-    enum Joining
-    {
-        OtherJoining, Dual, Right, Center
-    };
-
-    enum CombiningClass
-    {
+    enum CombiningClass {
         Combining_BelowLeftAttached       = 200,
         Combining_BelowAttached           = 202,
         Combining_BelowRightAttached      = 204,
