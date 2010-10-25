@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+//#define DIRECT_ENABLE_DEBUG
+
 #include "qdirectfbpixmap.h"
 
 #ifndef QT_NO_QWS_DIRECTFB
