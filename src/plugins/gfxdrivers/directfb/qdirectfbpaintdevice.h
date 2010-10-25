@@ -73,6 +73,7 @@ public:
     int metric(QPaintDevice::PaintDeviceMetric metric) const;
     DFBSurfaceLockFlags lockFlags() const { return lockFlgs; }
     QPaintEngine *paintEngine() const;
+    QDirectFBScreen *directfbScreen() const { return screen; }
 protected:
     QDirectFBPaintDevice(QDirectFBScreen *scr);
     inline int dotsPerMeterX() const
