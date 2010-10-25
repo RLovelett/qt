@@ -225,7 +225,6 @@ public:
     static QImage::Format getImageFormat(IDirectFBSurface *surface);
     static bool initSurfaceDescriptionPixelFormat(DFBSurfaceDescription *description, QImage::Format format);
     static inline bool isPremultiplied(QImage::Format format);
-           inline bool isPremultiplied(const QPixmap &pixmap);
     static inline bool hasAlphaChannel(DFBSurfacePixelFormat format);
     static inline bool hasAlphaChannel(IDirectFBSurface *surface);
     QImage::Format alphaPixmapFormat() const;
@@ -259,11 +258,6 @@ inline bool QDirectFBScreen::isPremultiplied(QImage::Format format)
         break;
     }
     return false;
-}
-
-inline bool QDirectFBScreen::isPremultiplied(const QPixmap &pixmap)
-{
-    return isPremultiplied( pixmap.hasAlphaChannel() ? alphaPixmapFormat() : pixelFormat() );
 }
 
 inline bool QDirectFBScreen::hasAlphaChannel(DFBSurfacePixelFormat format)
