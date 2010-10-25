@@ -107,6 +107,7 @@ private slots:
     void saveAndRestore();
 
     void drawBorderPixmap();
+    void drawBorderPixmapF();
     void drawPixmapFragments();
 
     void drawLine_data();
@@ -1009,50 +1010,68 @@ void tst_QPainter::drawBorderPixmap()
         QPainter::PixmapFragment d;
 
         // top left corner
-        d = QPainter::PixmapFragment::create(QPointF(0, 0), QRectF(0, 0, 8, 8), 1, 1, 0, 1);
-        d.x = 4;
-        d.y = 4;
-        fragments.append(d);
+        {
+            d = QPainter::PixmapFragment::create(QPointF(0, 0), QRectF(0, 0, 8, 8), 1, 1, 0, 1);
+            d.x = 4;
+            d.y = 4;
+            fragments.append(d);
+        }
         // top right corner
-        d = QPainter::PixmapFragment::create(QPointF(71, 0), QRectF(71, 0, 8, 8), 1, 1, 0, 1);
-        d.x = 75;
-        d.y = 4;
-        fragments.append(d);
+        {
+            d = QPainter::PixmapFragment::create(QPointF(71, 0), QRectF(71, 0, 8, 8), 1, 1, 0, 1);
+            d.x = 75;
+            d.y = 4;
+            fragments.append(d);
+        }
         // bottom left corner
-        d = QPainter::PixmapFragment::create(QPointF(0, 71), QRectF(0, 71, 8, 8), 1, 1, 0, 1);
-        d.x = 4;
-        d.y = 75;
-        fragments.append(d);
+        {
+            d = QPainter::PixmapFragment::create(QPointF(0, 71), QRectF(0, 71, 8, 8), 1, 1, 0, 1);
+            d.x = 4;
+            d.y = 75;
+            fragments.append(d);
+        }
         // bottom right corner
-        d = QPainter::PixmapFragment::create(QPointF(71, 71), QRectF(71, 71, 8, 8), 1, 1, 0, 1);
-        d.x = 75;
-        d.y = 75;
-        fragments.append(d);
+        {
+            d = QPainter::PixmapFragment::create(QPointF(71, 71), QRectF(71, 71, 8, 8), 1, 1, 0, 1);
+            d.x = 75;
+            d.y = 75;
+            fragments.append(d);
+        }
         // center
-        d = QPainter::PixmapFragment::create(QPointF(8, 8), QRectF(8, 8, 63, 63), 1, 1, 0, 1);
-        d.x = 39.5;
-        d.y = 39.5;
-        fragments.append(d);
+        {
+            d = QPainter::PixmapFragment::create(QPointF(8, 8), QRectF(8, 8, 63, 63), 1, 1, 0, 1);
+            d.x = 39.5;
+            d.y = 39.5;
+            fragments.append(d);
+        }
         // top edge
-        d = QPainter::PixmapFragment::create(QPointF(8, 0), QRectF(8, 0, 63, 8), 1, 1, 0, 1);
-        d.x = 39.5;
-        d.y = 4;
-        fragments.append(d);
+        {
+            d = QPainter::PixmapFragment::create(QPointF(8, 0), QRectF(8, 0, 63, 8), 1, 1, 0, 1);
+            d.x = 39.5;
+            d.y = 4;
+            fragments.append(d);
+        }
         // bottom edge
-        d = QPainter::PixmapFragment::create(QPointF(8, 71), QRectF(8, 71, 63, 8), 1, 1, 0, 1);
-        d.x = 39.5;
-        d.y = 75;
-        fragments.append(d);
+        {
+            d = QPainter::PixmapFragment::create(QPointF(8, 71), QRectF(8, 71, 63, 8), 1, 1, 0, 1);
+            d.x = 39.5;
+            d.y = 75;
+            fragments.append(d);
+        }
         // left edge
-        d = QPainter::PixmapFragment::create(QPointF(0, 8), QRectF(0, 8, 8, 63), 1, 1, 0, 1);
-        d.x = 4;
-        d.y = 39.5;
-        fragments.append(d);
+        {
+            d = QPainter::PixmapFragment::create(QPointF(0, 8), QRectF(0, 8, 8, 63), 1, 1, 0, 1);
+            d.x = 4;
+            d.y = 39.5;
+            fragments.append(d);
+        }
         // right edge
-        d = QPainter::PixmapFragment::create(QPointF(71, 8), QRectF(71, 8, 8, 63), 1, 1, 0, 1);
-        d.x = 75;
-        d.y = 39.5;
-        fragments.append(d);
+        {
+            d = QPainter::PixmapFragment::create(QPointF(71, 8), QRectF(71, 8, 8, 63), 1, 1, 0, 1);
+            d.x = 75;
+            d.y = 39.5;
+            fragments.append(d);
+        }
 
         QPainter p(&origPixmap);
         p.translate(100, 100);
@@ -1069,6 +1088,7 @@ void tst_QPainter::drawBorderPixmap()
     QImage resImage = resPixmap.toImage().convertToFormat(QImage::Format_ARGB32);
 
     QVERIFY(resImage.size() == resPixmap.size());
+    QVERIFY(resImage == origImage);
 
     // check all corner pixels
     QVERIFY(resImage.pixel(100, 100) == origImage.pixel(100, 100));
@@ -1094,6 +1114,143 @@ void tst_QPainter::drawBorderPixmap()
     QVERIFY(resImage.pixel(171, 171) == origImage.pixel(171, 171));
     QVERIFY(resImage.pixel(104, 171) == origImage.pixel(104, 171));
 }
+
+void tst_QPainter::drawBorderPixmapF()
+{
+    QSKIP("Fails due to qDrawBorderPixmap does not support floating points...", SkipAll);
+
+    QPixmap origPixmap(200, 200);
+    QPixmap resPixmap(200,200);
+    origPixmap.fill(Qt::transparent);
+    resPixmap.fill(Qt::transparent);
+
+    QPixmap src(79, 79);
+    src.fill(Qt::transparent);
+
+    {
+        QPainter p(&src);
+        QPainterPath roundedRect;
+        p.setRenderHint(QPainter::Antialiasing);
+        roundedRect.addRoundedRect(0, 0, 79, 79, 8, 8);
+        p.fillPath(roundedRect, Qt::black);
+    }
+
+    {
+        QVarLengthArray<QPainter::PixmapFragment, 9> fragments;
+
+        QPainter::PixmapFragment d;
+
+        // top left corner
+        {
+            d = QPainter::PixmapFragment::create(QPointF(0, 0), QRectF(0, 0, 8, 8), 1, 1, 0, 1);
+            d.x = 4;
+            d.y = 4;
+            fragments.append(d);
+        }
+        // top right corner
+        {
+            d = QPainter::PixmapFragment::create(QPointF(71, 0), QRectF(71, 0, 8, 8), 1, 1, 0, 1);
+            d.x = 75.5;
+            d.y = 4;
+            fragments.append(d);
+        }
+        // bottom left corner
+        {
+            d = QPainter::PixmapFragment::create(QPointF(0, 71), QRectF(0, 71, 8, 8), 1, 1, 0, 1);
+            d.x = 4;
+            d.y = 75.5;
+            fragments.append(d);
+        }
+        // bottom right corner
+        {
+            d = QPainter::PixmapFragment::create(QPointF(71, 71), QRectF(71, 71, 8, 8), 1, 1, 0, 1);
+            d.x = 75.5;
+            d.y = 75.5;
+            fragments.append(d);
+        }
+        // center
+        {
+            d = QPainter::PixmapFragment::create(QPointF(8, 8), QRectF(8, 8, 63, 63), 1.0079365079365079, 1.0079365079365079, 0, 1);
+            d.x = 39.75;
+            d.y = 39.75;
+            fragments.append(d);
+        }
+        // left edge
+        {
+            d = QPainter::PixmapFragment::create(QPointF(0, 8), QRectF(0, 8, 8, 63), 1, 1.0079365079365077, 0, 1);
+            d.x = 4;
+            d.y = 39.75;
+            fragments.append(d);
+        }
+        // right edge
+        {
+            d = QPainter::PixmapFragment::create(QPointF(71, 8), QRectF(71, 8, 8, 63), 1, 1.0079365079365079, 0, 1);
+            d.x = 75.5;
+            d.y = 39.75;
+            fragments.append(d);
+        }
+        // top edge
+        {
+            d = QPainter::PixmapFragment::create(QPointF(8, 0), QRectF(8, 0, 63, 8), 1.0079365079365079, 1, 0, 1);
+            d.x = 39.75;
+            d.y = 4;
+            fragments.append(d);
+        }
+        // bottom edge
+        {
+            d = QPainter::PixmapFragment::create(QPointF(8, 71), QRectF(8, 71, 63, 8), 1.0079365079365079, 1, 0, 1);
+            d.x = 39.75;
+            d.y = 75.5;
+            fragments.append(d);
+        }
+
+        QPainter p(&origPixmap);
+        p.translate(100, 100);
+        p.drawPixmapFragments(fragments.data(), fragments.size(), src);
+    }
+    {
+        QPainter p(&resPixmap);
+        p.translate(100, 100);
+        qDrawBorderPixmap(&p,  QRect(0, 0, 79.5, 79.5), QMargins(8, 8, 8, 8), src, QRect(0, 0, 79, 79), QMargins(8, 8, 8, 8),
+                          QTileRules(Qt::StretchTile,Qt::StretchTile), 0);
+    }
+
+    QImage origImage = origPixmap.toImage().convertToFormat(QImage::Format_ARGB32);
+    QImage resImage = resPixmap.toImage().convertToFormat(QImage::Format_ARGB32);
+
+    QVERIFY(resImage.size() == resPixmap.size());
+
+    // check all corner pixels
+    QVERIFY(resImage.pixel(101, 101) == origImage.pixel(101, 101));
+    QVERIFY(resImage.pixel(180, 101) == origImage.pixel(180, 101));
+    QVERIFY(resImage.pixel(101, 180) == origImage.pixel(100, 180));
+    QVERIFY(resImage.pixel(180, 180) == origImage.pixel(180, 180));
+
+    QVERIFY(resImage.pixel(104, 104) == origImage.pixel(104, 104));
+    QVERIFY(resImage.pixel(175, 104) == origImage.pixel(175, 104));
+    QVERIFY(resImage.pixel(104, 175) == origImage.pixel(104, 175));
+    QVERIFY(resImage.pixel(175, 175) == origImage.pixel(175, 175));
+
+    // check all edge centers (rounded pos)
+    QVERIFY(resImage.pixel(139, 104) == origImage.pixel(139, 104));
+    QVERIFY(resImage.pixel(175, 139) == origImage.pixel(175, 139));
+    QVERIFY(resImage.pixel(139, 175) == origImage.pixel(139, 175));
+    QVERIFY(resImage.pixel(104, 139) == origImage.pixel(104, 139));
+    // check center
+    QVERIFY(resImage.pixel(139, 139) == origImage.pixel(139, 139));
+    // check margin conditions between edges and corners
+    QVERIFY(resImage.pixel(109, 104) == origImage.pixel(109, 104));
+    QVERIFY(resImage.pixel(171, 104) == origImage.pixel(171, 104));
+    QVERIFY(resImage.pixel(171, 171) == origImage.pixel(171, 171));
+    QVERIFY(resImage.pixel(104, 171) == origImage.pixel(104, 171));
+
+    // check margins of edges
+    QVERIFY(resImage.pixel(139, 100) == origImage.pixel(139, 100));
+    QVERIFY(resImage.pixel(139, 179) == origImage.pixel(139, 179));
+    QVERIFY(resImage.pixel(179, 139) == origImage.pixel(179, 139));
+    QVERIFY(resImage.pixel(100, 139) == origImage.pixel(100, 139));
+}
+
 
 void tst_QPainter::drawPixmapFragments()
 {
