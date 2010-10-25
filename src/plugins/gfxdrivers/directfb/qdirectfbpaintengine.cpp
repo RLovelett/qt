@@ -58,12 +58,6 @@
 #include <private/qimagepixmapcleanuphooks_p.h>
 
 
-extern "C" {
-#include <direct/debug.h>
-}
-
-D_DEBUG_DOMAIN( QDFB_Paint, "QDFB/Paint", "Qt/DirectFB Painting" );
-
 /**********************************************************************************************************************/
 
 QT_BEGIN_NAMESPACE
@@ -308,7 +302,6 @@ template <class T>
 static inline void drawRects(const T *rects, int n, const QTransform &transform, IDirectFBSurface *surface);
 
 #define CLIPPED_PAINT(operation) {                                      \
-        D_DEBUG_AT( QDFB_Paint, "  == CLIPPED_PAINT( %s )\n", #operation );  \
         d->unlock();                                                    \
         DFBRegion clipRegion;                                           \
         switch (d->clipType) {                                          \
@@ -590,10 +583,6 @@ void QDirectFBPaintEngine::drawImage(const QRectF &r, const QImage &image,
     Q_D(QDirectFBPaintEngine);
     Q_UNUSED(flags);
 
-    D_DEBUG_AT( QDFB_Paint, "%s( r = %.0f,%.0f-%.0fx%.0f, image = %dx%d@%d, sr = %.0f,%.0f-%.0fx%.0f )\n", __func__,
-                r.x(), r.y(), r.width(), r.height(), image.width(), image.height(), image.format(),
-                sr.x(), sr.y(), sr.width(), sr.height() );
-
     /*  This is hard to read. The way it works is like this:
 
     - If you do not have support for preallocated surfaces and do not use an
@@ -652,10 +641,6 @@ void QDirectFBPaintEngine::drawPixmap(const QRectF &r, const QPixmap &pixmap,
                                       const QRectF &sr)
 {
     Q_D(QDirectFBPaintEngine);
-
-    D_DEBUG_AT( QDFB_Paint, "%s( r = %.0f,%.0f-%.0fx%.0f, pixmap = %dx%d, sr = %.0f,%.0f-%.0fx%.0f )\n", __func__,
-                r.x(), r.y(), r.width(), r.height(), pixmap.width(), pixmap.height(),
-                sr.x(), sr.y(), sr.width(), sr.height() );
 
     if (pixmap.pixmapData()->classId() != QPixmapData::DirectFBClass) {
         RASTERFALLBACK(DRAW_PIXMAP, r, pixmap.size(), sr);
@@ -1055,8 +1040,6 @@ void QDirectFBPaintEnginePrivate::setRenderHints(QPainter::RenderHints hints)
 void QDirectFBPaintEnginePrivate::prepareForBlit(bool alpha, bool is_pre)
 {
     DFBSurfaceBlittingFlags blittingFlags = DSBLIT_NOFX;
-
-    D_DEBUG_AT( QDFB_Paint, "%s( alpha = %d, is_pre = %d )\n", __func__, alpha, is_pre );
 
     if (is_pre) {
         if (alpha) {

@@ -53,12 +53,6 @@
 #include <directfb.h>
 
 
-extern "C" {
-#include <direct/debug.h>
-}
-
-D_DEBUG_DOMAIN( QDFB_Pixmap, "QDFB/Pixmap", "Qt/DirectFB Pixmaps" );
-
 /**********************************************************************************************************************/
 
 QT_BEGIN_NAMESPACE
@@ -306,8 +300,6 @@ void QDirectFBPixmapData::fromImage(const QImage &img, Qt::ImageConversionFlags 
 {
     alpha = QDirectFBPixmapData::hasAlphaChannel(img, flags);
     imageFormat = alpha ? screen->alphaPixmapFormat() : screen->pixelFormat();
-
-    D_DEBUG_AT( QDFB_Pixmap, "%s( %dx%d, alpha = %d, imageFormat = %d )\n", __func__, img.width(), img.height(), alpha, imageFormat );
 
     QImage image;
     if ((flags & ~Qt::NoOpaqueDetection) != Qt::AutoColor) {
