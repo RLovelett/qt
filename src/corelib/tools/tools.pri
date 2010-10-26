@@ -46,6 +46,7 @@ HEADERS +=  \
         tools/qstringmatcher.h \
         tools/qtextboundaryfinder.h \
         tools/qtimeline.h \
+        tools/qtimespan.h \
         tools/qelapsedtimer.h \
         tools/qunicodetables_p.h \
         tools/qvarlengtharray.h \
@@ -81,6 +82,7 @@ SOURCES += \
         tools/qstringlist.cpp \
         tools/qtextboundaryfinder.cpp \
         tools/qtimeline.cpp \
+        tools/qtimespan.cpp \
         tools/qvector.cpp \
         tools/qvsnprintf.cpp
 

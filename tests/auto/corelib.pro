@@ -90,6 +90,7 @@ SUBDIRS=\
    qthreadstorage \
    qtime \
    qtimeline \
+   qtimespan \
    qtimer \
    qtmd5 \
    qtokenautomaton \
