@@ -843,6 +843,8 @@ public:
     QChar::Category category() const { return QChar(*this).category(); }
     QChar::Direction direction() const { return QChar(*this).direction(); }
     QChar::Joining joining() const { return QChar(*this).joining(); }
+    QChar::EastAsianWidth eastAsianWidth() const { return QChar(*this).eastAsianWidth(); }
+    bool isZeroWidth() const { return QChar(*this).isZeroWidth(); }
     bool hasMirrored() const { return QChar(*this).hasMirrored(); }
     QChar mirroredChar() const { return QChar(*this).mirroredChar(); }
     QString decomposition() const { return QChar(*this).decomposition(); }

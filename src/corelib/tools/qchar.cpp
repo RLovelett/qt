@@ -839,6 +839,144 @@ QChar::Joining QChar::joining(ushort ucs2)
     return QChar::Joining(qGetProp(ucs2)->joining);
 }
 
+/*!
+    \since 4.8
+    Returns the character's East Asian width
+    (needed for glyph's width calculation for certain languages such as Japanese).
+    See http://www.unicode.org/reports/tr11/ for details.
+
+    \sa isZeroWidth()
+*/
+QChar::EastAsianWidth QChar::eastAsianWidth() const
+{
+    return QChar::EastAsianWidth(qGetProp(ucs)->eastAsianWidth);
+}
+
+/*!
+    \since 4.8
+    \overload
+    Returns information about the East Asian width of the UCS-2-encoded
+    character specified by \a ucs2 (needed for glyph's width calculation
+    for certain languages such as Japanese).
+    See http://www.unicode.org/reports/tr11/ for details.
+
+    \sa isZeroWidth()
+*/
+QChar::EastAsianWidth QChar::eastAsianWidth(ushort ucs2)
+{
+    return QChar::EastAsianWidth(qGetProp(ucs2)->eastAsianWidth);
+}
+
+/*!
+    \since 4.8
+    \overload
+    Returns information about the East Asian width of the UCS-4-encoded
+    character specified by \a ucs4 (needed for glyph's width calculation
+    for certain languages such as Japanese).
+    See http://www.unicode.org/reports/tr11/ for details.
+
+    \sa isZeroWidth()
+*/
+QChar::EastAsianWidth QChar::eastAsianWidth(uint ucs4)
+{
+    if (ucs4 > UNICODE_LAST_CODEPOINT)
+        return QChar::Width_Narrow;
+    return QChar::EastAsianWidth(qGetProp(ucs4)->eastAsianWidth);
+}
+
+/*!
+    \since 4.8
+    Determines if the character typically takes zero width when rendered.
+    Returns true for all non-spacing and enclosing marks (e.g., combining accents),
+    format characters, zero-width space, but not U+00AD SOFT HYPHEN; false otherwise.
+
+    A typical use of this function is with eastAsianWidth() to determine
+    the number of cells a glyph occupies when displayed on a grid display (terminals).
+    However, note that not all terminals support zero-width rendering of zero-width marks.
+
+    \sa eastAsianWidth()
+*/
+bool QChar::isZeroWidth() const
+{
+    if (ucs == 0x00AD)
+        return false;
+
+    const int test = FLAG(Mark_NonSpacing) |
+                     FLAG(Mark_Enclosing) |
+                     FLAG(Other_Format);
+    if (FLAG(qGetProp(ucs)->category) & test)
+        return true;
+
+    if ((ucs >= 0x1160 && ucs < 0x1200) || ucs == 0x200B)
+        return true;
+
+    return false;
+}
+
+/*!
+    \since 4.8
+    \overload
+    Determines if the UCS-2-encoded character specified by \a ucs2
+    typically takes zero width when rendered.
+    Returns true for all non-spacing and enclosing marks (e.g., combining accents),
+    format characters, zero-width space, but not U+00AD SOFT HYPHEN; false otherwise.
+
+    A typical use of this function is with eastAsianWidth() to determine
+    the number of cells a glyph occupies when displayed on a grid display (terminals).
+    However, note that not all terminals support zero-width rendering of zero-width marks.
+
+    \sa eastAsianWidth()
+*/
+bool QChar::isZeroWidth(ushort ucs2)
+{
+    if (ucs2 == 0x00AD)
+        return false;
+
+    const int test = FLAG(Mark_NonSpacing) |
+                     FLAG(Mark_Enclosing) |
+                     FLAG(Other_Format);
+    if (FLAG(qGetProp(ucs2)->category) & test)
+        return true;
+
+    if ((ucs2 >= 0x1160 && ucs2 < 0x1200) || ucs2 == 0x200B)
+        return true;
+
+    return false;
+}
+
+/*!
+    \since 4.8
+    \overload
+    Determines if the UCS-4-encoded character specified by \a ucs4
+    typically takes zero width when rendered.
+    Returns true for all non-spacing and enclosing marks (e.g., combining accents),
+    format characters, zero-width space, but not U+00AD SOFT HYPHEN; false otherwise.
+
+    A typical use of this function is with eastAsianWidth() to determine
+    the number of cells a glyph occupies when displayed on a grid display (terminals).
+    However, note that not all terminals support zero-width rendering of zero-width marks.
+
+    \sa eastAsianWidth()
+*/
+bool QChar::isZeroWidth(uint ucs4)
+{
+    if (ucs4 > UNICODE_LAST_CODEPOINT)
+        return true;
+
+    if (ucs4 == 0x00AD)
+        return false;
+
+    const int test = FLAG(Mark_NonSpacing) |
+                     FLAG(Mark_Enclosing) |
+                     FLAG(Other_Format);
+    if (FLAG(qGetProp(ucs4)->category) & test)
+        return true;
+
+    if ((ucs4 >= 0x1160 && ucs4 < 0x1200) || ucs4 == 0x200B)
+        return true;
+
+    return false;
+}
 
 /*!
     Returns true if the character should be reversed if the text

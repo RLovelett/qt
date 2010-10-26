@@ -80,6 +80,8 @@ private slots:
     void category();
     void direction();
     void joining();
+    void eastAsianWidth();
+    void isZeroWidth();
     void combiningClass();
     void digitValue();
     void decomposition();
@@ -340,6 +342,69 @@ void tst_QChar::joining()
     QVERIFY(QChar::joining(0xf0000u) == QChar::OtherJoining);
     QVERIFY(QChar::joining(0xE0030u) == QChar::OtherJoining);
     QVERIFY(QChar::joining(0x2FA17u) == QChar::OtherJoining);
+}
+
+void tst_QChar::eastAsianWidth()
+{
+    QVERIFY(QChar('a').eastAsianWidth() == QChar::Width_Narrow);
+    QVERIFY(QChar((ushort)0x401).eastAsianWidth() == QChar::Width_Ambiguous);
+    QVERIFY(QChar((ushort)0x408).eastAsianWidth() == QChar::Width_Neutral);
+    QVERIFY(QChar((ushort)0x31F0).eastAsianWidth() == QChar::Width_Wide);
+    QVERIFY(QChar((ushort)0xFF5E).eastAsianWidth() == QChar::Width_FullWidth);
+    QVERIFY(QChar((ushort)0xFF65).eastAsianWidth() == QChar::Width_HalfWidth);
+
+    QVERIFY(QChar::eastAsianWidth((ushort)'a') == QChar::Width_Narrow);
+    QVERIFY(QChar::eastAsianWidth((ushort)0x401) == QChar::Width_Ambiguous);
+    QVERIFY(QChar::eastAsianWidth((ushort)0x408) == QChar::Width_Neutral);
+    QVERIFY(QChar::eastAsianWidth((ushort)0x31F0) == QChar::Width_Wide);
+    QVERIFY(QChar::eastAsianWidth((ushort)0xFF5E) == QChar::Width_FullWidth);
+    QVERIFY(QChar::eastAsianWidth((ushort)0xFF65) == QChar::Width_HalfWidth);
+
+    QVERIFY(QChar::eastAsianWidth((uint)'a') == QChar::Width_Narrow);
+    QVERIFY(QChar::eastAsianWidth((uint)0x401) == QChar::Width_Ambiguous);
+    QVERIFY(QChar::eastAsianWidth((uint)0x408) == QChar::Width_Neutral);
+    QVERIFY(QChar::eastAsianWidth((uint)0x31F0) == QChar::Width_Wide);
+    QVERIFY(QChar::eastAsianWidth((uint)0xFF5E) == QChar::Width_FullWidth);
+    QVERIFY(QChar::eastAsianWidth((uint)0xFF65) == QChar::Width_HalfWidth);
+
+    QVERIFY(QChar::eastAsianWidth(0x30030u) == QChar::Width_Wide);
+    QVERIFY(QChar::eastAsianWidth(0xE007Fu) == QChar::Width_Neutral);
+    QVERIFY(QChar::eastAsianWidth(0xE0130u) == QChar::Width_Ambiguous);
+    QVERIFY(QChar::eastAsianWidth(0xE0030u) == QChar::Width_Neutral);
+}
+
+void tst_QChar::isZeroWidth()
+{
+    QVERIFY(!QChar('a').isZeroWidth());
+    QVERIFY(!QChar((ushort)0x00AD).isZeroWidth());
+    QVERIFY(QChar((ushort)0x0300).isZeroWidth());
+    QVERIFY(QChar((ushort)0x070F).isZeroWidth());
+    QVERIFY(QChar((ushort)0x1160).isZeroWidth());
+    QVERIFY(!QChar((ushort)0x10FB).isZeroWidth());
+
+    QVERIFY(!QChar::isZeroWidth((ushort)'a'));
+    QVERIFY(!QChar::isZeroWidth((ushort)0x00AD));
+    QVERIFY(QChar::isZeroWidth((ushort)0x0300));
+    QVERIFY(QChar::isZeroWidth((ushort)0x070F));
+    QVERIFY(QChar::isZeroWidth((ushort)0x1160));
+    QVERIFY(!QChar::isZeroWidth((ushort)0x10FB));
+
+    QVERIFY(!QChar::isZeroWidth((uint)'a'));
+    QVERIFY(!QChar::isZeroWidth((uint)0x00AD));
+    QVERIFY(QChar::isZeroWidth((uint)0x0300));
+    QVERIFY(QChar::isZeroWidth((uint)0x070F));
+    QVERIFY(QChar::isZeroWidth((uint)0x1160));
+    QVERIFY(!QChar::isZeroWidth((uint)0x10FB));
+
+    QVERIFY(QChar::isZeroWidth((uint)0x0300));
+    QVERIFY(QChar::isZeroWidth((uint)0x070F));
+    QVERIFY(QChar::isZeroWidth((uint)0x1160));
+    QVERIFY(!QChar::isZeroWidth((uint)0x10FB));
+
+    QVERIFY(!QChar::isZeroWidth(0x10300u));
+    QVERIFY(!QChar::isZeroWidth(0x103A0u));
+    QVERIFY(QChar::isZeroWidth(0x10A06u));
+    QVERIFY(QChar::isZeroWidth(0xE007Fu));
 }
 
 void tst_QChar::combiningClass()

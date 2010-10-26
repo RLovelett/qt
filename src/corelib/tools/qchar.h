@@ -156,6 +156,11 @@ public:
         OtherJoining, Dual, Right, Center
     };
 
+    enum EastAsianWidth {
+        Width_Neutral, Width_Ambiguous, Width_HalfWidth,
+        Width_Wide, Width_FullWidth, Width_Narrow
+    };
+
     enum Decomposition {
         NoDecomposition,
         Canonical,
@@ -222,6 +227,8 @@ public:
     Category category() const;
     Direction direction() const;
     Joining joining() const;
+    EastAsianWidth eastAsianWidth() const;
+    bool isZeroWidth() const;
     bool hasMirrored() const;
     unsigned char combiningClass() const;
 
@@ -309,6 +316,10 @@ public:
     static Direction QT_FASTCALL direction(ushort ucs2);
     static Joining QT_FASTCALL joining(uint ucs4);
     static Joining QT_FASTCALL joining(ushort ucs2);
+    static EastAsianWidth QT_FASTCALL eastAsianWidth(uint ucs4);
+    static EastAsianWidth QT_FASTCALL eastAsianWidth(ushort ucs2);
+    static bool QT_FASTCALL isZeroWidth(uint ucs4);
+    static bool QT_FASTCALL isZeroWidth(ushort ucs2);
     static unsigned char QT_FASTCALL combiningClass(uint ucs4);
     static unsigned char QT_FASTCALL combiningClass(ushort ucs2);
 
