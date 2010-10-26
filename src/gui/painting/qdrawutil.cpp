@@ -1105,6 +1105,29 @@ void qDrawBorderPixmap(QPainter *painter, const QRect &targetRect, const QMargin
                        const QPixmap &pixmap, const QRect &sourceRect,const QMargins &sourceMargins,
                        const QTileRules &rules, QDrawBorderPixmap::DrawingHints hints)
 {
+    qDrawBorderPixmap(painter, QRectF(targetRect), targetMargins, pixmap, sourceRect, sourceMargins,
+                      rules, hints);
+}
+
+/*!
+    \since 4.7.1
+
+    Draws the indicated \a sourceRect rectangle from the given \a pixmap into
+    the given \a targetRect floating point rectangle, using the given \a painter.
+    The pixmap will be split into nine segments according to the given \a targetMargins
+    and \a sourceMargins structures. Finally, the pixmap will be drawn
+    according to the given \a rules.
+
+    This function is used to draw a scaled pixmap, similar to
+    \l{http://www.w3.org/TR/css3-background/}{CSS3 border-images}
+
+    \sa Qt::TileRule, QTileRules, QMargins
+*/
+
+void qDrawBorderPixmap(QPainter *painter, const QRectF &targetRect, const QMargins &targetMargins,
+                       const QPixmap &pixmap, const QRect &sourceRect,const QMargins &sourceMargins,
+                       const QTileRules &rules, QDrawBorderPixmap::DrawingHints hints)
+{
     QPainter::PixmapFragment d;
     d.opacity = 1.0;
     d.rotation = 0.0;
@@ -1120,12 +1143,12 @@ void qDrawBorderPixmap(QPainter *painter, const QRect &targetRect, const QMargin
     const int sourceCenterWidth = sourceCenterRight - sourceCenterLeft;
     const int sourceCenterHeight = sourceCenterBottom - sourceCenterTop;
     // target center
-    const int targetCenterTop = targetRect.top() + targetMargins.top();
-    const int targetCenterLeft = targetRect.left() + targetMargins.left();
-    const int targetCenterBottom = targetRect.bottom() - targetMargins.bottom() + 1;
-    const int targetCenterRight = targetRect.right() - targetMargins.right() + 1;
-    const int targetCenterWidth = targetCenterRight - targetCenterLeft;
-    const int targetCenterHeight = targetCenterBottom - targetCenterTop;
+    const qreal targetCenterTop = targetRect.top() + targetMargins.top();
+    const qreal targetCenterLeft = targetRect.left() + targetMargins.left();
+    const qreal targetCenterBottom = targetRect.bottom() - targetMargins.bottom();
+    const qreal targetCenterRight = targetRect.right() - targetMargins.right();
+    const qreal targetCenterWidth = targetCenterRight - targetCenterLeft;
+    const qreal targetCenterHeight = targetCenterBottom - targetCenterTop;
 
     QVarLengthArray<qreal, 16> xTarget; // x-coordinates of target rectangles
     QVarLengthArray<qreal, 16> yTarget; // y-coordinates of target rectangles

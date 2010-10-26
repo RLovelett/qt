@@ -180,8 +180,28 @@ Q_GUI_EXPORT void qDrawBorderPixmap(QPainter *painter,
 #endif
                                     );
 
+Q_GUI_EXPORT void qDrawBorderPixmap(QPainter *painter,
+                                    const QRectF &targetRect,
+                                    const QMargins &targetMargins,
+                                    const QPixmap &pixmap,
+                                    const QRect &sourceRect,
+                                    const QMargins &sourceMargins,
+                                    const QTileRules &rules = QTileRules()
+#ifndef Q_QDOC
+                                    , QDrawBorderPixmap::DrawingHints hints = 0
+#endif
+                                    );
+
 inline void qDrawBorderPixmap(QPainter *painter,
                                            const QRect &target,
+                                           const QMargins &margins,
+                                           const QPixmap &pixmap)
+{
+    qDrawBorderPixmap(painter, target, margins, pixmap, pixmap.rect(), margins);
+}
+
+inline void qDrawBorderPixmap(QPainter *painter,
+                                           const QRectF &target,
                                            const QMargins &margins,
                                            const QPixmap &pixmap)
 {
