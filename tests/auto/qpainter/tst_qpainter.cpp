@@ -1088,7 +1088,6 @@ void tst_QPainter::drawBorderPixmap()
     QImage resImage = resPixmap.toImage().convertToFormat(QImage::Format_ARGB32);
 
     QVERIFY(resImage.size() == resPixmap.size());
-    QVERIFY(resImage == origImage);
 
     // check all corner pixels
     QVERIFY(resImage.pixel(100, 100) == origImage.pixel(100, 100));
@@ -1117,8 +1116,6 @@ void tst_QPainter::drawBorderPixmap()
 
 void tst_QPainter::drawBorderPixmapF()
 {
-    QSKIP("Fails due to qDrawBorderPixmap does not support floating points...", SkipAll);
-
     QPixmap origPixmap(200, 200);
     QPixmap resPixmap(200,200);
     origPixmap.fill(Qt::transparent);
@@ -1211,7 +1208,7 @@ void tst_QPainter::drawBorderPixmapF()
     {
         QPainter p(&resPixmap);
         p.translate(100, 100);
-        qDrawBorderPixmap(&p,  QRect(0, 0, 79.5, 79.5), QMargins(8, 8, 8, 8), src, QRect(0, 0, 79, 79), QMargins(8, 8, 8, 8),
+        qDrawBorderPixmap(&p,  QRectF(0, 0, 79.5, 79.5), QMargins(8, 8, 8, 8), src, QRect(0, 0, 79, 79), QMargins(8, 8, 8, 8),
                           QTileRules(Qt::StretchTile,Qt::StretchTile), 0);
     }
 
