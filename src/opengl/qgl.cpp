@@ -2834,7 +2834,7 @@ void QGLContext::deleteTexture(QMacCompatGLuint id)
 }
 #endif
 
-void qt_add_rect_to_array(const QRectF &r, GLfloat *array)
+void Q_OPENGL_EXPORT qt_add_rect_to_array(const QRectF &r, GLfloat *array)
 {
     qreal left = r.left();
     qreal right = r.right();
