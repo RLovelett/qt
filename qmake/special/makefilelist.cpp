@@ -53,7 +53,8 @@ namespace {
     const char * const indent = "        ";
 
     void dumpFilelist (QString name, QStringList list,
-                       QString (*transform)(QString) = 0
+                       QString (*transform)(QString) = 0,
+                       bool isDirectoryList = false
     ) {
         const char *varname = name.toLocal8Bit().data();
         fprintf (stdout, "%s = ", varname);
@@ -68,11 +69,19 @@ namespace {
                 name = relateTo.relativeFilePath(name);
             }
 
+            name = name.trimmed();
+
+            if (!isDirectoryList) {
+                if (name.startsWith("./")) name = name.remove(0, 2);
+                if (name == "") continue;
+            } else {
+                // Our relation logic might have stripped away a naked "./"
+                // or ".", but we want it explicitly in case of -I.
+                if (name == "") name = ".";
+            }
             if (transform)
                 name = transform (name);
 
-            if (name.startsWith("./"))
-                name = name.remove(0, 2);
             fprintf (stdout, " \\\n%s%s", indent, name.toLocal8Bit().data());
         }
         fprintf (stdout, "\n\n");
@@ -101,26 +110,37 @@ namespace {
         return filename_pattern_replace(name,
             Option::mkspecial::filelist_qrc_pattern);
     }
+
+    QString include_path_replace (QString name) {
+        return "-I" + name;
+    }
 }
 
 void makeFilelist (QMakeProject project) {
     QString prefix = Option::mkspecial::filelist_prefix + "_";
 
     QString manual_sourcefiles = prefix + "MANUAL_SOURCEFILES";
+    QString include_path       = prefix + "INCLUDEPATH";
     QString all_sourcefiles    = prefix + "SOURCES";
     QString ui_files           = prefix + "UIFILES";
     QString moc_files          = prefix + "MOCFILES";
     QString qrc_files          = prefix + "RESOURCEFILES";
     QString built_sources      = prefix + "BUILT_SOURCES";
+    QString cppflags           = prefix + "CPPFLAGS";
 
     dumpFilelist(manual_sourcefiles, project.values("SOURCES"));
     dumpFilelist(ui_files, project.values("FORMS"), ui_pattern_replace);
+
+    // The list of mocables is currently a hack. We need a reliable way
+    // of determining whether a file is to be moced.
     if (Option::mkspecial::filelist_moc_from_ui)
         dumpFilelist(moc_files, project.values("FORMS"), moc_pattern_replace);
     else
         dumpFilelist(moc_files, QStringList(), moc_pattern_replace);
 
     dumpFilelist(qrc_files, project.values("RESOURCES"), qrc_pattern_replace);
+    dumpFilelist(include_path, project.values("INCLUDEPATH"),
+                 include_path_replace, true);
 
     fprintf(stdout, "%s = \\\n"
                     "%s$(%s) \\\n"
@@ -137,6 +157,11 @@ void makeFilelist (QMakeProject project) {
                     all_sourcefiles.toLocal8Bit().data(),
                     indent, manual_sourcefiles.toLocal8Bit().data(),
                     indent, built_sources.toLocal8Bit().data()
+    );
+    fprintf(stdout, "%s = \\\n"
+                    "%s$(%s)\n\n",
+                    cppflags.toLocal8Bit().data(),
+                    indent, include_path.toLocal8Bit().data()
     );
 
     // TODO: find out what is set by -o
