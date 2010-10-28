@@ -230,6 +230,8 @@ Option::parseCommandLine(int argc, char **argv, int skip)
                     Option::qmake_mode = Option::QMAKE_QUERY_PROPERTY;
                 } else if(opt == "makefile") {
                     Option::qmake_mode = Option::QMAKE_GENERATE_MAKEFILE;
+                } else if (opt == "special") {
+                    Option::qmake_mode = Option::QMAKE_GENERATE_SPECIAL;
                 } else {
                     specified = false;
                 }
@@ -341,7 +343,8 @@ Option::parseCommandLine(int argc, char **argv, int skip)
                     if(!fi.makeAbsolute()) //strange
                         arg = fi.filePath();
                     if(Option::qmake_mode == Option::QMAKE_GENERATE_MAKEFILE ||
-                       Option::qmake_mode == Option::QMAKE_GENERATE_PRL) {
+                       Option::qmake_mode == Option::QMAKE_GENERATE_PRL ||
+                       Option::qmake_mode == Option::QMAKE_GENERATE_SPECIAL) {
                         if(fi.isDir()) {
                             QString proj = detectProjectFile(arg);
                             if (!proj.isNull())
@@ -429,9 +432,9 @@ Option::init(int argc, char **argv)
             Option::qmake_abslocation = argv0;
         } else if (argv0.contains(QLatin1Char('/'))
 #ifdef Q_OS_WIN
-		   || argv0.contains(QLatin1Char('\\'))
+           || argv0.contains(QLatin1Char('\\'))
 #endif
-	    ) { //relative PWD
+        ) { //relative PWD
             Option::qmake_abslocation = QDir::current().absoluteFilePath(argv0);
         } else { //in the PATH
             QByteArray pEnv = qgetenv("PATH");
@@ -515,7 +518,8 @@ Option::init(int argc, char **argv)
 
     //last chance for defaults
     if(Option::qmake_mode == Option::QMAKE_GENERATE_MAKEFILE ||
-        Option::qmake_mode == Option::QMAKE_GENERATE_PRL) {
+        Option::qmake_mode == Option::QMAKE_GENERATE_PRL ||
+        Option::qmake_mode == Option::QMAKE_GENERATE_SPECIAL) {
         if(Option::mkfile::qmakespec.isNull() || Option::mkfile::qmakespec.isEmpty())
             Option::mkfile::qmakespec = QString::fromLocal8Bit(qgetenv("QMAKESPEC").constData());
 
@@ -625,8 +629,8 @@ Option::fixString(QString string, uchar flags)
     }
     FixStringCacheKey cacheKey(string, flags);
     if(cache->contains(cacheKey)) {
-	const QString ret = cache->value(cacheKey);
-	//qDebug() << "Fix (cached) " << orig_string << "->" << ret;
+    const QString ret = cache->value(cacheKey);
+    //qDebug() << "Fix (cached) " << orig_string << "->" << ret;
         return ret;
     }
 
