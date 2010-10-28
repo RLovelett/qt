@@ -54,6 +54,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <QVarLengthArray>
 
 // Gets a component (red = 1, green = 2...) from a RGBA data structure.
 // data is unsigned char. stride is the number of bytes per line.
@@ -95,11 +96,11 @@ unsigned short* convertRGB32_to_RGB565(const unsigned char *in, int width, int h
     int x, y, c; // Pixel we're processing. c is component number (0, 1, 2 for r, b, b)
     short component[3]; // Stores the new components (r, g, b) for pixel produced during conversion
     short diff; // The difference between the converted value and the original one. To be accumulated.
-    short *accumulatorData = (short *) malloc(3 * width * 2 * 2); // Data for three acumulators for r, g, b. Each accumulator is two lines.
+    QVarLengthArray <short> accumulatorData(3 * width * 2); // Data for three acumulators for r, g, b. Each accumulator is two lines.
     short *accumulator[3]; // Helper for accessing the accumulator on a per-channel basis more easily.
-    accumulator[0] = accumulatorData;
-    accumulator[1] = accumulatorData + width;
-    accumulator[2] = accumulatorData + (width * 2);
+    accumulator[0] = accumulatorData.data();
+    accumulator[1] = accumulatorData.data() + width;
+    accumulator[2] = accumulatorData.data() + (width * 2);
 
     // Produce the conversion lookup tables.
     for (i = 0; i < 256; i++) {
@@ -177,7 +178,6 @@ unsigned short* convertRGB32_to_RGB565(const unsigned char *in, int width, int h
         }
     }
 
-    free(accumulatorData);
     return out;
 }
 
@@ -200,12 +200,12 @@ unsigned short* convertARGB32_to_RGBA4444(const unsigned char *in, int width, in
     int x, y, c; // Pixel we're processing. c is component number (0, 1, 2, 3 for r, b, b, a)
     short component[4]; // Stores the new components (r, g, b, a) for pixel produced during conversion
     short diff; // The difference between the converted value and the original one. To be accumulated.
-    short *accumulatorData = (short *) malloc(4 * width * 2 * 2); // Data for four acumulators for r, g, b, a. Each accumulator is two lines.
+    QVarLengthArray <short> accumulatorData(4 * width * 2); // Data for three acumulators for r, g, b. Each accumulator is two lines.
     short *accumulator[4]; // Helper for accessing the accumulator on a per-channel basis more easily.
-    accumulator[0] = accumulatorData;
-    accumulator[1] = accumulatorData + width;
-    accumulator[2] = accumulatorData + (width * 2);
-    accumulator[3] = accumulatorData + (width * 3);
+    accumulator[0] = accumulatorData.data();
+    accumulator[1] = accumulatorData.data() + width;
+    accumulator[2] = accumulatorData.data() + (width * 2);
+    accumulator[3] = accumulatorData.data() + (width * 3);
 
     // Produce the conversion lookup tables.
     for (i = 0; i < 256; i++) {
@@ -273,6 +273,5 @@ unsigned short* convertARGB32_to_RGBA4444(const unsigned char *in, int width, in
         }
     }
 
-    free(accumulatorData);
     return out;
 }
