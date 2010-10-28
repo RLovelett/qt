@@ -55,6 +55,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "special/makefilelist.hh"
+
 QT_BEGIN_NAMESPACE
 
 // for Borland, main is defined to qMain which breaks qmake
@@ -170,35 +172,10 @@ int runQMake(int argc, char **argv)
                 continue;
         }
 
-        /*
-        fprintf (stdout, "foooobar{{{{{\n");
-        fprintf (stdout, "file-count: %d\n", project.values("SOURCES").count());
-        foreach (QString source, project.values("SOURCES")) {
-                fprintf (stdout, "* %s\n", source.toLocal8Bit().data());
-        }
-        fprintf (stdout, "libs-count: %d\n", project.values("QMAKE_LIBS").count());
-        foreach (QString source, project.values("QMAKE_LIBS")) {fprintf (stdout, "* %s\n", source.toLocal8Bit().data());}
-        fprintf (stdout, "libs_private-count: %d\n", project.values("QMAKE_LIBS_PRIVATE").count());
-        foreach (QString source, project.values("QMAKE_LIBS_PRIVATE")) {fprintf (stdout, "* %s\n", source.toLocal8Bit().data());}
-        fprintf (stdout, "lflags-count: %d\n", project.values("QMAKE_LFLAGS").count());
-        foreach (QString source, project.values("QMAKE_LFLAGS")) {fprintf (stdout, "* %s\n", source.toLocal8Bit().data());}
-        fprintf (stdout, "lib-flag-count: %d\n", project.values("QMAKE_LIB_FLAG").count());
-        foreach (QString source, project.values("QMAKE_LIB_FLAG")) {fprintf (stdout, "* %s\n", source.toLocal8Bit().data());}
-        fprintf (stdout, "include-path-count: %d\n", project.values("INCLUDEPATH").count());
-        foreach (QString source, project.values("INCLUDEPATH")) {fprintf (stdout, "* %s\n", source.toLocal8Bit().data());}
-        fprintf (stdout, "all-deps-count: %d\n", project.values("ALL_DEPS").count());
-        foreach (QString source, project.values("ALL_DEPS")) {fprintf (stdout, "* %s\n", source.toLocal8Bit().data());}
-        fprintf (stdout, "dist-files-count: %d\n", project.values("DISTFILES").count());
-        foreach (QString source, project.values("DISTFILES")) {fprintf (stdout, "* %s\n", source.toLocal8Bit().data());}
-
-        fprintf (stdout, "keys: %d\n", project.valueKeys().count());
-        foreach (QString source, project.valueKeys()) {fprintf (stdout, "* %s\n", source.toLocal8Bit().data());}
-
-        fprintf (stdout, "foooobar}}}}}\n");
-        return exit_val;
-        */
         if (Option::qmake_mode == Option::QMAKE_GENERATE_SPECIAL) {
-            fprintf(stdout, "reached main.cpp:runQMake(), checkpoint §§QMAKE_GENERATE_SPECIAL\n");
+            if (Option::mkspecial::do_filelist) {
+                makeFilelist (project);
+            }
         } else {
             bool success = true;
             MetaMakefileGenerator *mkfile = MetaMakefileGenerator::createMetaGenerator(&project, QString(), false, &success);

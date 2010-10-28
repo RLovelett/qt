@@ -33,4 +33,3 @@ VPATH += $$QT_SOURCE_TREE/tools/shared
 INCLUDEPATH += $$QT_SOURCE_TREE/tools/shared
 
 include(qmake.pri)
-
