@@ -57,17 +57,22 @@ namespace {
     ) {
         const char *varname = name.toLocal8Bit().data();
         fprintf (stdout, "%s = ", varname);
-        foreach (QString val, list) {
-            QString name;
+        foreach (QString name, list) {
+
             if (Option::mkspecial::filelist_relate_filenames) {
-                name = QDir::current().relativeFilePath(val);
-                if (name.startsWith("./"))
-                    name = name.remove(0, 2);
-            } else {
-                name = val;
+                name = QDir().absoluteFilePath(name);
+
+                QDir relateTo = Option::mkspecial::filelist_relate_to != "" ?
+                                QDir(Option::mkspecial::filelist_relate_to) :
+                                QDir::current();
+                name = relateTo.relativeFilePath(name);
             }
+
             if (transform)
                 name = transform (name);
+
+            if (name.startsWith("./"))
+                name = name.remove(0, 2);
             fprintf (stdout, " \\\n%s%s", indent, name.toLocal8Bit().data());
         }
         fprintf (stdout, "\n\n");
@@ -117,7 +122,7 @@ void makeFilelist (QMakeProject project) {
 
     dumpFilelist(qrc_files, project.values("RESOURCES"), qrc_pattern_replace);
 
-    fprintf(stdout, "%s += \\\n"
+    fprintf(stdout, "%s = \\\n"
                     "%s$(%s) \\\n"
                     "%s$(%s) \\\n"
                     "%s$(%s)\n\n",
@@ -126,17 +131,13 @@ void makeFilelist (QMakeProject project) {
                     indent, moc_files.toLocal8Bit().data(),
                     indent, qrc_files.toLocal8Bit().data()
     );
-    fprintf(stdout, "%s += \\\n"
+    fprintf(stdout, "%s = \\\n"
                     "%s$(%s) \\\n"
                     "%s$(%s)\n\n",
                     all_sourcefiles.toLocal8Bit().data(),
                     indent, manual_sourcefiles.toLocal8Bit().data(),
                     indent, built_sources.toLocal8Bit().data()
     );
-
-    /*fprintf(stdout, "BUILT_SOURCES += $(foo_BUILT_SOURCES)\n");
-    fprintf(stdout, "CLEANFILES += $(foo_BUILT_SOURCES)\n");
-    fprintf (stdout, "")*/
 
     // TODO: find out what is set by -o
 }

@@ -199,6 +199,7 @@ struct Option
         static QString filelist_moc_pattern;
         static QString filelist_qrc_pattern;
         static QString filelist_prefix;
+        static QString filelist_relate_to;
     };
 
 private:
