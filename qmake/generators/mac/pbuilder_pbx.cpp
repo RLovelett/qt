@@ -113,6 +113,9 @@ ProjectBuilderMakefileGenerator::writeSubDirs(QTextStream &t)
                                     qmake_getpwd());
         QFile mkwrapf(mkwrap);
         if(mkwrapf.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            if (Option::mkfile::listgen) {
+                generatePrint(fileInfo(mkwrapf.fileName()).absoluteFilePath());
+            }
             debug_msg(1, "pbuilder: Creating file: %s", mkwrap.toLatin1().constData());
             QTextStream mkwrapt(&mkwrapf);
             writingUnixMakefileGenerator = true;
@@ -520,6 +523,9 @@ ProjectBuilderMakefileGenerator::writeMakeParts(QTextStream &t)
         QFile mkf(mkfile);
         if(mkf.open(QIODevice::WriteOnly | QIODevice::Text)) {
             writingUnixMakefileGenerator = true;
+            if (Option::mkfile::listgen) {
+                generatePrint(fileInfo(mkf.fileName()).absoluteFilePath());
+            }
             debug_msg(1, "pbuilder: Creating file: %s", mkfile.toLatin1().constData());
             QTextStream mkt(&mkf);
             writeHeader(mkt);
@@ -693,6 +699,9 @@ ProjectBuilderMakefileGenerator::writeMakeParts(QTextStream &t)
         if(mkf.open(QIODevice::WriteOnly | QIODevice::Text)) {
             writingUnixMakefileGenerator = true;
             did_preprocess = true;
+            if (Option::mkfile::listgen) {
+                generatePrint(fileInfo(mkf.fileName()).absoluteFilePath());
+            }
             debug_msg(1, "pbuilder: Creating file: %s", mkfile.toLatin1().constData());
             QTextStream mkt(&mkf);
             writeHeader(mkt);
@@ -940,6 +949,9 @@ ProjectBuilderMakefileGenerator::writeMakeParts(QTextStream &t)
         QFile mkf(mkfile);
         if(mkf.open(QIODevice::WriteOnly | QIODevice::Text)) {
             writingUnixMakefileGenerator = true;
+            if (Option::mkfile::listgen) {
+                generatePrint(fileInfo(mkf.fileName()).absoluteFilePath());
+            }
             debug_msg(1, "pbuilder: Creating file: %s", mkfile.toLatin1().constData());
             QTextStream mkt(&mkf);
             writeHeader(mkt);
@@ -1279,6 +1291,9 @@ ProjectBuilderMakefileGenerator::writeMakeParts(QTextStream &t)
                    project->first("QMAKE_PKGINFO_TYPEINFO").left(4)));
                 QFile plist_out_file("Info.plist");
                 if(plist_out_file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                    if (Option::mkfile::listgen) {
+                        generatePrint(fileInfo(plist_out_file.fileName()).absoluteFilePath());
+                    }
                     QTextStream plist_out(&plist_out_file);
                     plist_out << plist_in_text;
                     t << "\t\t\t\t" << writeSettings("INFOPLIST_FILE", "Info.plist") << ";" << "\n";
@@ -1557,6 +1572,9 @@ ProjectBuilderMakefileGenerator::writeMakeParts(QTextStream &t)
         QFile mkwrapf(mkwrap);
         if(mkwrapf.open(QIODevice::WriteOnly | QIODevice::Text)) {
             writingUnixMakefileGenerator = true;
+            if (Option::mkfile::listgen) {
+                generatePrint(fileInfo(mkwrapf.fileName()).absoluteFilePath());
+            }
             debug_msg(1, "pbuilder: Creating file: %s", mkwrap.toLatin1().constData());
             QTextStream mkwrapt(&mkwrapf);
             writeHeader(mkwrapt);

@@ -1483,6 +1483,12 @@ MakefileGenerator::createObjectList(const QStringList &sources)
     return ret;
 }
 
+void MakefileGenerator::generatePrint(const QString pathName)
+{
+    QTextStream cout(stdout);
+    cout << "Generating " << pathName << "\n";
+}
+
 ReplaceExtraCompilerCacheKey::ReplaceExtraCompilerCacheKey(const QString &v, const QStringList &i, const QStringList &o)
 {
     hash = 0;

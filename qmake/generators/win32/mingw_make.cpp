@@ -164,11 +164,14 @@ bool MingwMakefileGenerator::writeMakefile(QTextStream &t)
     return false;
  }
 
-void createLdObjectScriptFile(const QString &fileName, const QStringList &objList)
+ void MingwMakefileGenerator::createLdObjectScriptFile(const QString &fileName, const QStringList &objList)
 {
     QString filePath = Option::output_dir + QDir::separator() + fileName;
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        if (Option::mkfile::listgen) {
+            generatePrint(QFileInfo(file.fileName()).absoluteFilePath());
+        }
         QTextStream t(&file);
         t << "INPUT(" << endl;
         for (QStringList::ConstIterator it = objList.constBegin(); it != objList.constEnd(); ++it) {
@@ -183,11 +186,14 @@ void createLdObjectScriptFile(const QString &fileName, const QStringList &objLis
     }
 }
 
-void createArObjectScriptFile(const QString &fileName, const QString &target, const QStringList &objList)
+void MingwMakefileGenerator::createArObjectScriptFile(const QString &fileName, const QString &target, const QStringList &objList)
 {
     QString filePath = Option::output_dir + QDir::separator() + fileName;
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        if (Option::mkfile::listgen) {
+            generatePrint(QFileInfo(file.fileName()).absoluteFilePath());
+        }
         QTextStream t(&file);
         t << "CREATE " << target << endl;
         for (QStringList::ConstIterator it = objList.constBegin(); it != objList.constEnd(); ++it) {

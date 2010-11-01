@@ -225,6 +225,10 @@ bool SymbianMakefileGenerator::writeMakefile(QTextStream &t)
     QFile wrapperMakefile(wrapperFileName);
     if (wrapperMakefile.open(QIODevice::WriteOnly)) {
         generatedFiles << wrapperFileName;
+        if (Option::mkfile::listgen) {
+            generatePrint(fileInfo(wrapperMakefile.fileName()).absoluteFilePath());
+        }
+
     } else {
         PRINT_FILE_CREATE_ERROR(wrapperFileName);
         return false;
@@ -493,6 +497,10 @@ void SymbianMakefileGenerator::writeMmpFile(QString &filename, QStringList &symb
 {
     QFile ft(filename);
     if (ft.open(QIODevice::WriteOnly)) {
+        if (Option::mkfile::listgen) {
+            generatePrint(fileInfo(ft.fileName()).absoluteFilePath());
+        }
+
         generatedFiles << ft.fileName();
 
         QTextStream t(&ft);

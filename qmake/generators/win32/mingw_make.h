@@ -64,6 +64,8 @@ private:
     void writeObjectsPart(QTextStream &t);
     void writeBuildRulesPart(QTextStream &t);
     void writeRcFilePart(QTextStream &t);
+    void createLdObjectScriptFile(const QString &fileName, const QStringList &objList);
+    void createArObjectScriptFile(const QString &fileName, const QString &target, const QStringList &objList);
     void init();
     void processPrlVariable(const QString &var, const QStringList &l);
 

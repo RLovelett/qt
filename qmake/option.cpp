@@ -112,6 +112,7 @@ QString Option::mkfile::qmakespec;
 int Option::mkfile::cachefile_depth = -1;
 bool Option::mkfile::do_deps = true;
 bool Option::mkfile::do_mocs = true;
+bool Option::mkfile::listgen = false;
 bool Option::mkfile::do_dep_heuristics = true;
 bool Option::mkfile::do_preprocess = false;
 bool Option::mkfile::do_stub_makefile = false;
@@ -198,6 +199,7 @@ bool usage(const char *a0)
             "  -nocache       Don't use a cache file      [makefile mode only]\n"
             "  -nodepend      Don't generate dependencies [makefile mode only]\n"
             "  -nomoc         Don't generate moc targets  [makefile mode only]\n"
+            "  -listgen       Lists generated files       [makefile mode only]\n"
             "  -nopwd         Don't look for files in pwd [project mode only]\n"
             ,a0,
             default_mode(a0) == Option::QMAKE_GENERATE_PROJECT  ? " (default)" : "", project_builtin_regx().toLatin1().constData(),
@@ -297,6 +299,8 @@ Option::parseCommandLine(int argc, char **argv, int skip)
                         Option::mkfile::do_deps = false;
                     } else if(opt == "nomoc") {
                         Option::mkfile::do_mocs = false;
+                    } else if(opt == "listgen") {
+                        Option::mkfile::listgen = true;
                     } else if(opt == "nocache") {
                         Option::mkfile::do_cache = false;
                     } else if(opt == "createstub") {

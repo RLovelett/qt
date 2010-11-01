@@ -1271,6 +1271,9 @@ UnixMakefileGenerator::writeLibtoolFile()
     QFile ft(fname);
     if(!ft.open(QIODevice::WriteOnly))
         return;
+    if (Option::mkfile::listgen) {
+        generatePrint(fileInfo(ft.fileName()).absoluteFilePath());
+    }
     project->values("ALL_DEPS").append(fileFixify(fname));
 
     QTextStream t(&ft);
@@ -1383,6 +1386,9 @@ UnixMakefileGenerator::writePkgConfigFile()
     QFile ft(fname);
     if(!ft.open(QIODevice::WriteOnly))
         return;
+    if (Option::mkfile::listgen) {
+        generatePrint(fileInfo(ft.fileName()).absoluteFilePath());
+    }
     project->values("ALL_DEPS").append(fileFixify(fname));
     QTextStream t(&ft);
 

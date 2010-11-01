@@ -93,8 +93,12 @@ void SymbianSbsv2MakefileGenerator::exportFlm()
             if (!destInfo.exists() || destInfo.lastModified() != item.lastModified()) {
                 if (destInfo.exists())
                     QFile::remove(destInfo.absoluteFilePath());
-                if (QFile::copy(item.absoluteFilePath(), destInfo.absoluteFilePath()))
+                if (QFile::copy(item.absoluteFilePath(), destInfo.absoluteFilePath())) {
+                    if (Option::mkfile::listgen) {
+                        generatePrint(destInfo.absoluteFilePath());
+                    }
                     generatedFiles << destInfo.absoluteFilePath();
+                }
                 else
                     fprintf(stderr, "Error: Could not copy '%s' -> '%s'\n",
                             qPrintable(item.absoluteFilePath()),

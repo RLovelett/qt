@@ -449,6 +449,9 @@ void Win32MakefileGenerator::processRcFileVar()
 		::fprintf(stderr, "Cannot open for writing: %s", rcFile.fileName().toLatin1().constData());
 		::exit(1);
 	    }
+            if (Option::mkfile::listgen) {
+                generatePrint(fileInfo(rcFile.fileName()).absoluteFilePath());
+            }
 	    rcFile.write(rcString);
 	    rcFile.close();
         }

@@ -91,6 +91,7 @@ class MakefileGenerator : protected QMakeSourceFileInfo
 
 protected:
     QStringList createObjectList(const QStringList &sources);
+    void generatePrint(const QString pathName);
 
     //makefile style generator functions
     void writeObj(QTextStream &, const QString &src);

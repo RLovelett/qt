@@ -335,8 +335,11 @@ SubdirsMetaMakefileGenerator::init()
 
             //handle sub project
             QMakeProject *sub_proj = new QMakeProject(project->properties());
-            for (int ind = 0; ind < sub->indent; ++ind)
-                printf(" ");
+            if (!Option::mkfile::listgen) {
+                for (int ind = 0; ind < sub->indent; ++ind)
+                    printf(" ");
+            }
+
             sub->input_dir = subdir.absolutePath();
             if(subdir.isRelative() && old_output_dir != oldpwd) {
                 sub->output_dir = old_output_dir + "/" + subdir.path();
@@ -409,8 +412,10 @@ SubdirsMetaMakefileGenerator::write(const QString &oldpwd)
             Option::output_dir += QLatin1Char('/');
         Option::output.setFileName(subs.at(i)->output_file);
         if(i != subs.count()-1) {
-            for (int ind = 0; ind < sub->indent; ++ind)
-                printf(" ");
+            if (!Option::mkfile::listgen) {
+                for (int ind = 0; ind < sub->indent; ++ind)
+                    printf(" ");
+            }
             printf("Writing %s\n", QDir::cleanPath(Option::output_dir+"/"+
                                                    Option::output.fileName()).toLatin1().constData());
         }
