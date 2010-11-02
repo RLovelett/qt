@@ -146,9 +146,7 @@ Qt::HANDLE QMeeGoPixmapData::imageToEGLSharedImage(const QImage &image)
     glGenTextures(1, &textureId);
     glBindTexture(GL_TEXTURE_2D, textureId);
     if (image.hasAlphaChannel() && const_cast<QImage &>(image).data_ptr()->checkForAlphaPixels()) {
-        void *converted = convertARGB32_to_RGBA4444(image.bits(), image.width(), image.height(), image.bytesPerLine());
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4, converted);
-        free(converted);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width(), image.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, (const char *) image.bits());
     } else {
         void *converted = convertRGB32_to_RGB565(image.bits(), image.width(), image.height(), image.bytesPerLine());
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width(), image.height(), 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, converted);
