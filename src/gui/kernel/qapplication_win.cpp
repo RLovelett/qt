@@ -1082,7 +1082,7 @@ const QString qt_reg_winclass(QWidget *w)        // register window class
     return cname;
 }
 
-Q_GUI_EXPORT const void qt_setWndClass( const QString& forcedWndClass)
+Q_GUI_EXPORT void qt_setWndClass( const QString& forcedWndClass)
 {
     wndClass = forcedWndClass;
 }
