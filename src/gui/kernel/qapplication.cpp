@@ -195,13 +195,13 @@ QApplicationPrivate::QApplicationPrivate(int &argc, char **argv, QApplication::T
 #ifndef QT_NO_GESTURES
     gestureManager = 0;
     gestureWidget = 0;
-#endif // QT_NO_GESTURES
 
 #if defined(Q_WS_X11) || defined(Q_WS_WIN)
     move_cursor = 0;
     copy_cursor = 0;
     link_cursor = 0;
 #endif
+#endif // QT_NO_GESTURES
 #if defined(Q_WS_WIN)
     ignore_cursor = 0;
 #endif
@@ -1122,9 +1122,11 @@ QApplication::~QApplication()
 #endif
 
 #if defined(Q_WS_X11) || defined(Q_WS_WIN)
+#ifndef QT_NO_GESTURES
     delete d->move_cursor; d->move_cursor = 0;
     delete d->copy_cursor; d->copy_cursor = 0;
     delete d->link_cursor; d->link_cursor = 0;
+#endif
 #endif
 #if defined(Q_WS_WIN)
     delete d->ignore_cursor; d->ignore_cursor = 0;
@@ -6059,6 +6061,7 @@ static const char * const link_xpm[] = {
 QPixmap QApplicationPrivate::getPixmapCursor(Qt::CursorShape cshape)
 {
 #if defined(Q_WS_X11) || defined(Q_WS_WIN)
+#ifndef QT_NO_GESTURES
     if (!move_cursor) {
         move_cursor = new QPixmap((const char **)move_xpm);
         copy_cursor = new QPixmap((const char **)copy_xpm);
@@ -6067,14 +6070,17 @@ QPixmap QApplicationPrivate::getPixmapCursor(Qt::CursorShape cshape)
         ignore_cursor = new QPixmap((const char **)ignore_xpm);
 #endif
     }
+#endif
 
     switch (cshape) {
+#ifndef QT_NO_GESTURES
     case Qt::DragMoveCursor:
         return *move_cursor;
     case Qt::DragCopyCursor:
         return *copy_cursor;
     case Qt::DragLinkCursor:
         return *link_cursor;
+#endif
 #ifdef Q_WS_WIN
     case Qt::ForbiddenCursor:
         return *ignore_cursor;
