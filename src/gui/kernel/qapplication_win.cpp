@@ -414,6 +414,8 @@ static bool        sm_cancel;
 
 static bool replayPopupMouseEvent = false; // replay handling when popups close
 
+static QString wndClass;
+
 // ignore the next release event if return from a modal widget
 Q_GUI_EXPORT bool qt_win_ignoreNextMouseReleaseEvent = false;
 
@@ -1005,15 +1007,21 @@ const QString qt_reg_winclass(QWidget *w)        // register window class
 #endif
 
 #ifdef Q_OS_WINCE
-    // We need to register the classes with the
-    // unique ID on WinCE to make sure we can
-    // move the windows to the front when starting
-    // a second instance.
-    wchar_t uniqueAppID[MAX_PATH];
-    GetModuleFileName(0, uniqueAppID, MAX_PATH);
-    cname = QString::number(RegisterWindowMessage(
-              (const wchar_t *) QString::fromWCharArray(uniqueAppID).toLower().replace(QLatin1Char('\\'),
-              QLatin1Char('_')).utf16()));
+    if (wndClass.isEmpty()){
+        // We need to register the classes with the
+        // unique ID on WinCE to make sure we can
+        // move the windows to the front when starting
+        // a second instance.
+        wchar_t uniqueAppID[MAX_PATH];
+        GetModuleFileName(0, uniqueAppID, MAX_PATH);
+        cname = QString::number(RegisterWindowMessage(
+                 (const wchar_t *) QString::fromWCharArray(uniqueAppID).toLower().replace(QLatin1Char('\\'),
+                 QLatin1Char('_')).utf16()));
+    } else
+       cname = wndClass;
+#else
+    if (!wndClass.isEmpty())
+        cname = wndClass;
 #endif
 
     // since multiple Qt versions can be used in one process
@@ -1021,16 +1029,18 @@ const QString qt_reg_winclass(QWidget *w)        // register window class
     // The first instance gets the unmodified name; if the class
     // has already been registered by another instance of Qt then
     // add an instance-specific ID, the address of the window proc.
-    static int classExists = -1;
+    if (wndClass.isEmpty()) {
+        static int classExists = -1;
 
-    if (classExists == -1) {
-        WNDCLASS wcinfo;
-        classExists = GetClassInfo((HINSTANCE)qWinAppInst(), (wchar_t*)cname.utf16(), &wcinfo);
-        classExists = classExists && wcinfo.lpfnWndProc != QtWndProc;
+        if (classExists == -1) {
+            WNDCLASS wcinfo;
+            classExists = GetClassInfo((HINSTANCE)qWinAppInst(), (wchar_t*)cname.utf16(), &wcinfo);
+            classExists = classExists && wcinfo.lpfnWndProc != QtWndProc;
+        }
+
+       if (classExists)
+            cname += QString::number((quintptr)QtWndProc);
     }
-
-    if (classExists)
-        cname += QString::number((quintptr)QtWndProc);
 
     if (winclassNames()->contains(cname))        // already registered in our list
         return cname;
@@ -1070,6 +1080,11 @@ const QString qt_reg_winclass(QWidget *w)        // register window class
 
     winclassNames()->insert(cname, 1);
     return cname;
+}
+
+Q_GUI_EXPORT const void qt_setWndClass( const QString& forcedWndClass)
+{
+    wndClass = forcedWndClass;
 }
 
 Q_GUI_EXPORT const QString qt_getRegisteredWndClass()
