@@ -43,6 +43,7 @@
 #define QMEEGOLIVEPIXMAP_H
 
 #include <QPixmap>
+#include "qmeegofencesync.h"
 
 class QMeeGoLivePixmapPrivate;
 class QSharedMemory;
@@ -82,8 +83,9 @@ public:
     //! Locks the access to the pixmap. 
     /*! 
      The returned image can be used for direct access.
+     You can optionally specify a fence sync to wait on before unlocking. 
      */
-    QImage* lock();
+    QImage* lock(QMeeGoFenceSync *fenceSync = NULL);
     
     //! Unlocks the access to the pixmap. 
     /*! 
