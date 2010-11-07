@@ -4976,7 +4976,7 @@ QString QString::toLower() const
             c = QChar::surrogateToUcs4(c, *p);
         }
         const QUnicodeTables::Properties *prop = qGetProp(c);
-        if (prop->lowerCaseDiff || prop->lowerCaseSpecial) {
+        if (prop->lowerCaseDiff) {
             if (QChar::requiresSurrogates(c))
                 --p;
             QString s(d->size, Qt::Uninitialized);
@@ -5043,7 +5043,7 @@ QString QString::toCaseFolded() const
             c = QChar::surrogateToUcs4(c, *p);
         }
         const QUnicodeTables::Properties *prop = qGetProp(c);
-        if (prop->caseFoldDiff || prop->caseFoldSpecial) {
+        if (prop->caseFoldDiff) {
             if (QChar::requiresSurrogates(c))
                 --p;
             QString s(d->size, Qt::Uninitialized);
@@ -5106,7 +5106,7 @@ QString QString::toUpper() const
             c = QChar::surrogateToUcs4(c, *p);
         }
         const QUnicodeTables::Properties *prop = qGetProp(c);
-        if (prop->upperCaseDiff || prop->upperCaseSpecial) {
+        if (prop->upperCaseDiff) {
             if (QChar::requiresSurrogates(c))
                 --p;
             QString s(d->size, Qt::Uninitialized);
