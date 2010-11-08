@@ -46,8 +46,27 @@
 
 class QMeeGoFenceSyncPrivate;
 
-//! A synchronization helper for live pixmaps.
+//! A synchronization helper for GL pipeline.
 /*!
+ Fence syncs provide a mechanism for synchronizing access to certain GL primitives
+ and make it possible for the application developer to be sure that a certain point
+ in the GL processing pipeline has been already executed before continuing operation.
+
+ Currently fence syncs are only useful in conjunction with QMeeGoLivePixmaps. 
+ \code
+ ...
+ // In your paint/expose event:
+ QImage *image = livePixmap->lock(&someGlobalFenceSync);
+ // Modify the image...
+ livePixmap->release(image);
+
+ painter->drawPixmap(0, 0, *livePixmap);
+ someGlobalFenceSync.setSyncPoint();
+ ...
+ \endcode
+
+ Assuming the paint/expose events come repeatedly, the lock operation
+ will block till the previous event completed painting the livePixmap.
 */
 
 class Q_DECL_EXPORT QMeeGoFenceSync : public QObject
@@ -55,7 +74,7 @@ class Q_DECL_EXPORT QMeeGoFenceSync : public QObject
 public:
     //! Constructs a new fence sync.
     /*!
-     The fence sync is created uninitialized. You need to set it. 
+     The fence sync is created without a sync point. You need to set the sync point manually.
     */
     QMeeGoFenceSync(QWidget *parent = 0);
 
@@ -64,7 +83,9 @@ public:
 
     //! Sets the fence sync. 
     /*!
-      The fence sync should be set after all drawing has been scheduled.
+      The fence sync synchronization point should be set after all drawing has been scheduled.
+      Setting a synchronization point always overrides the previous point -- whetver is was
+      used (waited upon) or not.
     */
     void setSyncPoint();
 

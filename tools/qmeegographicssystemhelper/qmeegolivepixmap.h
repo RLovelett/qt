@@ -83,7 +83,10 @@ public:
     //! Locks the access to the pixmap. 
     /*! 
      The returned image can be used for direct access.
-     You can optionally specify a fence sync to wait on before unlocking. 
+     You can optionally specify a fence sync to wait upon before unlocking. When
+     you specify a fence sync, you can be sure that this function will return only
+     when the previsouly set QMeeGoFenceSync synchronization point has been executed/passed
+     by the GL processing pipeline.
      */
     QImage* lock(QMeeGoFenceSync *fenceSync = NULL);
     
