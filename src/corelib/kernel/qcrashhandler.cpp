@@ -91,6 +91,7 @@ static void print_backtrace(FILE *outb)
         for(int i = stack_size-1; i>=0; --i)
             fprintf(outb, "#%d  %p [%s]\n", i, stack[i], stack_symbols[i]);
     }
+    free(stack_symbols);
 }
 static void init_backtrace(char **, int)
 {
