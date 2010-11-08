@@ -69,7 +69,7 @@ QMeeGoFenceSync::~QMeeGoFenceSync()
 {
 }
 
-void QMeeGoFenceSync::set()
+void QMeeGoFenceSync::setSyncPoint()
 {
     Q_D(QMeeGoFenceSync);
     if (d->syncObject)

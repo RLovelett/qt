@@ -64,9 +64,9 @@ public:
 
     //! Sets the fence sync. 
     /*!
-      The fence sync should be set after all drawing was scheduled.
+      The fence sync should be set after all drawing has been scheduled.
     */
-    void set();
+    void setSyncPoint();
 
 private:
     Q_DISABLE_COPY(QMeeGoFenceSync)
