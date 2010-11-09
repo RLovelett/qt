@@ -653,8 +653,10 @@ void QX11PixmapData::fromImage(const QImage &img,
         Q_CHECK_PTR(xi);
         newbits = (uchar *)malloc(xi->bytes_per_line*h);
         Q_CHECK_PTR(newbits);
-        if (!newbits)                                // no memory
+        if (!newbits) {                               // no memory
+            qSafeXDestroyImage(xi);      
             return;
+        }
         int bppc = xi->bits_per_pixel;
 
         bool contig_bits = n_bits(red_mask) == rbits &&
@@ -1099,8 +1101,11 @@ void QX11PixmapData::fromImage(const QImage &img,
             int            p2inc = xi->bytes_per_line/sizeof(ushort);
             ushort *newerbits = (ushort *)malloc(xi->bytes_per_line * h);
             Q_CHECK_PTR(newerbits);
-            if (!newerbits)                                // no memory
+            if (!newerbits) {                              // no memory
+                free(newbits);
+                qSafeXDestroyImage(xi);                
                 return;
+            }
             uchar* p = newbits;
             for (int y = 0; y < h; y++) {                // OOPS: Do right byte order!!
                 p2 = newerbits + p2inc*y;
@@ -1988,7 +1993,9 @@ QPixmap QX11PixmapData::transformed(const QTransform &transform,
 
     if (!qt_xForm_helper(mat, xi->xoffset, type, bpp, dptr, xbpl, p_inc, h, sptr, sbpl, ws, hs)){
         qWarning("QPixmap::transform: display not supported (bpp=%d)",bpp);
+        qSafeXDestroyImage(xi);        
         QPixmap pm;
+        free(dptr);
         return pm;
     }
 
