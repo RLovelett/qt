@@ -1435,7 +1435,9 @@ void QObject::moveToThread(QThread *targetThread)
                  "Check that all plugins are compiled against the right Qt binaries. Export "
                  "DYLD_PRINT_LIBRARIES=1 and check that only one set of binaries are being loaded.");
 #endif
-
+        
+        // free memory
+        if (!targetThread) delete targetData;
         return;
     }
 
