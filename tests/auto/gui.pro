@@ -87,6 +87,7 @@ SUBDIRS=\
     qhelpprojectdata \
     qicoimageformat \
     qicon \
+    qidentityproxymodel \
     qimageiohandler \
     qimagereader \
     qimagewriter \
