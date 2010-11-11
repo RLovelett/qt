@@ -1304,6 +1304,7 @@ void MainWindow::addToPhraseBook()
     if (phraseBookList.isEmpty()) {
         QMessageBox::warning(this, tr("Add to phrase book"),
               tr("No appropriate phrasebook found."));
+        delete phrase;
     } else if (phraseBookList.size() == 1) {
         if (QMessageBox::information(this, tr("Add to phrase book"),
               tr("Adding entry to phrasebook %1").arg(phraseBookList.at(0)),
@@ -1317,6 +1318,8 @@ void MainWindow::addToPhraseBook()
                                 phraseBookList, 0, false, &okPressed);
         if (okPressed)
             phraseBookHash.value(selection)->append(phrase);
+        else 
+            delete phrase;
     }
 }
 
