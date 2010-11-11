@@ -315,6 +315,7 @@ DomProperty *QDesignerResourceBuilder::saveResource(const QDir &workingDirectory
                         case QIcon::Disabled: ri->setElementDisabledOff(rp); break;
                         case QIcon::Active:   ri->setElementActiveOff(rp);   break;
                         case QIcon::Selected: ri->setElementSelectedOff(rp); break;
+                        default: delete rp;
                     }
                 } else {
                     switch (mode) {
@@ -322,6 +323,7 @@ DomProperty *QDesignerResourceBuilder::saveResource(const QDir &workingDirectory
                         case QIcon::Disabled: ri->setElementDisabledOn(rp); break;
                         case QIcon::Active:   ri->setElementActiveOn(rp);   break;
                         case QIcon::Selected: ri->setElementSelectedOn(rp); break;
+                        default: delete rp;
                     }
                 }
             }
