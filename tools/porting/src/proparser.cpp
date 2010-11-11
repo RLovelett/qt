@@ -58,6 +58,12 @@
 #define QT_POPEN popen
 #endif
 
+#ifdef Q_OS_WIN32
+#define QT_PCLOSE _pclose
+#else
+#define QT_PCLOSE pclose
+#endif
+
 QT_BEGIN_NAMESPACE
 
 QString loadFile( const QString &fileName )
@@ -185,6 +191,7 @@ QMap<QString, QString> proFileTagMap( const QString& text, QString currentPath )
                 }
                 (*it).replace( i, callToSystem.matchedLength(), after );
                 i += after.length();
+                QT_PCLOSE(proc);
             }
         }
     return tagMap;
