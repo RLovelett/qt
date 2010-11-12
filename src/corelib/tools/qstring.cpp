@@ -5024,31 +5024,56 @@ QString QString::toLower() const
 */
 QString QString::toCaseFolded() const
 {
-    if (!d->size)
+    if (!d->data || !d->size)
         return *this;
 
     const ushort *p = d->data;
-    if (!p)
-        return *this;
-
     const ushort *e = d->data + d->size;
 
-    uint last = 0;
-    while (p < e) {
-        ushort folded = foldCase(*p, last);
-        if (folded != *p) {
-            QString s(*this);
-            s.detach();
+    // this avoids one out of bounds check in the loop
+    while (e != p && QChar(e[-1]).isHighSurrogate())
+        --e;
+
+    while (p != e) {
+        uint c = *p;
+        if (QChar::isHighSurrogate(c)) {
+            ++p;
+            if (!QChar::isLowSurrogate(*p))
+                continue;
+            c = QChar::surrogateToUcs4(c, *p);
+        }
+        const QUnicodeTables::Properties *prop = qGetProp(c);
+        if (prop->caseFoldDiff || prop->caseFoldSpecial) {
+            if (QChar::requiresSurrogates(c))
+                --p;
+            QString s(d->size, Qt::Uninitialized);
+            memcpy(s.d->data, d->data, (p - d->data)*sizeof(ushort));
             ushort *pp = s.d->data + (p - d->data);
-            const ushort *ppe = s.d->data + s.d->size;
-            last = pp > s.d->data ? *(pp - 1) : 0;
-            while (pp < ppe) {
-                *pp = foldCase(*pp, last);
-                ++pp;
+            while (p < e) {
+                c = *p;
+                if (QChar::isHighSurrogate(c)) {
+                    // high part never changes for C and S case foldings
+                    *pp++ = *p++;
+                    if (!QChar::isLowSurrogate(*p))
+                        continue;
+                    c = QChar::surrogateToUcs4(c, *p);
+                }
+                prop = qGetProp(c);
+                if (prop->caseFoldSpecial) {
+                    //### we currently don't support full case foldings
+                } else {
+                    *pp++ = *p + prop->caseFoldDiff;
+                }
+                ++p;
             }
+
+            // this restores extra high surrogate parts eaten above
+            while (e != d->data + d->size)
+                *pp++ = *e++;
+
             return s;
         }
-        p++;
+        ++p;
     }
     return *this;
 }
