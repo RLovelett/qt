@@ -753,7 +753,7 @@ int QChar::digitValue(uint ucs4)
 */
 QChar::Category QChar::category() const
 {
-    return (QChar::Category) qGetProp(ucs)->category;
+    return QChar::Category(qGetProp(ucs)->category);
 }
 
 /*!
@@ -765,7 +765,7 @@ QChar::Category QChar::category(uint ucs4)
 {
     if (ucs4 > UNICODE_LAST_CODEPOINT)
         return QChar::NoCategory;
-    return (QChar::Category) qGetProp(ucs4)->category;
+    return QChar::Category(qGetProp(ucs4)->category);
 }
 
 /*!
@@ -774,7 +774,7 @@ QChar::Category QChar::category(uint ucs4)
 */
 QChar::Category QChar::category(ushort ucs2)
 {
-    return (QChar::Category) qGetProp(ucs2)->category;
+    return QChar::Category(qGetProp(ucs2)->category);
 }
 
 
@@ -783,7 +783,7 @@ QChar::Category QChar::category(ushort ucs2)
 */
 QChar::Direction QChar::direction() const
 {
-    return (QChar::Direction) qGetProp(ucs)->direction;
+    return QChar::Direction(qGetProp(ucs)->direction);
 }
 
 /*!
@@ -794,7 +794,7 @@ QChar::Direction QChar::direction(uint ucs4)
 {
     if (ucs4 > UNICODE_LAST_CODEPOINT)
         return QChar::DirL;
-    return (QChar::Direction) qGetProp(ucs4)->direction;
+    return QChar::Direction(qGetProp(ucs4)->direction);
 }
 
 /*!
@@ -803,7 +803,7 @@ QChar::Direction QChar::direction(uint ucs4)
 */
 QChar::Direction QChar::direction(ushort ucs2)
 {
-    return (QChar::Direction) qGetProp(ucs2)->direction;
+    return QChar::Direction(qGetProp(ucs2)->direction);
 }
 
 /*!
@@ -812,7 +812,7 @@ QChar::Direction QChar::direction(ushort ucs2)
 */
 QChar::Joining QChar::joining() const
 {
-    return (QChar::Joining) qGetProp(ucs)->joining;
+    return QChar::Joining(qGetProp(ucs)->joining);
 }
 
 /*!
@@ -825,7 +825,7 @@ QChar::Joining QChar::joining(uint ucs4)
 {
     if (ucs4 > UNICODE_LAST_CODEPOINT)
         return QChar::OtherJoining;
-    return (QChar::Joining) qGetProp(ucs4)->joining;
+    return QChar::Joining(qGetProp(ucs4)->joining);
 }
 
 /*!
@@ -836,7 +836,7 @@ QChar::Joining QChar::joining(uint ucs4)
 */
 QChar::Joining QChar::joining(ushort ucs2)
 {
-    return (QChar::Joining) qGetProp(ucs2)->joining;
+    return QChar::Joining(qGetProp(ucs2)->joining);
 }
 
 
@@ -1001,7 +1001,7 @@ QChar::Decomposition QChar::decompositionTag(uint ucs4)
     const unsigned short index = GET_DECOMPOSITION_INDEX(ucs4);
     if (index == 0xffff)
         return QChar::NoDecomposition;
-    return (QChar::Decomposition)(uc_decomposition_map[index] & 0xff);
+    return QChar::Decomposition(uc_decomposition_map[index] & 0xff);
 }
 
 /*!
@@ -1044,7 +1044,7 @@ unsigned char QChar::combiningClass(ushort ucs2)
 */
 QChar::UnicodeVersion QChar::unicodeVersion() const
 {
-    return (QChar::UnicodeVersion) qGetProp(ucs)->unicodeVersion;
+    return QChar::UnicodeVersion(qGetProp(ucs)->unicodeVersion);
 }
 
 /*!
@@ -1056,7 +1056,7 @@ QChar::UnicodeVersion QChar::unicodeVersion(uint ucs4)
 {
     if (ucs4 > UNICODE_LAST_CODEPOINT)
         return QChar::Unicode_Unassigned;
-    return (QChar::UnicodeVersion) qGetProp(ucs4)->unicodeVersion;
+    return QChar::UnicodeVersion(qGetProp(ucs4)->unicodeVersion);
 }
 
 /*!
@@ -1066,7 +1066,7 @@ QChar::UnicodeVersion QChar::unicodeVersion(uint ucs4)
 */
 QChar::UnicodeVersion QChar::unicodeVersion(ushort ucs2)
 {
-    return (QChar::UnicodeVersion) qGetProp(ucs2)->unicodeVersion;
+    return QChar::UnicodeVersion(qGetProp(ucs2)->unicodeVersion);
 }
 
 
