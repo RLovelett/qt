@@ -854,7 +854,7 @@ void Heap::markConservatively(MarkStack& markStack, void* start, void* end)
 
 void NEVER_INLINE Heap::markCurrentThreadConservativelyInternal(MarkStack& markStack)
 {
-    void* dummy;
+    void* dummy = 0;
     void* stackPointer = &dummy;
     void* stackBase = currentThreadStackBase();
     markConservatively(markStack, stackPointer, stackBase);
