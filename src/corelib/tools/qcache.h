@@ -183,6 +183,11 @@ bool QCache<Key,T>::insert(const Key &akey, T *aobject, int acost)
     remove(akey);
     if (acost > mx) {
         delete aobject;
+
+        // this will most probably cause problems since return value
+        // is not usually checked and aobject pointer is used anyway
+        // after calling this function
+        aobject = 0;
         return false;
     }
     trim(mx - acost);
