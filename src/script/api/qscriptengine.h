@@ -113,9 +113,9 @@ class Q_SCRIPT_EXPORT QScriptEngine
 #endif
 public:
     enum ValueOwnership {
-        QtOwnership,
-        ScriptOwnership,
-        AutoOwnership
+        QtOwnership = Qt::ValueOwnershipQt,
+        ScriptOwnership = Qt::ValueOwnershipScript,
+        AutoOwnership = Qt::ValueOwnershipAuto
     };
 
     enum QObjectWrapOption {

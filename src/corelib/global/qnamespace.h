@@ -266,6 +266,12 @@ public:
         ElideNone
     };
 
+    enum ValueOwnership {
+        ValueOwnershipQt,
+        ValueOwnershipScript,
+        ValueOwnershipAuto
+    };
+
     enum WindowType {
         Widget = 0x00000000,
         Window = 0x00000001,
