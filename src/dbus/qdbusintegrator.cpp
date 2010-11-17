@@ -1783,6 +1783,7 @@ void QDBusConnectionPrivate::processFinishedCall(QDBusPendingCallPrivate *call)
     if (call->autoDelete) {
         Q_ASSERT(!call->waitingForFinished); // can't wait on a call with autoDelete!
         delete call;
+        call = 0;
     }
 }
 
