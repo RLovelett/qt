@@ -2506,7 +2506,7 @@ void QWindowsVistaStylePrivate::timerEvent()
             animations[i]->widget()->update();
 
         if (!animations[i]->widget() ||
-            !animations[i]->widget()->isEnabled() ||
+            !(animations[i]->widget()->isEnabled() || qobject_cast<const QProgressBar *>(animations[i]->widget())) ||
             !animations[i]->widget()->isVisible() ||
             animations[i]->widget()->window()->isMinimized() ||
             !animations[i]->running() ||
