@@ -108,6 +108,11 @@ SOURCES += \
 	dialogs/qwizard.cpp \
         dialogs/qprintpreviewdialog.cpp
 
+symbian:contains(QT_CONFIG, s60) {
+    LIBS += -lavkon
+    SOURCES += dialogs/qcolordialog_symbian.cpp
+}
+
 FORMS += dialogs/qpagesetupwidget.ui
 RESOURCES += dialogs/qprintdialog.qrc
 RESOURCES += dialogs/qmessagebox.qrc
