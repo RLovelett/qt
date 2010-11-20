@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.0" language="pt_BR">
+    <extra-po-header-po_revision_date>2010-11-20 15:37-0300</extra-po-header-po_revision_date>
+    <extra-po-headers>MIME-Version,Content-Type,Content-Transfer-Encoding,X-Qt-Contexts,Last-Translator,PO-Revision-Date,Project-Id-Version,Language-Team,X-Generator,Plural-Forms,POT-Creation-Date,X-Poedit-Language,X-Poedit-Country</extra-po-headers>
+    <extra-po-header-x_generator>Lokalize 1.1</extra-po-header-x_generator>
+    <extra-po-header-language_team>Brazilian Portuguese &lt;kde-i18n-doc@kde.org&gt;</extra-po-header-language_team>
+    <extra-po-header-project_id_version></extra-po-header-project_id_version>
+    <extra-po-header-pot_creation_date></extra-po-header-pot_creation_date>
+    <extra-po-header-x_poedit_language>Portuguese</extra-po-header-x_poedit_language>
+    <extra-po-header_comment># Fernando Boaglio &lt;boaglio@kde.org&gt;, 2010.</extra-po-header_comment>
+    <extra-po-header-last_translator>Fernando boaglio &lt;boaglio@kde.org&gt;</extra-po-header-last_translator>
+    <extra-po-header-x_poedit_country>BRAZIL</extra-po-header-x_poedit_country>
 <context>
     <name>AbstractFindWidget</name>
     <message>
@@ -488,6 +498,7 @@
         <source>Changed &apos;%1&apos; of %n objects</source>
         <translation type="unfinished">
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -497,6 +508,7 @@
     <message numerus="yes">
         <source>Reset &apos;%1&apos; of %n objects</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -508,6 +520,7 @@
         <source>Add dynamic property &apos;%1&apos; to %n objects</source>
         <translation type="unfinished">
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -517,6 +530,7 @@
     <message numerus="yes">
         <source>Remove dynamic property &apos;%1&apos; from %n objects</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -1844,6 +1858,7 @@ Container pages should only be added by specifying them in XML returned by the d
     <message numerus="yes">
         <source>There are %n forms with unsaved changes. Do you want to review these changes before quitting?</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -3414,11 +3429,13 @@ Do you want overwrite the template?</source>
         <source>Remove %n buddies</source>
         <translation type="unfinished">
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Add %n buddies</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -3699,6 +3716,7 @@ Do you want overwrite the template?</source>
         <source>Customized (%n roles)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>
@@ -3946,11 +3964,13 @@ Do you want overwrite the template?</source>
         <source>Paste %n action(s)</source>
         <translation type="unfinished">
             <numerusform></numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Paste %n widget(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -5126,6 +5146,7 @@ Class: %2</source>
     <message numerus="yes">
         <source>Set size constraint on %n widget(s)</source>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
