@@ -78,6 +78,8 @@ private slots:
     void itemData();
     void itemFlags();
     void match();
+    void match2_data();
+    void match2();
     void dropMimeData_data();
     void dropMimeData();
     void changePersistentIndex();
@@ -373,40 +375,129 @@ void tst_QAbstractItemModel::match()
     QModelIndex idx = model.index(1, 0, QModelIndex());
     bool areEqual = (idx == res.first());
     QVERIFY(areEqual);
+}
 
+Q_DECLARE_METATYPE(Qt::ItemDataRole)
+Q_DECLARE_METATYPE(Qt::MatchFlags)
+
+void tst_QAbstractItemModel::match2_data()
+{
+    QTest::addColumn<int>("startRow");
+    QTest::addColumn<Qt::ItemDataRole>("role");
+    QTest::addColumn<QVariant>("search");
+    QTest::addColumn<int>("hits");
+    QTest::addColumn<Qt::MatchFlags>("flags");
+    QTest::addColumn<QVariantList>("values");
+
+    QVariantList values = QVariantList() << QVariant("dog");
+    QTest::newRow("exact dog") << 0 << Qt::DisplayRole << QVariant("dog")
+        << -1 << Qt::MatchFlags(Qt::MatchExactly) << values;
+
+    values = QVariantList() << QVariant("bat") << QVariant("cat") << QVariant("boar");
+    QTest::newRow("contains a") << 0 << Qt::DisplayRole << QVariant("a")
+        << -1 << Qt::MatchFlags(Qt::MatchContains) << values;
+
+    values = QVariantList() << QVariant("boar") << QVariant("cat") << QVariant("bat");
+    QTest::newRow("backward contains a") << 3 << Qt::DisplayRole << QVariant("a")
+        << -1 << Qt::MatchFlags(Qt::MatchContains | Qt::MatchBackward) << values;
+
+    values = QVariantList() << QVariant("bat") << QVariant("cat");
+    QTest::newRow("contains a - 2 hits") << 0 << Qt::DisplayRole << QVariant("a")
+        << 2 << Qt::MatchFlags(Qt::MatchContains) << values;
+
+    values = QVariantList() << QVariant("bat") << QVariant("boar");
+    QTest::newRow("wrap backward contains a - 2 hits") << 0 << Qt::DisplayRole << QVariant("a")
+        << 2 << Qt::MatchFlags(Qt::MatchContains | Qt::MatchBackward | Qt::MatchWrap) << values;
+
+    values = QVariantList() << QVariant("bat");
+    QTest::newRow("contains a - 1 hit") << 0 << Qt::DisplayRole << QVariant("a")
+        << 1 << Qt::MatchFlags(Qt::MatchContains) << values;
+
+    values.clear();
+    QTest::newRow("contains a - 0 hits") << 0 << Qt::DisplayRole << QVariant("a")
+        << 0 << Qt::MatchFlags(Qt::MatchContains) << values;
+
+    values = QVariantList() << QVariant("bat") << QVariant("boar");
+    QTest::newRow("starts with b") << 0 << Qt::DisplayRole << QVariant("b")
+        << -1 << Qt::MatchFlags(Qt::MatchStartsWith) << values;
+
+    values = QVariantList() << QVariant("bat") << QVariant("cat");
+    QTest::newRow("ends with t") << 0 << Qt::DisplayRole << QVariant("t")
+        << -1 << Qt::MatchFlags(Qt::MatchEndsWith) << values;
+
+    values = QVariantList() << QVariant("bat") << QVariant("cat") << QVariant("boar");
+    QTest::newRow("wildcard *a*") << 0 << Qt::DisplayRole << QVariant("*a*")
+        << -1 << Qt::MatchFlags(Qt::MatchWildcard) << values;
+
+    values = QVariantList() << QVariant("boar") << QVariant("cat") << QVariant("bat");
+    QTest::newRow("backward wildcard *a*") << 3 << Qt::DisplayRole << QVariant("*a*")
+        << -1 << Qt::MatchFlags(Qt::MatchWildcard | Qt::MatchBackward) << values;
+
+    values = QVariantList() << QVariant("dog") << QVariant("boar");
+    QTest::newRow("regexp .*O.*") << 0 << Qt::DisplayRole << QVariant(".*O.*")
+        << -1 << Qt::MatchFlags(Qt::MatchRegExp) << values;
+
+    values.clear();
+    QTest::newRow("case regexp .*O.*") << 0 << Qt::DisplayRole << QVariant(".*O.*")
+        << -1 << Qt::MatchFlags(Qt::MatchRegExp | Qt::MatchCaseSensitive) << values;
+
+    values = QVariantList() << QVariant("boar");
+    QTest::newRow("fixed BOAR") << 0 << Qt::DisplayRole << QVariant("BOAR")
+        << -1 << Qt::MatchFlags(Qt::MatchFixedString) << values;
+
+    values = QVariantList() << QVariant("bat");
+    QTest::newRow("fixed bat") << 0 << Qt::DisplayRole << QVariant("bat")
+        << -1 << Qt::MatchFlags(Qt::MatchFixedString | Qt::MatchCaseSensitive) << values;
+
+    values.clear();
+    QTest::newRow("backward boar 0") << 0 << Qt::DisplayRole << QVariant("boar")
+        << -1 << Qt::MatchFlags(Qt::MatchExactly | Qt::MatchBackward) << values;
+
+    values = QVariantList() << QVariant("boar");
+    QTest::newRow("backward boar 3") << 3 << Qt::DisplayRole << QVariant("boar")
+        << -1 << Qt::MatchFlags(Qt::MatchExactly | Qt::MatchBackward) << values;
+
+    values = QVariantList() << QVariant("boar");
+    QTest::newRow("backward wrap boar") << 0 << Qt::DisplayRole << QVariant("boar")
+        << -1 << Qt::MatchFlags(Qt::MatchExactly | Qt::MatchBackward | Qt::MatchWrap) << values;
+
+    values = QVariantList() << QVariant("cat");
+    QTest::newRow("backward cat") << 3 << Qt::DisplayRole << QVariant("cat")
+        << -1 << Qt::MatchFlags(Qt::MatchExactly | Qt::MatchBackward) << values;
+
+    values.clear();
+    QTest::newRow("backward dog") << 1 << Qt::DisplayRole << QVariant("dog")
+        << -1 << Qt::MatchFlags(Qt::MatchExactly | Qt::MatchBackward) << values;
+
+    values.clear();
+    QTest::newRow("forward invalid dog") << -1 << Qt::DisplayRole << QVariant("dog")
+        << -1 << Qt::MatchFlags(Qt::MatchExactly) << values;
+
+    values.clear();
+    QTest::newRow("backward invalid cat") << -1 << Qt::DisplayRole << QVariant("cat")
+        << -1 << Qt::MatchFlags(Qt::MatchExactly | Qt::MatchBackward) << values;
+}
+
+void tst_QAbstractItemModel::match2()
+{
+    QFETCH(int, startRow);
+    QFETCH(Qt::ItemDataRole, role);
+    QFETCH(QVariant, search);
+    QFETCH(int, hits);
+    QFETCH(Qt::MatchFlags, flags);
+    QFETCH(QVariantList, values);
+
+    QtTestModel model(4, 1);
     model.setData(model.index(0, 0, QModelIndex()), "bat", Qt::DisplayRole);
     model.setData(model.index(1, 0, QModelIndex()), "cat", Qt::DisplayRole);
     model.setData(model.index(2, 0, QModelIndex()), "dog", Qt::DisplayRole);
     model.setData(model.index(3, 0, QModelIndex()), "boar", Qt::DisplayRole);
 
-    res = model.match(start, Qt::DisplayRole, QVariant("dog"), -1, Qt::MatchExactly);
-    QCOMPARE(res.count(), 1);
-    res = model.match(start, Qt::DisplayRole, QVariant("a"), -1, Qt::MatchContains);
-    QCOMPARE(res.count(), 3);
-    res = model.match(start, Qt::DisplayRole, QVariant("b"), -1, Qt::MatchStartsWith);
-    QCOMPARE(res.count(), 2);
-    res = model.match(start, Qt::DisplayRole, QVariant("t"), -1, Qt::MatchEndsWith);
-    QCOMPARE(res.count(), 2);
-    res = model.match(start, Qt::DisplayRole, QVariant("*a*"), -1, Qt::MatchWildcard);
-    QCOMPARE(res.count(), 3);
-    res = model.match(start, Qt::DisplayRole, QVariant(".*O.*"), -1, Qt::MatchRegExp);
-    QCOMPARE(res.count(), 2);
-    res = model.match(start, Qt::DisplayRole, QVariant(".*O.*"), -1, Qt::MatchRegExp | Qt::MatchCaseSensitive);
-    QCOMPARE(res.count(), 0);
-    res = model.match(start, Qt::DisplayRole, QVariant("BOAR"), -1, Qt::MatchFixedString);
-    QCOMPARE(res.count(), 1);
-    res = model.match(start, Qt::DisplayRole, QVariant("bat"), -1,
-                      Qt::MatchFixedString | Qt::MatchCaseSensitive);
-    QCOMPARE(res.count(), 1);
-    res = model.match(start, Qt::DisplayRole, QVariant("boar"), -1,
-                      Qt::MatchExactly | Qt::MatchBackwards | Qt::MatchWrap);
-    QCOMPARE(res.count(), 1);
-    res = model.match(res.first(), Qt::DisplayRole, QVariant("cat"), -1,
-                      Qt::MatchExactly | Qt::MatchBackwards);
-    QCOMPARE(res.count(), 1);
-    res = model.match(res.first(), Qt::DisplayRole, QVariant("dog"), -1,
-                      Qt::MatchExactly | Qt::MatchBackwards);
-    QCOMPARE(res.count(), 0);
+    QModelIndex start = model.index(startRow, 0, QModelIndex());
+    QModelIndexList res = model.match(start, role, search, hits, flags);
+    QCOMPARE(res.count(), values.count());
+    for (int i = 0; i < values.count(); ++i)
+        QCOMPARE(res.at(i).data(role), values.at(i));
 }
 
 typedef QPair<int, int> Position;
