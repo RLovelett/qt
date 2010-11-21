@@ -970,16 +970,20 @@ qreal QFont::pointSizeF() const
 /*!
     Sets the font size to \a pixelSize pixels.
 
+    \a minimum is the smallest font size you wish to permit, for example if
+    \a pixelSize is not validated by the caller, and will default to 1. Values
+    of \a minimum less than zero will be treated as zero.
+
     Using this function makes the font device dependent. Use
     setPointSize() or setPointSizeF() to set the size of the font
     in a device independent manner.
 
     \sa pixelSize()
 */
-void QFont::setPixelSize(int pixelSize)
+void QFont::setPixelSize(int pixelSize, int minimum)
 {
-    if (pixelSize <= 0) {
-        qWarning("QFont::setPixelSize: Pixel size <= 0 (%d)", pixelSize);
+    if (pixelSize < qMax(0, minimum)) {
+        qWarning("QFont::setPixelSize: Pixel size < %i (%d)", qMax(0, minimum), pixelSize);
         return;
     }
 

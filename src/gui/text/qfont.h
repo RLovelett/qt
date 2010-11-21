@@ -166,7 +166,7 @@ public:
     void setPointSizeF(qreal);
 
     int pixelSize() const;
-    void setPixelSize(int);
+    void setPixelSize(int, int minimum = 1);
 
     int weight() const;
     void setWeight(int);

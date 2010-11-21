@@ -329,6 +329,23 @@ void tst_QFont::compare()
 {
     QFont font;
     {
+    font.setPixelSize( 0, 0 );
+    QVERIFY(font.pixelSize() == 0);
+    }
+    {
+    font.setPixelSize( -1 );
+    QVERIFY(font.pixelSize() == 0);
+    }
+    {
+    font.setPixelSize( -1, -1 );
+    QVERIFY(font.pixelSize() == 0);
+    }
+    {
+    font.setPixelSize( 1, -1 );
+    QVERIFY(font.pixelSize() == 1);
+    }
+
+    {
 	QFont font2 = font;
 	font2.setPointSize( 24 );
 	QVERIFY( font != font2 );
