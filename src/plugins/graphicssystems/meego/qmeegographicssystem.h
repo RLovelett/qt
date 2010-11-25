@@ -61,6 +61,7 @@ public:
     static void setSurfaceFixedSize(int width, int height);
     static void setSurfaceScaling(int x, int y, int width, int height);
     static void setTranslucent(bool translucent);
+    static void setBlocksClear(bool blocks);
 
     static QPixmapData *pixmapDataFromEGLSharedImage(Qt::HANDLE handle, const QImage &softImage);
     static QPixmapData *pixmapDataFromEGLImage(Qt::HANDLE handle);
@@ -95,7 +96,8 @@ extern "C" {
     Q_DECL_EXPORT bool qt_meego_destroy_egl_shared_image(Qt::HANDLE handle);
     Q_DECL_EXPORT void qt_meego_set_surface_fixed_size(int width, int height);
     Q_DECL_EXPORT void qt_meego_set_surface_scaling(int x, int y, int width, int height);
-    Q_DECL_EXPORT void qt_meego_set_translucent(bool translucent);    
+    Q_DECL_EXPORT void qt_meego_set_translucent(bool translucent);
+    Q_DECL_EXPORT void qt_meego_set_blocks_clear(bool block);
     Q_DECL_EXPORT QPixmapData* qt_meego_pixmapdata_with_new_live_texture(int w, int h, QImage::Format format);
     Q_DECL_EXPORT QPixmapData* qt_meego_pixmapdata_from_live_texture_handle(Qt::HANDLE handle);
     Q_DECL_EXPORT QImage* qt_meego_live_texture_lock(QPixmap *pixmap, void *fenceSync);

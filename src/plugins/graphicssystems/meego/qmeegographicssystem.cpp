@@ -148,6 +148,12 @@ void QMeeGoGraphicsSystem::setTranslucent(bool translucent)
     QGLWindowSurface::surfaceFormat.setAlpha(translucent);
 }
 
+void QMeeGoGraphicsSystem::setBlocksClear(bool blocks)
+{
+    QGLContext *context = (QGLContext *) QGLContext::currentContext();
+    context->d_func()->workaround_blocksClear = blocks;
+}
+
 QPixmapData *QMeeGoGraphicsSystem::pixmapDataFromEGLSharedImage(Qt::HANDLE handle, const QImage &softImage)
 {
     if (softImage.format() != QImage::Format_ARGB32_Premultiplied &&
@@ -285,6 +291,11 @@ void qt_meego_set_surface_scaling(int x, int y, int width, int height)
 void qt_meego_set_translucent(bool translucent)
 {
     QMeeGoGraphicsSystem::setTranslucent(translucent);
+}
+
+void qt_meego_set_blocks_clear(bool blocks)
+{
+    QMeeGoGraphicsSystem::setBlocksClear(blocks);
 }
 
 void qt_meego_update_egl_shared_image_pixmap(QPixmap *pixmap)
