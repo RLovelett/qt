@@ -430,6 +430,7 @@ private:
     friend class QGLExtensions;
     friend class QGLTexture;
     friend QGLFormat::OpenGLVersionFlags QGLFormat::openGLVersionFlags();
+    friend class QMeeGoGraphicsSystem;
 #ifdef Q_WS_MAC
 public:
     void updatePaintDevice();

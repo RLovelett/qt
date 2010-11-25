@@ -439,6 +439,9 @@ void QGLWindowSurface::beginPaint(const QRegion &)
     if (!context())
         return;
 
+    if (context()->d_func()->workaround_blocksClear)
+        return;
+
     int clearFlags = 0;
 
     if (context()->d_func()->workaround_needsFullClearOnEveryFrame)

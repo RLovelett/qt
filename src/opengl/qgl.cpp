@@ -1705,6 +1705,7 @@ void QGLContextPrivate::init(QPaintDevice *dev, const QGLFormat &format)
     default_fbo = 0;
     active_engine = 0;
     workaround_needsFullClearOnEveryFrame = false;
+    workaround_blocksClear = false;
     workaround_brokenFBOReadBack = false;
     workaroundsCached = false;
 
