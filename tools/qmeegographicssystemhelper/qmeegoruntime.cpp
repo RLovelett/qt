@@ -58,6 +58,7 @@ typedef void (*QMeeGoUpdateEglSharedImagePixmapFunc) (QPixmap*);
 typedef void (*QMeeGoSetSurfaceFixedSizeFunc) (int w, int h);
 typedef void (*QMeeGoSetSurfaceScalingFunc) (int x, int y, int w, int h);
 typedef void (*QMeeGoSetTranslucentFunc) (bool translucent);
+typedef void (*QMeeGoSetBlocksClearFunc) (bool blocks);
 typedef QPixmapData* (*QMeeGoPixmapDataWithNewLiveTextureFunc) (int w, int h, QImage::Format format);
 typedef QPixmapData* (*QMeeGoPixmapDataFromLiveTextureHandleFunc) (Qt::HANDLE h);
 typedef QImage* (*QMeeGoLiveTextureLockFunc) (QPixmap*, void* fenceSync);
@@ -74,6 +75,7 @@ static QMeeGoUpdateEglSharedImagePixmapFunc qt_meego_update_egl_shared_image_pix
 static QMeeGoSetSurfaceFixedSizeFunc qt_meego_set_surface_fixed_size = NULL;
 static QMeeGoSetSurfaceScalingFunc qt_meego_set_surface_scaling = NULL;
 static QMeeGoSetTranslucentFunc qt_meego_set_translucent = NULL;
+static QMeeGoSetBlocksClearFunc qt_meego_set_blocks_clear = NULL;
 static QMeeGoPixmapDataWithNewLiveTextureFunc qt_meego_pixmapdata_with_new_live_texture = NULL;
 static QMeeGoPixmapDataFromLiveTextureHandleFunc qt_meego_pixmapdata_from_live_texture_handle = NULL;
 static QMeeGoLiveTextureLockFunc qt_meego_live_texture_lock = NULL;
@@ -102,6 +104,7 @@ void QMeeGoRuntime::initialize()
         qt_meego_set_surface_fixed_size = (QMeeGoSetSurfaceFixedSizeFunc) library.resolve("qt_meego_set_surface_fixed_size");
         qt_meego_set_surface_scaling = (QMeeGoSetSurfaceScalingFunc) library.resolve("qt_meego_set_surface_scaling");
         qt_meego_set_translucent = (QMeeGoSetTranslucentFunc) library.resolve("qt_meego_set_translucent");
+        qt_meego_set_blocks_clear = (QMeeGoSetBlocksClearFunc) library.resolve("qt_meego_set_blocks_clear");
         qt_meego_pixmapdata_with_new_live_texture = (QMeeGoPixmapDataWithNewLiveTextureFunc) library.resolve("qt_meego_pixmapdata_with_new_live_texture");
         qt_meego_pixmapdata_from_live_texture_handle = (QMeeGoPixmapDataFromLiveTextureHandleFunc) library.resolve("qt_meego_pixmapdata_from_live_texture_handle");
         qt_meego_live_texture_lock = (QMeeGoLiveTextureLockFunc) library.resolve("qt_meego_live_texture_lock");
@@ -115,7 +118,7 @@ void QMeeGoRuntime::initialize()
             qt_meego_set_surface_fixed_size && qt_meego_set_surface_scaling && qt_meego_set_translucent && 
             qt_meego_pixmapdata_with_new_live_texture && qt_meego_pixmapdata_from_live_texture_handle &&
             qt_meego_live_texture_lock && qt_meego_live_texture_release && qt_meego_live_texture_get_handle &&
-            qt_meego_create_fence_sync && qt_meego_destroy_fence_sync)
+            qt_meego_create_fence_sync && qt_meego_destroy_fence_sync && qt_meego_set_blocks_clear)
         {
             qDebug("Successfully resolved MeeGo graphics system: %s %s\n", qPrintable(libraryPrivate->fileName), qPrintable(libraryPrivate->fullVersion));
         } else {
@@ -182,6 +185,13 @@ void QMeeGoRuntime::setTranslucent(bool translucent)
     ENSURE_INITIALIZED;
     Q_ASSERT(qt_meego_set_translucent);
     qt_meego_set_translucent(translucent);
+}
+
+void QMeeGoRuntime::setBlocksClear(bool blocks)
+{
+    ENSURE_INITIALIZED;
+    Q_ASSERT(qt_meego_set_blocks_clear);
+    qt_meego_set_blocks_clear(blocks);
 }
 
 QPixmapData* QMeeGoRuntime::pixmapDataWithNewLiveTexture(int w, int h, QImage::Format format)

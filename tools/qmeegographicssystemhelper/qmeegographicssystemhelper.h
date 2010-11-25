@@ -183,6 +183,12 @@ public:
      with QGLFormat.alpha == true.
     */
     static void setTranslucent(bool translucent);
+
+    //! Blocks buffer clearing on the underlying window surface.
+    /*!
+     The window surface will not clear (call glClear on painting start).
+    */
+    static void setBlocksClear(bool blocks);
 };
 
 #endif

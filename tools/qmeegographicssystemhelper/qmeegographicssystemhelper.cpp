@@ -153,3 +153,9 @@ void QMeeGoGraphicsSystemHelper::setTranslucent(bool translucent)
     ENSURE_RUNNING_MEEGO;
     QMeeGoRuntime::setTranslucent(translucent);
 }
+
+void QMeeGoGraphicsSystemHelper::setBlocksClear(bool blocks)
+{
+    ENSURE_RUNNING_MEEGO;
+    QMeeGoRuntime::setBlocksClear(blocks);
+}

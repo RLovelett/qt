@@ -55,6 +55,7 @@ public:
     static void setSurfaceFixedSize(int w, int h);
     static void setSurfaceScaling(int x, int y, int w, int h);
     static void setTranslucent(bool translucent);
+    static void setBlocksClear(bool blocks);
     static QPixmapData* pixmapDataWithNewLiveTexture(int w, int h, QImage::Format format);
     static QPixmapData* pixmapDataFromLiveTextureHandle(Qt::HANDLE h);
     static QImage* lockLiveTexture(QPixmap *pixmap, void *fenceSync);
