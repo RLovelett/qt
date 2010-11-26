@@ -82,6 +82,11 @@
 #   include <private/qt_cocoa_helpers_mac_p.h>
 #endif
 
+#ifdef Q_WS_S60
+#include <aknutils.h>
+#include "qt_s60_p.h"
+#endif
+
 
 QT_BEGIN_NAMESPACE
 
@@ -190,6 +195,24 @@ QRect QMenuPrivate::popupGeometry(const QWidget *widget) const
         return QApplication::desktop()->screenGeometry(widget);
     else
         return QApplication::desktop()->availableGeometry(widget);
+#elif defined Q_WS_S60
+//find out if any parent window has Qt::WindowFullScreen setting
+    Q_Q(const QMenu);
+    bool isFullscreen = false;
+    QWidget *parent = q->parentWidget();
+    while (parent != 0) {
+        if (parent->windowState() & Qt::WindowFullScreen) {
+            isFullscreen = true;
+            break;
+        }
+        parent = parent->parentWidget();
+    }
+    TRect rect;
+    AknLayoutUtils::LayoutMetricsRect(AknLayoutUtils::EControlPane, rect);
+    QRect ret = QApplication::desktop()->screenGeometry(widget);
+    if (!isFullscreen)
+        ret.setHeight(ret.height() - qt_TRect2QRect(rect).height());
+    return ret;
 #else
         return QApplication::desktop()->availableGeometry(widget);
 #endif
@@ -205,6 +228,24 @@ QRect QMenuPrivate::popupGeometry(int screen) const
         return QApplication::desktop()->screenGeometry(screen);
     else
         return QApplication::desktop()->availableGeometry(screen);
+#elif defined Q_WS_S60
+//find out if any parent window has Qt::WindowFullScreen setting
+    Q_Q(const QMenu);
+    bool isFullscreen = false;
+    QWidget *parent = q->parentWidget();
+    while (parent != 0) {
+        if (parent->windowState() & Qt::WindowFullScreen) {
+            isFullscreen = true;
+            break;
+        }
+        parent = parent->parentWidget();
+    }
+    TRect rect;
+    AknLayoutUtils::LayoutMetricsRect(AknLayoutUtils::EControlPane, rect);
+    QRect ret = QApplication::desktop()->screenGeometry(screen);
+    if (!isFullscreen)
+        ret.setHeight(ret.height() - qt_TRect2QRect(rect).height());
+    return ret;
 #else
         return QApplication::desktop()->availableGeometry(screen);
 #endif
@@ -1320,6 +1361,9 @@ void QMenu::initStyleOption(QStyleOptionMenuItem *option, const QAction *action)
     Conversely, actions can be added to widgets with the addAction(),
     addActions() and insertAction() functions.
 
+    \warning Instead of using show() to make it visible on the screen,
+    use exec() or popup().
+
     \section1 QMenu on Qt for Windows CE
 
     If a menu is integrated into the native menubar on Windows Mobile we
@@ -2380,6 +2424,41 @@ QMenu::event(QEvent *e)
             setMask(menuMask.region);
         }
         d->itemsDirty = 1;
+#ifdef Q_WS_S60
+//sofar it has been reported only as an s60 issue QTBUG-14123, but
+//theoretically it can happen on desktop too.
+        QRect geom(geometry());
+        QRect aviableGeom(d->popupGeometry(this));
+        bool changed = false;
+//if resolution changes, should fit to the screen
+        if (geom.height() > aviableGeom.height()) {
+            geom.setHeight(aviableGeom.height());
+            changed = true;
+        }
+        if (geom.width() > aviableGeom.width()) {
+            geom.setWidth(aviableGeom.width());
+            changed = true;
+        }
+//move it
+        if (geom.top() < aviableGeom.top()) {
+            geom.moveTop(aviableGeom.top());
+            changed = true;
+        }
+        if (geom.left() < aviableGeom.left()) {
+            geom.moveLeft(aviableGeom.left());
+            changed = true;
+        }
+        if (geom.bottom() > aviableGeom.bottom()) {
+            geom.moveBottom(aviableGeom.bottom());
+            changed = true;
+        }
+        if (geom.right() > aviableGeom.right()) {
+            geom.moveRight(aviableGeom.right());
+            changed = true;
+        }
+        if (changed)
+            setGeometry(geom);
+#endif
         d->updateActionRects();
         break; }
     case QEvent::Show:
