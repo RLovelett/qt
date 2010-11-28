@@ -63,6 +63,7 @@
 #include <qdesktopwidget.h>
 #include <stdlib.h>
 #include <qabstracteventdispatcher.h>
+#include <CoreServices/CoreServices.h>
 #import <AppKit/NSSavePanel.h>
 #include "ui_qfiledialog.h"
 
@@ -300,6 +301,16 @@ QT_USE_NAMESPACE
             if ([[NSWorkspace sharedWorkspace] isFilePackageAtPath:filename] == NO)
                 return YES;
         }
+    }
+
+    // Always accept aliases. (Cocoa does not provide a direct method for detecting whether
+    // a file is an alias.)
+    FSRef fileRef;
+    Boolean aliasFileFlag;
+    Boolean folderFlag;
+    if (FSPathMakeRef(reinterpret_cast<const UInt8 *>([filename UTF8String]), &fileRef, NULL) == noErr) {
+        if (FSIsAliasFile(&fileRef, &aliasFileFlag, &folderFlag) == noErr && aliasFileFlag == true)
+            return YES;
     }
 
     QString qtFileName = QT_PREPEND_NAMESPACE(qt_mac_NSStringToQString)(filename);
