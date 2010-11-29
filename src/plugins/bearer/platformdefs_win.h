@@ -43,7 +43,10 @@
 #define QPLATFORMDEFS_WIN_H
 
 #include <winsock2.h>
+#ifndef Q_OS_WINCE_420
+#define HAS_MSWSOCK
 #include <mswsock.h>
+#endif
 #undef interface
 #include <winioctl.h>
 
