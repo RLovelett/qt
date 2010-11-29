@@ -26,7 +26,7 @@
     <message>
         <location line="+4"/>
         <source>(The reason for this might be that the documentation is still being indexed.)</source>
-        <translation>(문서가 현재 인덱싱 중이므로 결과가 없을 수도 있습니다.)</translation>
+        <translation>(문서를 현재 인덱싱 중이므로 결과가 없을 수도 있습니다.)</translation>
     </message>
 </context>
 <context>
@@ -306,7 +306,7 @@
     <message>
         <location line="+3"/>
         <source>Missing virtual folder in QtHelpProject</source>
-        <translation>QtHelpProject에 가상 폴더가 억습니다</translation>
+        <translation>QtHelpProject에 가상 폴더가 없습니다</translation>
     </message>
     <message>
         <location line="+89"/>
