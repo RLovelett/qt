@@ -735,7 +735,9 @@ QString decodeMSG(const MSG& msg)
 #ifdef WS_EX_LEFT
                                            FLGSTR(WS_EX_LEFT),
 #endif
+#ifdef WS_EX_LEFTSCROLLBAR
                                            FLGSTR(WS_EX_LEFTSCROLLBAR),
+#endif
 #ifdef WS_EX_LTRREADING
                                            FLGSTR(WS_EX_LTRREADING),
 #endif
