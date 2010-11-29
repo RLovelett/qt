@@ -735,8 +735,13 @@ PtrUpdateLayeredWindow ptrUpdateLayeredWindow = 0;
 PtrUpdateLayeredWindowIndirect ptrUpdateLayeredWindowIndirect = 0;
 static BOOL WINAPI qt_updateLayeredWindowIndirect(HWND hwnd, const Q_UPDATELAYEREDWINDOWINFO *info)
 {
+#ifdef HAS_BLENDFUNCTION
     return (*ptrUpdateLayeredWindow)(hwnd, info->hdcDst, info->pptDst, info->psize, info->hdcSrc,
                                      info->pptSrc, info->crKey, info->pblend, info->dwFlags);
+#else
+    return (*ptrUpdateLayeredWindow)(hwnd, info->hdcDst, info->pptDst, info->psize, info->hdcSrc,
+                                     info->pptSrc, info->crKey, info->dwFlags);
+#endif
 }
 
 void qt_init(QApplicationPrivate *priv, int)

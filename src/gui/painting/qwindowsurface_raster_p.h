@@ -64,6 +64,10 @@ QT_BEGIN_NAMESPACE
 #define Q_ULW_ALPHA               0x00000002 // copied from ULW_ALPHA in winuser.h
 #define Q_AC_SRC_ALPHA            0x00000001 // copied from AC_SRC_ALPHA in winuser.h
 
+#ifndef Q_WS_WINCE_420
+#define HAS_BLENDFUNCTION
+#endif
+
 struct Q_UPDATELAYEREDWINDOWINFO {
     DWORD cbSize;
     HDC hdcDst;
@@ -72,14 +76,22 @@ struct Q_UPDATELAYEREDWINDOWINFO {
     HDC hdcSrc;
     const POINT *pptSrc;
     COLORREF crKey;
+#if defined(HAS_BLENDFUNCTION)
     const BLENDFUNCTION *pblend;
+#endif
     DWORD dwFlags;
     const RECT *prcDirty;
 };
 
+#if defined(HAS_BLENDFUNCTION)
 typedef BOOL (WINAPI *PtrUpdateLayeredWindow)(HWND hwnd, HDC hdcDst, const POINT *pptDst,
              const SIZE *psize, HDC hdcSrc, const POINT *pptSrc, COLORREF crKey,
              const BLENDFUNCTION *pblend, DWORD dwflags);
+#else
+typedef BOOL (WINAPI *PtrUpdateLayeredWindow)(HWND hwnd, HDC hdcDst, const POINT *pptDst,
+             const SIZE *psize, HDC hdcSrc, const POINT *pptSrc, COLORREF crKey,
+             DWORD dwflags);
+#endif
 typedef BOOL (WINAPI *PtrUpdateLayeredWindowIndirect)(HWND hwnd, const Q_UPDATELAYEREDWINDOWINFO *pULWInfo);
 extern PtrUpdateLayeredWindow ptrUpdateLayeredWindow;
 extern PtrUpdateLayeredWindowIndirect ptrUpdateLayeredWindowIndirect;
