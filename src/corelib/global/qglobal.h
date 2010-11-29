@@ -1148,6 +1148,15 @@ typedef unsigned long Q_ULONG;      /* word up to 64 bit unsigned */
 #  define QMIN(a, b) qMin((a), (b))
 #endif
 
+#ifdef Q_OS_WINCE_420
+/*
+ * WinCE 4.20 does not expose this prototype.
+ * Only needed by webkit/JavascriptCore
+ * Ideally this shoudl be fixed there by 3rd party
+ */
+__int64 __cdecl _abs64(__int64);
+#endif
+
 /*
    Data stream functions are provided by many classes (defined in qdatastream.h)
 */
