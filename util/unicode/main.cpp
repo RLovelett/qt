@@ -85,6 +85,37 @@ static void initAgeMap()
 }
 
 
+enum EastAsianWidth {
+    Width_Neutral, Width_Ambiguous, Width_HalfWidth,
+    Width_Wide, Width_FullWidth, Width_Narrow
+
+    , Width_Unassigned
+};
+
+static QHash<QByteArray, EastAsianWidth> width_map;
+
+static void initEastAsianWidthMap()
+{
+    struct EastAsianWidthList {
+        EastAsianWidth width;
+        const char *name;
+    } widths[] = {
+        { Width_Neutral,   "N" },
+        { Width_Ambiguous, "A" },
+        { Width_HalfWidth, "H" },
+        { Width_Wide,      "W" },
+        { Width_FullWidth, "F" },
+        { Width_Narrow,    "Na" },
+        { Width_Unassigned, 0 }
+    };
+    EastAsianWidthList *d = widths;
+    while (d->name) {
+        width_map.insert(d->name, d->width);
+        ++d;
+    }
+}
+
+
 static const char *grapheme_break_string =
     "    enum GraphemeBreak {\n"
     "        GraphemeBreakOther,\n"
@@ -356,7 +387,8 @@ static const char *property_string =
     "        signed short caseFoldDiff  : 16;\n"
     "        ushort graphemeBreak    : 8; /* 4 needed */\n"
     "        ushort wordBreak        : 8; /* 4 needed */\n"
-    "        ushort sentenceBreak    : 8; /* 4 needed */\n"
+    "        ushort sentenceBreak    : 4;\n"
+    "        ushort eastAsianWidth   : 4; /* 3 needed */\n"
     "    };\n"
     "    Q_CORE_EXPORT const Properties * QT_FASTCALL properties(uint ucs4);\n"
     "    Q_CORE_EXPORT const Properties * QT_FASTCALL properties(ushort ucs2);\n";
@@ -377,6 +409,7 @@ struct PropertyFlags {
                 && category == o.category
                 && direction == o.direction
                 && joining == o.joining
+                && eastAsianWidth == o.eastAsianWidth
                 && age == o.age
                 && digitValue == o.digitValue
                 && line_break_class == o.line_break_class
@@ -400,6 +433,8 @@ struct PropertyFlags {
     QChar::Direction direction : 5;
     // from ArabicShaping.txt
     QChar::Joining joining : 2;
+    // from EastAsianWidth.txt
+    EastAsianWidth eastAsianWidth;
     // from DerivedAge.txt
     QChar::UnicodeVersion age : 4;
     int digitValue;
@@ -472,6 +507,22 @@ struct UnicodeData {
             || (codepoint >= 0xfdf0 && codepoint <= 0xfdff)
             || (codepoint >= 0xfe70 && codepoint <= 0xfefe))
             p.direction = QChar::DirAL;
+
+        p.eastAsianWidth = Width_Narrow;
+        // EastAsianWidth.txt
+        // Wide for:  U+3400..U+4DBF, U+4E00..U+9FFF, U+F900..U+FAFF, U+20000..U+2A6DF, U+2A700..U+2B73F
+        //            U+2B740..U+2B81F, U+2F800..U+2FA1F, U+20000..U+2FFFD, U+30000..U+3FFFD
+        if ((codepoint >= 0x3400 && codepoint <= 0x4dbf)
+            || (codepoint >= 0x4e00 && codepoint <= 0x9fff)
+            || (codepoint >= 0xf900 && codepoint <= 0xfaff)
+            || (codepoint >= 0x20000 && codepoint <= 0x2a6df)
+            || (codepoint >= 0x2a700 && codepoint <= 0x2b73f)
+            || (codepoint >= 0x2b740 && codepoint <= 0x2b81f)
+            || (codepoint >= 0x2f800 && codepoint <= 0x2fa1f)
+            || (codepoint >= 0x20000 && codepoint <= 0x2fffd)
+            || (codepoint >= 0x30000 && codepoint <= 0x3fffd)) {
+            p.eastAsianWidth = Width_Wide;
+        }
 
         mirroredChar = 0;
         decompositionType = QChar::NoDecomposition;
@@ -895,6 +946,56 @@ static void readArabicShaping()
         UnicodeData d = unicodeData.value(codepoint, UnicodeData(codepoint));
         d.p.joining = j;
         unicodeData.insert(codepoint, d);
+    }
+}
+
+static void readEastAsianWidth()
+{
+    QFile f("data/EastAsianWidth.txt");
+    if (!f.exists())
+        qFatal("Couldn't find EastAsianWidth.txt");
+
+    f.open(QFile::ReadOnly);
+
+    while (!f.atEnd()) {
+        QByteArray line;
+        line.resize(1024);
+        int len = f.readLine(line.data(), 1024);
+        line.resize(len-1);
+
+        int comment = line.indexOf('#');
+        if (comment >= 0)
+            line = line.left(comment);
+        line.replace(" ", "");
+
+        if (line.isEmpty())
+            continue;
+
+        QList<QByteArray> l = line.split(';');
+        Q_ASSERT(l.size() == 2);
+
+        QByteArray codes = l[0];
+        codes.replace("..", ".");
+        QList<QByteArray> cl = codes.split('.');
+
+        bool ok;
+        int from = cl[0].toInt(&ok, 16);
+        Q_ASSERT(ok);
+        int to = from;
+        if (cl.size() == 2) {
+            to = cl[1].toInt(&ok, 16);
+            Q_ASSERT(ok);
+        }
+
+        EastAsianWidth eastAsianWidth = width_map.value(l[1].trimmed(), Width_Unassigned);
+        if (eastAsianWidth == Width_Unassigned)
+            qFatal("unassigned or unhandled eastAsianWidth value: %s", l[1].constData());
+
+        for (int codepoint = from; codepoint <= to; ++codepoint) {
+            UnicodeData d = unicodeData.value(codepoint, UnicodeData(codepoint));
+            d.p.eastAsianWidth = eastAsianWidth;
+            unicodeData.insert(codepoint, d);
+        }
     }
 }
 
@@ -2166,6 +2267,9 @@ static QByteArray createPropertyInfo()
         out += QByteArray::number( p.wordBreak );
         out += ", ";
         out += QByteArray::number( p.sentenceBreak );
+        out += ", ";
+//     "        ushort eastAsianWidth   : 4; /* 3 needed */\n"
+        out += QByteArray::number( p.eastAsianWidth );
         out += " },\n";
     }
     out += "};\n\n";
@@ -2566,8 +2670,9 @@ int main(int, char **)
 {
     initAgeMap();
     initCategoryMap();
-    initDirectionMap();
     initDecompositionMap();
+    initDirectionMap();
+    initEastAsianWidthMap();
     initGraphemeBreak();
     initWordBreak();
     initSentenceBreak();
@@ -2576,6 +2681,7 @@ int main(int, char **)
     readUnicodeData();
     readBidiMirroring();
     readArabicShaping();
+    readEastAsianWidth();
     readDerivedAge();
     readDerivedNormalizationProps();
     readSpecialCasing();
