@@ -1069,11 +1069,21 @@ void QTextEngine::shapeTextWithCE(int item) const
         ushort *uc = upperCased;
         if (len > 256)
             uc = new ushort[len];
+        // ### use QString::toLower()/QString::toUpper()
         for (int i = 0; i < len; ++i) {
-            if(si.analysis.flags == QScriptAnalysis::Lowercase)
-                uc[i] = str[i].toLower().unicode();
-            else
-                uc[i] = str[i].toUpper().unicode();
+            uint ucs4 = str[i].unicode();
+            if (str[i].isHighSurrogate() && i + 1 < len && str[i + 1].isLowSurrogate()) {
+                ++i;
+                ucs4 = QChar::surrogateToUcs4(ucs4, str[i].unicode());
+            }
+            ucs4 = (si.analysis.flags == QScriptAnalysis::Lowercase ? QChar::toLower(ucs4)
+                                                                    : QChar::toUpper(ucs4));
+            if (QChar::requiresSurrogates(ucs4)) {
+                uc[i-1] = QChar::highSurrogate(ucs4);
+                uc[i] = QChar::lowSurrogate(ucs4);
+            } else {
+                uc[i] = ucs4;
+            }
         }
         str = reinterpret_cast<const QChar *>(uc);
     }
@@ -1150,11 +1160,24 @@ void QTextEngine::shapeTextWithHarfbuzz(int item) const
         HB_UChar16 *uc = upperCased;
         if (entire_shaper_item.item.length > 256)
             uc = new HB_UChar16[entire_shaper_item.item.length];
+        // ### use QString::toLower()/QString::toUpper()
         for (uint i = 0; i < entire_shaper_item.item.length; ++i) {
-            if(si.analysis.flags == QScriptAnalysis::Lowercase)
-                uc[i] = QChar::toLower(entire_shaper_item.string[si.position + i]);
-            else
-                uc[i] = QChar::toUpper(entire_shaper_item.string[si.position + i]);
+            uint ucs4 = entire_shaper_item.string[si.position + i];
+            if (QChar::isHighSurrogate(ucs4) && si.position + i + 1 < entire_shaper_item.item.length) {
+                ushort low = entire_shaper_item.string[si.position + i + 1];
+                if (QChar::isLowSurrogate(low)) {
+                    ++i;
+                    ucs4 = QChar::surrogateToUcs4(ucs4, low);
+                }
+            }
+            ucs4 = (si.analysis.flags == QScriptAnalysis::Lowercase ? QChar::toLower(ucs4)
+                                                                    : QChar::toUpper(ucs4));
+            if (QChar::requiresSurrogates(ucs4)) {
+                uc[i-1] = QChar::highSurrogate(ucs4);
+                uc[i] = QChar::lowSurrogate(ucs4);
+            } else {
+                uc[i] = ucs4;
+            }
         }
         entire_shaper_item.item.pos = 0;
         entire_shaper_item.string = uc;
