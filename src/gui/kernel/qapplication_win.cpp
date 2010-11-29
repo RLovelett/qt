@@ -636,7 +636,9 @@ static void qt_win_read_cleartype_settings()
 {
     UINT result = 0;
 #ifdef Q_OS_WINCE
+#ifdef SPI_GETFONTSMOOTHING
     if (SystemParametersInfo(SPI_GETFONTSMOOTHING, 0, &result, 0))
+#endif
         qt_cleartype_enabled = result;
 #else
     if (SystemParametersInfo(SPI_GETFONTSMOOTHINGTYPE, 0, &result, 0))
