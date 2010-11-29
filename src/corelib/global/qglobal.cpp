@@ -92,7 +92,6 @@ _LIT(qt_symbianSystemInstallDir, "z:\\system\\install\\");
 
 QT_BEGIN_NAMESPACE
 
-
 /*!
     \class QFlag
     \brief The QFlag class is a helper data type for QFlags.
@@ -2307,7 +2306,8 @@ static void qEmergencyOut(QtMsgType msgType, const char *msg, va_list ap)
 */
 static void qt_message(QtMsgType msgType, const char *msg, va_list ap)
 {
-#if !defined(QT_NO_EXCEPTIONS)
+    /* WinCE 4.20 does not have std::uncaught_exception */
+#if !defined(QT_NO_EXCEPTIONS) && !defined(Q_OS_WINCE_420)
     if (std::uncaught_exception()) {
         qEmergencyOut(msgType, msg, ap);
         return;

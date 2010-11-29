@@ -46,7 +46,7 @@
 
 QT_BEGIN_NAMESPACE
 
-/*! 
+/*!
     \class QtConcurrent::Exception
     \brief The Exception class provides a base class for exceptions that can transferred across threads.
     \since 4.4
@@ -204,8 +204,9 @@ ExceptionHolder ExceptionStore::exception()
 void ExceptionStore::throwPossibleException()
 {
     /* On win32-g++, with GCC 3.4.2 std::uncaught_exception() isn't reliable. */
+    /* On WinCE4.20, std::uncaught_exception doesnt exist */
     if (hasException()
-#ifndef Q_CC_MINGW
+#if !defined(Q_CC_MINGW) && !defined(Q_OS_WINCE_420)
         && std::uncaught_exception() == false
 #endif
             ) {
