@@ -178,6 +178,7 @@ QFixed QFontEngineWin::lineThickness() const
     return QFontEngine::lineThickness();
 }
 
+#ifndef Q_WS_WINCE_420
 static OUTLINETEXTMETRIC *getOutlineTextMetric(HDC hdc)
 {
     int size;
@@ -186,6 +187,7 @@ static OUTLINETEXTMETRIC *getOutlineTextMetric(HDC hdc)
     GetOutlineTextMetrics(hdc, size, otm);
     return otm;
 }
+#endif
 
 void QFontEngineWin::getCMap()
 {
@@ -207,6 +209,7 @@ void QFontEngineWin::getCMap()
     designToDevice = 1;
     _faceId.index = 0;
     if(cmap) {
+#ifndef Q_WS_WINCE_420
         OUTLINETEXTMETRIC *otm = getOutlineTextMetric(hdc);
         designToDevice = QFixed((int)otm->otmEMSquare)/int(otm->otmTextMetrics.tmHeight);
         unitsPerEm = otm->otmEMSquare;
@@ -216,6 +219,9 @@ void QFontEngineWin::getCMap()
         lineWidth = otm->otmsUnderscoreSize;
         fsType = otm->otmfsType;
         free(otm);
+#else
+        unitsPerEm = tm.tmHeight;
+#endif
     } else {
         unitsPerEm = tm.tmHeight;
     }
@@ -664,12 +670,14 @@ void QFontEngineWin::getGlyphBearings(glyph_t glyph, qreal *leftBearing, qreal *
 #endif
 
     {
+#ifndef Q_WS_WINCE_420
         ABC abcWidths;
-        GetCharABCWidthsI(hdc, glyph, 1, 0, &abcWidths);
+        GetCharABCWidths(hdc, glyph, 1, 0, &abcWidths);
         if (leftBearing)
             *leftBearing = abcWidths.abcA;
         if (rightBearing)
             *rightBearing = abcWidths.abcC;
+#endif
     }
 
 #ifndef Q_WS_WINCE
@@ -1001,6 +1009,7 @@ int QFontEngineWin::synthesized() const
     if(synthesized_flags == -1) {
         synthesized_flags = 0;
         if(ttf) {
+#ifndef Q_WS_WINCE_420
             const DWORD HEAD = MAKE_TAG('h', 'e', 'a', 'd');
             HDC hdc = shared_dc();
             SelectObject(hdc, hfont);
@@ -1015,6 +1024,7 @@ int QFontEngineWin::synthesized() const
                 synthesized_flags |= SynthesizedBold;
             //qDebug() << "font is" << _name <<
             //    "it=" << (macStyle & 2) << fontDef.style << "flags=" << synthesized_flags;
+#endif
         }
     }
     return synthesized_flags;
@@ -1027,13 +1037,14 @@ QFixed QFontEngineWin::emSquareSize() const
 
 QFontEngine::Properties QFontEngineWin::properties() const
 {
+    Properties p;
+#ifndef Q_WS_WINCE_420
     LOGFONT lf = logfont;
     lf.lfHeight = unitsPerEm;
     HFONT hf = CreateFontIndirect(&lf);
     HDC hdc = shared_dc();
     HGDIOBJ oldfont = SelectObject(hdc, hf);
     OUTLINETEXTMETRIC *otm = getOutlineTextMetric(hdc);
-    Properties p;
     p.emSquare = unitsPerEm;
     p.italicAngle = otm->otmItalicAngle;
     p.postscriptName = QString::fromWCharArray((wchar_t *)((char *)otm + (quintptr)otm->otmpFamilyName)).toLatin1();
@@ -1049,6 +1060,9 @@ QFontEngine::Properties QFontEngineWin::properties() const
     p.lineWidth = otm->otmsUnderscoreSize;
     free(otm);
     DeleteObject(SelectObject(hdc, oldfont));
+#else
+    p.emSquare = unitsPerEm;
+#endif
     return p;
 }
 
@@ -1072,6 +1086,7 @@ void QFontEngineWin::getUnscaledGlyph(glyph_t glyph, QPainterPath *path, glyph_m
 
 bool QFontEngineWin::getSfntTableData(uint tag, uchar *buffer, uint *length) const
 {
+#ifndef Q_WS_WINCE_420
     if (!ttf)
         return false;
     HDC hdc = shared_dc();
@@ -1079,6 +1094,9 @@ bool QFontEngineWin::getSfntTableData(uint tag, uchar *buffer, uint *length) con
     DWORD t = qbswap<quint32>(tag);
     *length = GetFontData(hdc, t, 0, buffer, *length);
     return *length != GDI_ERROR;
+#else
+    return false;
+#endif
 }
 
 #if !defined(CLEARTYPE_QUALITY)

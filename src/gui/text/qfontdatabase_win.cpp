@@ -209,6 +209,7 @@ static QString getEnglishName(const QString &familyName)
 
     HGDIOBJ oldobj = SelectObject( hdc, hfont );
 
+#ifndef Q_WS_WINCE_420
     const DWORD name_tag = MAKE_TAG( 'n', 'a', 'm', 'e' );
 
     // get the name table
@@ -227,8 +228,13 @@ static QString getEnglishName(const QString &familyName)
         goto error;
 
     i18n_name = getEnglishName(table, bytes);
+#else
+    i18n_name = QString::fromWCharArray(lf.lfFaceName);
+#endif
 error:
+#ifndef Q_WS_WINCE_420
     delete [] table;
+#endif
     SelectObject( hdc, oldobj );
     DeleteObject( hfont );
     ReleaseDC( 0, hdc );
@@ -383,6 +389,7 @@ void addFontToDatabase(QString familyName, const QString &scriptName,
     }
 }
 
+#ifndef Q_WS_WINCE_420
 static
 int CALLBACK
 storeFont(ENUMLOGFONTEX* f, NEWTEXTMETRICEX *textmetric, int type, LPARAM /*p*/)
@@ -399,6 +406,26 @@ storeFont(ENUMLOGFONTEX* f, NEWTEXTMETRICEX *textmetric, int type, LPARAM /*p*/)
     // keep on enumerating
     return 1;
 }
+#else
+static
+int CALLBACK
+storeFont(ENUMLOGFONT* f, TEXTMETRIC *textmetric, int type, LPARAM /*p*/)
+{
+    QString familyName = QString::fromWCharArray(f->elfLogFont.lfFaceName);
+    QString script = QLatin1String("Roman");
+
+    FONTSIGNATURE signature; // = textmetric->tmFontSig;
+    memset(&signature, 0, sizeof(signature));
+    signature.fsCsb[0] = FS_LATIN1;
+
+    // NEWTEXTMETRICEX is a NEWTEXTMETRIC, which according to the documentation is
+    // identical to a TEXTMETRIC except for the last four members, which we don't use
+    // anyway
+    addFontToDatabase(familyName, script, (TEXTMETRIC *)textmetric, &signature, type);
+    // keep on enumerating
+    return 1;
+}
+#endif
 
 static
 void populate_database(const QString& fam)
@@ -427,8 +454,13 @@ void populate_database(const QString& fam)
     }
     lf.lfPitchAndFamily = 0;
 
+#ifndef Q_WS_WINCE_420
     EnumFontFamiliesEx(dummy, &lf,
         (FONTENUMPROC)storeFont, (LPARAM)privateDb(), 0);
+#else
+    EnumFontFamilies(dummy, lf.lfFaceName,
+        (FONTENUMPROC)storeFont, (LPARAM)privateDb());
+#endif
 
     ReleaseDC(0, dummy);
 
