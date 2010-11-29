@@ -45,6 +45,7 @@
 #include <QtDeclarative/qdeclarativeview.h>
 #include <QtDeclarative/qdeclarativeitem.h>
 #include <QtGui/qgraphicswidget.h>
+#include <QtOpenGL/QGLWidget>
 #include "../../../shared/util.h"
 
 #ifdef Q_OS_SYMBIAN
@@ -62,6 +63,7 @@ public:
 private slots:
     void scene();
     void resizemodedeclarativeitem();
+    void resizeglmodedeclarativeitem();
     void resizemodegraphicswidget();
     void errors();
 
@@ -101,7 +103,7 @@ void tst_QDeclarativeView::resizemodedeclarativeitem()
     QDeclarativeView *canvas = new QDeclarativeView(&window);
     QVERIFY(canvas);
     QSignalSpy sceneResizedSpy(canvas, SIGNAL(sceneResized(QSize)));
-    canvas->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    canvas->setResizeMode(QDeclarativeView::SizeViewToRootObject);
     QCOMPARE(QSize(0,0), canvas->initialSize());
     canvas->setSource(QUrl::fromLocalFile(SRCDIR "/data/resizemodedeclarativeitem.qml"));
     QDeclarativeItem* declarativeItem = qobject_cast<QDeclarativeItem*>(canvas->rootObject());
@@ -115,6 +117,8 @@ void tst_QDeclarativeView::resizemodedeclarativeitem()
     QCOMPARE(canvas->size(), canvas->sizeHint());
     QCOMPARE(canvas->size(), canvas->initialSize());
     QCOMPARE(sceneResizedSpy.count(), 1);
+
+    canvas->setResizeMode(QDeclarativeView::SizeRootObjectToView);
 
     // size update from view
     canvas->resize(QSize(80,100));
@@ -192,13 +196,79 @@ void tst_QDeclarativeView::resizemodedeclarativeitem()
     delete canvas;
 }
 
+void tst_QDeclarativeView::resizeglmodedeclarativeitem()
+{
+    QDeclarativeView *canvas = new QDeclarativeView;
+    QVERIFY(canvas);
+    QGLWidget *window=new QGLWidget;
+    canvas->resize(QSize(300, 300));
+    canvas->setViewport(window);
+    QSignalSpy sceneResizedSpy(canvas, SIGNAL(sceneResized(QSize)));
+    canvas->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    QCOMPARE(QSize(0,0), canvas->initialSize());
+    canvas->setSource(QUrl::fromLocalFile(SRCDIR "/data/resizemodedeclarativeitem.qml"));
+    QDeclarativeItem* declarativeItem = qobject_cast<QDeclarativeItem*>(canvas->rootObject());
+    QVERIFY(declarativeItem);
+    canvas->show();
+
+    // initial size from canvas
+    QCOMPARE(declarativeItem->width(), 300.0);
+    QCOMPARE(declarativeItem->height(), 300.0);
+    QCOMPARE(canvas->size(), QSize(300, 300));
+    QCOMPARE(canvas->size(), canvas->sizeHint());
+    // holds the initial root item size (since adjusted)
+    QCOMPARE(QSize(200, 200), canvas->initialSize());
+    QCOMPARE(sceneResizedSpy.count(), 1);
+
+    // size update from view
+    canvas->resize(QSize(80,100));
+    QCOMPARE(declarativeItem->width(), 80.0);
+    QCOMPARE(declarativeItem->height(), 100.0);
+    QCOMPARE(canvas->size(), QSize(80, 100));
+    QCOMPARE(canvas->size(), canvas->sizeHint());
+    QCOMPARE(sceneResizedSpy.count(), 2);
+
+    QSize presize = canvas->size();
+    window->resize(QSize(80, 100));
+
+    canvas->setSource(QUrl::fromLocalFile(SRCDIR "/data/resizemodedeclarativeitem.qml"));
+    declarativeItem = qobject_cast<QDeclarativeItem*>(canvas->rootObject());
+    QVERIFY(declarativeItem);
+
+    // SizeRootObjectToView must not resize the view when the root size
+    // changes, even in reset.
+    QCOMPARE(presize, canvas->size());
+
+    canvas->setResizeMode(QDeclarativeView::SizeViewToRootObject);
+
+    // size update from view disabled
+    canvas->resize(QSize(60,80));
+    QCOMPARE(declarativeItem->width(), 80.0);
+    QCOMPARE(declarativeItem->height(), 100.0);
+    QCOMPARE(canvas->size(), QSize(60, 80));
+    QCOMPARE(sceneResizedSpy.count(), 3);
+
+    // size update from root object
+    QTest::qWait(1); // help avoid the race with multiple resize requests
+    declarativeItem->setWidth(250);
+    declarativeItem->setHeight(350);
+    QCOMPARE(declarativeItem->width(), 250.0);
+    QCOMPARE(declarativeItem->height(), 350.0);
+    QTRY_COMPARE(canvas->size(), QSize(250, 350));
+    QCOMPARE(canvas->size(), QSize(250, 350));
+    QCOMPARE(canvas->size(), canvas->sizeHint());
+    QCOMPARE(sceneResizedSpy.count(), 4);
+
+    delete canvas;
+}
+
 void tst_QDeclarativeView::resizemodegraphicswidget()
 {
     QWidget window;
     QDeclarativeView *canvas = new QDeclarativeView(&window);
     QVERIFY(canvas);
     QSignalSpy sceneResizedSpy(canvas, SIGNAL(sceneResized(QSize)));
-    canvas->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    canvas->setResizeMode(QDeclarativeView::SizeViewToRootObject);
     canvas->setSource(QUrl::fromLocalFile(SRCDIR "/data/resizemodegraphicswidget.qml"));
     QGraphicsWidget* graphicsWidget = qobject_cast<QGraphicsWidget*>(canvas->rootObject());
     QVERIFY(graphicsWidget);
@@ -213,6 +283,7 @@ void tst_QDeclarativeView::resizemodegraphicswidget()
     QCOMPARE(sceneResizedSpy.count(), 1);
 
     // size update from view
+    canvas->setResizeMode(QDeclarativeView::SizeRootObjectToView);
     canvas->resize(QSize(80,100));
     QCOMPARE(graphicsWidget->size(), QSizeF(80.0,100.0));
     QCOMPARE(canvas->size(), QSize(80,100));

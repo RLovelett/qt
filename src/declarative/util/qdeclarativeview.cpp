@@ -426,7 +426,7 @@ QList<QDeclarativeError> QDeclarativeView::errors() const
     If this property is set to SizeRootObjectToView, the view will
     automatically resize the root item.
 
-    Regardless of this property, the sizeHint of the view
+    Regardless of this property, initialSize()
     is the initial size of the root item. Note though that
     since QML may load dynamically, that size may change.
 */
@@ -603,10 +603,10 @@ void QDeclarativeView::setRootObject(QObject *obj)
 
     if (d->root) {
         d->initialSize = d->rootObjectSize();
-        if (d->initialSize != size()) {
-            if (!(parentWidget() && parentWidget()->layout())) {
-                resize(d->initialSize);
-            }
+        if (d->resizeMode == QDeclarativeView::SizeViewToRootObject
+            && d->initialSize != size()
+            && !(parentWidget() && parentWidget()->layout())) {
+            resize(d->initialSize);
         }
         d->initResize();
     }
