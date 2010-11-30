@@ -1889,7 +1889,7 @@ QByteArray createScriptTableDeclaration()
     declaration += " }; // size of each block\n\n";
 
     // script table
-    declaration += "namespace QUnicodeTables {\n\nstatic const unsigned char uc_scripts[] = {\n";
+    declaration += "using namespace QUnicodeTables;\n\nstatic const unsigned char uc_scripts[] = {\n";
     for (int i = 0; i < unicodeBlockCount; ++i) {
         int block = (((i << 7) & 0xff00) | ((i & 1) * 0x80));
         int blockAssignment[unicodeBlockSize];
@@ -1966,7 +1966,7 @@ QByteArray createScriptTableDeclaration()
         if (declaration.endsWith(' '))
             declaration.chop(1);
     }
-    declaration += "\n};\n\n} // namespace QUnicodeTables\n\n";
+    declaration += "\n};\n\n";
 
     declaration += 
             "Q_CORE_EXPORT int QT_FASTCALL QUnicodeTables::script(uint ucs4)\n"
@@ -1981,8 +1981,8 @@ QByteArray createScriptTableDeclaration()
             "    return script;\n"
             "}\n\n";
 
-    qDebug("createScriptTableDeclaration: table size is %d bytes",
-           unicodeBlockCount + (extraBlockList.size() * unicodeBlockSize));
+    qDebug("createScriptTableDeclaration:");
+    qDebug("    memory usage: %d bytes", unicodeBlockCount + (extraBlockList.size() * unicodeBlockSize));
 
     return declaration;
 }
@@ -2386,7 +2386,7 @@ static QByteArray createCompositionInfo()
     qDebug("        block data uses: %d bytes", smp_block_data);
     qDebug("        trie data uses : %d bytes", smp_trie);
 
-    qDebug("\n        decomposition table use : %d bytes", decompositions.size()*2);
+    qDebug("\n        decomposition table uses : %d bytes", decompositions.size()*2);
     qDebug("    memory usage: %d bytes", bmp_mem+smp_mem + decompositions.size()*2);
 
     QByteArray out;
