@@ -6246,17 +6246,20 @@ QString QString::normalized(QString::NormalizationForm mode, QChar::UnicodeVersi
 
 void qt_string_normalize(QString *data, QString::NormalizationForm mode, QChar::UnicodeVersion version, int from)
 {
-    bool simple = true;
-    const QChar *p = data->constData();
-    int len = data->length();
-    for (int i = from; i < len; ++i) {
-        if (p[i].unicode() >= 0x80) {
-            simple = false;
-            break;
+    const int len = data->length();
+
+    {
+        int i = from;
+        for ( ; i < len; ++i) {
+            if (data->at(i).unicode() >= 0x80) {
+                if (i > from)
+                    from = i - 1;
+                break;
+            }
         }
+        if (i >= len)
+            return;
     }
-    if (simple)
-        return;
 
     if (version == QChar::Unicode_Unassigned) {
         version = UNICODE_DATA_VERSION;
@@ -6294,6 +6297,10 @@ void qt_string_normalize(QString *data, QString::NormalizationForm mode, QChar::
             }
         }
     }
+
+    if (normalizationQuickCheckHelper(data, mode, from, &from))
+        return;
+
     decomposeHelper(data, mode < QString::NormalizationForm_KD, version, from);
 
     canonicalOrderHelper(data, version, from);

@@ -1651,4 +1651,60 @@ static void canonicalOrderHelper(QString *str, QChar::UnicodeVersion version, in
     }
 }
 
+// returns true if the text is in a desired normalization form already; false otherwise.
+// sets lastStable to the position of the last stable code point
+static bool normalizationQuickCheckHelper(QString *str, QString::NormalizationForm mode, int from, int *lastStable)
+{
+    enum { NFQC_YES = 0, NFQC_NO = 1, NFQC_MAYBE = 2 };
+
+    const ushort *string = reinterpret_cast<const ushort *>(str->data());
+    int length = str->length();
+
+    // this avoids one out of bounds check in the loop
+    while (length > from && QChar::isHighSurrogate(string[length - 1]))
+        length--;
+
+    uint uc;
+    uchar lastCombining = 0;
+    int pos = from;
+    while (pos < length) {
+        uc = string[pos];
+        if (uc < 0x80) {
+            *lastStable = pos;
+            lastCombining = 0;
+            pos++;
+            continue;
+        }
+        if (QChar::isHighSurrogate(uc)) {
+            pos++;
+            ushort low = string[pos];
+            if (!QChar::isLowSurrogate(low)) {
+                *lastStable = pos - 1;
+                lastCombining = 0;
+                continue;
+            }
+            uc = QChar::surrogateToUcs4(uc, low);
+        }
+        const QUnicodeTables::Properties *p = qGetProp(uc);
+        if (p->combiningClass != 0 && lastCombining > p->combiningClass)
+            return false;
+        const uchar check = (uc_normalization_form_quickcheck[p->nfqc_index] >> (mode << 1)) & 0x03;
+        if (check == NFQC_NO)
+            return false;
+        if (check == NFQC_MAYBE) {
+            // ### can we do a quick check for NFQC_MAYBE ?
+            return false;
+        }
+        if (p->combiningClass == 0)
+            *lastStable = QChar::requiresSurrogates(uc) ? pos - 1 : pos;
+        lastCombining = p->combiningClass;
+        pos++;
+    }
+
+    if (length != str->length()) // low surrogate parts at the end of text
+        *lastStable = str->length() - 1;
+
+    return true;
+}
+
 QT_END_NAMESPACE
