@@ -7619,9 +7619,11 @@ void QWidget::setVisible(bool visible)
 #ifdef QT3_SUPPORT
         QApplication::sendPostedEvents(this, QEvent::ChildInserted);
 #endif
-        // activate our layout before we and our children become visible
-        if (d->layout)
-            d->layout->activate();
+        if (isWindow() || !parentWidget() || parentWidget()->isVisible()) {
+            // activate our layout before we and our children become visible
+            if (d->layout)
+                d->layout->activate();
+        }
 
         if (!isWindow()) {
             QWidget *parent = parentWidget();

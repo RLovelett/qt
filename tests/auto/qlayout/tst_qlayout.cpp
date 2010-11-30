@@ -84,6 +84,7 @@ private slots:
     void warnIfWrongParent();
     void controlTypes();
     void adjustSizeShouldMakeSureLayoutIsActivated();
+    void testNoLayoutActivationOnShowingChild();
 };
 
 tst_QLayout::tst_QLayout()
@@ -356,6 +357,62 @@ void tst_QLayout::adjustSizeShouldMakeSureLayoutIsActivated()
     frame2->hide();
     main.adjustSize();
     QCOMPARE(main.size(), QSize(200, 10));
+}
+
+
+class ResizeEventObserver : public QObject
+{
+public:
+    ResizeEventObserver() : QObject() {}
+
+    QList<QSize> resizeEvents() const { return m_resizeEvents; }
+protected:
+    virtual bool eventFilter(QObject *obj, QEvent *ev) {
+        if (ev->type() == QEvent::Resize) {
+            const QSize sz = static_cast<QResizeEvent*>(ev)->size();
+            //qDebug() << "Got a QResizeEvent of size" << sz;
+            m_resizeEvents.append(sz);
+        }
+        return QObject::eventFilter(obj, ev);
+    }
+private:
+    QList<QSize> m_resizeEvents;
+};
+
+void tst_QLayout::testNoLayoutActivationOnShowingChild()
+{
+    QWidget window;
+    window.setObjectName("window");
+    QHBoxLayout *windowLayout = new QHBoxLayout(&window);
+    windowLayout->setObjectName("windowLayout");
+
+    QWidget *page = new QWidget(&window);
+    page->setObjectName("page");
+    windowLayout->addWidget(page);
+    QVBoxLayout *pageLayout = new QVBoxLayout(page);
+    pageLayout->setObjectName("pageLayout");
+
+    QFrame *grid = new QFrame(page);
+    grid->setObjectName("grid");
+    pageLayout->addWidget(grid);
+    pageLayout->addStretch(1);
+
+    QVBoxLayout *boxLayout = new QVBoxLayout(grid);
+    boxLayout->setObjectName("boxLayout");
+    boxLayout->addWidget(new QLabel("Label 1"));
+    boxLayout->addWidget(new QLabel("Label 2"));
+    QLabel *label3 = new QLabel("Label 3");
+    boxLayout->addWidget(label3);
+
+    page->show(); // like QStackedWidget does
+
+    ResizeEventObserver observer;
+    grid->installEventFilter(&observer);
+
+    label3->hide();
+    window.show();
+    qApp->processEvents();
+    QCOMPARE(observer.resizeEvents().count(), 1);
 }
 
 QTEST_MAIN(tst_QLayout)
