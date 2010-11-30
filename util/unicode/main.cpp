@@ -391,7 +391,8 @@ static const char *property_string =
     "        signed short caseFoldDiff  : 16;\n"
     "        ushort graphemeBreak    : 8; /* 4 needed */\n"
     "        ushort wordBreak        : 8; /* 4 needed */\n"
-    "        ushort sentenceBreak    : 8; /* 4 needed */\n"
+    "        ushort sentenceBreak    : 4;\n"
+    "        ushort nfqc_index       : 4; /* 3 needed */\n"
     "    };\n"
     "    Q_CORE_EXPORT const Properties * QT_FASTCALL properties(uint ucs4);\n"
     "    Q_CORE_EXPORT const Properties * QT_FASTCALL properties(ushort ucs2);\n";
@@ -428,6 +429,7 @@ struct PropertyFlags {
                 && graphemeBreak == o.graphemeBreak
                 && wordBreak == o.wordBreak
                 && sentenceBreak == o.sentenceBreak
+                && nfqc_index == o.nfqc_index
             );
     }
     // from UnicodeData.txt
@@ -454,6 +456,9 @@ struct PropertyFlags {
     GraphemeBreak graphemeBreak;
     WordBreak wordBreak;
     SentenceBreak sentenceBreak;
+
+    // from DerivedNormalizationProps.txt
+    uchar nfqc_index;
 };
 
 
@@ -531,6 +536,7 @@ struct UnicodeData {
         p.graphemeBreak = GraphemeBreakOther;
         p.wordBreak = WordBreakOther;
         p.sentenceBreak = SentenceBreakOther;
+        p.nfqc_index = 0;
         propertyIndex = -1;
         excludedComposition = false;
     }
@@ -699,6 +705,9 @@ static void initDecompositionMap()
 
 static QHash<int, UnicodeData> unicodeData;
 static QList<PropertyFlags> uniqueProperties;
+
+
+static QList<uchar> uniqueNFQC;
 
 
 static QHash<int, int> decompositionLength;
@@ -1022,9 +1031,12 @@ static void readDerivedNormalizationProps()
         Q_ASSERT(l.size() >= 2);
 
         QByteArray propName = l[1].trimmed();
-        if (propName != "Full_Composition_Exclusion")
+        if (propName != "Full_Composition_Exclusion" &&
+            propName != "NFD_QC" && propName != "NFC_QC" &&
+            propName != "NFKD_QC" && propName != "NFKC_QC") {
             // ###
             continue;
+        }
 
         QByteArray codes = l[0].trimmed();
         codes.replace("..", ".");
@@ -1041,7 +1053,30 @@ static void readDerivedNormalizationProps()
 
         for (int codepoint = from; codepoint <= to; ++codepoint) {
             UnicodeData d = unicodeData.value(codepoint, UnicodeData(codepoint));
-            d.excludedComposition = true;
+            if (propName == "Full_Composition_Exclusion") {
+                d.excludedComposition = true;
+            } else {
+                QString::NormalizationForm form;
+                if (propName == "NFD_QC")
+                    form = QString::NormalizationForm_D;
+                else if (propName == "NFC_QC")
+                    form = QString::NormalizationForm_C;
+                else if (propName == "NFKD_QC")
+                    form = QString::NormalizationForm_KD;
+                else// if (propName == "NFKC_QC")
+                    form = QString::NormalizationForm_KC;
+
+                Q_ASSERT(l.size() == 3);
+                QByteArray answer = l[2].trimmed();
+
+                enum { NFQC_YES = 0, NFQC_NO = 1, NFQC_MAYBE = 2 };
+                uchar ynm = (answer == "N" ? NFQC_NO : answer == "M" ? NFQC_MAYBE : NFQC_YES);
+                if (ynm == NFQC_MAYBE) {
+                    // if this changes, we need to revise the normalizationQuickCheckHelper() implementation
+                    Q_ASSERT(form == QString::NormalizationForm_C || form == QString::NormalizationForm_KC);
+                }
+                d.p.nfqc_index |= (ynm << (form * 2));
+            }
             unicodeData.insert(codepoint, d);
         }
     }
@@ -1065,6 +1100,14 @@ static void readDerivedNormalizationProps()
             Ligature l = {(ushort)part1, (ushort)part2, (ushort)codepoint};
             ligatureHashes[part2].append(l);
         }
+
+        int index = uniqueNFQC.indexOf(d.p.nfqc_index);
+        if (index == -1) {
+            index = uniqueNFQC.size();
+            uniqueNFQC.append(d.p.nfqc_index);
+        }
+        d.p.nfqc_index = uchar(index);
+        unicodeData.insert(codepoint, d);
     }
 }
 
@@ -2213,6 +2256,9 @@ static QByteArray createPropertyInfo()
         out += QByteArray::number( p.wordBreak );
         out += ", ";
         out += QByteArray::number( p.sentenceBreak );
+        out += ", ";
+//     "        ushort nfqc_index       : 4; /* 3 needed */\n"
+        out += QByteArray::number( p.nfqc_index );
         out += " },\n";
     }
     out += "};\n\n";
@@ -2245,6 +2291,15 @@ static QByteArray createPropertyInfo()
            "{\n"
            "    return (QUnicodeTables::LineBreakClass)qGetProp(ucs4)->line_break_class;\n"
            "}\n\n";
+
+
+    out += "static const uchar uc_normalization_form_quickcheck[] = {\n";
+    for (int i = 0; i < uniqueNFQC.size(); ++i)
+        out += QByteArray("    0x") + QByteArray::number(uniqueNFQC.at(i), 16) + QByteArray(",\n");
+    out += "};\n\n";
+
+    qDebug("NFQC map uses : %d bytes", uniqueNFQC.size());
+
 
     out += "static const ushort specialCaseMap[] = {\n   ";
     for (int i = 0; i < specialCaseMap.size(); ++i) {
