@@ -4548,12 +4548,18 @@ fi
 setBootstrapVariable()
 {
     getQMakeConf | $AWK '/^('"$1"')[^_A-Z0-9]/ { print $0; }' | ( [ -n "$2" ] && sed "$2" ; [ -z "$2" ] && cat ) | $AWK '
+BEGIN {
+    vars = 1
+}
 {
     varLength = index($0, "=") - 1
     valStart = varLength + 2
-    if (substr($0, varLength, 1) == "+") {
+    op = substr($0, varLength, 1)
+    if (op == "+") {
         varLength = varLength - 1
         valStart = valStart + 1
+    } else if (op == " " || op == "\t") {
+        vars = NR;
     }
     var = substr($0, 0, varLength)
     gsub("[ \t]+", "", var)
@@ -4563,7 +4569,7 @@ setBootstrapVariable()
 END {
     if (length(var) > 0) {
         printf "%s =", var
-        for (i = 1; i <= NR; ++i)
+        for (i = vars; i <= NR; ++i)
             printf " $(%s_%s)", var, i
         printf "\n"
     }
