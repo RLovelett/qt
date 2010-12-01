@@ -389,6 +389,11 @@ QPixmap QPixmap::fromWinHICON(HICON icon)
     HDC hdc = CreateCompatibleDC(screenDevice);
     ReleaseDC(0, screenDevice);
 
+#ifdef Q_WS_WINCE_420
+    // fixed size icons in <= 4.20
+    int w = 32;
+    int h = 32;
+#else //ifdef Q_WS_WINCE_420
     ICONINFO iconinfo;
     bool result = GetIconInfo(icon, &iconinfo);
     if (!result)
@@ -413,6 +418,7 @@ QPixmap QPixmap::fromWinHICON(HICON icon)
         w = iconinfo.xHotspot * 2;
         h = iconinfo.yHotspot * 2;
     }
+#endif //ifdef Q_WS_WINCE_420
     const DWORD dwImageSize = w * h * 4;
 
     BITMAPINFO bmi;
