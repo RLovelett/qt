@@ -150,6 +150,7 @@ namespace QT_NAMESPACE {}
      OS2EMX   - XFree86 on OS/2 (not PM)
      WIN32    - Win32 (Windows 2000/XP/Vista/7 and Windows Server 2003/2008)
      WINCE    - WinCE (Windows CE 5.0)
+     WINCE_420- WinCE (Windows CE 4.20)
      CYGWIN   - Cygwin
      SOLARIS  - Sun Solaris
      HPUX     - HP-UX
@@ -203,6 +204,9 @@ namespace QT_NAMESPACE {}
 #elif !defined(SAG_COM) && (defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__))
 #  if defined(WINCE) || defined(_WIN32_WCE)
 #    define Q_OS_WINCE
+#    if defined(_WIN32_WCE) && (_WIN32_WCE < 0x500)
+#      define Q_OS_WINCE_420
+#    endif
 #  else
 #    define Q_OS_WIN32
 #  endif
@@ -798,6 +802,9 @@ namespace QT_NAMESPACE {}
 #  define Q_WS_WINCE
 #  if defined(Q_OS_WINCE_WM)
 #    define Q_WS_WINCE_WM
+#  endif
+#  if defined(Q_OS_WINCE_420)
+#    define Q_WS_WINCE_420
 #  endif
 #elif defined(Q_OS_OS2)
 #  define Q_WS_PM
