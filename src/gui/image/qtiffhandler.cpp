@@ -245,6 +245,9 @@ bool QTiffHandler::read(QImage *image)
                     }
                     if (!TIFFGetField(tiff, TIFFTAG_COLORMAP, &redTable, &greenTable, &blueTable)) {
                         TIFFClose(tiff);
+                        qFree(redTable);
+                        qFree(greenTable);
+                        qFree(blueTable);
                         return false;
                     }
 
@@ -254,6 +257,9 @@ bool QTiffHandler::read(QImage *image)
                         const int blue = blueTable[i] / 257;
                         qtColorTable[i] = qRgb(red, green, blue);
                     }
+                    qFree(redTable);
+                    qFree(greenTable);
+                    qFree(blueTable);
                 }
 
                 image->setColorTable(qtColorTable);
@@ -263,8 +269,6 @@ bool QTiffHandler::read(QImage *image)
                         return false;
                     }
                 }
-
-                // free redTable, greenTable and greenTable done by libtiff
             }
         } else {
             if (image->size() != QSize(width, height) || image->format() != QImage::Format_ARGB32)
