@@ -699,6 +699,10 @@ rescan_list:
                     IcdNetworkConfigurationPrivate *cpPriv = new IcdNetworkConfigurationPrivate;
                     QString hrs = scanned_ssid.data();
 
+                    // For all hidden Wi-Fi display a "Hidden Wi-Fi" name instead of an empty string
+                    if (hrs.isEmpty() && (ap.scan.network_type == QLatin1String("WLAN_INFRA")))
+                        hrs = QNetworkConfiguration::tr("Hidden Wi-Fi");
+
                     cpPriv->name = ap.network_name.isEmpty() ? hrs : ap.network_name;
                     cpPriv->isValid = true;
                     cpPriv->id = scanned_ssid.data();  // Note: id is now ssid, it should be set to IAP id if the IAP is saved
