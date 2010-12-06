@@ -450,7 +450,7 @@ QVariant QSqlTableModel::data(const QModelIndex &index, int role) const
             return var;
         break; }
     }
-    return QSqlQueryModel::data(item, role);
+    return QSqlQueryModel::data(index, role);
 }
 
 /*!
