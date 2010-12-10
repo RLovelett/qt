@@ -632,12 +632,39 @@ QLineF QLineF::fromPolar(qreal length, qreal angle)
 */
 QLineF QLineF::unitVector() const
 {
+#if defined(__GNUC__) && defined(QT_ALWAYS_HAVE_SSE2) 
+    double __attribute__((aligned(16))) pt[2];
+
+    __asm__ __volatile__ (
+        "subsd    %[pox], %[ptx]\n\t" 
+        "movsd    %[ptx], %%xmm4\n\t"
+        "mulsd    %[ptx], %[ptx]\n\t"
+        "subsd    %[poy], %[pty]\n\t" 
+        "movsd    %[pty], %%xmm5\n\t" 
+        "mulsd    %[pty], %[pty]\n\t" 
+        "addsd    %[ptx], %[pty]\n\t"
+        "sqrtsd   %[pty], %[pty]\n\t"
+        "leal     %[pt],  %%eax\n\t" 
+        "divsd    %[pty], %%xmm4\n\t" 
+        "divsd	   %[pty], %%xmm5\n\t"
+        "addsd    %%xmm4, %[pox]\n\t"
+        "addsd    %%xmm5, %[poy]\n\t"
+        "movsd    %[pox], (%%eax)\n\t"
+        "movsd    %[poy], 8(%%eax)\n\t"
+    :  [pt] "=m" (pt) 
+    :  [ptx] "x" (pt2.x()), [pty] "x" (pt2.y()), 
+       [pox] "x" (pt1.x()), [poy] "x" (pt1.y()) 
+    :  "%xmm4", "%xmm5", "%eax", "memory" 
+    );
+	
+    QLineF f(p1(), QPointF(pt[0], pt[1])); 
+#else
     qreal x = pt2.x() - pt1.x();
     qreal y = pt2.y() - pt1.y();
 
     qreal len = qSqrt(x*x + y*y);
     QLineF f(p1(), QPointF(pt1.x() + x/len, pt1.y() + y/len));
-
+#endif
 #ifndef QT_NO_DEBUG
     if (qAbs(f.length() - 1) >= 0.001)
         qWarning("QLine::unitVector: New line does not have unit length");
