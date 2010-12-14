@@ -1508,6 +1508,12 @@ void QWindowsStyle::drawPrimitive(PrimitiveElement pe, const QStyleOption *opt, 
             p->restore();
         break;
     case PE_FrameFocusRect:
+        // Providing QT_NO_FOCUSRECT environment variable to disable frame focus rect
+        static int focusRectEnv = -1;
+        if (focusRectEnv == -1)
+            focusRectEnv = qgetenv("QT_NO_FOCUSRECT").toInt() > 0 ? 1 : 0;
+        if (focusRectEnv == 1)
+            return;
         if (const QStyleOptionFocusRect *fropt = qstyleoption_cast<const QStyleOptionFocusRect *>(opt)) {
             //### check for d->alt_down
             if (!(fropt->state & State_KeyboardFocusChange) && !proxy()->styleHint(SH_UnderlineShortcut, opt))
