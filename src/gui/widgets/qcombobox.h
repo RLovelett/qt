@@ -230,6 +230,7 @@ Q_SIGNALS:
     void activated(const QString &);
     void highlighted(int index);
     void highlighted(const QString &);
+    void currentIndexChanged(const QModelIndex &index);
     void currentIndexChanged(int index);
     void currentIndexChanged(const QString &);
 

@@ -815,6 +815,15 @@ QStyleOptionComboBox QComboBoxPrivateContainer::comboStyleOption() const
 */
 
 /*!
+    \fn void QComboBox::currentIndexChanged(const QModelIndex &index)
+
+    This signal is sent whenever the currentIndex in the combobox
+    changes either through user interaction or programmatically. The
+    item's \a index is passed or an invalid QModelIndex if the combobox
+    becomes empty or the currentIndex was reset.
+*/
+
+/*!
     \fn void QComboBox::currentIndexChanged(int index)
     \since 4.1
 
@@ -1261,6 +1270,7 @@ void QComboBoxPrivate::_q_emitHighlighted(const QModelIndex &index)
 void QComboBoxPrivate::_q_emitCurrentIndexChanged(const QModelIndex &index)
 {
     Q_Q(QComboBox);
+    emit q->currentIndexChanged(index);
     emit q->currentIndexChanged(index.row());
     emit q->currentIndexChanged(itemText(index));
 }
