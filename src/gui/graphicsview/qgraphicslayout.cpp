@@ -302,32 +302,25 @@ void QGraphicsLayout::invalidate()
 {
     // only mark layouts as invalid (activated = false) if we can post a LayoutRequest event.
     QGraphicsLayoutItem *layoutItem = this;
-    while (layoutItem && layoutItem->isLayout()) {
+    QGraphicsWidget *widget = NULL;
+    do {
         // we could call updateGeometry(), but what if that method
         // does not call the base implementation? In addition, updateGeometry()
         // does more than we need.
-        layoutItem->d_func()->sizeHintCacheDirty = true;
-        layoutItem->d_func()->sizeHintWithConstraintCacheDirty = true;
-        layoutItem = layoutItem->parentLayoutItem();
-    }
-    if (layoutItem) {
-        layoutItem->d_func()->sizeHintCacheDirty = true;
-        layoutItem->d_func()->sizeHintWithConstraintCacheDirty = true;
-    }
 
-    bool postIt = layoutItem ? !layoutItem->isLayout() : false;
-    if (postIt) {
-        layoutItem = this;
-        while (layoutItem && layoutItem->isLayout()
-                && static_cast<QGraphicsLayout*>(layoutItem)->d_func()->activated) {
+        layoutItem->d_func()->sizeHintCacheDirty = true;
+        layoutItem->d_func()->sizeHintWithConstraintCacheDirty = true;
+
+        if(layoutItem->isLayout())
             static_cast<QGraphicsLayout*>(layoutItem)->d_func()->activated = false;
-            layoutItem = layoutItem->parentLayoutItem();
-        }
-        if (layoutItem && !layoutItem->isLayout()) {
-            // If a layout has a parent that is not a layout it must be a QGraphicsWidget.
-            QApplication::postEvent(static_cast<QGraphicsWidget *>(layoutItem), new QEvent(QEvent::LayoutRequest));
-        }
-    }
+        else
+            widget = static_cast<QGraphicsWidget *>(layoutItem);
+
+        layoutItem = layoutItem->parentLayoutItem();
+    } while (layoutItem/*&& (!layoutItem->isLayout() || !static_cast<QGraphicsLayout*>(layoutItem)->d_func()->activated)*/);
+    if(widget)
+        QApplication::postEvent(widget, new QEvent(QEvent::LayoutRequest));
+
 }
 
 /*!
