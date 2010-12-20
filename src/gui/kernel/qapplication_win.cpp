@@ -3820,7 +3820,20 @@ bool QETWidget::translateConfigEvent(const MSG &msg)
                 QApplication::postEvent(this, e);
             }
         }
-} else if (msg.message == WM_MOVE) {        // move event
+        Qt::WindowStates oldstate, newstate;
+        oldstate = newstate = windowState();
+        if (msg.wParam == SIZE_MAXIMIZED)
+            newstate = (newstate & ~Qt::WindowMinimized) | Qt::WindowMaximized;
+        else if (msg.wParam == SIZE_MINIMIZED)
+            newstate = (newstate & ~Qt::WindowMaximized) | Qt::WindowMinimized;
+        else if (msg.wParam == SIZE_RESTORED)
+            newstate &= ~(Qt::WindowMinimized | Qt::WindowMaximized);
+        data->window_state = newstate;
+        if (newstate != oldstate) {
+            QWindowStateChangeEvent * e = new QWindowStateChangeEvent(oldstate);
+            QApplication::postEvent(this, e);
+        }
+    } else if (msg.message == WM_MOVE) {        // move event
         int a = (int) (short) LOWORD(msg.lParam);
         int b = (int) (short) HIWORD(msg.lParam);
         QPoint oldPos = geometry().topLeft();
