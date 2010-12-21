@@ -102,7 +102,8 @@ QGLTemporaryContext::QGLTemporaryContext(bool, QWidget *)
     vi = XGetVisualInfo(X11->display, VisualIDMask, &visualInfo, &numVisuals);
     if (!vi || numVisuals < 1) {
         qWarning("QGLTemporaryContext: Unable to get X11 visual info id.");
-        if (vi) XFree(vi);
+        if (vi) 
+            XFree(vi);
         return;
     }
 

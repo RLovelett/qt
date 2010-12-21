@@ -1436,8 +1436,9 @@ void QObject::moveToThread(QThread *targetThread)
                  "DYLD_PRINT_LIBRARIES=1 and check that only one set of binaries are being loaded.");
 #endif
         
-        // free memory
-        if (!targetThread) delete targetData;
+        
+        if (!targetThread) 
+            delete targetData;
         return;
     }
 

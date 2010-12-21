@@ -2776,7 +2776,8 @@ void QDeclarativeParentAnimation::transition(QDeclarativeStateActions &actions,
             d->startAction->setAnimAction(d->via ? data : 0, QActionAnimation::DeleteWhenStopped);
         }
         
-        if ( !d->via ) delete viaData;
+        if (!d->via) 
+            delete viaData;
 
     } else {
         delete data;

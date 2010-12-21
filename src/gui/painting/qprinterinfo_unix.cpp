@@ -341,7 +341,7 @@ char *qt_parsePrintersConf(QList<QPrinterDescription> *printers, bool *found)
                             printerDesc[j] != QLatin1Char(':') && printerDesc[j] != QLatin1Char(','))
                         j++;
                     // that's our default printer
-                    delete defaultPrinter;
+                    delete [] defaultPrinter;
                     defaultPrinter =
                         qstrdup(printerDesc.mid(i, j-i).toAscii().data());
                     printerName = QString();
