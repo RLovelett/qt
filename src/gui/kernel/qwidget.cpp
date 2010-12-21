@@ -10212,6 +10212,7 @@ void QWidget::scroll(int dx, int dy)
                 proxy->update(rect);
         }
         proxy->scroll(dx, dy, proxy->subWidgetRect(this));
+		d->scroll_sys(dx, dy);
         return;
     }
 #endif
