@@ -1023,13 +1023,7 @@ void QTreeView::keyboardSearch(const QString &search)
         index = d->viewItems.at(bestAbove).index;
 
     if (index.isValid()) {
-        QItemSelectionModel::SelectionFlags flags = (d->selectionMode == SingleSelection
-                                                     ? QItemSelectionModel::SelectionFlags(
-                                                         QItemSelectionModel::ClearAndSelect
-                                                         |d->selectionBehaviorFlags())
-                                                     : QItemSelectionModel::SelectionFlags(
-                                                         QItemSelectionModel::NoUpdate));
-        selectionModel()->setCurrentIndex(index, flags);
+        setCurrentIndex(index);
     }
 }
 

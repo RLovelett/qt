@@ -241,6 +241,7 @@ private slots:
     void taskQTBUG_9216_setSizeAndUniformRowHeightsWrongRepaint();
     void taskQTBUG_11466_keyboardNavigationRegression();
     void taskQTBUG_13567_removeLastItemRegression();
+    void keyboardSearchSelection();
 };
 
 class QtTestModel: public QAbstractItemModel
@@ -3933,6 +3934,43 @@ void tst_QTreeView::taskQTBUG_13567_removeLastItemRegression()
     QTest::qWait(10);
     QCOMPARE(view.currentIndex(), model.index(198, 0));
     CHECK_VISIBLE(198, 0);
+}
+
+void tst_QTreeView::keyboardSearchSelection()
+{
+    QStandardItemModel model;
+
+    QStandardItem *a = new QStandardItem("a");
+    QStandardItem *b = new QStandardItem("b");
+    QStandardItem *c = new QStandardItem("c");
+    QStandardItem *b1 = new QStandardItem("b");
+
+    model.setItem(0, 0, a);
+    model.setItem(1, 0, b);
+    model.setItem(2, 0, c);
+    c->appendRow(b1);
+
+    QTreeView view;
+    view.setSelectionMode(QAbstractItemView::ExtendedSelection);
+    view.setModel(&model);
+    view.show();
+    view.setItemsExpandable(true);
+    QTest::qWaitForWindowShown(&view);
+
+    view.expand(c->index());
+    QVERIFY(view.isExpanded(c->index()));
+
+    QTest::keyPress(view.viewport(), Qt::Key_B);
+    QCOMPARE(view.currentIndex(), b->index());
+    QModelIndexList selectedIndexes = view.selectionModel()->selectedIndexes();
+    QCOMPARE(selectedIndexes.count(), 1);
+    QVERIFY(selectedIndexes.contains(b->index()));
+
+    QTest::keyPress(view.viewport(), Qt::Key_B);
+    QCOMPARE(view.currentIndex(), b1->index());
+    selectedIndexes = view.selectionModel()->selectedIndexes();
+    QCOMPARE(selectedIndexes.count(), 1);
+    QVERIFY(selectedIndexes.contains(b1->index()));
 }
 
 QTEST_MAIN(tst_QTreeView)
