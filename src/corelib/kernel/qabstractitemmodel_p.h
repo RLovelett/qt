@@ -157,6 +157,22 @@ public:
     };
     QStack<Change> changes;
 
+    struct ChildrenLayoutsChange {
+      ChildrenLayoutsChange() {}
+      ChildrenLayoutsChange(const QModelIndex &_parent1, const QModelIndex &_parent2)
+        : parent1(_parent1), parent2(_parent2)
+      {
+      }
+
+      void clear() {
+        parent1 = QModelIndex();
+        parent2 = QModelIndex();
+      }
+
+      QPersistentModelIndex parent1;
+      QPersistentModelIndex parent2;
+    } childrenLayoutsChange;
+
     struct Persistent {
         Persistent() {}
         QHash<QModelIndex, QPersistentModelIndexData *> indexes;

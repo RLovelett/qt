@@ -258,6 +258,8 @@ private: // can only be emitted by QAbstractItemModel
     void columnsAboutToBeMoved( const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationColumn );
     void columnsMoved( const QModelIndex &parent, int start, int end, const QModelIndex &destination, int column );
 
+    void childrenLayoutsAboutToBeChanged(const QModelIndex &parent1, const QModelIndex &parent2);
+    void childrenLayoutsChanged(const QModelIndex &parent1, const QModelIndex &parent2);
 
 public Q_SLOTS:
     virtual bool submit();
@@ -295,6 +297,9 @@ protected:
 
     void beginResetModel();
     void endResetModel();
+
+    void beginChangeChildrenLayouts(const QModelIndex &parent1, const QModelIndex &parent2);
+    void endChangeChildrenLayouts();
 
     void changePersistentIndex(const QModelIndex &from, const QModelIndex &to);
     void changePersistentIndexList(const QModelIndexList &from, const QModelIndexList &to);

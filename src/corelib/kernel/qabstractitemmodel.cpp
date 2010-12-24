@@ -2934,6 +2934,66 @@ void QAbstractItemModel::endResetModel()
 }
 
 /*!
+    \fn void QAbstractItemModel::beginChangeChildrenLayouts(const QModelIndex &parent1, const QModelIndex &parent2)
+    \since 4.8
+
+    This method can be called just before the layout of particular parents are changed.
+    Components connected to this signal use it to adapt to changes in the
+    model's layout. This signal is more specific than layoutAboutToBeChanged, and allows observers to more efficiently
+    handle changes. If the children of only one parent is being layouted, for example when sorting items, the same QModelIndex
+    should be passed as both \a parent1 and \a parent2.
+
+    Subclasses should update any persistent model indexes after calling
+    beginChangeChildrenLayouts(). This method emits layoutAboutToBeChanged() for compatibility reasons.
+
+    \sa layoutAboutToBeChanged(), changePersistentIndex(), endChangeChildrenLayouts()
+*/
+void QAbstractItemModel::beginChangeChildrenLayouts(const QModelIndex &parent1, const QModelIndex &parent2)
+{
+    Q_D(QAbstractItemModel);
+    childrenLayoutsAboutToBeChanged(parent1, parent2);
+    layoutAboutToBeChanged();
+    d->childrenLayoutsChange = QAbstractItemModelPrivate::ChildrenLayoutsChange(parent1, parent2);
+}
+
+/*!
+    \since 4.8
+
+    This signal can be emitted just after the layout of particular parents are changed.
+    Components connected to this signal use it to adapt to changes in the
+    model's layout.
+
+    When subclassing QAbstractItemModel or QAbstractProxyModel, this signal can be used as
+    an alternative to layoutAboutToBeChanged and layoutChanged. This is helpful when sorting a
+    the children of particular QModelIndex in a large tree because for example proxy models can update
+    only part of their internal mapping instead of all of it.
+
+    Subclasses should update any persistent model indexes before emitting
+    childrenLayoutsChanged(). For backwards compatibility, layoutChanged() is emitted.
+    In other words, when sorting the children of a particular parent:
+
+    \list
+        \o  Call beginChangeChildrenLayouts(parent, parent)
+        \o  Update your internal data
+        \o  Call changePersistentIndex() as appropriate
+        \o  Call endChangeChildrenLayouts()
+    \endlist
+
+    Additionally, if moving a complex selection of indexes from one parent to another, it may be useful
+    to use this method as an alternative to multiple invocations of beginMoveRows() and endMoveRows().
+
+    \sa childrenLayoutsAboutToBeChanged(), layoutChanged(), changePersistentIndex()
+*/
+void QAbstractItemModel::endChangeChildrenLayouts()
+{
+    Q_D(QAbstractItemModel);
+    childrenLayoutsChanged(d->childrenLayoutsChange.parent1, d->childrenLayoutsChange.parent2);
+    d->childrenLayoutsChange.clear();
+    layoutChanged();
+}
+
+
+/*!
     Changes the QPersistentModelIndex that is equal to the given \a from model
     index to the given \a to model index.
 
@@ -3411,6 +3471,26 @@ bool QAbstractListModel::dropMimeData(const QMimeData *data, Qt::DropAction acti
     state (e.g. persistent model indexes) has been invalidated.
 
     \sa endResetModel(), modelAboutToBeReset()
+*/
+
+/*!
+    \fn QAbstractItemModel::childrenLayoutsAboutToBeChanged(const QModelIndex &parent1, const QModelIndex &parent2)
+    \since 4.8
+
+    This signal is emitted when beginChangeChildrenLayouts() is called, before the model's internal
+    state (e.g. persistent model indexes) has been updated.
+
+    \sa beginChangeChildrenLayouts(), childrenLayoutsChanged()
+*/
+
+/*!
+    \fn QAbstractItemModel::childrenLayoutsChanged(const QModelIndex &parent1, const QModelIndex &parent2)
+    \since 4.8
+
+    This signal is emitted when endChangeChildrenLayouts() is called, after the model's internal
+    state (e.g. persistent model indexes) has been updated.
+
+    \sa endChangeChildrenLayouts(), childrenLayoutsAboutToBeChanged()
 */
 
 /*!
