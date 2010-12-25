@@ -2007,14 +2007,6 @@ extern "C" LRESULT QT_WIN_CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wPa
             if ( QApplication::type() == QApplication::Tty )
                 break;
 
-            if (ptrWTOverlap && ptrWTEnable) {
-                // cooperate with other tablet applications, but when
-                // we get focus, I want to use the tablet...
-                if (qt_tablet_context && GET_WM_ACTIVATE_STATE(wParam, lParam)) {
-                    if (ptrWTEnable(qt_tablet_context, true))
-                        ptrWTOverlap(qt_tablet_context, true);
-                }
-            }
             if (QApplication::activePopupWidget() && LOWORD(wParam) == WA_INACTIVE &&
                 QWidget::find((HWND)lParam) == 0) {
                 // Another application was activated while our popups are open,
@@ -2027,6 +2019,15 @@ extern "C" LRESULT QT_WIN_CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wPa
             }
 
             if (LOWORD(wParam) != WA_INACTIVE) {
+                if (ptrWTOverlap && ptrWTEnable) {
+                    // cooperate with other tablet applications, but when
+                    // we get focus, I want to use the tablet...
+                    if (qt_tablet_context && GET_WM_ACTIVATE_STATE(wParam, lParam)) {
+                        if (ptrWTEnable(qt_tablet_context, true))
+                            ptrWTOverlap(qt_tablet_context, true);
+                    }
+                }
+
                 // WM_ACTIVATEAPP handles the "true" false case, as this is only when the application
                 // loses focus. Doing it here would result in the widget getting focus to not know
                 // where it got it from; it would simply get a 0 value as the old focus widget.
@@ -2059,7 +2060,16 @@ extern "C" LRESULT QT_WIN_CALLBACK QtWndProc(HWND hwnd, UINT message, WPARAM wPa
                     // reset any window alert flashes
                     alert_widget(widget, -1);
                 }
+            } else {
+                if (ptrWTOverlap && ptrWTEnable) {
+                    // Disables the qt wintab context and push it to the back of the context stack
+                    // so this context no longer recieves the wintab messages.
+                    if (qt_tablet_context) {
+                        if (ptrWTEnable(qt_tablet_context, false))
+                            ptrWTOverlap(qt_tablet_context, false);
+                }
             }
+
 
             // Windows tries to activate a modally blocked window.
             // This happens when restoring an application after "Show Desktop"
