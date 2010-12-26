@@ -230,6 +230,7 @@ public:
 
 Q_SIGNALS:
     void dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
+    void roleDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QSet<int> &roles);
     void headerDataChanged(Qt::Orientation orientation, int first, int last);
     void layoutChanged();
     void layoutAboutToBeChanged();

@@ -53,6 +53,9 @@ class DynamicTreeModel : public QAbstractItemModel
   Q_OBJECT
 
 public:
+  enum Roles {
+    CustomDataRole = Qt::UserRole
+  };
   DynamicTreeModel(QObject *parent = 0);
 
   QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
@@ -76,6 +79,7 @@ protected slots:
 private:
   QHash<qint64, QString> m_items;
   QHash<qint64, QList<QList<qint64> > > m_childItems;
+  QHash<qint64, qint64> m_customData;
   qint64 nextId;
   qint64 newId() { return nextId++; };
 
@@ -151,8 +155,11 @@ public:
 
   void setStartColumn(int column) { m_startColumn = column; }
 
+  void setRole(int role) { m_role = role; }
+
 protected:
   int m_startColumn;
+  int m_role;
 };
 
 class ModelMoveCommand : public ModelChangeCommand

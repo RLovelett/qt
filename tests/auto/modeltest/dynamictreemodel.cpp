@@ -42,6 +42,7 @@
 #include "dynamictreemodel.h"
 
 #include <QtCore/QHash>
+#include <QtCore/QSet>
 #include <QtCore/QList>
 #include <QtCore/QTimer>
 
@@ -226,7 +227,7 @@ void ModelInsertCommand::doCommand()
 }
 
 ModelDataChangeCommand::ModelDataChangeCommand(DynamicTreeModel *model, QObject *parent)
-  : ModelChangeCommand(model, parent), m_startColumn(0)
+  : ModelChangeCommand(model, parent), m_startColumn(0), m_role(Qt::DisplayRole)
 {
 
 }
@@ -244,11 +245,21 @@ void ModelDataChangeCommand::doCommand()
   {
     for (int row = m_startRow; row <= m_endRow; row++ )
     {
-      QString name = QString::number( m_model->newId() );
-      m_model->m_items[childItems[col][row]] = name;
+      if (m_role == Qt::DisplayRole) {
+        QString name = QString::number( m_model->newId() );
+        m_model->m_items[childItems[col][row]] = name;
+      } else {
+        m_model->m_customData[childItems[col][row]] = m_model->newId();
+      }
     }
   }
-  m_model->dataChanged(topLeft, bottomRight);
+  if (m_role == Qt::DisplayRole) {
+    m_model->dataChanged(topLeft, bottomRight);
+  } else {
+    QSet<int> roles;
+    roles.insert(m_role);
+    m_model->roleDataChanged(topLeft, bottomRight, roles);
+  }
 }
 
 ModelMoveCommand::ModelMoveCommand(DynamicTreeModel *model, QObject *parent)

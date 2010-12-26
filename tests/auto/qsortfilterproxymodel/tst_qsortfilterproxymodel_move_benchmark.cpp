@@ -24,6 +24,9 @@ private slots:
   void testRowMove_data();
   void testRowMove();
 
+  void testCustomRoleDataChange_data();
+  void testCustomRoleDataChange();
+
 private:
   DynamicTreeModel *createModel();
 };
@@ -192,6 +195,43 @@ void tst_QSortFilterProxyModelMoveBenchmark::testRowMove()
 
     QBENCHMARK {
       moveCommand.doCommand();
+    }
+}
+
+void tst_QSortFilterProxyModelMoveBenchmark::testCustomRoleDataChange_data()
+{
+  QTest::addColumn<bool>("manySiblings");
+
+  QTest::newRow("manySiblings") << true;
+  QTest::newRow("fewSiblings") << false;
+}
+
+void tst_QSortFilterProxyModelMoveBenchmark::testCustomRoleDataChange()
+{
+    QFETCH(bool, manySiblings);
+
+    DynamicTreeModel *model = createModel();
+
+    QSortFilterProxyModel *p1_1 = new QSortFilterProxyModel(this);
+    p1_1->setSourceModel(model);
+    QSortFilterProxyModel *p2_1 = new QSortFilterProxyModel(this);
+    p2_1->setSourceModel(p1_1);
+
+    SETUP(p1_1)
+    SETUP(p2_1)
+
+    QList<QPersistentModelIndex> list;
+    list << create_mappings(p1_1);
+    list << create_mappings(p2_1);
+
+    ModelDataChangeCommand dataChangeCommand(model, 0);
+    dataChangeCommand.setAncestorRowNumbers(QList<int>() << (manySiblings ? 3 : 7));
+    dataChangeCommand.setStartRow(0);
+    dataChangeCommand.setEndRow(0);
+    dataChangeCommand.setRole(DynamicTreeModel::CustomDataRole);
+
+    QBENCHMARK {
+      dataChangeCommand.doCommand();
     }
 }
 

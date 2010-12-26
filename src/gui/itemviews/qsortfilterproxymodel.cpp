@@ -195,6 +195,8 @@ public:
 
     void _q_sourceDataChanged(const QModelIndex &source_top_left,
                            const QModelIndex &source_bottom_right);
+    void _q_sourceRoleDataChanged(const QModelIndex &source_top_left,
+                                  const QModelIndex &source_bottom_right, const QSet<int> &roles);
     void _q_sourceHeaderDataChanged(Qt::Orientation orientation, int start, int end);
 
     void _q_sourceAboutToBeReset();
@@ -1055,6 +1057,21 @@ void QSortFilterProxyModelPrivate::handle_filter_changed(
     }
 }
 
+void QSortFilterProxyModelPrivate::_q_sourceRoleDataChanged(const QModelIndex &source_top_left,
+              const QModelIndex &source_bottom_right, const QSet<int> &roles)
+{
+    if (!source_top_left.isValid() || !source_bottom_right.isValid())
+        return;
+    QModelIndex source_parent = source_top_left.parent();
+    IndexMap::const_iterator it = source_index_mapping.find(source_parent);
+    if (it == source_index_mapping.constEnd()) {
+        // Don't care, since we don't have mapping for this index
+        return;
+    }
+    if (roles.contains(sort_role) || roles.contains(filter_role))
+        _q_sourceDataChanged(source_top_left, source_bottom_right);
+}
+
 void QSortFilterProxyModelPrivate::_q_sourceDataChanged(const QModelIndex &source_top_left,
 							const QModelIndex &source_bottom_right)
 {
@@ -1595,6 +1612,9 @@ void QSortFilterProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
     disconnect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
                this, SLOT(_q_sourceDataChanged(QModelIndex,QModelIndex)));
 
+    disconnect(d->model, SIGNAL(roleDataChanged(QModelIndex,QModelIndex,QSet<int>)),
+               this, SLOT(_q_sourceRoleDataChanged(QModelIndex,QModelIndex,QSet<int>)));
+
     disconnect(d->model, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
                this, SLOT(_q_sourceHeaderDataChanged(Qt::Orientation,int,int)));
 
@@ -1653,6 +1673,9 @@ void QSortFilterProxyModel::setSourceModel(QAbstractItemModel *sourceModel)
 
     connect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
             this, SLOT(_q_sourceDataChanged(QModelIndex,QModelIndex)));
+
+    connect(d->model, SIGNAL(roleDataChanged(QModelIndex,QModelIndex,QSet<int>)),
+            this, SLOT(_q_sourceRoleDataChanged(QModelIndex,QModelIndex,QSet<int>)));
 
     connect(d->model, SIGNAL(headerDataChanged(Qt::Orientation,int,int)),
             this, SLOT(_q_sourceHeaderDataChanged(Qt::Orientation,int,int)));
