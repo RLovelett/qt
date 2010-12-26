@@ -262,7 +262,7 @@ public:
         const QVector<int> &source_to_proxy, const QVector<int> &source_items,
         int &proxy_low, int &proxy_high) const;
 
-    QModelIndexPairList store_persistent_indexes();
+    QModelIndexPairList store_persistent_indexes() const;
     void update_persistent_indexes(const QModelIndexPairList &source_indexes);
 
     void filter_changed(const QModelIndex &source_parent = QModelIndex());
@@ -985,9 +985,9 @@ void QSortFilterProxyModelPrivate::build_source_to_proxy_mapping(
   Maps the persistent proxy indexes to source indexes and
   returns the list of source indexes.
 */
-QModelIndexPairList QSortFilterProxyModelPrivate::store_persistent_indexes()
+QModelIndexPairList QSortFilterProxyModelPrivate::store_persistent_indexes() const
 {
-    Q_Q(QSortFilterProxyModel);
+    Q_Q(const QSortFilterProxyModel);
     QModelIndexPairList source_indexes;
     foreach (QPersistentModelIndexData *data, persistent.indexes) {
         QModelIndex proxy_index = data->index;
