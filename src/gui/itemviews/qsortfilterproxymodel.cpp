@@ -1106,15 +1106,15 @@ void QSortFilterProxyModelPrivate::_q_sourceDataChanged(const QModelIndex &sourc
 
     if (!source_rows_resort.isEmpty()) {
         // Re-sort the rows
-        emit q->layoutAboutToBeChanged();
+        q->beginChangeChildrenLayouts(source_parent, source_parent);
         QModelIndexPairList source_indexes = store_persistent_indexes(source_parent);
         remove_source_items(m, source_rows_resort, source_parent, Qt::Vertical, false, false);
         sort_source_rows(source_rows_resort, source_parent);
         insert_source_items(m, source_rows_resort, source_parent, Qt::Vertical, false);
         update_persistent_indexes(source_indexes);
-        emit q->layoutChanged();
-	// Make sure we also emit dataChanged for the rows
-	source_rows_change += source_rows_resort;
+        q->endChangeChildrenLayouts();
+        // Make sure we also emit dataChanged for the rows
+        source_rows_change += source_rows_resort;
     }
 
     if (!source_rows_change.isEmpty()) {
