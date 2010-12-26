@@ -263,6 +263,7 @@ public:
         int &proxy_low, int &proxy_high) const;
 
     QModelIndexPairList store_persistent_indexes() const;
+    QModelIndexPairList store_persistent_indexes(const QModelIndex &parent) const;
     void update_persistent_indexes(const QModelIndexPairList &source_indexes);
 
     void filter_changed(const QModelIndex &source_parent = QModelIndex());
@@ -997,6 +998,20 @@ QModelIndexPairList QSortFilterProxyModelPrivate::store_persistent_indexes() con
     return source_indexes;
 }
 
+QModelIndexPairList QSortFilterProxyModelPrivate::store_persistent_indexes(const QModelIndex &parent) const
+{
+    Q_Q(const QSortFilterProxyModel);
+    QModelIndexPairList source_indexes;
+    foreach (QPersistentModelIndexData *data, persistent.indexes) {
+        QModelIndex proxy_index = data->index;
+        QModelIndex source_index = q->mapToSource(proxy_index);
+        if (source_index.parent() == parent) {
+            source_indexes.append(qMakePair(proxy_index, QPersistentModelIndex(source_index)));
+        }
+    }
+    return source_indexes;
+}
+
 /*!
   \internal
 
@@ -1155,7 +1170,7 @@ void QSortFilterProxyModelPrivate::_q_sourceDataChanged(const QModelIndex &sourc
     if (!source_rows_resort.isEmpty()) {
         // Re-sort the rows
         emit q->layoutAboutToBeChanged();
-        QModelIndexPairList source_indexes = store_persistent_indexes();
+        QModelIndexPairList source_indexes = store_persistent_indexes(source_parent);
         remove_source_items(m->proxy_rows, m->source_rows, source_rows_resort,
                             source_parent, Qt::Vertical, false);
         sort_source_rows(source_rows_resort, source_parent);
