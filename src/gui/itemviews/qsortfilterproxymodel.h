@@ -181,14 +181,21 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_sourceReset())
     Q_PRIVATE_SLOT(d_func(), void _q_sourceLayoutAboutToBeChanged())
     Q_PRIVATE_SLOT(d_func(), void _q_sourceLayoutChanged())
+    Q_PRIVATE_SLOT(d_func(), void _q_sourceChildrenLayoutsAboutToBeChanged(const QModelIndex &parent1, const QModelIndex &parent2))
+    Q_PRIVATE_SLOT(d_func(), void _q_sourceChildrenLayoutsChanged(const QModelIndex &parent1, const QModelIndex &parent2))
     Q_PRIVATE_SLOT(d_func(), void _q_sourceRowsAboutToBeInserted(const QModelIndex &source_parent, int start, int end))
     Q_PRIVATE_SLOT(d_func(), void _q_sourceRowsInserted(const QModelIndex &source_parent, int start, int end))
     Q_PRIVATE_SLOT(d_func(), void _q_sourceRowsAboutToBeRemoved(const QModelIndex &source_parent, int start, int end))
     Q_PRIVATE_SLOT(d_func(), void _q_sourceRowsRemoved(const QModelIndex &source_parent, int start, int end))
+    Q_PRIVATE_SLOT(d_func(), void _q_sourceRowsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationRow))
+    Q_PRIVATE_SLOT(d_func(), void _q_sourceRowsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int row))
     Q_PRIVATE_SLOT(d_func(), void _q_sourceColumnsAboutToBeInserted(const QModelIndex &source_parent, int start, int end))
     Q_PRIVATE_SLOT(d_func(), void _q_sourceColumnsInserted(const QModelIndex &source_parent, int start, int end))
     Q_PRIVATE_SLOT(d_func(), void _q_sourceColumnsAboutToBeRemoved(const QModelIndex &source_parent, int start, int end))
     Q_PRIVATE_SLOT(d_func(), void _q_sourceColumnsRemoved(const QModelIndex &source_parent, int start, int end))
+    Q_PRIVATE_SLOT(d_func(), void _q_sourceColumnsAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd, const QModelIndex &destinationParent, int destinationColumn))
+    Q_PRIVATE_SLOT(d_func(), void _q_sourceColumnsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int column))
+
 };
 
 QT_END_NAMESPACE

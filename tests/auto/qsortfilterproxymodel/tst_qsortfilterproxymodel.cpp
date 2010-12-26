@@ -51,6 +51,9 @@
 
 #include <qdebug.h>
 
+#include "dynamictreemodel.h"
+
+
 //TESTED CLASS=
 //TESTED_FILES=
 
@@ -148,6 +151,7 @@ private slots:
     void testMultipleProxiesWithSelection();
     void mapSelectionFromSource();
     void filteredColumns();
+    void testSourceMoves();
 
 protected:
     void buildHierarchy(const QStringList &data, QAbstractItemModel *model);
@@ -3210,7 +3214,118 @@ void tst_QSortFilterProxyModel::filteredColumns()
     insertCommand->setEndRow(0);
     // Parent is QModelIndex()
     insertCommand->doCommand();
+}
 
+void tst_QSortFilterProxyModel::testSourceMoves()
+{
+    DynamicTreeModel m;
+
+    {
+        ModelInsertCommand insertCommand(&m);
+        insertCommand.setStartRow(0);
+        insertCommand.setEndRow(9);
+        insertCommand.doCommand();
+    }
+    {
+        ModelInsertCommand insertCommand(&m);
+        insertCommand.setAncestorRowNumbers(QList<int>() << 5);
+        insertCommand.setStartRow(0);
+        insertCommand.setEndRow(9);
+        insertCommand.doCommand();
+    }
+
+    QSortFilterProxyModel p1;
+    p1.setSourceModel(&m);
+    QSortFilterProxyModel p2;
+    p2.setSourceModel(&p1);
+
+    p2.rowCount(); // Cause mappings to be made.
+
+    QSignalSpy beginMoveSpy(&m, SIGNAL(rowsAboutToBeMoved(QModelIndex,int,int,QModelIndex,int)));
+    QSignalSpy endMoveSpy(&m, SIGNAL(rowsMoved(QModelIndex,int,int,QModelIndex,int)));
+
+    QSignalSpy mLayoutAboutToBeChangedSpy(&m, SIGNAL(layoutAboutToBeChanged()));
+    QSignalSpy mLayoutChangedSpy(&m, SIGNAL(layoutChanged()));
+    QSignalSpy p1LayoutAboutToBeChangedSpy(&p1, SIGNAL(layoutAboutToBeChanged()));
+    QSignalSpy p1LayoutChangedSpy(&p1, SIGNAL(layoutChanged()));
+    QSignalSpy p2LayoutAboutToBeChangedSpy(&p2, SIGNAL(layoutAboutToBeChanged()));
+    QSignalSpy p2LayoutChangedSpy(&p2, SIGNAL(layoutChanged()));
+
+    QSignalSpy p1ChildrenLayoutsAboutToBeChangedSpy(&p1, SIGNAL(childrenLayoutsAboutToBeChanged(QModelIndex,QModelIndex)));
+    QSignalSpy p1ChildrenLayoutsChangedSpy(&p1, SIGNAL(childrenLayoutsChanged(QModelIndex,QModelIndex)));
+    QSignalSpy p2ChildrenLayoutsAboutToBeChangedSpy(&p2, SIGNAL(childrenLayoutsAboutToBeChanged(QModelIndex,QModelIndex)));
+    QSignalSpy p2ChildrenLayoutsChangedSpy(&p2, SIGNAL(childrenLayoutsChanged(QModelIndex,QModelIndex)));
+
+    QList<QPersistentModelIndex> mPersistent;
+    QList<QPersistentModelIndex> p1Persistent;
+    QList<QPersistentModelIndex> p2Persistent;
+
+    for (int row = 0; row < m.rowCount(); ++row)
+    {
+        const QModelIndex idx = m.index(row, 0);
+        mPersistent.append(idx);
+        const QModelIndex p1Idx = p1.mapFromSource(idx);
+        p1Persistent.append(p1Idx);
+        p2Persistent.append(p2.mapFromSource(p1Idx));
+    }
+    QModelIndex parentIdx = m.index(5, 0);
+
+    for (int row = 0; row < m.rowCount(parentIdx); ++row)
+    {
+        const QModelIndex idx = m.index(row, 0, parentIdx);
+        mPersistent.append(idx);
+        const QModelIndex p1Idx = p1.mapFromSource(idx);
+        p1Persistent.append(p1Idx);
+        p2Persistent.append(p2.mapFromSource(p1Idx));
+    }
+
+    {
+        ModelMoveCommand moveCommand(&m, 0);
+        moveCommand.setAncestorRowNumbers(QList<int>() << 5);
+        moveCommand.setStartRow(3);
+        moveCommand.setEndRow(4);
+        moveCommand.setDestRow(1);
+        moveCommand.doCommand();
+    }
+
+    QVERIFY(beginMoveSpy.size() == 1);
+    QVERIFY(endMoveSpy.size() == 1);
+
+    QVERIFY(mLayoutAboutToBeChangedSpy.size() == 1);
+    QVERIFY(mLayoutChangedSpy.size() == 1);
+
+    QVERIFY(p1LayoutAboutToBeChangedSpy.size() == 1);
+    QVERIFY(p1LayoutChangedSpy.size() == 1);
+    QVERIFY(p2LayoutAboutToBeChangedSpy.size() == 1);
+    QVERIFY(p2LayoutChangedSpy.size() == 1);
+
+    QVERIFY(p1ChildrenLayoutsAboutToBeChangedSpy.size() == 1);
+    QVERIFY(p1ChildrenLayoutsChangedSpy.size() == 1);
+    QVERIFY(p2ChildrenLayoutsAboutToBeChangedSpy.size() == 1);
+    QVERIFY(p2ChildrenLayoutsChangedSpy.size() == 1);
+
+    QModelIndex rootSource = endMoveSpy.first().first().value<QModelIndex>();
+    QModelIndex rootDestination = endMoveSpy.first().at(3).value<QModelIndex>();
+
+    QModelIndex p1Source = p1ChildrenLayoutsChangedSpy.first().first().value<QModelIndex>();
+    QModelIndex p1Destination = p1ChildrenLayoutsChangedSpy.first().last().value<QModelIndex>();
+
+    QVERIFY(p1.mapFromSource(rootSource) == p1Source);
+    QVERIFY(p1.mapFromSource(rootDestination) == p1Destination);
+
+    QModelIndex p2Source = p2ChildrenLayoutsChangedSpy.first().first().value<QModelIndex>();
+    QModelIndex p2Destination = p2ChildrenLayoutsChangedSpy.first().last().value<QModelIndex>();
+
+    QVERIFY(p2.mapFromSource(p1Source) == p2Source);
+    QVERIFY(p2.mapFromSource(p1Destination) == p2Destination);
+
+    for (int i = 0; i < mPersistent.size(); ++i)
+    {
+        const QPersistentModelIndex idx = mPersistent.at(i);
+        const QPersistentModelIndex p1Idx = p1.mapFromSource(idx);
+        QVERIFY(p1Idx == p1Persistent.at(i));
+        QVERIFY(p2.mapFromSource(p1Idx) == p2Persistent.at(i));
+    }
 }
 
 QTEST_MAIN(tst_QSortFilterProxyModel)
