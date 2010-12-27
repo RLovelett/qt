@@ -225,6 +225,31 @@ void ModelInsertCommand::doCommand()
   m_model->endInsertRows();
 }
 
+ModelDataChangeCommand::ModelDataChangeCommand(DynamicTreeModel *model, QObject *parent)
+  : ModelChangeCommand(model, parent), m_startColumn(0)
+{
+
+}
+
+void ModelDataChangeCommand::doCommand()
+{
+  QModelIndex parent = findIndex(m_rowNumbers);
+  QModelIndex topLeft = m_model->index(m_startRow, m_startColumn, parent);
+  QModelIndex bottomRight = m_model->index(m_endRow, m_numCols - 1, parent);
+
+  QList<QList<qint64> > childItems = m_model->m_childItems[parent.internalId()];
+
+
+  for (int col = m_startColumn; col < m_startColumn + m_numCols; col++)
+  {
+    for (int row = m_startRow; row <= m_endRow; row++ )
+    {
+      QString name = QString::number( m_model->newId() );
+      m_model->m_items[childItems[col][row]] = name;
+    }
+  }
+  m_model->dataChanged(topLeft, bottomRight);
+}
 
 ModelMoveCommand::ModelMoveCommand(DynamicTreeModel *model, QObject *parent)
   : ModelChangeCommand(model, parent)

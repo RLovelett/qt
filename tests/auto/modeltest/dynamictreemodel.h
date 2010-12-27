@@ -86,6 +86,7 @@ private:
   int maxDepth;
 
   friend class ModelInsertCommand;
+  friend class ModelDataChangeCommand;
   friend class ModelMoveCommand;
   friend class ModelResetCommand;
   friend class ModelResetCommandFixed;
@@ -137,6 +138,22 @@ public:
   virtual void doCommand();
 };
 
+
+class ModelDataChangeCommand : public ModelChangeCommand
+{
+  Q_OBJECT
+public:
+  explicit ModelDataChangeCommand(DynamicTreeModel *model, QObject *parent = 0);
+
+  virtual ~ModelDataChangeCommand() {}
+
+  virtual void doCommand();
+
+  void setStartColumn(int column) { m_startColumn = column; }
+
+protected:
+  int m_startColumn;
+};
 
 class ModelMoveCommand : public ModelChangeCommand
 {
