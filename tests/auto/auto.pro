@@ -20,4 +20,5 @@ contains(QT_CONFIG, phonon):                SUBDIRS += phonon.pro
 contains(QT_CONFIG, svg):                   SUBDIRS += svg.pro
 contains(QT_CONFIG, declarative):           SUBDIRS += declarative.pro
 !symbian                                    SUBDIRS += help.pro
+win32:                                      SUBDIRS += activeqt.pro
 
