@@ -42,6 +42,7 @@
 #include "project.h"
 #include "option.h"
 
+#include <QSet>
 #include <QStringList>
 #include <QByteArray>
 #include <QDir>
@@ -53,6 +54,7 @@ namespace {
     const char * const indent = "        ";
 
     void dumpFilename (QString name,
+                       QSet<QString> &skip,
                        QString (*transform)(QString) = 0,
                        bool isDirectoryList = false
     ) {
@@ -72,7 +74,7 @@ namespace {
                 name = name.remove(0, 2);
 
             if (name == "")
-                continue;
+                return;
         } else {
             // Our relation logic might have stripped away a naked "./"
             // or ".", but we want it explicitly in case of -I.
@@ -83,7 +85,9 @@ namespace {
         if (transform)
             name = transform (name);
 
+        if (skip.contains(name)) return;
         fprintf (stdout, " \\\n%s%s", indent, name.toLocal8Bit().data());
+        skip.insert (name);
     }
 
 
@@ -94,9 +98,11 @@ namespace {
         const char *varname = name.toLocal8Bit().data();
         fprintf (stdout, "%s = ", varname);
 
+        QSet<QString> skip;
+
         list.sort();
         foreach (QString name, list) {
-            dumpFilename (name, transform, isDirectoryList);
+            dumpFilename (name, skip, transform, isDirectoryList);
         }
         fprintf (stdout, "\n\n");
     }
