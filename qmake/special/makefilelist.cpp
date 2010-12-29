@@ -52,37 +52,51 @@ QT_BEGIN_NAMESPACE
 namespace {
     const char * const indent = "        ";
 
+    void dumpFilename (QString name,
+                       QString (*transform)(QString) = 0,
+                       bool isDirectoryList = false
+    ) {
+        if (Option::mkspecial::filelist_relate_filenames) {
+            name = QDir().absoluteFilePath(name);
+
+            QDir relateTo = Option::mkspecial::filelist_relate_to != "" ?
+                            QDir(Option::mkspecial::filelist_relate_to) :
+                            QDir::current();
+            name = relateTo.relativeFilePath(name);
+        }
+
+        name = name.trimmed();
+
+        if (!isDirectoryList) {
+            if (name.startsWith("./"))
+                name = name.remove(0, 2);
+
+            if (name == "")
+                continue;
+        } else {
+            // Our relation logic might have stripped away a naked "./"
+            // or ".", but we want it explicitly in case of -I.
+            if (name == "")
+                name = ".";
+        }
+
+        if (transform)
+            name = transform (name);
+
+        fprintf (stdout, " \\\n%s%s", indent, name.toLocal8Bit().data());
+    }
+
+
     void dumpFilelist (QString name, QStringList list,
                        QString (*transform)(QString) = 0,
                        bool isDirectoryList = false
     ) {
         const char *varname = name.toLocal8Bit().data();
         fprintf (stdout, "%s = ", varname);
+
+        list.sort();
         foreach (QString name, list) {
-
-            if (Option::mkspecial::filelist_relate_filenames) {
-                name = QDir().absoluteFilePath(name);
-
-                QDir relateTo = Option::mkspecial::filelist_relate_to != "" ?
-                                QDir(Option::mkspecial::filelist_relate_to) :
-                                QDir::current();
-                name = relateTo.relativeFilePath(name);
-            }
-
-            name = name.trimmed();
-
-            if (!isDirectoryList) {
-                if (name.startsWith("./")) name = name.remove(0, 2);
-                if (name == "") continue;
-            } else {
-                // Our relation logic might have stripped away a naked "./"
-                // or ".", but we want it explicitly in case of -I.
-                if (name == "") name = ".";
-            }
-            if (transform)
-                name = transform (name);
-
-            fprintf (stdout, " \\\n%s%s", indent, name.toLocal8Bit().data());
+            dumpFilename (name, transform, isDirectoryList);
         }
         fprintf (stdout, "\n\n");
     }
