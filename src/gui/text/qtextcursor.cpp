@@ -269,25 +269,10 @@ void QTextCursorPrivate::adjustCursor(QTextCursor::MoveOperation m)
     QTextTableCell c_position = table->cellAt(position);
     QTextTableCell c_anchor = table->cellAt(adjusted_anchor);
     if (c_position != c_anchor) {
-        bool before;
         int col_position = c_position.column();
         int col_anchor = c_anchor.column();
-        if (col_position == col_anchor) {
-            before = c_position.row() < c_anchor.row();
-        } else {
-            before = col_position < col_anchor;
-        }
 
-        // adjust to cell boundaries
-        if (m <= QTextCursor::WordLeft) {
-            position = c_position.firstPosition();
-            if (!before)
-                --position;
-        } else {
-            position = c_position.lastPosition();
-            if (before)
-                ++position;
-        }
+        position = c_position.firstPosition();
         if (position < adjusted_anchor)
             adjusted_anchor = c_anchor.lastPosition();
         else
@@ -387,6 +372,15 @@ bool QTextCursorPrivate::movePosition(QTextCursor::MoveOperation op, QTextCursor
     Q_ASSERT(priv->frameAt(position) == priv->frameAt(adjusted_anchor));
 
     int newPosition = position;
+    
+    if (mode == QTextCursor::KeepAnchor && complexSelectionTable() != 0) {
+        if (op >= QTextCursor::EndOfLine && op <= QTextCursor::NextWord) {
+            op = QTextCursor::NextCell;
+        }
+        if (op >= QTextCursor::Right && op <= QTextCursor::WordRight) {
+            op = QTextCursor::NextCell;
+        }
+    }
 
     if (x == -1 && !priv->isInEditBlock() && (op == QTextCursor::Up || op == QTextCursor::Down))
         setX();
