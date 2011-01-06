@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tmx SYSTEM "tmx14.dtd">
+<tmx version="1.4">
+    <header creationtool="linguist" creationtoolversion="TOOLVERSION" segtype="paragraph" o-encoding="UTF-8" adminlang="en_US" srclang="en_US" o-tmf="unknown" datatype="plaintext" />
+    <body>
+        <tu tuid="1">
+            <tuv xml:lang="en_US">
+                <seg>About</seg>
+            </tuv>
+            <tuv xml:lang="de">
+                <seg>Info</seg>
+            </tuv>
+        </tu>
+        <tu tuid="2">
+            <tuv xml:lang="en_US">
+                <seg>adornment</seg>
+            </tuv>
+            <tuv xml:lang="de">
+                <seg>Zubehör</seg>
+            </tuv>
+        </tu>
+        <tu tuid="3">
+            <tuv xml:lang="en_US">
+                <seg>barrel button</seg>
+            </tuv>
+            <tuv xml:lang="de">
+                <seg>Pen-Knopf</seg>
+            </tuv>
+        </tu>
+        <tu tuid="4">
+            <tuv xml:lang="en_US">
+                <seg>foo &amp; bar</seg>
+            </tuv>
+            <tuv xml:lang="de">
+                <seg>Foo &amp; bar</seg>
+            </tuv>
+        </tu>
+    </body>
+</tmx>

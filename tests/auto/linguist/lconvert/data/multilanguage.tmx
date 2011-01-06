@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tmx SYSTEM "tmx14.dtd">
+<!-- Example of TMX document for Qt -->
+<tmx version="1.4">
+ <header creationtool="QT-Test" creationtoolversion="20110116" datatype="PlainText"
+  segtype="sentence" adminlang="en-us" srclang="EN" creationdate="20110116T152425Z"
+  creationid="Alice" o-tmf="unknown" >
+  <note>Document Note</note>
+ </header>
+ <body>
+  <tu tuid="1" datatype="Text" usagecount="5" lastusagedate="20110116T162312Z">
+   <note>TU Note.</note>
+   <prop type="x-Domain">Computing</prop>
+   <prop type="x-Project">linguist</prop>
+   <tuv xml:lang="EN" creationdate="20110116T152425Z" creationid="Alice">
+    <seg>这是 chinese chars. Here an other: &#x4ECA;</seg>
+   </tuv>
+   <tuv xml:lang="DE" creationdate="20110116T154226Z" creationid="Alice">
+    <prop type="Origin">QT</prop>
+    <seg>这是 chinesische Zeichen. Hier ein anderes: &#x4ECA;</seg>
+   </tuv>
+  </tu>
+  <tu tuid="2" srclang="*all*">
+   <prop type="Domain">Cooking</prop>
+   <tuv xml:lang="EN">
+    <seg>menu</seg>
+   </tuv>
+   <tuv xml:lang="FI">
+    <seg>ruokalista</seg>
+   </tuv>
+   <tuv xml:lang="DE">
+    <seg>Menü</seg>
+   </tuv>
+  </tu>
+  <tu tuid="1">
+   <tuv xml:lang="FI">
+    <seg>Osa 1<bpt i="1" x="1">&lt;b></bpt>Osa 2<ept i="1">&lt;/b></ept> <bpt i="2" x="2">&lt;u></bpt>Osa 3<ept i="2">&lt;/u></ept>Osa 4</seg>
+   </tuv>
+   <tuv xml:lang="EN">
+    <seg>Part 1<bpt i="1" x="1">&lt;b></bpt>Part 2<ept i="1">&lt;/b></ept> <bpt i="2" x="2">&lt;u></bpt>Part 3<ept i="2">&lt;/u></ept>Part 4</seg>
+   </tuv>
+   <tuv xml:lang="DE">
+    <seg>Teil 1<bpt i="2" x="2">&lt;u></bpt>Teil 3<ept i="2">&lt;/u></ept> <bpt i="1" x="1">&lt;b></bpt>Teil 2<ept i="1">&lt;/b></ept>Teil 4</seg>
+   </tuv>
+  </tu>
+ </body>
+</tmx>

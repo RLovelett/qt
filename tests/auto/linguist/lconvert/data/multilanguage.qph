@@ -1,0 +1,15 @@
+<!DOCTYPE QPH>
+<QPH language="DE" sourcelanguage="EN">
+<phrase>
+    <source>这是 chinese chars. Here an other: 今</source>
+    <target>这是 chinesische Zeichen. Hier ein anderes: 今</target>
+</phrase>
+<phrase>
+    <source>menu</source>
+    <target>Menü</target>
+</phrase>
+<phrase>
+    <source>Part 1&lt;b&gt;Part 2&lt;/b&gt; &lt;u&gt;Part 3&lt;/u&gt;Part 4</source>
+    <target>Teil 1&lt;u&gt;Teil 3&lt;/u&gt; &lt;b&gt;Teil 2&lt;/b&gt;Teil 4</target>
+</phrase>
+</QPH>

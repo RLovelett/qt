@@ -64,7 +64,8 @@ private slots:
 
 private:
     void doWait(QProcess *cvt, int stage);
-    void doCompare(QIODevice *actual, const QString &expectedFn);
+    void doCompare(QIODevice *actual, const QString &expectedFn,
+                   const QString &toBeReplaced, const QString &replacement);
     void verifyReadFail(const QString &fn);
     // args can be empty or have one element less than stations
     void convertChain(const QString &inFileName, const QString &outFileName,
@@ -100,13 +101,24 @@ void tst_lconvert::doWait(QProcess *cvt, int stage)
     }
 }
 
-void tst_lconvert::doCompare(QIODevice *actualDev, const QString &expectedFn)
+void tst_lconvert::doCompare(QIODevice *actualDev, const QString &expectedFn,
+                             const QString &toBeReplaced, const QString &replacement)
 {
     QList<QByteArray> actual = actualDev->readAll().split('\n');
 
     QFile file(expectedFn);
     QVERIFY(file.open(QIODevice::ReadOnly | QIODevice::Text));
     QList<QByteArray> expected = file.readAll().split('\n');
+
+    if (!toBeReplaced.isEmpty()) {
+        QList<QByteArray> modifiedExpected;
+        for (int i=0; i < expected.size(); i++){
+            QString line = expected.at(i);
+            line.replace(QRegExp(toBeReplaced), replacement);
+            modifiedExpected.append(QByteArray(line.toStdString().c_str()));
+        }
+        expected = modifiedExpected;
+    }
 
     int i = 0, ei = expected.size(), gi = actual.size();
     for (; ; i++) {
@@ -186,7 +198,7 @@ void tst_lconvert::convertChain(const QString &_inFileName, const QString &_outF
         doWait(cvt, ++st);
 
     if (!QTest::currentTestFailed())
-        doCompare(cvts.last(), outFileName);
+        doCompare(cvts.last(), outFileName, NULL, NULL);
 
     qDeleteAll(cvts);
 }
@@ -229,10 +241,20 @@ void tst_lconvert::converts_data()
     QTest::addColumn<QString>("inFileName");
     QTest::addColumn<QString>("outFileName");
     QTest::addColumn<QString>("format");
+    QTest::addColumn<QString>("toBeReplaced");
+    QTest::addColumn<QString>("replacement");
 
-    QTest::newRow("broken utf8") << "test-broken-utf8.po" << "test-broken-utf8.po.out" << "po";
-    QTest::newRow("line joins") << "test-slurp.po" << "test-slurp.po.out" << "po";
-    QTest::newRow("escapes") << "test-escapes.po" << "test-escapes.po.out" << "po";
+    QTest::newRow("broken utf8") << "test-broken-utf8.po" << "test-broken-utf8.po.out" << "po" << "" << "";
+    QTest::newRow("line joins") << "test-slurp.po" << "test-slurp.po.out" << "po" << "" << "";
+    QTest::newRow("escapes") << "test-escapes.po" << "test-escapes.po.out" << "po" << "" << "";
+    QTest::newRow("tmx multilanguage to tmx") << "multilanguage.tmx" << "multilanguage.tmx.out" << "tmx"
+                   << "creationtoolversion=\"TOOLVERSION\""
+                   << QString("creationtoolversion=\"%1\"").arg(QT_VERSION_STR);
+    QTest::newRow("tmx multilanguage to ts") << "multilanguage.tmx" << "multilanguage.ts" << "ts" << "" << "";
+    QTest::newRow("tmx multilanguage to qph") << "multilanguage.tmx" << "multilanguage.qph" << "qph" << "" << "";
+    QTest::newRow("qph to tmx") << "phrasebook.qph" << "phrasebook.qph.tmx.out" << "tmx"
+                  << "creationtoolversion=\"TOOLVERSION\""
+                  << QString("creationtoolversion=\"%1\"").arg(QT_VERSION_STR);
 }
 
 void tst_lconvert::converts()
@@ -240,6 +262,8 @@ void tst_lconvert::converts()
     QFETCH(QString, inFileName);
     QFETCH(QString, outFileName);
     QFETCH(QString, format);
+    QFETCH(QString, toBeReplaced);
+    QFETCH(QString, replacement);
 
     QString outFileNameFq = dataDir + outFileName;
 
@@ -251,7 +275,7 @@ void tst_lconvert::converts()
     if (QTest::currentTestFailed())
         return;
 
-    doCompare(&cvt, outFileNameFq);
+    doCompare(&cvt, outFileNameFq, toBeReplaced, replacement);
 }
 
 Q_DECLARE_METATYPE(QList<QStringList>);
