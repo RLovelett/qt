@@ -58,6 +58,7 @@ void *qMalloc(size_t size)
 void qFree(void *ptr)
 {
     ::free(ptr);
+    ptr = NULL;
 }
 
 void *qRealloc(void *ptr, size_t size)

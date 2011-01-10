@@ -183,6 +183,7 @@ bool QCache<Key,T>::insert(const Key &akey, T *aobject, int acost)
     remove(akey);
     if (acost > mx) {
         delete aobject;
+	aobject = NULL;
         return false;
     }
     trim(mx - acost);
