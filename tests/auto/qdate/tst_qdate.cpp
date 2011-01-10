@@ -100,6 +100,7 @@ private slots:
     void longMonthName() const;
     void standaloneLongMonthName() const;
     void roundtrip() const;
+    void toString_format_ISODATE() const;
 };
 
 Q_DECLARE_METATYPE(QDate)
@@ -942,6 +943,20 @@ void tst_QDate::roundtrip() const
         QCOMPARE( loopDate.toJulianDay(), testDate.toJulianDay() );
         loopDate = loopDate.addDays(1);
     }
+}
+
+void tst_QDate::toString_format_ISODATE() const
+{
+    QTest::addColumn<QDate>("t");
+    QTest::addColumn<QString>("format");
+    QTest::addColumn<QString>("str");
+
+    QTest::newRow( "data0" ) << QDate(1,1,1) << QString("Qt::ISODate(yyyy-MM-dd)") << QString("0001-01-01");
+    QCOMPARE(QDate(1,1,1).toString(Qt::ISODate), QString("0001-01-01"));
+    QTest::newRow( "data1" ) << QDate(11,1,1) << QString("Qt::ISODate(yyyy-MM-dd)") << QString("0011-01-01");
+    QCOMPARE(QDate(11,1,1).toString(Qt::ISODate), QString("0011-01-01"));
+    QTest::newRow( "data2" ) << QDate(111,1,1) << QString("Qt::ISODate(yyyy-MM-dd)") << QString("0111-01-01");
+    QCOMPARE(QDate(111,1,1).toString(Qt::ISODate), QString("0111-01-01"));
 }
 
 QTEST_APPLESS_MAIN(tst_QDate)
