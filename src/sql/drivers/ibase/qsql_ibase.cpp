@@ -1342,25 +1342,6 @@ QSqlRecord QIBaseResult::record() const
         f.setLength(v.sqllen);
         f.setPrecision(qAbs(v.sqlscale));
         f.setRequiredStatus((v.sqltype & 1) == 0 ? QSqlField::Required : QSqlField::Optional);
-        if(v.sqlscale < 0) {
-            QSqlQuery q(new QIBaseResult(d->db));
-            q.setForwardOnly(true);
-            q.exec(QLatin1String("select b.RDB$FIELD_PRECISION, b.RDB$FIELD_SCALE, b.RDB$FIELD_LENGTH, a.RDB$NULL_FLAG "
-                    "FROM RDB$RELATION_FIELDS a, RDB$FIELDS b "
-                    "WHERE b.RDB$FIELD_NAME = a.RDB$FIELD_SOURCE "
-                    "AND a.RDB$RELATION_NAME = '") + QString::fromAscii(v.relname, v.relname_length).toUpper() + QLatin1String("' "
-                    "AND a.RDB$FIELD_NAME = '") + QString::fromAscii(v.sqlname, v.sqlname_length).toUpper() + QLatin1String("' "));
-            if(q.first()) {
-                if(v.sqlscale < 0) {
-                    f.setLength(q.value(0).toInt());
-                    f.setPrecision(qAbs(q.value(1).toInt()));
-                } else {
-                    f.setLength(q.value(2).toInt());
-                    f.setPrecision(0);
-                }
-                f.setRequiredStatus(q.value(3).toBool() ? QSqlField::Required : QSqlField::Optional);
-            }
-        }
         f.setSqlType(v.sqltype);
         rec.append(f);
     }
@@ -1638,7 +1619,14 @@ QSqlRecord QIBaseDriver::record(const QString& tablename) const
         bool hasScale = q.value(3).toInt() < 0;
         QSqlField f(q.value(0).toString().simplified(), qIBaseTypeName(type, hasScale));
         if(hasScale) {
-            f.setLength(q.value(4).toInt());
+            int lengthField = q.value(4).toInt();
+            if (lengthField == 0) {
+                // Fix problem with computed field, we set the value to max precison (18)
+                // Core-2362 : http://tracker.firebirdsql.org/browse/CORE-2362
+                f.setLength(18);
+            } else {
+                f.setLength(lengthField);
+            }
             f.setPrecision(qAbs(q.value(3).toInt()));
         } else {
             f.setLength(q.value(2).toInt());
