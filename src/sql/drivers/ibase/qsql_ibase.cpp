@@ -1087,6 +1087,12 @@ bool QIBaseResult::reset (const QString& query)
     return exec();
 }
 
+void QIBaseResult::setLastError(const QSqlError &error)
+{
+    QSqlCachedResult::setLastError(error);
+    d->db->catchError(error);
+}
+
 bool QIBaseResult::gotoNext(QSqlCachedResult::ValueCache& row, int rowIdx)
 {
     ISC_STATUS stat = 0;
@@ -1881,6 +1887,18 @@ QString QIBaseDriver::escapeIdentifier(const QString &identifier, IdentifierType
         res.replace(QLatin1Char('.'), QLatin1String("\".\""));
     }
     return res;
+}
+
+void QIBaseDriver::catchError(const QSqlError &error) const
+{
+    if (error.number() != -1)
+        Q_EMIT errorTriggered(error);
+}
+
+void QIBaseDriver::setLastError(const QSqlError &error)
+{
+    QSqlDriver::setLastError(error);
+    catchError(error);
 }
 
 QT_END_NAMESPACE

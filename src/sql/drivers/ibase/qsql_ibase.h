@@ -67,6 +67,7 @@ public:
     QVariant handle() const;
 
 protected:
+    void setLastError(const QSqlError &error);
     bool gotoNext(QSqlCachedResult::ValueCache& row, int rowIdx);
     bool reset (const QString& query);
     int size();
@@ -113,6 +114,10 @@ public:
 
     QString escapeIdentifier(const QString &identifier, IdentifierType type) const;
 
+    void catchError(const QSqlError &) const ;
+protected :
+    void setLastError(const QSqlError &error);
+
 protected Q_SLOTS:
     bool subscribeToNotificationImplementation(const QString &name);
     bool unsubscribeFromNotificationImplementation(const QString &name);
@@ -120,6 +125,9 @@ protected Q_SLOTS:
 
 private Q_SLOTS:
     void qHandleEventNotification(void* updatedResultBuffer);
+
+Q_SIGNALS :
+    void errorTriggered(const QSqlError &error) const;
 
 private:
     QIBaseDriverPrivate* d;
