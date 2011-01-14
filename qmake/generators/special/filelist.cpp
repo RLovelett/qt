@@ -153,6 +153,8 @@ FilelistGenerator::FilelistGenerator()
 
 bool FilelistGenerator::writeMakefile(QTextStream &str)
 {
+    verifyCompilers();
+
     QString prefix = Option::mkspecial::filelist_prefix + "_";
 
     QString manual_sourcefiles = prefix + "MANUAL_SOURCEFILES";
