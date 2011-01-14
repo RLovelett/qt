@@ -143,6 +143,14 @@ namespace {
 
 
 
+void FilelistGenerator::run(QMakeProject project)
+{
+    FilelistGenerator f;
+    f.setProjectFile(&project);
+    QTextStream t(&Option::output);
+    f.writeMakefile(t);
+}
+
 
 
 FilelistGenerator::FilelistGenerator()
@@ -154,7 +162,6 @@ FilelistGenerator::FilelistGenerator()
 bool FilelistGenerator::writeMakefile(QTextStream &str)
 {
     verifyCompilers();
-
     QString prefix = Option::mkspecial::filelist_prefix + "_";
 
     QString manual_sourcefiles = prefix + "MANUAL_SOURCEFILES";

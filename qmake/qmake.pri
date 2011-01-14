@@ -22,8 +22,7 @@ SOURCES += project.cpp property.cpp main.cpp generators/makefile.cpp \
            generators/symbian/initprojectdeploy_symbian.cpp \
            generators/special/filelist.cpp \
            windows/registry.cpp \
-           symbian/epocroot.cpp \
-           special/makefilelist.cpp
+           symbian/epocroot.cpp
 
 HEADERS += project.h property.h generators/makefile.h \
            generators/unix/unixmake.h meta.h option.h cachekeys.h \
@@ -40,8 +39,7 @@ HEADERS += project.h property.h generators/makefile.h \
            generators/symbian/initprojectdeploy_symbian.h \
            generators/special/filelist.h \
            windows/registry.h \
-           symbian/epocroot.h \
-           special/makefilelist.h
+           symbian/epocroot.h
 
 contains(QT_EDITION, OpenSource) {
    DEFINES += QMAKE_OPENSOURCE_EDITION

@@ -55,7 +55,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include "special/makefilelist.hh"
+#include "generators/special/filelist.h" // TODO: generalize specials
 
 QT_BEGIN_NAMESPACE
 
@@ -174,7 +174,7 @@ int runQMake(int argc, char **argv)
 
         if (Option::qmake_mode == Option::QMAKE_GENERATE_SPECIAL) {
             if (Option::mkspecial::do_filelist) {
-                makeFilelist (project);
+                FilelistGenerator::run (project);
             }
         } else {
             bool success = true;

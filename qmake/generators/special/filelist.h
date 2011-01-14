@@ -49,6 +49,7 @@ QT_BEGIN_NAMESPACE
 class FilelistGenerator : public MakefileGenerator
 {
 public:
+    static void run(QMakeProject project);
     FilelistGenerator();
 
     bool writeMakefile(QTextStream &);
