@@ -123,7 +123,6 @@ QString Option::mkfile::qmakespec_commandline;
 //QMAKE_GENERATE_SPECIAL stuff
 bool Option::mkspecial::do_filelist = false;
 bool Option::mkspecial::filelist_relate_filenames = true;
-bool Option::mkspecial::filelist_moc_from_ui = true;
 QString Option::mkspecial::filelist_ui_pattern = "ui_#.h";
 QString Option::mkspecial::filelist_moc_pattern = "moc_#.cpp";
 QString Option::mkspecial::filelist_qrc_pattern = "qrc_#.cpp";
@@ -340,8 +339,6 @@ Option::parseCommandLine(int argc, char **argv, int skip)
                         Option::mkspecial::do_filelist = true;
                     } else if (opt == "norelate") {
                         Option::mkspecial::filelist_relate_filenames = false;
-                    } else if (opt == "nomocfromui") {
-                        Option::mkspecial::filelist_moc_from_ui = false;
                     } else if (opt == "ui_pattern") {
                         Option::mkspecial::filelist_ui_pattern = argv[++x];
                     } else if (opt == "moc_pattern") {

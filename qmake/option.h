@@ -194,7 +194,6 @@ struct Option
     struct mkspecial {
         static bool do_filelist;
         static bool filelist_relate_filenames;
-        static bool filelist_moc_from_ui;
         static QString filelist_ui_pattern;
         static QString filelist_moc_pattern;
         static QString filelist_qrc_pattern;
