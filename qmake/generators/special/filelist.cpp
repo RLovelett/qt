@@ -65,10 +65,10 @@ namespace {
     ) {
         if (Option::mkspecial::filelist_relate_filenames) {
             name = QDir().absoluteFilePath(name);
-
             QDir relateTo = Option::mkspecial::filelist_relate_to != "" ?
                             QDir(Option::mkspecial::filelist_relate_to) :
                             QDir::current();
+
             name = relateTo.relativeFilePath(name);
         }
 
@@ -161,6 +161,10 @@ FilelistGenerator::FilelistGenerator()
 
 bool FilelistGenerator::writeMakefile(QTextStream &str)
 {
+    const QString oldPwd = qmake_getpwd();
+    qmake_setpwd(Option::output_dir); // Because the project file contains
+                                      // names relative to the folder qmake is
+                                      // run in (at least that's my guess)
     verifyCompilers();
     QString prefix = Option::mkspecial::filelist_prefix + "_";
 
@@ -202,7 +206,7 @@ bool FilelistGenerator::writeMakefile(QTextStream &str)
                     indent, include_path.toLocal8Bit().data()
     );
 
-    // TODO: find out what is set by -o
+    qmake_setpwd(oldPwd);
     return true;
 }
 
