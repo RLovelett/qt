@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the config.tests of the Qt Toolkit.
+** This file is part of the QtNetwork module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,28 +39,43 @@
 **
 ****************************************************************************/
 
-/*
+#ifndef QSHAREDNETWORKSESSIONPRIVATE_H
+#define QSHAREDNETWORKSESSIONPRIVATE_H
 
-LE: strings | grep 0123ABCD0123ABCD
-BE: strings | grep DCBA3210DCBA3210
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-LE arm-swapped-dword-order: strings | grep ABCD0123ABCD0123
-BE arm-swapped-dword-order: strings | grep 3210DCBA3210DCBA (untested)
+#include "qnetworksession.h"
+#include "qnetworkconfiguration.h"
+#include <QHash>
+#include <QSharedPointer>
+#include <QWeakPointer>
+#include <QMutex>
 
-tested on x86, arm-le (gp), aix
+#ifndef QT_NO_BEARERMANAGEMENT
 
-*/
+QT_BEGIN_NAMESPACE
 
-#include <stdlib.h>
-
-// equals static char c [] = "0123ABCD0123ABCD\0\0\0\0\0\0\0"
-static double d [] = { 710524581542275055616.0, 710524581542275055616.0, 0.0 };
-
-int main(int argc, char **argv)
+class QSharedNetworkSessionManager
 {
-    // make sure the linker doesn't throw away the arrays
-    double *d2 = (double *) d;
-    if (argc > 3)
-        d[1] += 1;
-    return d2[0] + d[2] + atof(argv[1]);
-}
+public:
+    static QSharedPointer<QNetworkSession> getSession(QNetworkConfiguration config);
+    static void setSession(QNetworkConfiguration config, QSharedPointer<QNetworkSession> session);
+private:
+    QHash<QNetworkConfiguration, QWeakPointer<QNetworkSession> > sessions;
+};
+
+QT_END_NAMESPACE
+
+#endif // QT_NO_BEARERMANAGEMENT
+
+#endif //QSHAREDNETWORKSESSIONPRIVATE_H
+
