@@ -1180,7 +1180,7 @@ bool QDeclarativePropertyPrivate::write(QObject *object, const QDeclarativePrope
             for (int ii = 0; ii < list.count(); ++ii) {
                 QObject *o = list.at(ii);
                 if (o && !canConvert(o->metaObject(), listType))
-                    o = 0;
+                    o = 0; // <--- causes a crash to, if reached
                 prop.append(&prop, (void *)o);
             }
         } else {
