@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.0" language="pt_BR">
 <context>
     <name>QCLuceneResultWidget</name>
     <message>
@@ -98,7 +98,8 @@
     <name>QHelpDBReader</name>
     <message>
         <source>Cannot open database &apos;%1&apos; &apos;%2&apos;: %3</source>
-        <extracomment>The placeholders are: %1 - The name of the database which cannot be opened %2 - The unique id for the connection %3 - The actual error string</extracomment>
+        <extracomment>The placeholders are: %1 - The name of the database which cannot be opened %2 - The unique id for the connection %3 - The actual error string
+</extracomment>
         <translation>Não foi possível abrir o banco de dados &apos;%1&apos; com a conexão &apos;%2&apos;, mensagem de erro: %3</translation>
     </message>
 </context>
@@ -308,6 +309,7 @@
         <source>%1 - %2 of %n Hits</source>
         <translation>
             <numerusform>%1 - 2% de %n resultados</numerusform>
+            <numerusform></numerusform>
         </translation>
     </message>
     <message>

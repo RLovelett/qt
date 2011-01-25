@@ -1,29 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="pt_BR">
-    <extra-po-header-po_revision_date>2010-11-20 15:37-0300</extra-po-header-po_revision_date>
-    <extra-po-headers>MIME-Version,Content-Type,Content-Transfer-Encoding,X-Qt-Contexts,Last-Translator,PO-Revision-Date,Project-Id-Version,Language-Team,X-Generator,Plural-Forms,POT-Creation-Date,X-Poedit-Language,X-Poedit-Country</extra-po-headers>
-    <extra-po-header-x_generator>Lokalize 1.1</extra-po-header-x_generator>
-    <extra-po-header-language_team>Brazilian Portuguese &lt;kde-i18n-doc@kde.org&gt;</extra-po-header-language_team>
+    <extra-po-header-po_revision_date></extra-po-header-po_revision_date>
+    <extra-po-headers>MIME-Version,Content-Type,Content-Transfer-Encoding,X-Qt-Contexts,Project-Id-Version,POT-Creation-Date,PO-Revision-Date,Last-Translator,Language-Team</extra-po-headers>
+    <extra-po-header-language_team></extra-po-header-language_team>
     <extra-po-header-project_id_version></extra-po-header-project_id_version>
     <extra-po-header-pot_creation_date></extra-po-header-pot_creation_date>
-    <extra-po-header-x_poedit_language>Portuguese</extra-po-header-x_poedit_language>
-    <extra-po-header_comment># Fernando Boaglio &lt;boaglio@kde.org&gt;, 2010.</extra-po-header_comment>
     <extra-po-header-last_translator>Fernando boaglio &lt;boaglio@kde.org&gt;</extra-po-header-last_translator>
-    <extra-po-header-x_poedit_country>BRAZIL</extra-po-header-x_poedit_country>
 <context>
     <name>AbstractFindWidget</name>
     <message>
         <source>&amp;Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Anterior</translation>
     </message>
     <message>
         <source>&amp;Next</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Próximo</translation>
     </message>
     <message>
         <source>&amp;Case sensitive</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Diferenciar maiúsculas de minúsculas</translation>
     </message>
     <message>
         <source>Whole &amp;words</source>
@@ -38,11 +34,11 @@
     <name>AbstractItemEditor</name>
     <message>
         <source>Selectable</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecionável</translation>
     </message>
     <message>
         <source>Editable</source>
-        <translation type="unfinished"></translation>
+        <translation>Editável</translation>
     </message>
     <message>
         <source>DragEnabled</source>
@@ -58,7 +54,7 @@
     </message>
     <message>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Ativado</translation>
     </message>
     <message>
         <source>Tristate</source>
@@ -81,22 +77,22 @@
     <name>AddLinkDialog</name>
     <message>
         <source>Insert Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Inserir link</translation>
     </message>
     <message>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Título:</translation>
     </message>
     <message>
         <source>URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>URL:</translation>
     </message>
 </context>
 <context>
     <name>AppFontDialog</name>
     <message>
         <source>Additional Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Fontes adicionais</translation>
     </message>
 </context>
 <context>
@@ -134,7 +130,7 @@
     <name>AppFontWidget</name>
     <message>
         <source>Fonts</source>
-        <translation type="unfinished"></translation>
+        <translation>Fontes</translation>
     </message>
     <message>
         <source>Add font files</source>
@@ -211,31 +207,31 @@
     </message>
     <message>
         <source>Dense 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Denso 1</translation>
     </message>
     <message>
         <source>Dense 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Denso 2</translation>
     </message>
     <message>
         <source>Dense 3</source>
-        <translation type="unfinished"></translation>
+        <translation>Denso 3</translation>
     </message>
     <message>
         <source>Dense 4</source>
-        <translation type="unfinished"></translation>
+        <translation>Denso 4</translation>
     </message>
     <message>
         <source>Dense 5</source>
-        <translation type="unfinished"></translation>
+        <translation>Denso 5</translation>
     </message>
     <message>
         <source>Dense 6</source>
-        <translation type="unfinished"></translation>
+        <translation>Denso 6</translation>
     </message>
     <message>
         <source>Dense 7</source>
-        <translation type="unfinished"></translation>
+        <translation>Denso 7</translation>
     </message>
     <message>
         <source>Horizontal</source>
@@ -271,7 +267,7 @@
     </message>
     <message>
         <source>[%1, %2]</source>
-        <translation type="unfinished"></translation>
+        <translation>[%1, %2]</translation>
     </message>
 </context>
 <context>
@@ -298,12 +294,14 @@
     </message>
     <message>
         <source>Add &apos;%1&apos; to &apos;%2&apos;</source>
-        <extracomment>Command description for adding buttons to a QButtonGroup</extracomment>
+        <extracomment>Command description for adding buttons to a QButtonGroup
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Morph %1/&apos;%2&apos; into %3</source>
-        <extracomment>MorphWidgetCommand description</extracomment>
+        <extracomment>MorphWidgetCommand description
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -584,7 +582,8 @@
     </message>
     <message>
         <source>Remove &apos;%1&apos; from &apos;%2&apos;</source>
-        <extracomment>Command description for removing buttons from a QButtonGroup</extracomment>
+        <extracomment>Command description for removing buttons from a QButtonGroup
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -600,7 +599,7 @@
     </message>
     <message>
         <source>Edit...</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar...</translation>
     </message>
     <message>
         <source>Show signals and slots inherited from QWidget</source>
@@ -626,17 +625,20 @@
     <name>DPI_Chooser</name>
     <message>
         <source>Standard (96 x 96)</source>
-        <extracomment>Embedded device standard screen resolution</extracomment>
+        <extracomment>Embedded device standard screen resolution
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Greenphone (179 x 185)</source>
-        <extracomment>Embedded device screen resolution</extracomment>
+        <extracomment>Embedded device screen resolution
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>High (192 x 192)</source>
-        <extracomment>Embedded device high definition screen resolution</extracomment>
+        <extracomment>Embedded device high definition screen resolution
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -734,7 +736,8 @@
     <name>DeviceProfile</name>
     <message>
         <source>&apos;%1&apos; is not a number.</source>
-        <extracomment>Reading a number for an embedded device profile</extracomment>
+        <extracomment>Reading a number for an embedded device profile
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -762,7 +765,7 @@
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome</translation>
     </message>
 </context>
 <context>
@@ -816,7 +819,8 @@
     <name>EmbeddedOptionsControl</name>
     <message>
         <source>&lt;html&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Font&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%1, %2&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Style&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%3&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;b&gt;Resolution&lt;/b&gt;&lt;/td&gt;&lt;td&gt;%4 x %5&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/html&gt;</source>
-        <extracomment>Format embedded device profile description</extracomment>
+        <extracomment>Format embedded device profile description
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -824,12 +828,14 @@
     <name>EmbeddedOptionsPage</name>
     <message>
         <source>Embedded Design</source>
-        <extracomment>Tab in preferences dialog</extracomment>
+        <extracomment>Tab in preferences dialog
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Device Profiles</source>
-        <extracomment>EmbeddedOptionsControl group box&quot;</extracomment>
+        <extracomment>EmbeddedOptionsControl group box&quot;
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -883,7 +889,8 @@
 ----------
 Parsing layout stretch values
 ----------
-Parsing layout stretch values</extracomment>
+Parsing layout stretch values
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -892,7 +899,8 @@ Parsing layout stretch values</extracomment>
 ----------
 Parsing grid layout minimum size values
 ----------
-Parsing grid layout minimum size values</extracomment>
+Parsing grid layout minimum size values
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -900,7 +908,8 @@ Parsing grid layout minimum size values</extracomment>
     <name>FormEditorOptionsPage</name>
     <message>
         <source>%1 %</source>
-        <extracomment>Zoom percentage</extracomment>
+        <extracomment>Zoom percentage
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -913,7 +922,8 @@ Parsing grid layout minimum size values</extracomment>
     </message>
     <message>
         <source>Forms</source>
-        <extracomment>Tab in preferences dialog</extracomment>
+        <extracomment>Tab in preferences dialog
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1025,7 +1035,8 @@ Parsing grid layout minimum size values</extracomment>
     <name>ItemPropertyBrowser</name>
     <message>
         <source>XX Icon Selected off</source>
-        <extracomment>Sample string to determinate the width for the first column of the list item property browser</extracomment>
+        <extracomment>Sample string to determinate the width for the first column of the list item property browser
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1033,7 +1044,8 @@ Parsing grid layout minimum size values</extracomment>
     <name>MainWindowBase</name>
     <message>
         <source>Main</source>
-        <extracomment>Not currently used (main tool bar)</extracomment>
+        <extracomment>Not currently used (main tool bar)
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1138,7 +1150,7 @@ Parsing grid layout minimum size values</extracomment>
     </message>
     <message>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation>1</translation>
     </message>
 </context>
 <context>
@@ -1168,7 +1180,7 @@ Parsing grid layout minimum size values</extracomment>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Device skin</source>
@@ -1179,7 +1191,8 @@ Parsing grid layout minimum size values</extracomment>
     <name>PromotionModel</name>
     <message>
         <source>Not used</source>
-        <extracomment>Usage of promoted widgets</extracomment>
+        <extracomment>Usage of promoted widgets
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1584,7 +1597,8 @@ Would you like to retry?</source>
     <name>QDesignerAppearanceOptionsPage</name>
     <message>
         <source>Appearance</source>
-        <extracomment>Tab in preferences dialog</extracomment>
+        <extracomment>Tab in preferences dialog
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1757,17 +1771,20 @@ Container pages should only be added by specifying them in XML returned by the d
     </message>
     <message>
         <source>Unexpected element &lt;%1&gt;</source>
-        <extracomment>Parsing clipboard contents</extracomment>
+        <extracomment>Parsing clipboard contents
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Error while pasting clipboard contents at line %1, column %2: %3</source>
-        <extracomment>Parsing clipboard contents</extracomment>
+        <extracomment>Parsing clipboard contents
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Error while pasting clipboard contents: The root element &lt;ui&gt; is missing.</source>
-        <extracomment>Parsing clipboard contents</extracomment>
+        <extracomment>Parsing clipboard contents
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1899,7 +1916,8 @@ Container pages should only be added by specifying them in XML returned by the d
 ----------
 Empty class name passed to widget factory method
 ----------
-Empty class name passed to widget factory method</extracomment>
+Empty class name passed to widget factory method
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2076,7 +2094,7 @@ Empty class name passed to widget factory method</extracomment>
     <name>QtColorEditWidget</name>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
@@ -2181,7 +2199,7 @@ Empty class name passed to widget factory method</extracomment>
     <name>QtFontEditWidget</name>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Select Font</source>
@@ -2242,23 +2260,23 @@ Empty class name passed to widget factory method</extracomment>
     </message>
     <message>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation>1</translation>
     </message>
     <message>
         <source>2</source>
-        <translation type="unfinished"></translation>
+        <translation>2</translation>
     </message>
     <message>
         <source>3</source>
-        <translation type="unfinished"></translation>
+        <translation>3</translation>
     </message>
     <message>
         <source>4</source>
-        <translation type="unfinished"></translation>
+        <translation>4</translation>
     </message>
     <message>
         <source>5</source>
-        <translation type="unfinished"></translation>
+        <translation>5</translation>
     </message>
     <message>
         <source>Gradient Stops Editor</source>
@@ -2358,7 +2376,7 @@ Empty class name passed to widget factory method</extracomment>
     </message>
     <message>
         <source>%</source>
-        <translation type="unfinished"></translation>
+        <translation>%</translation>
     </message>
     <message>
         <source>Zoom In</source>
@@ -2374,7 +2392,7 @@ Empty class name passed to widget factory method</extracomment>
     </message>
     <message>
         <source>&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;</translation>
     </message>
     <message>
         <source>Linear Type</source>
@@ -2382,7 +2400,7 @@ Empty class name passed to widget factory method</extracomment>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Radial Type</source>
@@ -2557,7 +2575,7 @@ Empty class name passed to widget factory method</extracomment>
     </message>
     <message>
         <source>%1, %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1, %2</translation>
     </message>
     <message>
         <source>Language</source>
@@ -2572,56 +2590,56 @@ Empty class name passed to widget factory method</extracomment>
     <name>QtPointFPropertyManager</name>
     <message>
         <source>(%1, %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>(%1, %2)</translation>
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation>X</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y</translation>
     </message>
 </context>
 <context>
     <name>QtPointPropertyManager</name>
     <message>
         <source>(%1, %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>(%1, %2)</translation>
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation>X</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y</translation>
     </message>
 </context>
 <context>
     <name>QtPropertyBrowserUtils</name>
     <message>
         <source>[%1, %2, %3] (%4)</source>
-        <translation type="unfinished"></translation>
+        <translation>[%1, %2, %3] (%4)</translation>
     </message>
     <message>
         <source>[%1, %2]</source>
-        <translation type="unfinished"></translation>
+        <translation>[%1, %2]</translation>
     </message>
 </context>
 <context>
     <name>QtRectFPropertyManager</name>
     <message>
         <source>[(%1, %2), %3 x %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>[(%1, %2), %3 x %4]</translation>
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation>X</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y</translation>
     </message>
     <message>
         <source>Width</source>
@@ -2636,15 +2654,15 @@ Empty class name passed to widget factory method</extracomment>
     <name>QtRectPropertyManager</name>
     <message>
         <source>[(%1, %2), %3 x %4]</source>
-        <translation type="unfinished"></translation>
+        <translation>[(%1, %2), %3 x %4]</translation>
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation>X</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y</translation>
     </message>
     <message>
         <source>Width</source>
@@ -2945,7 +2963,7 @@ to
     <name>QtSizePropertyManager</name>
     <message>
         <source>%1 x %2</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 x %2</translation>
     </message>
     <message>
         <source>Width</source>
@@ -2964,7 +2982,7 @@ to
     </message>
     <message>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation>1</translation>
     </message>
     <message>
         <source>Actions</source>
@@ -3012,7 +3030,7 @@ to
     </message>
     <message>
         <source>&lt;-</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;-</translation>
     </message>
     <message>
         <source>Add action to toolbar</source>
@@ -3020,7 +3038,7 @@ to
     </message>
     <message>
         <source>-&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>-&gt;</translation>
     </message>
     <message>
         <source>Move action down</source>
@@ -3156,7 +3174,7 @@ Do you want overwrite the template?</source>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -3182,7 +3200,8 @@ Do you want overwrite the template?</source>
     <name>TemplateOptionsPage</name>
     <message>
         <source>Template Paths</source>
-        <extracomment>Tab in preferences dialog</extracomment>
+        <extracomment>Tab in preferences dialog
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3665,7 +3684,8 @@ Do you want overwrite the template?</source>
     <name>qdesigner_internal::DPI_Chooser</name>
     <message>
         <source>System (%1 x %2)</source>
-        <extracomment>System resolution</extracomment>
+        <extracomment>System resolution
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3674,8 +3694,9 @@ Do you want overwrite the template?</source>
     </message>
     <message>
         <source> x </source>
-        <extracomment>DPI X/Y separator</extracomment>
-        <translation type="unfinished"></translation>
+        <extracomment>DPI X/Y separator
+</extracomment>
+        <translation> x </translation>
     </message>
 </context>
 <context>
@@ -3942,7 +3963,7 @@ Do you want overwrite the template?</source>
     </message>
     <message>
         <source>F2</source>
-        <translation type="unfinished"></translation>
+        <translation>F2</translation>
     </message>
     <message>
         <source>Insert widget &apos;%1&apos;</source>
@@ -4480,7 +4501,7 @@ Do you want overwrite the template?</source>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
 </context>
 <context>
@@ -4560,7 +4581,8 @@ Please select another name.</source>
     </message>
     <message>
         <source>Widgets</source>
-        <extracomment>New Form Dialog Categories</extracomment>
+        <extracomment>New Form Dialog Categories
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4826,7 +4848,7 @@ Please select another name.</source>
     </message>
     <message>
         <source>%1 - Error</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - Erro</translation>
     </message>
     <message>
         <source>%1 is not a valid skin directory:
@@ -4842,12 +4864,14 @@ Please select another name.</source>
     </message>
     <message>
         <source>Landscape (&amp;CCW)</source>
-        <extracomment>Rotate form preview counter-clockwise</extracomment>
+        <extracomment>Rotate form preview counter-clockwise
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Landscape (CW)</source>
-        <extracomment>Rotate form preview clockwise</extracomment>
+        <extracomment>Rotate form preview clockwise
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4867,7 +4891,8 @@ Please select another name.</source>
     <message>
         <source>The moose in the noose
 ate the goose who was loose.</source>
-        <extracomment>Palette editor background</extracomment>
+        <extracomment>Palette editor background
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5035,7 +5060,7 @@ Class: %2</source>
     </message>
     <message>
         <source>%1 - Error</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 - Erro</translation>
     </message>
 </context>
 <context>
@@ -5220,15 +5245,15 @@ Class: %2</source>
     </message>
     <message>
         <source>R</source>
-        <translation type="unfinished"></translation>
+        <translation>R</translation>
     </message>
     <message>
         <source>G</source>
-        <translation type="unfinished"></translation>
+        <translation>G</translation>
     </message>
     <message>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <source>Red</source>
@@ -5524,7 +5549,7 @@ Class: %2</source>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Pick a directory to save templates in</source>
@@ -5562,7 +5587,7 @@ Class: %2</source>
     </message>
     <message>
         <source>...</source>
-        <translation type="unfinished"></translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Choose a File</source>
@@ -5608,7 +5633,7 @@ Class: %2</source>
     </message>
     <message>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation>1</translation>
     </message>
     <message>
         <source>New Item</source>
@@ -5797,15 +5822,16 @@ This indicates an inconsistency in the ui-file.</source>
     <name>qdesigner_internal::ZoomMenu</name>
     <message>
         <source>%1 %</source>
-        <extracomment>Zoom factor</extracomment>
-        <translation type="unfinished"></translation>
+        <extracomment>Zoom factor
+</extracomment>
+        <translation>%1 %</translation>
     </message>
 </context>
 <context>
     <name>qdesigner_internal::ZoomablePreviewDeviceSkin</name>
     <message>
         <source>&amp;Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Zoom</translation>
     </message>
 </context>
 </TS>

@@ -1,261 +1,304 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.0" language="pt_BR">
+    <extra-po-header-po_revision_date></extra-po-header-po_revision_date>
+    <extra-po-headers>Project-Id-Version,POT-Creation-Date,PO-Revision-Date,Last-Translator,Language-Team,MIME-Version,Content-Type,Content-Transfer-Encoding</extra-po-headers>
+    <extra-po-header-language_team></extra-po-header-language_team>
+    <extra-po-header-project_id_version></extra-po-header-project_id_version>
+    <extra-po-header-pot_creation_date></extra-po-header-pot_creation_date>
+    <extra-po-header-last_translator>Fernando boaglio &lt;boaglio@kde.org&gt;</extra-po-header-last_translator>
 <context>
-    <name>AboutDialog</name>
+    <name></name>
     <message>
         <source>Qt Linguist</source>
-        <translation type="unfinished"></translation>
+        <comment>AboutDialog|</comment>
+        <translation>Qt Linguist</translation>
     </message>
-</context>
-<context>
-    <name>BatchTranslationDialog</name>
     <message>
         <source>Qt Linguist - Batch Translation</source>
-        <translation type="unfinished"></translation>
+        <comment>BatchTranslationDialog|</comment>
+        <translation>Qt Linguist - tradução em lote</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <comment>BatchTranslationDialog|</comment>
+        <translation>Opções</translation>
     </message>
     <message>
         <source>Set translated entries to finished</source>
+        <comment>BatchTranslationDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Retranslate entries with existing translation</source>
+        <comment>BatchTranslationDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Note that the modified entries will be reset to unfinished if &apos;Set translated entries to finished&apos; above is unchecked</source>
+        <comment>BatchTranslationDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translate also finished entries</source>
+        <comment>BatchTranslationDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Phrase book preference</source>
+        <comment>BatchTranslationDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <comment>BatchTranslationDialog|</comment>
+        <translation>Mover para cima</translation>
     </message>
     <message>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <comment>BatchTranslationDialog|</comment>
+        <translation>Mover para baixo</translation>
     </message>
     <message>
         <source>The batch translator will search through the selected phrase books in the order given above</source>
+        <comment>BatchTranslationDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Run</source>
+        <comment>BatchTranslationDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <comment>BatchTranslationDialog|</comment>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Batch Translation of &apos;%1&apos; - Qt Linguist</source>
+        <comment>BatchTranslationDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Searching, please wait...</source>
+        <comment>BatchTranslationDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
-        <translation type="unfinished"></translation>
+        <comment>BatchTranslationDialog|</comment>
+        <translation>&amp;Cancelar</translation>
     </message>
     <message>
         <source>Linguist batch translator</source>
+        <comment>BatchTranslationDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>Batch translated %n entries</source>
+        <comment>BatchTranslationDialog|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
-</context>
-<context>
-    <name>DataModel</name>
     <message>
         <source>&lt;qt&gt;Duplicate messages found in &apos;%1&apos;:</source>
+        <comment>DataModel|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;p&gt;[more duplicates omitted]</source>
+        <comment>DataModel|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;p&gt;* ID: %1</source>
-        <translation type="unfinished"></translation>
+        <comment>DataModel|</comment>
+        <translation>&lt;p&gt;* ID: %1</translation>
     </message>
     <message>
         <source>&lt;p&gt;* Context: %1&lt;br&gt;* Source: %2</source>
+        <comment>DataModel|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;br&gt;* Comment: %3</source>
-        <translation type="unfinished"></translation>
+        <comment>DataModel|</comment>
+        <translation>&lt;br&gt;* Commentário: %3</translation>
     </message>
     <message>
         <source>Linguist does not know the plural rules for &apos;%1&apos;.
 Will assume a single universal form.</source>
+        <comment>DataModel|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cannot create &apos;%2&apos;: %1</source>
+        <comment>DataModel|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Universal Form</source>
+        <comment>DataModel|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>ErrorsView</name>
     <message>
         <source>Accelerator possibly superfluous in translation.</source>
+        <comment>ErrorsView|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Accelerator possibly missing in translation.</source>
+        <comment>ErrorsView|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translation does not end with the same punctuation as the source text.</source>
+        <comment>ErrorsView|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>A phrase book suggestion for &apos;%1&apos; was ignored.</source>
+        <comment>ErrorsView|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translation does not refer to the same place markers as in the source text.</source>
+        <comment>ErrorsView|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translation does not contain the necessary %n place marker.</source>
+        <comment>ErrorsView|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unknown error</source>
+        <comment>ErrorsView|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>FindDialog</name>
     <message>
         <source>Find</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This window allows you to search for some text in the translation source file.</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Find what:</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Type in the text to search for.</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Options</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Source texts are searched when checked.</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Source texts</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translations are searched when checked.</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Translations</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Texts such as &apos;TeX&apos; and &apos;tex&apos; are considered as different when checked.</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Match case</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Comments and contexts are searched when checked.</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Comments</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ignore &amp;accelerators</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Click here to find the next occurrence of the text you typed in.</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Find Next</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Click here to close this window.</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
+        <comment>FindDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source></source>
-        <comment>Choose Edit|Find from the menu bar or press Ctrl+F to pop up the Find dialog</comment>
-        <translation></translation>
-    </message>
-</context>
-<context>
-    <name>FormMultiWidget</name>
-    <message>
         <source>Alt+Delete</source>
-        <extracomment>translate, but don&apos;t change</extracomment>
+        <comment>FormMultiWidget|</comment>
+        <extracomment>translate, but don&apos;t change
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Shift+Alt+Insert</source>
-        <extracomment>translate, but don&apos;t change</extracomment>
+        <comment>FormMultiWidget|</comment>
+        <extracomment>translate, but don&apos;t change
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Alt+Insert</source>
-        <extracomment>translate, but don&apos;t change</extracomment>
+        <comment>FormMultiWidget|</comment>
+        <extracomment>translate, but don&apos;t change
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Confirmation - Qt Linguist</source>
+        <comment>FormMultiWidget|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Delete non-empty length variant?</source>
+        <comment>FormMultiWidget|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>LConvert</name>
     <message>
         <source>
 Usage:
@@ -344,32 +387,38 @@ Return value:
     2 on read failures
     3 on write failures
 </source>
+        <comment>LConvert|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>LRelease</name>
     <message numerus="yes">
         <source>Dropped %n message(s) which had no ID.</source>
+        <comment>LRelease|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>Excess context/disambiguation dropped from %n message(s).</source>
+        <comment>LRelease|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>    Generated %n translation(s) (%1 finished and %2 unfinished)</source>
+        <comment>LRelease|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>    Ignored %n untranslated source text(s)</source>
+        <comment>LRelease|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
@@ -401,216 +450,256 @@ Options:
     -version
            Display the version of lrelease and exit
 </source>
+        <comment>LRelease|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lrelease error: %1</source>
+        <comment>LRelease|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Updating &apos;%1&apos;...
 </source>
+        <comment>LRelease|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Removing translations equal to source text in &apos;%1&apos;...
 </source>
+        <comment>LRelease|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lrelease error: cannot create &apos;%1&apos;: %2
 </source>
+        <comment>LRelease|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lrelease error: cannot save &apos;%1&apos;: %2</source>
+        <comment>LRelease|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lrelease version %1
 </source>
+        <comment>LRelease|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lrelease error: cannot read project file &apos;%1&apos;.
 </source>
+        <comment>LRelease|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lrelease error: cannot process project file &apos;%1&apos;.
 </source>
+        <comment>LRelease|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lrelease warning: Met no &apos;TRANSLATIONS&apos; entry in project file &apos;%1&apos;
 </source>
+        <comment>LRelease|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>LUpdate</name>
     <message>
         <source>Parenthesis/bracket/brace mismatch between #if and #else branches; using #if branch
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Parenthesis/brace mismatch between #if and #else branches; using #if branch
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unterminated C++ comment
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unterminated C++ string
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Excess closing brace in C++ code (or abuse of the C++ preprocessor)
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Excess closing parenthesis in C++ code (or abuse of the C++ preprocessor)
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Excess closing bracket in C++ code (or abuse of the C++ preprocessor)
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>circular inclusion of %1
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cannot open %1: %2
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>//% cannot be used with tr() / QT_TR_NOOP(). Ignoring
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qualifying with unknown namespace/class %1::%2
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>tr() cannot be called without context
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Class &apos;%1&apos; lacks Q_OBJECT macro
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>It is not recommended to call tr() from within a constructor &apos;%1::%2&apos;
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>//% cannot be used with translate() / QT_TRANSLATE_NOOP(). Ignoring
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>//= cannot be used with qtTrId() / QT_TRID_NOOP(). Ignoring
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unexpected character in meta string
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unterminated meta string
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cannot invoke tr() like this
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Discarding unconsumed meta data
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unbalanced opening brace in C++ code (or abuse of the C++ preprocessor)
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unbalanced opening parenthesis in C++ code (or abuse of the C++ preprocessor)
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unbalanced opening bracket in C++ code (or abuse of the C++ preprocessor)
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cannot open %1: %2</source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unterminated Java comment.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Invalid Unicode value.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unterminated string.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>String used in translation can contain only literals concatenated with other literals, not expressions or numbers.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&apos;class&apos; must be followed by a class name.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Excess closing brace.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&apos;package&apos; must be followed by package name.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unbalanced opening brace.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unbalanced opening parenthesis.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -670,1576 +759,1897 @@ Options:
     @lst-file
            Read additional file names (one per line) from lst-file.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate warning: Codec for tr() &apos;%1&apos; disagrees with existing file&apos;s codec &apos;%2&apos;. Expect trouble.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate warning: Specified target language &apos;%1&apos; disagrees with existing file&apos;s language &apos;%2&apos;. Ignoring.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate warning: Specified source language &apos;%1&apos; disagrees with existing file&apos;s language &apos;%2&apos;. Ignoring.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Updating &apos;%1&apos;...
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Stripping non plural forms in &apos;%1&apos;...
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate warning: Codec for source &apos;%1&apos; is invalid. Falling back to codec for tr().
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate warning: TS files from command line will override TRANSLATIONS in %1.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate warning: TS files from command line prevent recursing into %1.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate warning: no TS files specified. Only diagnostics will be produced for &apos;%1&apos;.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The option -target-language requires a parameter.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The option -source-language requires a parameter.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The option -disable-heuristic requires a parameter.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Invalid heuristic name passed to -disable-heuristic.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The option -locations requires a parameter.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Invalid parameter passed to -locations.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The -codecfortr option should be followed by a codec name.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The -extensions option should be followed by an extension list.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The -pro option should be followed by a filename of .pro file.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The -I option should be followed by a path.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unrecognized option &apos;%1&apos;.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate error: List file &apos;%1&apos; is not readable.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate warning: For some reason, &apos;%1&apos; is not writable.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate error: File &apos;%1&apos; has no recognized extension.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate error: File &apos;%1&apos; does not exist.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Scanning directory &apos;%1&apos;...
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate warning: -target-language usually only makes sense with exactly one TS file.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate warning: -codecfortr has no effect without -ts.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate warning: no TS files specified. Only diagnostics will be produced.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate error: Both project and source files / include paths specified.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>    Found %n source text(s) (%1 new and %2 already existing)
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>    Removed %n obsolete entries
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>    Kept %n obsolete entries
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>    Number heuristic provided %n translation(s)
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>    Same-text heuristic provided %n translation(s)
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message numerus="yes">
         <source>    Similar-text heuristic provided %n translation(s)
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
         <source>Illegal character</source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unclosed string at end of line</source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Illegal escape squence</source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Illegal unicode escape sequence</source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unclosed comment at end of file</source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Illegal syntax for exponential number</source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Identifier cannot start with numeric literal</source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unterminated regular expression literal</source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>//% cannot be used with %1(). Ignoring
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1() requires at least two arguments.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1(): both arguments must be literal strings.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1() requires at least one argument.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1(): text to translate must be a literal string.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>//= cannot be used with %1(). Ignoring
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1(): identifier must be a literal string.
 </source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Expected </source>
-        <extracomment>Beginning of the string that contains comma-separated list of expected tokens</extracomment>
+        <comment>LUpdate|</comment>
+        <extracomment>Beginning of the string that contains comma-separated list of expected tokens
+</extracomment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>XML error: Parse error at line %1, column %2 (%3).</source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Parse error in UI file</source>
+        <comment>LUpdate|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>MainWindow</name>
     <message>
         <source>MainWindow</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Phrases</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Close Phrase Book</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Edit Phrase Book</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Print Phrase Book</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>V&amp;alidation</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;View</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Vie&amp;ws</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Toolbars</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Help</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Translation</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;File</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Recently Opened &amp;Files</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Edit</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Open...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open a Qt translation source file (TS file) for editing</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+O</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>E&amp;xit</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Close this window and exit.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+Q</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save changes made to this Qt translation source file</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save &amp;As...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save As...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save changes made to this Qt translation source file into a new file.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Release</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Create a Qt message file suitable for released applications from the current message file.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Print...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Print a list of all the translation units in the current translation source file.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+P</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Undo</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Undo the last editing operation performed on the current translation.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+Z</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Redo</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Redo an undone editing operation performed on the translation.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+Y</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copy the selected translation text to the clipboard and deletes it.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+X</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Copy</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copy the selected translation text to the clipboard.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+C</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Paste</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Paste the clipboard text into the translation.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+V</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Select &amp;All</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Select the whole translation text.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+A</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Find...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Search for some text in the translation source file.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+F</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Find &amp;Next</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Continue the search where it was left.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>F3</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Prev Unfinished</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Previous unfinished item</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Move to the previous unfinished item.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+K</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Next Unfinished</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Next unfinished item</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Move to the next unfinished item.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+J</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>P&amp;rev</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Move to previous item</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Move to the previous item.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+Shift+K</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ne&amp;xt</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Next item</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Move to the next item.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+Shift+J</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Done and Next</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Mark item as done and move to the next unfinished item</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Mark this item as done and move to the next unfinished item.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copy from source text</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copies the source text into the translation field</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Copies the source text into the translation field.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+B</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Accelerators</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Toggle the validity check of accelerators</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Toggle the validity check of accelerators, i.e. whether the number of ampersands in the source and translation text is the same. If the check fails, a message is shown in the warnings window.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Ending Punctuation</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Toggle the validity check of ending punctuation</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Toggle the validity check of ending punctuation. If the check fails, a message is shown in the warnings window.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Phrase matches</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Toggle checking that phrase suggestions are used</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Toggle checking that phrase suggestions are used. If the check fails, a message is shown in the warnings window.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Place &amp;Marker Matches</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Toggle the validity check of place markers</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Toggle the validity check of place markers, i.e. whether %1, %2, ... are used consistently in the source text and translation text. If the check fails, a message is shown in the warnings window.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;New Phrase Book...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Create a new phrase book.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+N</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Open Phrase Book...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open a phrase book to assist translation.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+H</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Reset Sorting</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sort the items back in the same order as in the message file.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Display guesses</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Set whether or not to display translation guesses.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Statistics</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Display translation statistics.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Manual</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>F1</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>About Qt Linguist</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>About Qt</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Display information about the Qt toolkit by Nokia.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;What&apos;s This?</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>What&apos;s This?</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Enter What&apos;s This? mode.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Shift+F1</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Search And Translate...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Replace the translation on all entries that matches the search source text.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Batch Translation...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Batch translate all entries using the information in the phrase books.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Release As...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Create a Qt message file suitable for released applications from the current message file. The filename will automatically be determined from the name of the TS file.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>File</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Edit</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translation</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Validation</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Help</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open/Refresh Form &amp;Preview</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Form Preview Tool</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>F5</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translation File &amp;Settings...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Add to Phrase Book</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+T</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open Read-O&amp;nly...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Save All</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+S</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Release All</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Close</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Close All</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+W</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Length Variants</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source></source>
-        <comment>This is the application&apos;s main window.</comment>
-        <translation></translation>
-    </message>
-    <message>
         <source>Source text</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Index</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Context</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Items</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This panel lists the source contexts.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Strings</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Phrases and guesses</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Sources and Forms</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Warnings</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source> MOD </source>
-        <comment>status bar: file(s) modified</comment>
+        <comment>MainWindow|status bar: file(s) modified</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Loading...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Loading File - Qt Linguist</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The file &apos;%1&apos; does not seem to be related to the currently open file(s) &apos;%2&apos;.
 
 Close the open file(s) first?</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>The file &apos;%1&apos; does not seem to be related to the file &apos;%2&apos; which is being loaded as well.
 
 Skip loading the first named file?</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n translation unit(s) loaded.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
         <source>Related files (%1);;</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open Translation Files</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>File saved.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qt message files for released applications (*.qm)
 All files (*)</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>File created.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Printing...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Context: %1</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>finished</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>unresolved</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>obsolete</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Printing... (page %1)</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Printing completed</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Printing aborted</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Search wrapped.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qt Linguist</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cannot find the string &apos;%1&apos;.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Search And Translate in &apos;%1&apos; - Qt Linguist</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translate - Qt Linguist</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>Translated %n entry(s)</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
         <source>No more occurrences of &apos;%1&apos;. Start over?</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Create New Phrase Book</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qt phrase books (*.qph)
 All files (*)</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Phrase book created.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open Phrase Book</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qt phrase books (*.qph);;All files (*)</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
         <source>%n phrase(s) loaded.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished">
+            <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
     </message>
     <message>
         <source>Add to phrase book</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>No appropriate phrasebook found.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Adding entry to phrasebook %1</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Select phrase book to add to</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Unable to launch Qt Assistant (%1)</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Version %1</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;center&gt;&lt;img src=&quot;:/images/splash.png&quot;/&gt;&lt;/img&gt;&lt;p&gt;%1&lt;/p&gt;&lt;/center&gt;&lt;p&gt;Qt Linguist is a tool for adding translations to Qt applications.&lt;/p&gt;&lt;p&gt;Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Do you want to save the modified files?</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Do you want to save &apos;%1&apos;?</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qt Linguist[*]</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1[*] - Qt Linguist</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>No untranslated translation units left.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Window</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Minimize</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Ctrl+M</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Display the manual for %1.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Display information about %1.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Save &apos;%1&apos;</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save &apos;%1&apos; &amp;As...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Release &apos;%1&apos;</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Release &apos;%1&apos; As...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Close &apos;%1&apos;</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Save</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Close</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Save All</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Close All</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Release</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translation File &amp;Settings for &apos;%1&apos;...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Batch Translation of &apos;%1&apos;...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Search And &amp;Translate in &apos;%1&apos;...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Search And &amp;Translate...</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cannot read from phrase book &apos;%1&apos;.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Close this phrase book.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Enables you to add, modify, or delete entries in this phrase book.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Print the entries in this phrase book.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cannot create phrase book &apos;%1&apos;.</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Do you want to save phrase book &apos;%1&apos;?</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>All</source>
+        <comment>MainWindow|</comment>
         <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>MessageEditor</name>
-    <message>
-        <source></source>
-        <comment>This is the right panel of the main window.</comment>
-        <translation></translation>
     </message>
     <message>
         <source>Russian</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>German</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Japanese</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>French</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Polish</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Chinese</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This whole panel allows you to view and edit the translation of some source text.</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Source text</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This area shows the source text.</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Source text (Plural)</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This area shows the plural form of the source text.</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Developer comments</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This area shows a comment that may guide you, and the context in which the text occurs.</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Here you can enter comments for your own use. They have no effect on the translated applications.</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 translation (%2)</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This is where you can enter or modify the translation of the above source text.</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 translation</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 translator comments</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&apos;%1&apos;
 Line: %2</source>
+        <comment>MessageEditor|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>MessageModel</name>
     <message>
         <source>Completion status for %1</source>
+        <comment>MessageModel|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;file header&gt;</source>
+        <comment>MessageModel|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;context comment&gt;</source>
+        <comment>MessageModel|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;unnamed context&gt;</source>
+        <comment>MessageModel|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>PhraseBook</name>
     <message>
         <source>Parse error at line %1, column %2 (%3).</source>
+        <comment>PhraseBook|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>PhraseBookBox</name>
     <message>
         <source>Edit Phrase Book</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This window allows you to add, modify, or delete entries in a phrase book.</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Translation:</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This is the phrase in the target language corresponding to the source phrase.</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>S&amp;ource phrase:</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This is a definition for the source phrase.</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>This is the phrase in the source language.</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Definition:</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Click here to add the phrase to the phrase book.</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;New Entry</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Click here to remove the entry from the phrase book.</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Remove Entry</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Settin&amp;gs...</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Click here to save the changes made.</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Save</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Click here to close this window.</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Close</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source></source>
-        <comment>Go to Phrase &gt; Edit Phrase Book... The dialog that pops up is a PhraseBookBox.</comment>
-        <translation></translation>
-    </message>
-    <message>
         <source>(New Entry)</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1[*] - Qt Linguist</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qt Linguist</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cannot save phrase book &apos;%1&apos;.</source>
+        <comment>PhraseBookBox|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>PhraseModel</name>
     <message>
         <source>Source phrase</source>
+        <comment>PhraseModel|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translation</source>
+        <comment>PhraseModel|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Definition</source>
+        <comment>PhraseModel|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>PhraseView</name>
     <message>
         <source>Insert</source>
+        <comment>PhraseView|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Edit</source>
+        <comment>PhraseView|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Guess (%1)</source>
+        <comment>PhraseView|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Guess</source>
+        <comment>PhraseView|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QObject</name>
     <message>
         <source>Translation files (%1);;</source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>All files (*)</source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qt Linguist</source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>GNU Gettext localization files</source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>GNU Gettext localization template files</source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Compiled Qt translations</source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qt Linguist &apos;Phrase Book&apos;</source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qt translation sources (format 1.1)</source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qt translation sources (format 2.0)</source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Qt translation sources (latest format)</source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>XLIFF localization files</source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>lupdate version %1
 </source>
+        <comment>QObject|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>SourceCodeView</name>
     <message>
         <source>&lt;i&gt;Source code not available&lt;/i&gt;</source>
+        <comment>SourceCodeView|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;i&gt;File %1 not available&lt;/i&gt;</source>
+        <comment>SourceCodeView|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;i&gt;File %1 not readable&lt;/i&gt;</source>
+        <comment>SourceCodeView|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>Statistics</name>
     <message>
         <source>Statistics</source>
+        <comment>Statistics|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Close</source>
+        <comment>Statistics|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translation</source>
+        <comment>Statistics|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Source</source>
+        <comment>Statistics|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>0</source>
+        <comment>Statistics|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Words:</source>
+        <comment>Statistics|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Characters:</source>
+        <comment>Statistics|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Characters (with spaces):</source>
+        <comment>Statistics|</comment>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>TranslateDialog</name>
     <message>
         <source>This window allows you to search for some text in the translation source file.</source>
+        <comment>TranslateDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Type in the text to search for.</source>
+        <comment>TranslateDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Find &amp;source text:</source>
+        <comment>TranslateDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Translate to:</source>
+        <comment>TranslateDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Search options</source>
+        <comment>TranslateDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Texts such as &apos;TeX&apos; and &apos;tex&apos; are considered as different when checked.</source>
+        <comment>TranslateDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Match &amp;case</source>
+        <comment>TranslateDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Mark new translation as &amp;finished</source>
+        <comment>TranslateDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Click here to find the next occurrence of the text you typed in.</source>
+        <comment>TranslateDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Find Next</source>
+        <comment>TranslateDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Translate</source>
-        <translation type="unfinished"></translation>
+        <comment>TranslateDialog|</comment>
+        <translation>Traduzir</translation>
     </message>
     <message>
         <source>Translate All</source>
-        <translation type="unfinished"></translation>
+        <comment>TranslateDialog|</comment>
+        <translation>Traduzir tudo</translation>
     </message>
     <message>
         <source>Click here to close this window.</source>
+        <comment>TranslateDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <comment>TranslateDialog|</comment>
+        <translation>Cancelar</translation>
     </message>
-</context>
-<context>
-    <name>TranslationSettingsDialog</name>
     <message>
         <source>Source language</source>
-        <translation type="unfinished"></translation>
+        <comment>TranslationSettingsDialog|</comment>
+        <translation>Idioma origem</translation>
     </message>
     <message>
         <source>Language</source>
-        <translation type="unfinished"></translation>
+        <comment>TranslationSettingsDialog|</comment>
+        <translation>Idioma</translation>
     </message>
     <message>
         <source>Country/Region</source>
+        <comment>TranslationSettingsDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Target language</source>
-        <translation type="unfinished"></translation>
+        <comment>TranslationSettingsDialog|</comment>
+        <translation>Idioma destino</translation>
     </message>
     <message>
         <source>Settings for &apos;%1&apos; - Qt Linguist</source>
+        <comment>TranslationSettingsDialog|</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Any Country</source>
-        <translation type="unfinished"></translation>
+        <comment>TranslationSettingsDialog|</comment>
+        <translation>Qualquer país</translation>
     </message>
 </context>
 </TS>
