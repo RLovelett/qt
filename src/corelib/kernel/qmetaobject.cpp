@@ -725,12 +725,16 @@ int QMetaObject::indexOfProperty(const char *name) const
     const QMetaObject *m = this;
     while (m) {
         const QMetaObjectPrivate *d = priv(m->d.data);
-        for (int i = d->propertyCount-1; i >= 0; --i) {
-            const char *prop = m->d.stringdata + m->d.data[d->propertyData + 3*i];
-            if (name[0] == prop[0] && strcmp(name + 1, prop + 1) == 0) {
+        int i = d->propertyData + 3 * (d->propertyCount-1);
+        const uint *data = m->d.data + i;
+        while (i >= d->propertyData) { 
+            const char *prop = m->d.stringdata + *data;
+            if (name[0] == prop[0] && strcmp(name+1, prop+1) == 0) {
                 i += m->propertyOffset();
                 return i;
             }
+            i -= 3;
+            data -= 3;
         }
         m = m->d.superdata;
     }
@@ -738,7 +742,6 @@ int QMetaObject::indexOfProperty(const char *name) const
     if (priv(this->d.data)->revision >= 3 && (priv(this->d.data)->flags & DynamicMetaObject)) {
         QAbstractDynamicMetaObject *me = 
             const_cast<QAbstractDynamicMetaObject *>(static_cast<const QAbstractDynamicMetaObject *>(this));
-
         return me->createProperty(name, 0);
     }
 
