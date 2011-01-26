@@ -97,10 +97,10 @@ public:
           lastSectionSize(0),
           sectionIndicatorOffset(0),
           sectionIndicator(0),
-          globalResizeMode(QHeaderView::Interactive)
+          globalResizeMode(QHeaderView::Interactive),
+          sectionStartposRecalc(true),          
+          allSectionsHaveDefaultSize(true)
     {}
-
-
     int lastVisibleVisualIndex() const;
     int sectionHandleAt(int position);
     void setupSectionIndicator(int section, int position);
@@ -112,6 +112,7 @@ public:
     void _q_layoutChanged();
 
     bool isSectionSelected(int section) const;
+// ### TODO: inline int sectionCount() const {return sectionSpans.count();}
 
     inline bool rowIntersectsSelection(int row) const {
         return (selectionModel ? selectionModel->rowIntersectsSelection(row, root) : false);
@@ -185,9 +186,11 @@ public:
             || logicalIndices.count() != sectionCount) {
             visualIndices.resize(sectionCount);
             logicalIndices.resize(sectionCount);
+            int *visualdata=visualIndices.data();
+            int *logicaldata=logicalIndices.data();
             for (int s = 0; s < sectionCount; ++s) {
-                visualIndices[s] = s;
-                logicalIndices[s] = s;
+                visualdata[s] = s;
+                logicaldata[s] = s;
             }
         }
     }
@@ -281,22 +284,28 @@ public:
     QLabel *sectionIndicator;
     QHeaderView::ResizeMode globalResizeMode;
     QList<QPersistentModelIndex> persistentHiddenSections;
-
+    mutable bool sectionStartposRecalc;
+    bool allSectionsHaveDefaultSize;
     // header section spans
 
     struct SectionSpan {
         int size;
-        int count;
+        union {
+            mutable int calculated_startpos;
+            int logindex;
+            int dataStreamCount;
+        };
         QHeaderView::ResizeMode resizeMode;
-        inline SectionSpan() : size(0), count(0), resizeMode(QHeaderView::Interactive) {}
-        inline SectionSpan(int length, int sections, QHeaderView::ResizeMode mode)
-            : size(length), count(sections), resizeMode(mode) {}
-        inline int sectionSize() const { return (count > 0 ? size / count : 0); }
+        inline SectionSpan() : size(0), resizeMode(QHeaderView::Interactive) {}
+        inline SectionSpan(int length,QHeaderView::ResizeMode mode)
+            : size(length), calculated_startpos(-1), resizeMode(mode) {}
+        inline int sectionSize() const { return size;}
+        inline int calculatedEndPos() const {return calculated_startpos+size;}
 #ifndef QT_NO_DATASTREAM
         inline void write(QDataStream &out) const
-        { out << size; out << count; out << (int)resizeMode; }
+        { out << size; out << 1; out << (int)resizeMode; }
         inline void read(QDataStream &in)
-        { in >> size; in >> count; int m; in >> m; resizeMode = (QHeaderView::ResizeMode)m; }
+        {int m; in >> m; size = m; in >>m; dataStreamCount=m; in >>m; resizeMode = (QHeaderView::ResizeMode)m; }
 #endif
     };
 
@@ -306,12 +315,10 @@ public:
     void removeSectionsFromSpans(int start, int end);
     void resizeSectionSpan(int visualIndex, int oldSize, int newSize);
     void setDefaultSectionSize(int size);
+    void recalcSectionStartPos() const; // not really const
 
     inline int headerSectionCount() const { // for debugging
-        int count = 0;
-        for (int i = 0; i < sectionSpans.count(); ++i)
-            count += sectionSpans.at(i).count;
-        return count;
+        return sectionSpans.count();
     }
 
     inline int headerLength() const { // for debugging
@@ -329,12 +336,8 @@ public:
     }
 
     inline int sectionSpanIndex(int visual) const {
-        int section_start = 0;
-        for (int i = 0; i < sectionSpans.count(); ++i) {
-            int section_end = section_start + sectionSpans.at(i).count - 1;
-            if (visual >= section_start && visual <= section_end)
-                return i;
-            section_start = section_end + 1;
+        if (visual<sectionSpans.count() && visual>=0) {
+          return visual;
         }
         return -1;
     }
