@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -1211,6 +1211,36 @@ void QAbstractSocketPrivate::fetchConnectionParameters()
            host.toString().toLatin1().constData(), port);
 #endif
 }
+
+
+void QAbstractSocketPrivate::pauseSocketNotifiers(QAbstractSocket *socket)
+{
+    QAbstractSocketEngine *socketEngine = socket->d_func()->socketEngine;
+    if (!socketEngine)
+        return;
+    socket->d_func()->prePauseReadSocketNotifierState = socketEngine->isReadNotificationEnabled();
+    socket->d_func()->prePauseWriteSocketNotifierState = socketEngine->isWriteNotificationEnabled();
+    socket->d_func()->prePauseExceptionSocketNotifierState = socketEngine->isExceptionNotificationEnabled();
+    socketEngine->setReadNotificationEnabled(false);
+    socketEngine->setWriteNotificationEnabled(false);
+    socketEngine->setExceptionNotificationEnabled(false);
+}
+
+void QAbstractSocketPrivate::resumeSocketNotifiers(QAbstractSocket *socket)
+{
+    QAbstractSocketEngine *socketEngine = socket->d_func()->socketEngine;
+    if (!socketEngine)
+        return;
+    socketEngine->setReadNotificationEnabled(socket->d_func()->prePauseReadSocketNotifierState);
+    socketEngine->setWriteNotificationEnabled(socket->d_func()->prePauseWriteSocketNotifierState);
+    socketEngine->setExceptionNotificationEnabled(socket->d_func()->prePauseExceptionSocketNotifierState);
+}
+
+QAbstractSocketEngine* QAbstractSocketPrivate::getSocketEngine(QAbstractSocket *socket)
+{
+    return socket->d_func()->socketEngine;
+}
+
 
 /*! \internal
 

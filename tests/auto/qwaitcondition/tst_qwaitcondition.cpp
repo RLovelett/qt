@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -76,7 +76,7 @@ private slots:
 static const int iterations = 10;
 
 // Note: some tests rely on ThreadCount being multiple of 2
-#ifdef Q_OS_SOLARIS
+#if defined(Q_OS_SOLARIS) || ( defined(Q_OS_LINUX) && defined(QT_ARCH_ARMV6) )
 static const int ThreadCount = 4;
 #else
 static const int ThreadCount = 10;

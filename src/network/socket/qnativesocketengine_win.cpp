@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -733,7 +733,7 @@ int QNativeSocketEnginePrivate::nativeAccept()
 {
     int acceptedDescriptor = WSAAccept(socketDescriptor, 0,0,0,0);
 	if (acceptedDescriptor != -1 && QAbstractEventDispatcher::instance()) {
-		// Becuase of WSAAsyncSelect() WSAAccept returns a non blocking socket
+		// Because of WSAAsyncSelect() WSAAccept returns a non blocking socket
 		// with the same attributes as the listening socket including the current
 		// WSAAsyncSelect(). To be able to change the socket to blocking mode the
 		// WSAAsyncSelect() call must be cancled.

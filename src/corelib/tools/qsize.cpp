@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -492,8 +492,12 @@ QDebug operator<<(QDebug dbg, const QSize &s) {
 /*!
     \fn bool QSizeF::isNull() const
 
-    Returns true if both the width and height is 0; otherwise returns
+    Returns true if both the width and height are +0.0; otherwise returns
     false.
+
+    \note Since this function treats +0.0 and -0.0 differently, sizes with
+    zero width and height where either or both values have a negative
+    sign are not defined to be null sizes.
 
     \sa isValid(), isEmpty()
 */

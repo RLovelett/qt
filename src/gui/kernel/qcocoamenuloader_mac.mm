@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -89,7 +89,7 @@ QT_USE_NAMESPACE
 - (void)ensureAppMenuInMenu:(NSMenu *)menu
 {
     // The application menu is the menu in the menu bar that contains the
-    // 'Quit' item. When changing menu bar (e.g when swithing between
+    // 'Quit' item. When changing menu bar (e.g when switching between
     // windows with different menu bars), we never recreate this menu, but
     // instead pull it out the current menu bar and place into the new one:
     NSMenu *mainMenu = [NSApp mainMenu];

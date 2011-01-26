@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -446,7 +446,7 @@ QRegion QWidgetBackingStore::dirtyRegion(QWidget *widget) const
 
 /*!
     Returns the static content inside the \a parent if non-zero; otherwise the static content
-    for the entire backing store is returned. The content will be clipped to \a withingClipRect
+    for the entire backing store is returned. The content will be clipped to \a withinClipRect
     if non-empty.
 */
 QRegion QWidgetBackingStore::staticContents(QWidget *parent, const QRect &withinClipRect) const

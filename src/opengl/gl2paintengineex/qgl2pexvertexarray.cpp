@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -63,8 +63,9 @@ QGLRect QGL2PEXVertexArray::boundingRect() const
 
 void QGL2PEXVertexArray::addClosingLine(int index)
 {
-    if (QPointF(vertexArray.at(index)) != QPointF(vertexArray.last()))
-        vertexArray.add(vertexArray.at(index));
+    QPointF point(vertexArray.at(index));
+    if (point != QPointF(vertexArray.last()))
+        vertexArray.add(point);
 }
 
 void QGL2PEXVertexArray::addCentroid(const QVectorPath &path, int subPathIndex)

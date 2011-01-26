@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -82,7 +82,8 @@ private slots:
 // Testing get/set functions
 void tst_QCalendarWidget::getSetCheck()
 {
-    QCalendarWidget object;
+    QWidget topLevel;
+    QCalendarWidget object(&topLevel);
 
     //horizontal header formats
     object.setHorizontalHeaderFormat(QCalendarWidget::NoHorizontalHeader);
@@ -191,7 +192,7 @@ void tst_QCalendarWidget::buttonClickCheck()
     QCOMPARE(month, object.monthShown());
 
     button = qFindChild<QToolButton *>(&object, "qt_calendar_yearbutton");
-    QTest::mouseClick(button, Qt::LeftButton);
+    QTest::mouseClick(button, Qt::LeftButton, Qt::NoModifier, button->rect().center(), 2);
     QVERIFY(!button->isVisible());
     QSpinBox *spinbox = qFindChild<QSpinBox *>(&object, "qt_calendar_yearedit");
     QTest::qWait(500);

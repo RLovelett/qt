@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -83,7 +83,8 @@ public:
         SaveOnExit = 0x00000010,
         ExitOnComplete = 0x00000020,
         ExitOnFailure = 0x00000040,
-        Snapshot = 0x00000080
+        Snapshot = 0x00000080,
+        TestSkipProperty = 0x00000100
     };
     Q_DECLARE_FLAGS(ScriptOptions, ScriptOption)
     void setScript(const QString &s) { m_script = s; }
@@ -187,8 +188,6 @@ private:
     ScriptOptions m_scriptOptions;
     QDeclarativeTester *tester;
 
-    QNetworkReply *wgtreply;
-    QString wgtdir;
     NetworkAccessManagerFactory *namFactory;
 
     bool useQmlFileBrowser;

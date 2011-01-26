@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,9 +56,13 @@
 
 struct CopyItem
 {
-    CopyItem(const QString& f, const QString& t) : from(f) , to(t) { }
+    CopyItem(const QString& f, const QString& t)
+        : from(f) , to(t) { }
+    CopyItem(const QString& f, const QString& t, const QStringList& l)
+        : from(f) , to(t), flags(l) { }
     QString from;
     QString to;
+    QStringList flags;
 };
 typedef QList<CopyItem> DeploymentList;
 

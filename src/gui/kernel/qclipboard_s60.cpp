@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -257,18 +257,14 @@ const QMimeData* QClipboard::mimeData(Mode mode) const
                 }
             }
             CleanupStack::PopAndDestroy(cb);
-            if (dataExists) {
-                return d->source();
-            }
-            else {
-                return 0;
-            }
-
         });
         if (err != KErrNone){
             qDebug()<< "clipboard is empty/err: " << err;
         }
 
+        if (dataExists) {
+            return d->source();
+        }
     }
     return 0;
 }

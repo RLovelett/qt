@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -1970,7 +1970,7 @@ void QInputMethodEvent::setCommitString(const QString &commitString, int replace
   is usually given by a wheel on 4D mouse. If the device does not support a
   Z-axis, pass zero here.
 
-  The \a tangentialPressure paramater contins the tangential pressure of an air
+  The \a tangentialPressure parameter contins the tangential pressure of an air
   brush. If the device does not support tangential pressure, pass 0 here.
 
   \a rotation contains the device's rotation in degrees. 4D mice support

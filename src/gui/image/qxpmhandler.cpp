@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -766,7 +766,7 @@ static bool qt_get_named_xpm_rgb(const char *name_no_space, QRgb *rgb)
 {
     XPMRGBData x;
     x.name = name_no_space;
-    // Funtion bsearch() is supposed to be
+    // Function bsearch() is supposed to be
     // void *bsearch(const void *key, const void *base, ...
     // So why (char*)? Are there broken bsearch() declarations out there?
     XPMRGBData *r = (XPMRGBData *)bsearch((char *)&x, (char *)xpmRgbTbl, xpmRgbTblSize,

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -438,8 +438,12 @@ QDebug operator<<(QDebug d, const QPointF &p)
 /*!
     \fn bool QPointF::isNull() const
 
-    Returns true if both the x and y coordinates are set to 0.0,
+    Returns true if both the x and y coordinates are set to +0.0;
     otherwise returns false.
+
+    \note Since this function treats +0.0 and -0.0 differently, points
+    with zero-valued coordinates where either or both values have a
+    negative sign are not defined to be null points.
 */
 
 

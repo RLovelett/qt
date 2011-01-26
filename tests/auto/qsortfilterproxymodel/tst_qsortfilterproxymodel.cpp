@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,6 +42,9 @@
 
 #include <QtTest/QtTest>
 #include "../../shared/util.h"
+
+#include "dynamictreemodel.h"
+#include "modeltest.h"
 
 #include <QtCore>
 #include <QtGui>
@@ -144,6 +147,7 @@ private slots:
 
     void testMultipleProxiesWithSelection();
     void mapSelectionFromSource();
+    void filteredColumns();
 
 protected:
     void buildHierarchy(const QStringList &data, QAbstractItemModel *model);
@@ -3172,6 +3176,41 @@ void tst_QSortFilterProxyModel::taskQTBUG_10287_unnecessaryMapCreation()
     Proxy10287 p(&m);
     m.removeChild();
     // No assert failure, it passes.
+}
+
+class FilteredColumnProxyModel : public QSortFilterProxyModel
+{
+  Q_OBJECT
+public:
+  FilteredColumnProxyModel(QObject *parent = 0)
+    : QSortFilterProxyModel(parent)
+  {
+
+  }
+
+protected:
+  bool filterAcceptsColumn(int column, const QModelIndex &source_parent) const
+  {
+    return column % 2 != 0;
+  }
+};
+
+void tst_QSortFilterProxyModel::filteredColumns()
+{
+    DynamicTreeModel *model = new DynamicTreeModel(this);
+
+    FilteredColumnProxyModel *proxy = new FilteredColumnProxyModel(this);
+    proxy->setSourceModel(model);
+
+    new ModelTest(proxy, this);
+
+    ModelInsertCommand *insertCommand = new ModelInsertCommand(model, this);
+    insertCommand->setNumCols(2);
+    insertCommand->setStartRow(0);
+    insertCommand->setEndRow(0);
+    // Parent is QModelIndex()
+    insertCommand->doCommand();
+
 }
 
 QTEST_MAIN(tst_QSortFilterProxyModel)

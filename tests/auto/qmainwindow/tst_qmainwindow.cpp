@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,6 +55,7 @@
 #include <qtextedit.h>
 #include <private/qmainwindowlayout_p.h>
 #include <private/qdockarealayout_p.h>
+#include "../platformquirks.h"
 
 //TESTED_FILES=
 
@@ -1679,6 +1680,9 @@ void tst_QMainWindow::addToolbarAfterShow()
 
 void tst_QMainWindow::centralWidgetSize()
 {
+    if(PlatformQuirks::isAutoMaximizing())
+        QSKIP("The platform is auto maximizing, so the test makes no sense", SkipAll);;
+
     QMainWindow mainWindow;
     mainWindow.menuBar()->addMenu("menu");
 

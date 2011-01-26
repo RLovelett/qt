@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,7 +57,7 @@ QT_MODULE(Declarative)
 class QDeclarativeAbstractAnimation;
 class QDeclarativeTransitionPrivate;
 class QDeclarativeTransitionManager;
-class Q_DECLARATIVE_PRIVATE_EXPORT QDeclarativeTransition : public QObject
+class Q_DECLARATIVE_EXPORT QDeclarativeTransition : public QObject
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QDeclarativeTransition)

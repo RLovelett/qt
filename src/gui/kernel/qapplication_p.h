@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -446,7 +446,8 @@ public:
     static bool animate_toolbox;
     static bool widgetCount; // Coupled with -widgetcount switch
     static bool load_testability; // Coupled with -testability switch
-    static QString qmljsDebugArguments; // a string containing arguments for js/qml debugging.
+    static QString qmljs_debug_arguments; // a string containing arguments for js/qml debugging.
+    static QString qmljsDebugArgumentsString(); // access string from other libraries
 
 #ifdef Q_WS_MAC
     static bool native_modal_dialog_active;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -1300,6 +1300,9 @@ void tst_QPathClipper::task251909()
 
 void tst_QPathClipper::qtbug3778()
 {
+    if (sizeof(double) != sizeof(qreal)) {
+        QSKIP("This test only works for qreal=double, otherwise ends in rounding errors", SkipAll);
+    }
     QPainterPath path1;
     path1.moveTo(200, 3.22409e-5);
     // e-5 and higher leads to a bug

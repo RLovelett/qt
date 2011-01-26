@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -164,9 +164,13 @@ QAuthenticator &QAuthenticator::operator=(const QAuthenticator &other)
 {
     if (d == other.d)
         return *this;
-    detach();
-    d->user = other.d->user;
-    d->password = other.d->password;
+
+    if (d && !d->ref.deref())
+        delete d;
+
+    d = other.d;
+    if (d)
+        d->ref.ref();
     return *this;
 }
 
@@ -209,44 +213,29 @@ void QAuthenticator::setUser(const QString &user)
     int separatorPosn = 0;
 
     switch(d->method) {
-    case QAuthenticatorPrivate::DigestMd5:
-        if((separatorPosn = user.indexOf(QLatin1String("\\"))) != -1) {
-            //domain name is present
-	    d->userDomain.clear();
-            d->realm = user.left(separatorPosn);
-            d->user = user.mid(separatorPosn + 1);
-        } else if((separatorPosn = user.indexOf(QLatin1String("@"))) != -1) {
-            //domain name is present
-	    d->userDomain.clear();
-            d->realm = user.mid(separatorPosn + 1);
-            d->user = user.left(separatorPosn);
-        } else {
-            d->user = user;
-            d->realm.clear();
-            d->userDomain.clear();
-        }
-        break;
-
     case QAuthenticatorPrivate::Ntlm:
         if((separatorPosn = user.indexOf(QLatin1String("\\"))) != -1) {
             //domain name is present
             d->realm.clear();
             d->userDomain = user.left(separatorPosn);
-            d->user = user.mid(separatorPosn + 1);
+            d->extractedUser = user.mid(separatorPosn + 1);
+            d->user = user;
         } else if((separatorPosn = user.indexOf(QLatin1String("@"))) != -1) {
             //domain name is present
             d->realm.clear();
             d->userDomain = user.left(separatorPosn);
-            d->user = user.left(separatorPosn);
+            d->extractedUser = user.left(separatorPosn);
+            d->user = user;
         } else {
+            d->extractedUser = user;
             d->user = user;
 	    d->realm.clear();
             d->userDomain.clear();
         }
         break;
-    // For other auth mechanisms, domain name will be part of username
     default:
         d->user = user;
+        d->userDomain.clear();
         break;
     }
 }
@@ -1196,7 +1185,7 @@ static QByteArray qCreatev2Hash(const QAuthenticatorPrivate *ctx,
         Q_ASSERT(hashKey.size() == 16);
         // Assuming the user and domain is always unicode in challenge
         QByteArray message =
-                qStringAsUcs2Le(ctx->user.toUpper()) +
+                qStringAsUcs2Le(ctx->extractedUser.toUpper()) +
                 qStringAsUcs2Le(phase3->domainStr);
 
         phase3->v2Hash = qEncodeHmacMd5(hashKey, message);
@@ -1401,8 +1390,8 @@ static QByteArray qNtlmPhase3(QAuthenticatorPrivate *ctx, const QByteArray& phas
         pb.domainStr = ctx->userDomain;
     }
 
-    offset = qEncodeNtlmString(pb.user, offset, ctx->user, unicode);
-    pb.userStr = ctx->user;
+    offset = qEncodeNtlmString(pb.user, offset, ctx->extractedUser, unicode);
+    pb.userStr = ctx->extractedUser;
 
     offset = qEncodeNtlmString(pb.workstation, offset, ctx->workstation, unicode);
     pb.workstationStr = ctx->workstation;

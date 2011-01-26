@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -147,12 +147,14 @@ void tst_qmouseevent_modal::mousePressRelease()
     QVERIFY( w->d->count() == 0 );
 
     QTest::mousePress( w->pb, Qt::LeftButton );
+    QTest::qWait(200);
 
     QVERIFY( !w->d->isVisible() );
     QVERIFY( w->d->count() == 1 );
     QVERIFY( !w->pb->isDown() );
 
     QTest::mousePress( w->pb, Qt::LeftButton );
+    QTest::qWait(200);
 
     QVERIFY( !w->d->isVisible() );
     QVERIFY( w->d->count() == 2 );
@@ -161,12 +163,14 @@ void tst_qmouseevent_modal::mousePressRelease()
     // With the current QWS mouse handling, the 3rd press would fail...
 
     QTest::mousePress( w->pb, Qt::LeftButton );
+    QTest::qWait(200);
 
     QVERIFY( !w->d->isVisible() );
     QVERIFY( w->d->count() == 3 );
     QVERIFY( !w->pb->isDown() );
 
     QTest::mousePress( w->pb, Qt::LeftButton );
+    QTest::qWait(200);
 
     QVERIFY( !w->d->isVisible() );
     QVERIFY( w->d->count() == 4 );

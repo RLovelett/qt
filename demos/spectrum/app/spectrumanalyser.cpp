@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -64,6 +64,8 @@ SpectrumAnalyserThread::SpectrumAnalyserThread(QObject *parent)
 #endif
 {
 #ifdef SPECTRUM_ANALYSER_SEPARATE_THREAD
+    // moveToThread() cannot be called on a QObject with a parent
+    setParent(0);
     moveToThread(m_thread);
     m_thread->start();
 #endif

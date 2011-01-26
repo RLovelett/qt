@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -288,6 +288,7 @@ private slots:
     void taskQT657_paintIntoCacheWithTransparentParts();
     void taskQTBUG_7863_paintIntoCacheWithTransparentParts();
     void taskQT_3674_doNotCrash();
+    void taskQTBUG_15977_renderWithDeviceCoordinateCache();
 };
 
 void tst_QGraphicsScene::initTestCase()
@@ -2694,12 +2695,14 @@ void tst_QGraphicsScene::render()
     QPixmap pix(30, 30);
     pix.fill(Qt::blue);
 
-    QGraphicsScene scene;
+    QGraphicsView view;
+    QGraphicsScene scene(&view);
     scene.addEllipse(QRectF(-10, -10, 20, 20), QPen(Qt::black), QBrush(Qt::white));
     scene.addEllipse(QRectF(-2, -7, 4, 4), QPen(Qt::black), QBrush(Qt::yellow))->setZValue(1);
     QGraphicsPixmapItem *item = scene.addPixmap(pix);
     item->setZValue(2);
     item->setOffset(QPointF(3, 3));
+    view.show();
 
     scene.setSceneRect(scene.itemsBoundingRect());
 
@@ -2820,6 +2823,8 @@ void tst_QGraphicsScene::contextMenuEvent()
 
     QGraphicsView view(&scene);
     view.show();
+    QTest::qWaitForWindowShown(&view);
+    view.activateWindow();
 #ifdef Q_WS_X11
         qt_x11_wait_for_window_manager(&view);
 #endif
@@ -2851,12 +2856,14 @@ void tst_QGraphicsScene::contextMenuEvent_ItemIgnoresTransformations()
     item->setFlag(QGraphicsItem::ItemIgnoresTransformations);
     scene.addItem(item);
 
-    QGraphicsView view(&scene);
+    QWidget topLevel;
+    QGraphicsView view(&scene, &topLevel);
     view.resize(200, 200);
-    view.show();
+    topLevel.show();
 #ifdef Q_WS_X11
     qt_x11_wait_for_window_manager(&view);
 #endif
+    QTest::qWaitForWindowShown(&topLevel);
 
     {
         QPoint pos(50, 50);
@@ -4621,6 +4628,28 @@ void tst_QGraphicsScene::zeroScale()
     rect1->setPos(20,20);
     QApplication::processEvents();
     QTRY_COMPARE(cl.changes.count(), 2);
+}
+
+void tst_QGraphicsScene::taskQTBUG_15977_renderWithDeviceCoordinateCache()
+{
+    QGraphicsScene scene;
+    scene.setSceneRect(0, 0, 100, 100);
+    QGraphicsRectItem *rect = scene.addRect(0, 0, 100, 100);
+    rect->setPen(Qt::NoPen);
+    rect->setBrush(Qt::red);
+    rect->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
+
+    QImage image(100, 100, QImage::Format_RGB32);
+    QPainter p(&image);
+    scene.render(&p);
+    p.end();
+
+    QImage expected(100, 100, QImage::Format_RGB32);
+    p.begin(&expected);
+    p.fillRect(expected.rect(), Qt::red);
+    p.end();
+
+    QCOMPARE(image, expected);
 }
 
 QTEST_MAIN(tst_QGraphicsScene)

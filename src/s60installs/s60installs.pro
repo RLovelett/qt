@@ -16,8 +16,7 @@ symbian: {
         # It is also expected that devices newer than those based on S60 5.0 all have sqlite3.dll.
         contains(S60_VERSION, 3.1)|contains(S60_VERSION, 3.2)|contains(S60_VERSION, 5.0) {
             BLD_INF_RULES.prj_exports += \
-                "sqlite3.sis /epoc32/data/qt/sis/sqlite3.sis" \
-                "sqlite3_selfsigned.sis /epoc32/data/qt/sis/sqlite3_selfsigned.sis"
+                "sqlite3.sis /epoc32/data/qt/sis/sqlite3.sis"
             symbian-abld|symbian-sbsv2 {
                 sqlitedeployment = \
                     "; Deploy sqlite onto phone that does not have it already" \
@@ -126,7 +125,7 @@ symbian: {
     codecs_plugins.path = c:$$QT_PLUGINS_BASE_DIR/codecs
 
     contains(QT_CONFIG, phonon-backend) {
-        phonon_backend_plugins.sources += $$QMAKE_LIBDIR_QT/phonon_mmf$${QT_LIBINFIX}.dll
+        phonon_backend_plugins.sources += $$QT_BUILD_TREE/plugins/phonon_backend/phonon_mmf$${QT_LIBINFIX}.dll
 
         phonon_backend_plugins.path = c:$$QT_PLUGINS_BASE_DIR/phonon_backend
         DEPLOYMENT += phonon_backend_plugins
@@ -185,11 +184,9 @@ symbian: {
         qtlibraries.sources += $$QMAKE_LIBDIR_QT/QtOpenVG$${QT_LIBINFIX}.dll
         graphicssystems_plugins.sources += $$QT_BUILD_TREE/plugins/graphicssystems/qvggraphicssystem$${QT_LIBINFIX}.dll
         # OpenVG requires Symbian^3 or later
-        pkg_platform_dependencies -= \
-            "[0x101F7961],0,0,0,{\"S60ProductID\"}" \
-            "[0x102032BE],0,0,0,{\"S60ProductID\"}" \
-            "[0x102752AE],0,0,0,{\"S60ProductID\"}" \
-            "[0x1028315F],0,0,0,{\"S60ProductID\"}"
+        pkg_platform_dependencies = \
+            "[0x20022E6D],0,0,0,{\"S60ProductID\"}" \
+            "[0x20032DE7],0,0,0,{\"S60ProductID\"}"
     }
 
     contains(QT_CONFIG, opengl) {

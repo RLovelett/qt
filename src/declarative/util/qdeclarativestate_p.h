@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,6 +45,7 @@
 #include <qdeclarative.h>
 #include <qdeclarativeproperty.h>
 #include <QtCore/qobject.h>
+#include <private/qdeclarativebinding_p.h>
 #include <private/qdeclarativeglobal_p.h>
 
 QT_BEGIN_HEADER
@@ -75,7 +76,7 @@ public:
     QVariant toValue;
 
     QDeclarativeAbstractBinding *fromBinding;
-    QDeclarativeAbstractBinding *toBinding;
+    QDeclarativeAbstractBinding::Pointer toBinding;
     QDeclarativeActionEvent *event;
 
     //strictly for matching
@@ -114,7 +115,7 @@ public:
 class QDeclarativeStateGroup;
 class QDeclarativeState;
 class QDeclarativeStateOperationPrivate;
-class Q_DECLARATIVE_PRIVATE_EXPORT QDeclarativeStateOperation : public QObject
+class Q_DECLARATIVE_EXPORT QDeclarativeStateOperation : public QObject
 {
     Q_OBJECT
 public:
@@ -139,7 +140,7 @@ typedef QDeclarativeStateOperation::ActionList QDeclarativeStateActions;
 
 class QDeclarativeTransition;
 class QDeclarativeStatePrivate;
-class Q_DECLARATIVE_PRIVATE_EXPORT QDeclarativeState : public QObject
+class Q_DECLARATIVE_EXPORT QDeclarativeState : public QObject
 {
     Q_OBJECT
 

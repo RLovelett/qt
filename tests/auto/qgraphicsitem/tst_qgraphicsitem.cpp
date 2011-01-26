@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -65,6 +65,7 @@
 #include <QInputContext>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QGraphicsLinearLayout>
 
 #include "../../shared/util.h"
 
@@ -93,6 +94,8 @@ Q_DECLARE_METATYPE(QRectF)
 #else
 #define COMPARE_REGIONS QTRY_COMPARE
 #endif
+
+#include "../platformquirks.h"
 
 static QGraphicsRectItem staticItem; //QTBUG-7629, we should not crash at exit.
 
@@ -272,7 +275,7 @@ class MyGraphicsView : public QGraphicsView
 public:
     int repaints;
     QRegion paintedRegion;
-    MyGraphicsView(QGraphicsScene *scene) : QGraphicsView(scene), repaints(0) {}
+    MyGraphicsView(QGraphicsScene *scene, QWidget *parent=0) : QGraphicsView(scene,parent), repaints(0) {}
     void paintEvent(QPaintEvent *e)
     {
         paintedRegion += e->region();
@@ -467,6 +470,7 @@ private slots:
     void itemDiesDuringDraggingOperation();
     void QTBUG_12112_focusItem();
     void QTBUG_13473_sceneposchange();
+    void QTBUG_16374_crashInDestructor();
 
 private:
     QList<QGraphicsItem *> paintedItems;
@@ -4070,9 +4074,10 @@ void tst_QGraphicsItem::cursor()
     item1->setCursor(Qt::IBeamCursor);
     item2->setCursor(Qt::PointingHandCursor);
 
-    QGraphicsView view(&scene);
+    QWidget topLevel;
+    QGraphicsView view(&scene,&topLevel);
     view.setFixedSize(200, 100);
-    view.show();
+    topLevel.show();
     QTest::mouseMove(&view, view.rect().center());
 
     QTest::qWait(25);
@@ -4094,6 +4099,8 @@ void tst_QGraphicsItem::cursor()
         QApplication::sendEvent(view.viewport(), &event);
     }
 
+    if (!PlatformQuirks::haveMouseCursor())
+        return;
 #if !defined(Q_OS_WINCE)
     QTest::qWait(250);
 #else
@@ -4959,7 +4966,10 @@ void tst_QGraphicsItem::paint()
 
     QGraphicsView view(&scene);
 
-    view.show();
+    if(PlatformQuirks::isAutoMaximizing())
+        view.showFullScreen();
+    else
+        view.show();
     QTest::qWaitForWindowShown(&view);
     QApplication::processEvents();
 #ifdef Q_OS_WIN32
@@ -5975,9 +5985,10 @@ void tst_QGraphicsItem::untransformable()
     QGraphicsScene scene(-500, -500, 1000, 1000);
     scene.addItem(item1);
 
-    QGraphicsView view(&scene);
+    QWidget topLevel;
+    QGraphicsView view(&scene,&topLevel);
     view.resize(300, 300);
-    view.show();
+    topLevel.show();
     view.scale(8, 8);
     view.centerOn(0, 0);
 
@@ -6616,7 +6627,10 @@ void tst_QGraphicsItem::opacity2()
     scene.addItem(parent);
 
     MyGraphicsView view(&scene);
-    view.show();
+    if(PlatformQuirks::isAutoMaximizing())
+        view.showFullScreen();
+    else
+        view.show();
     QTest::qWaitForWindowShown(&view);
     QTRY_VERIFY(view.repaints >= 1);
 
@@ -7050,6 +7064,7 @@ void tst_QGraphicsItem::tabChangesFocus()
     widget.setLayout(layout);
     widget.show();
     QTest::qWaitForWindowShown(&widget);
+    QTest::qWait(2000);
 
     QTRY_VERIFY(scene.isActive());
 
@@ -7495,9 +7510,11 @@ void tst_QGraphicsItem::update()
 {
     QGraphicsScene scene;
     scene.setSceneRect(-100, -100, 200, 200);
-    MyGraphicsView view(&scene);
+    QWidget topLevel;
+    MyGraphicsView view(&scene,&topLevel);
 
-    view.show();
+    topLevel.resize(300, 300);
+    topLevel.show();
 #ifdef Q_WS_X11
     qt_x11_wait_for_window_manager(&view);
 #endif
@@ -7776,10 +7793,11 @@ void tst_QGraphicsItem::itemUsesExtendedStyleOption()
     MyStyleOptionTester *rect = new MyStyleOptionTester(QRect(0, 0, 100, 100));
     scene.addItem(rect);
     rect->setPos(200, 200);
-    QGraphicsView view(&scene);
-    view.setWindowFlags(Qt::X11BypassWindowManagerHint);
+    QWidget topLevel;
+    QGraphicsView view(&scene, &topLevel);
+    topLevel.setWindowFlags(Qt::X11BypassWindowManagerHint);
     rect->startTrack = false;
-    view.show();
+    topLevel.show();
     QTest::qWaitForWindowShown(&view);
     QTest::qWait(60);
     rect->startTrack = true;
@@ -7980,6 +7998,9 @@ void tst_QGraphicsItem::sorting_data()
 
 void tst_QGraphicsItem::sorting()
 {
+    if (PlatformQuirks::isAutoMaximizing())
+        QSKIP("Skipped because Platform is auto maximizing", SkipAll);
+
     _paintedItems.clear();
 
     QGraphicsScene scene;
@@ -8015,7 +8036,7 @@ void tst_QGraphicsItem::sorting()
     _paintedItems.clear();
 
     view.viewport()->repaint();
-#ifdef Q_WS_MAC
+#if defined(Q_WS_MAC)
     // There's no difference between repaint and update on the Mac,
     // so we have to process events here to make sure we get the event.
     QTest::qWait(100);
@@ -8114,10 +8135,13 @@ void tst_QGraphicsItem::hitTestGraphicsEffectItem()
     QGraphicsScene scene;
     scene.setSceneRect(-100, -100, 200, 200);
 
-    QGraphicsView view(&scene);
-    view.show();
+    QWidget toplevel;
+
+    QGraphicsView view(&scene, &toplevel);
+    toplevel.resize(300, 300);
+    toplevel.show();
 #ifdef Q_WS_X11
-    qt_x11_wait_for_window_manager(&view);
+    qt_x11_wait_for_window_manager(&toplevel);
 #endif
     QTest::qWait(100);
 
@@ -10721,7 +10745,10 @@ void tst_QGraphicsItem::QTBUG_6738_missingUpdateWithSetParent()
     scene.addItem(parent);
 
     MyGraphicsView view(&scene);
-    view.show();
+    if(PlatformQuirks::isAutoMaximizing())
+        view.showFullScreen();
+    else
+        view.show();
     QTest::qWaitForWindowShown(&view);
     QTRY_VERIFY(view.repaints > 0);
 
@@ -10769,7 +10796,10 @@ void tst_QGraphicsItem::QT_2653_fullUpdateDiscardingOpacityUpdate()
     // ItemIgnoresTransformations, ItemClipsChildrenToShape, ItemIsSelectable
     parentGreen->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
-    view.show();
+    if (PlatformQuirks::isAutoMaximizing())
+        view.showFullScreen();
+    else
+        view.show();
     QTest::qWaitForWindowShown(&view);
     view.reset();
 
@@ -10954,7 +10984,10 @@ void tst_QGraphicsItem::doNotMarkFullUpdateIfNotInScene()
     item3->setParentItem(item2);
     item2->setParentItem(item);
     scene.addItem(item);
-    view.show();
+    if(PlatformQuirks::isAutoMaximizing())
+        view.showFullScreen();
+    else
+        view.show();
     QTest::qWaitForWindowShown(&view);
     QTRY_COMPARE(view.repaints, 1);
     QTRY_COMPARE(item->painted, 1);
@@ -11046,5 +11079,56 @@ void tst_QGraphicsItem::QTBUG_13473_sceneposchange()
     QCOMPARE(child->changes.count(QGraphicsItem::ItemScenePositionHasChanged), 2);
 }
 
+class MyGraphicsWidget : public QGraphicsWidget {
+Q_OBJECT
+public:
+    MyGraphicsWidget()
+        : QGraphicsWidget(0)
+    {
+        QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(Qt::Vertical);
+        QLatin1String wiseWords("AZ BUKI VEDI");
+        QString sentence(wiseWords);
+        QStringList words = sentence.split(QLatin1Char(' '), QString::SkipEmptyParts);
+        for (int i = 0; i < words.count(); ++i) {
+            QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(this);
+            QLabel *label = new QLabel(words.at(i));
+            proxy->setWidget(label);
+            proxy->setFocusPolicy(Qt::StrongFocus);
+            proxy->setFlag(QGraphicsItem::ItemAcceptsInputMethod, true);
+            if (i%2 == 0)
+                proxy->setVisible(false);
+            proxy->setFocus();
+            lay->addItem(proxy);
+        }
+        setLayout(lay);
+    }
+
+};
+
+class MyWidgetWindow : public QGraphicsWidget
+{
+public:
+    MyWidgetWindow()
+        : QGraphicsWidget(0, Qt::Window)
+    {
+        QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(Qt::Vertical);
+        MyGraphicsWidget *widget = new MyGraphicsWidget();
+        lay->addItem(widget);
+        setLayout(lay);
+    }
+};
+
+void tst_QGraphicsItem::QTBUG_16374_crashInDestructor()
+{
+    QGraphicsScene scene;
+    QGraphicsView view(&scene);
+
+    MyWidgetWindow win;
+    scene.addItem(&win);
+
+    view.show();
+    QTest::qWaitForWindowShown(&view);
+}
+    
 QTEST_MAIN(tst_QGraphicsItem)
 #include "tst_qgraphicsitem.moc"

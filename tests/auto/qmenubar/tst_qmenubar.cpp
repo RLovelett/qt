@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -338,6 +338,8 @@ void tst_QMenuBar::initTestCase_noQt3()
 
     initSimpleMenubar_noQt3();
     mw->show();
+    QTest::qWaitForWindowShown(mw);
+    mw->activateWindow();
 
     menu1 = new QtTestSlot( mw );
     menu2 = new QtTestSlot( mw );
@@ -1700,8 +1702,8 @@ void tst_QMenuBar::taskQTBUG11823_crashwithInvisibleActions()
     QAction * a = menubar.addAction( "&a" );
 
     menubar.show();
-    QApplication::setActiveWindow(&menubar);
     QTest::qWaitForWindowShown(&menubar);
+    QApplication::setActiveWindow(&menubar);
     menubar.setActiveAction(m);
     QCOMPARE(menubar.activeAction(), m);
     QTest::keyClick(0, Qt::Key_Right);

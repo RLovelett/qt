@@ -2725,7 +2725,7 @@ EXPORTS
 	?clearSelection@QTextCursor@@QAEXXZ @ 2724 NONAME ; void QTextCursor::clearSelection(void)
 	?clearSpans@QTableView@@QAEXXZ @ 2725 NONAME ; void QTableView::clearSpans(void)
 	?clearString@QLineControl@@ABE?AVQString@@II@Z @ 2726 NONAME ; class QString QLineControl::clearString(unsigned int, unsigned int) const
-	?clearSubFocus@QGraphicsItemPrivate@@QAEXPAVQGraphicsItem@@@Z @ 2727 NONAME ; void QGraphicsItemPrivate::clearSubFocus(class QGraphicsItem *)
+	?clearSubFocus@QGraphicsItemPrivate@@QAEXPAVQGraphicsItem@@@Z @ 2727 NONAME ABSENT ; void QGraphicsItemPrivate::clearSubFocus(class QGraphicsItem *)
 	?clearUndo@QLineControl@@QAEXXZ @ 2728 NONAME ; void QLineControl::clearUndo(void)
 	?click@QAbstractButton@@QAEXXZ @ 2729 NONAME ; void QAbstractButton::click(void)
 	?clicked@QAbstractButton@@IAEX_N@Z @ 2730 NONAME ; void QAbstractButton::clicked(bool)
@@ -9914,7 +9914,7 @@ EXPORTS
 	?setStyleSheet@QWidget@@QAEXABVQString@@@Z @ 9913 NONAME ; void QWidget::setStyleSheet(class QString const &)
 	?setStyleStrategy@QFont@@QAEXW4StyleStrategy@1@@Z @ 9914 NONAME ; void QFont::setStyleStrategy(enum QFont::StyleStrategy)
 	?setStyle_helper@QWidgetPrivate@@QAEXPAVQStyle@@_N1@Z @ 9915 NONAME ; void QWidgetPrivate::setStyle_helper(class QStyle *, bool, bool)
-	?setSubFocus@QGraphicsItemPrivate@@QAEXPAVQGraphicsItem@@@Z @ 9916 NONAME ; void QGraphicsItemPrivate::setSubFocus(class QGraphicsItem *)
+	?setSubFocus@QGraphicsItemPrivate@@QAEXPAVQGraphicsItem@@@Z @ 9916 NONAME ABSENT ; void QGraphicsItemPrivate::setSubFocus(class QGraphicsItem *)
 	?setSubTitle@QWizardPage@@QAEXABVQString@@@Z @ 9917 NONAME ; void QWizardPage::setSubTitle(class QString const &)
 	?setSubTitleFormat@QWizard@@QAEXW4TextFormat@Qt@@@Z @ 9918 NONAME ; void QWizard::setSubTitleFormat(enum Qt::TextFormat)
 	?setSubmitPolicy@QDataWidgetMapper@@QAEXW4SubmitPolicy@1@@Z @ 9919 NONAME ; void QDataWidgetMapper::setSubmitPolicy(enum QDataWidgetMapper::SubmitPolicy)
@@ -12852,7 +12852,7 @@ EXPORTS
 	?drawStaticText@QPainter@@QAEXABVQPointF@@ABVQStaticText@@@Z @ 12851 NONAME ; void QPainter::drawStaticText(class QPointF const &, class QStaticText const &)
 	?updateAll@QGraphicsViewPrivate@@QAEXXZ @ 12852 NONAME ; void QGraphicsViewPrivate::updateAll(void)
 	?updateMicroFocus@QGraphicsItem@@IAEXXZ @ 12853 NONAME ; void QGraphicsItem::updateMicroFocus(void)
-	?populate@QTextureGlyphCache@@QAEXPAVQFontEngine@@HPBIPBUQFixedPoint@@@Z @ 12854 NONAME ; void QTextureGlyphCache::populate(class QFontEngine *, int, unsigned int const *, struct QFixedPoint const *)
+	?populate@QTextureGlyphCache@@QAEXPAVQFontEngine@@HPBIPBUQFixedPoint@@@Z @ 12854 NONAME ABSENT ; void QTextureGlyphCache::populate(class QFontEngine *, int, unsigned int const *, struct QFixedPoint const *)
 	?hasPartialUpdateSupport@QWindowSurface@@QBE_NXZ @ 12855 NONAME ; bool QWindowSurface::hasPartialUpdateSupport(void) const
 	?scroll@QRuntimePixmapData@@UAE_NHHABVQRect@@@Z @ 12856 NONAME ; bool QRuntimePixmapData::scroll(int, int, class QRect const &)
 	?qt_draw_glyphs@@YAXPAVQPainter@@PBIPBVQPointF@@H@Z @ 12857 NONAME ; void qt_draw_glyphs(class QPainter *, unsigned int const *, class QPointF const *, int)
@@ -12890,10 +12890,22 @@ EXPORTS
 	?lastRightBearing@QFontEngine@@IAE?AUQFixed@@ABUQGlyphLayout@@_N@Z @ 12889 NONAME ; struct QFixed QFontEngine::lastRightBearing(struct QGlyphLayout const &, bool)
 	?childrenBoundingRectHelper@QGraphicsItemPrivate@@QAEXPAVQTransform@@PAVQRectF@@PAVQGraphicsItem@@@Z @ 12890 NONAME ; void QGraphicsItemPrivate::childrenBoundingRectHelper(class QTransform *, class QRectF *, class QGraphicsItem *)
 	?setTimeout@QTapAndHoldGesture@@SAXH@Z @ 12891 NONAME ; void QTapAndHoldGesture::setTimeout(int)
-	?qmljsDebugArguments@QApplicationPrivate@@2VQString@@A @ 12892 NONAME ; class QString QApplicationPrivate::qmljsDebugArguments
+	?qmljsDebugArguments@QApplicationPrivate@@2VQString@@A @ 12892 NONAME ABSENT ; class QString QApplicationPrivate::qmljsDebugArguments
 	?effectiveBoundingRect@QGraphicsItemPrivate@@QBE?AVQRectF@@PAVQGraphicsItem@@@Z @ 12893 NONAME ; class QRectF QGraphicsItemPrivate::effectiveBoundingRect(class QGraphicsItem *) const
 	?maxTextureHeight@QTextureGlyphCache@@UBEHXZ @ 12894 NONAME ; int QTextureGlyphCache::maxTextureHeight(void) const
 	?maxTextureWidth@QTextureGlyphCache@@UBEHXZ @ 12895 NONAME ; int QTextureGlyphCache::maxTextureWidth(void) const
-	?convertToPostscriptFontFamilyName@QFontEngine@@SA?AVQByteArray@@ABV2@@Z @ 12896 NONAME ; class QByteArray QFontEngine::convertToPostscriptFontFamilyName(class QByteArray const &)
-	?lastResortFont@QFont@@QBE?AVQString@@XZ @ 12897 NONAME ; class QString QFont::lastResortFont(void) const
+	?qmljs_debug_arguments@QApplicationPrivate@@2VQString@@A @ 12896 NONAME ; class QString QApplicationPrivate::qmljs_debug_arguments
+	?qmljsDebugArgumentsString@QApplicationPrivate@@SA?AVQString@@XZ @ 12897 NONAME ; class QString QApplicationPrivate::qmljsDebugArgumentsString(void)
+	?convertToPostscriptFontFamilyName@QFontEngine@@SA?AVQByteArray@@ABV2@@Z @ 12898 NONAME ; class QByteArray QFontEngine::convertToPostscriptFontFamilyName(class QByteArray const &)
+	?lastResortFont@QFont@@QBE?AVQString@@XZ @ 12899 NONAME ; class QString QFont::lastResortFont(void) const
+	?setFontEngine@QStaticTextItem@@QAEXPAVQFontEngine@@@Z @ 12900 NONAME ; void QStaticTextItem::setFontEngine(class QFontEngine *)
+	??0QStaticTextItem@@QAE@ABV0@@Z @ 12901 NONAME ; QStaticTextItem::QStaticTextItem(class QStaticTextItem const &)
+	??4QStaticTextItem@@QAEXABV0@@Z @ 12902 NONAME ; void QStaticTextItem::operator=(class QStaticTextItem const &)
+	?fontEngine@QStaticTextItem@@QBEPAVQFontEngine@@XZ @ 12903 NONAME ; class QFontEngine * QStaticTextItem::fontEngine(void) const
+	?reactivateDeferredActiveObjects@QEventDispatcherS60@@UAEXXZ @ 12904 NONAME ; void QEventDispatcherS60::reactivateDeferredActiveObjects(void)
+	?userData@QStaticTextItem@@QBEPAVQStaticTextUserData@@XZ @ 12905 NONAME ; class QStaticTextUserData * QStaticTextItem::userData(void) const
+	?populate@QTextureGlyphCache@@QAE_NPAVQFontEngine@@HPBIPBUQFixedPoint@@@Z @ 12906 NONAME ; bool QTextureGlyphCache::populate(class QFontEngine *, int, unsigned int const *, struct QFixedPoint const *)
+	?resetCursorBlinkTimer@QLineControl@@QAEXXZ @ 12907 NONAME ; void QLineControl::resetCursorBlinkTimer(void)
+	?setSubFocus@QGraphicsItemPrivate@@QAEXPAVQGraphicsItem@@0@Z @ 12908 NONAME ; void QGraphicsItemPrivate::setSubFocus(class QGraphicsItem *, class QGraphicsItem *)
+	?clearSubFocus@QGraphicsItemPrivate@@QAEXPAVQGraphicsItem@@0@Z @ 12909 NONAME ; void QGraphicsItemPrivate::clearSubFocus(class QGraphicsItem *, class QGraphicsItem *)
 

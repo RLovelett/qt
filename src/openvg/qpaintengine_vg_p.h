@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -170,6 +170,7 @@ private:
     bool isDefaultClipRegion(const QRegion& region);
     bool isDefaultClipRect(const QRect& rect);
     bool clearRect(const QRectF &rect, const QColor &color);
+    bool canVgWritePixels(const QImage &image) const;
 };
 
 QT_END_NAMESPACE

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,14 +59,12 @@
 
 #include <QMap>
 #include <QVariant>
-#include <QtCore/qthread.h>
 
 #ifndef QT_NO_BEARERMANAGEMENT
 #ifndef QT_NO_DBUS
 
 QT_BEGIN_NAMESPACE
 
-class QConnmanConnectThread;
 class QConnmanEngine : public QBearerEngineImpl
 {
     Q_OBJECT
@@ -105,8 +103,6 @@ private Q_SLOTS:
 
     void doRequestUpdate();
     void servicePropertyChangedContext(const QString &,const QString &,const QDBusVariant &);
-    void networkPropertyChangedContext(const QString &,const QString &,const QDBusVariant &);
-    void devicePropertyChangedContext(const QString &,const QString &,const QDBusVariant &);
     void propertyChangedContext(const QString &,const QString &,const QDBusVariant &);
     void technologyPropertyChangedContext(const QString &,const QString &, const QDBusVariant &);
 
@@ -114,10 +110,6 @@ private:
     QConnmanManagerInterface *connmanManager;
 
     QList<QNetworkConfigurationPrivate *> foundConfigurations;
-
-    void getNetworkListing();
-
-    QString getServiceForNetwork(const QString &network);
 
     QString serviceFromId(const QString &id);
     QString networkFromId(const QString &id);
@@ -127,47 +119,19 @@ private:
 
     void removeConfiguration(const QString &servicePath);
     void addServiceConfiguration(const QString &servicePath);
-    void addNetworkConfiguration(const QString &worknetPath);
     QDateTime activeTime;
 
 
     QMap<QString,QConnmanTechnologyInterface *> technologies; // techpath, tech interface
     QMap<QString,QString> configInterfaces; // id, interface name
-    QMap<QString,QStringList> knownNetworks; //device path, net paths list
-    QMap<QString,QStringList> deviceMap; //tech path,  device path
-    QMap<QString, QString> serviceNetworks; //service, network
+    QList<QString> serviceNetworks; //servpath
 
     QNetworkConfiguration::BearerType ofonoTechToBearerType(const QString &type);
     bool isRoamingAllowed(const QString &context);
 protected:
     bool requiresPolling() const;
-    QConnmanConnectThread *connThread;
 };
 
-class QConnmanConnectThread : public QThread
-{
-    Q_OBJECT
-
-public:
-    QConnmanConnectThread(QObject *parent = 0);
-    ~QConnmanConnectThread();
-    bool keepRunning;
-    void stop();
-    void setServicePath(const QString &path);
-    void setIdentifier(const QString &id);
-
-Q_SIGNALS:
-    void connectionError(const QString &id, QBearerEngineImpl::ConnectionError error);
-
-protected:
-    void run();
-    QString servicePath;
-    QString identifier;
-
-private:
-    QMutex mutex;
-
-};
 
 QT_END_NAMESPACE
 

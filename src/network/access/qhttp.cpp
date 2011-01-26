@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -2442,7 +2442,7 @@ void QHttpPrivate::_q_slotSendRequest()
         if (proxy.hostName().isEmpty()) {
             proxy.setType(QNetworkProxy::NoProxy);
         } else if (sslInUse) {
-            // Disallow use of cacheing proxy with HTTPS; instead fall back to
+            // Disallow use of caching proxy with HTTPS; instead fall back to
             // transparent HTTP CONNECT proxying.
             transparentProxyInUse = true;
         } else {

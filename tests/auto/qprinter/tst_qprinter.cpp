@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -596,12 +596,12 @@ void tst_QPrinter::testPageMargins_data()
     QTest::addColumn<qreal>("bottom");
     QTest::addColumn<int>("unit");
 
-    QTest::newRow("data0") << 5.5 << 6.5 << 7.5 << 8.5 << static_cast<int>(QPrinter::Millimeter);
-    QTest::newRow("data1") << 5.5 << 6.5 << 7.5 << 8.5 << static_cast<int>(QPrinter::Point);
-    QTest::newRow("data2") << 5.5 << 6.5 << 7.5 << 8.5 << static_cast<int>(QPrinter::Inch);
-    QTest::newRow("data3") << 5.5 << 6.5 << 7.5 << 8.5 << static_cast<int>(QPrinter::Pica);
-    QTest::newRow("data4") << 5.5 << 6.5 << 7.5 << 8.5 << static_cast<int>(QPrinter::Didot);
-    QTest::newRow("data5") << 5.5 << 6.5 << 7.5 << 8.5 << static_cast<int>(QPrinter::Cicero);
+    QTest::newRow("data0") << qreal(5.5) << qreal(6.5) << qreal(7.5) << qreal(8.5) << static_cast<int>(QPrinter::Millimeter);
+    QTest::newRow("data1") << qreal(5.5) << qreal(6.5) << qreal(7.5) << qreal(8.5) << static_cast<int>(QPrinter::Point);
+    QTest::newRow("data2") << qreal(5.5) << qreal(6.5) << qreal(7.5) << qreal(8.5) << static_cast<int>(QPrinter::Inch);
+    QTest::newRow("data3") << qreal(5.5) << qreal(6.5) << qreal(7.5) << qreal(8.5) << static_cast<int>(QPrinter::Pica);
+    QTest::newRow("data4") << qreal(5.5) << qreal(6.5) << qreal(7.5) << qreal(8.5) << static_cast<int>(QPrinter::Didot);
+    QTest::newRow("data5") << qreal(5.5) << qreal(6.5) << qreal(7.5) << qreal(8.5) << static_cast<int>(QPrinter::Cicero);
 }
 
 void tst_QPrinter::testPageMargins()

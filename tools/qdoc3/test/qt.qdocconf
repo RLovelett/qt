@@ -17,7 +17,7 @@ naturallanguage         = en_US
 qhp.projects            = Qt
 
 qhp.Qt.file                = qt.qhp
-qhp.Qt.namespace           = com.trolltech.qt.471
+qhp.Qt.namespace           = com.trolltech.qt.472
 qhp.Qt.virtualFolder       = qdoc
 qhp.Qt.indexTitle          = Qt Reference Documentation
 qhp.Qt.indexRoot           =
@@ -59,14 +59,18 @@ qhp.Qt.extraFiles          = index.html \
                  style/style_ie8.css \
                  style/style.css
 
-qhp.Qt.filterAttributes    = qt 4.7.1 qtrefdoc
-qhp.Qt.customFilters.Qt.name = Qt 4.7.1
-qhp.Qt.customFilters.Qt.filterAttributes = qt 4.7.1
-qhp.Qt.subprojects         = classes overviews examples
+qhp.Qt.filterAttributes    = qt 4.7.2 qtrefdoc
+qhp.Qt.customFilters.Qt.name = Qt 4.7.2
+qhp.Qt.customFilters.Qt.filterAttributes = qt 4.7.2
+qhp.Qt.subprojects         = classes qmlelements overviews examples
 qhp.Qt.subprojects.classes.title = Classes
 qhp.Qt.subprojects.classes.indexTitle = Qt's Classes
 qhp.Qt.subprojects.classes.selectors = class fake:headerfile
 qhp.Qt.subprojects.classes.sortPages = true
+qhp.Qt.subprojects.qmlelements.title = QML Elements
+qhp.Qt.subprojects.qmlelements.indexTitle = QML Elements
+qhp.Qt.subprojects.qmlelements.selectors = fake:qmlclass
+qhp.Qt.subprojects.qmlelements.sortPages = true
 qhp.Qt.subprojects.overviews.title = Overviews
 qhp.Qt.subprojects.overviews.indexTitle = All Overviews and HOWTOs
 qhp.Qt.subprojects.overviews.selectors = fake:page,group,module

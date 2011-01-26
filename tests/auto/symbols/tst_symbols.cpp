@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -443,7 +443,7 @@ void tst_Symbols::prefix()
 #  if defined(Q_OS_LINUX) && defined(Q_CC_INTEL)
     QEXPECT_FAIL("", "linux-icc* incorrectly exports some QtWebkit symbols, waiting for a fix from Intel.", Continue);
 #  endif
-    QVERIFY2(!isFailed, "Libraries contain non-prefixed symbols. See Debug output :)");
+    QVERIFY2(!isFailed, "Libraries contain non-prefixed symbols. See Debug output above.");
 #else
     QSKIP("Linux-specific test", SkipAll);
 #endif
