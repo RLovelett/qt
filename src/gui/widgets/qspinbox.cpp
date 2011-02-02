@@ -78,6 +78,8 @@ public:
         q->setInputMethodHints(Qt::ImhDigitsOnly);
         setLayoutItemMargins(QStyle::SE_SpinBoxLayoutItem);
     }
+
+    bool m_stripSeparator;
 };
 
 class QDoubleSpinBoxPrivate : public QAbstractSpinBoxPrivate
@@ -103,6 +105,8 @@ public:
     // When fiddling with the decimals property, we may lose precision in these properties.
     double actualMin;
     double actualMax;
+
+    bool m_stripSeparator;
 };
 
 
@@ -431,6 +435,32 @@ void QSpinBox::setMaximum(int maximum)
 }
 
 /*!
+    \property QSpinBox::stripSeparator
+
+    \brief should a groupSeparator be stripped from the displayText if present?
+
+    When this property is set to true, a groupSeparator is 
+    stripped from the displayText if it is present.
+
+    The default value is false.
+
+    \sa textFromValue()
+
+*/
+
+bool QSpinBox::stripSeparator() const
+   {
+   Q_D(const QSpinBox);
+   return d->m_stripSeparator;
+   }
+
+void QSpinBox::setStripSeparator(bool val)
+   {
+   Q_D(QSpinBox);
+   d->m_stripSeparator = val;
+   }
+
+/*!
     Convenience function to set the \a minimum, and \a maximum values
     with a single function call.
 
@@ -468,7 +498,7 @@ void QSpinBox::setRange(int minimum, int maximum)
 QString QSpinBox::textFromValue(int value) const
 {
     QString str = locale().toString(value);
-    if (qAbs(value) >= 1000 || value == INT_MIN) {
+    if (stripSeparator() && (qAbs(value) >= 1000 || value == INT_MIN)) {
         str.remove(locale().groupSeparator());
     }
 
@@ -807,6 +837,32 @@ void QDoubleSpinBox::setMaximum(double maximum)
 }
 
 /*!
+    \property QDoubleSpinBox::stripSeparator
+
+    \brief should a groupSeparator be stripped from the displayText if present?
+
+    When this property is set to true, a groupSeparator is 
+    stripped from the displayText if it is present.
+
+    The default value is false.
+
+    \sa textFromValue()
+
+*/
+
+bool QDoubleSpinBox::stripSeparator() const
+   {
+   Q_D(const QDoubleSpinBox);
+   return d->m_stripSeparator;
+   }
+
+void QDoubleSpinBox::setStripSeparator(bool val)
+   {
+   Q_D(QDoubleSpinBox);
+   d->m_stripSeparator = val;
+   }
+
+/*!
     Convenience function to set the \a minimum and \a maximum values
     with a single function call.
 
@@ -881,7 +937,7 @@ QString QDoubleSpinBox::textFromValue(double value) const
 {
     Q_D(const QDoubleSpinBox);
     QString str = locale().toString(value, 'f', d->decimals);
-    if (qAbs(value) >= 1000.0) {
+    if (stripSeparator() && qAbs(value) >= 1000.0) {
         str.remove(locale().groupSeparator());
     }
     return str;
@@ -944,6 +1000,7 @@ QSpinBoxPrivate::QSpinBoxPrivate()
     value = minimum;
     singleStep = QVariant((int)1);
     type = QVariant::Int;
+    m_stripSeparator = false;
 }
 
 /*!
@@ -1071,6 +1128,7 @@ QDoubleSpinBoxPrivate::QDoubleSpinBoxPrivate()
     singleStep = QVariant(1.0);
     decimals = 2;
     type = QVariant::Double;
+    m_stripSeparator = false;
 }
 
 /*!

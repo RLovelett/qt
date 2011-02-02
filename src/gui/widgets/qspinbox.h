@@ -64,6 +64,7 @@ class Q_GUI_EXPORT QSpinBox : public QAbstractSpinBox
     Q_PROPERTY(int maximum READ maximum WRITE setMaximum)
     Q_PROPERTY(int singleStep READ singleStep WRITE setSingleStep)
     Q_PROPERTY(int value READ value WRITE setValue NOTIFY valueChanged USER true)
+    Q_PROPERTY(bool stripSeparator READ stripSeparator WRITE setStripSeparator)
 
 public:
     explicit QSpinBox(QWidget *parent = 0);
@@ -93,6 +94,9 @@ public:
     void setMaximum(int max);
 
     void setRange(int min, int max);
+
+    bool stripSeparator() const;
+    void setStripSeparator(bool val);
 
 #ifdef QT3_SUPPORT
     inline QT3_SUPPORT void setLineStep(int step) { setSingleStep(step); }
@@ -135,6 +139,8 @@ class Q_GUI_EXPORT QDoubleSpinBox : public QAbstractSpinBox
     Q_PROPERTY(double maximum READ maximum WRITE setMaximum)
     Q_PROPERTY(double singleStep READ singleStep WRITE setSingleStep)
     Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged USER true)
+    Q_PROPERTY(bool stripSeparator READ stripSeparator WRITE setStripSeparator)
+
 public:
     explicit QDoubleSpinBox(QWidget *parent = 0);
 
@@ -158,6 +164,9 @@ public:
     void setMaximum(double max);
 
     void setRange(double min, double max);
+
+    bool stripSeparator() const;
+    void setStripSeparator(bool val);
 
     int decimals() const;
     void setDecimals(int prec);
