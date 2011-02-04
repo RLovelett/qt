@@ -394,6 +394,11 @@ public:
 
     void updateViewport() {
         Q_Q(QDeclarativeListView);
+        if (!visibleItems.count()) {
+            q->setContentWidth(0);
+            q->setContentHeight(0);
+            return;
+        }
         if (orient == QDeclarativeListView::Vertical) {
             q->setContentHeight(endPosition() - startPosition() + 1);
         } else {
@@ -740,6 +745,7 @@ void QDeclarativeListViewPrivate::layout()
     if (!isValid() && !visibleItems.count()) {
         clear();
         setPosition(0);
+        updateViewport();
         return;
     }
     if (!visibleItems.isEmpty()) {
