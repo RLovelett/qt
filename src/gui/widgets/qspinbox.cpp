@@ -79,7 +79,7 @@ public:
         setLayoutItemMargins(QStyle::SE_SpinBoxLayoutItem);
     }
 
-    bool m_stripSeparator;
+    bool stripSeparator;
 };
 
 class QDoubleSpinBoxPrivate : public QAbstractSpinBoxPrivate
@@ -106,7 +106,7 @@ public:
     double actualMin;
     double actualMax;
 
-    bool m_stripSeparator;
+    bool stripSeparator;
 };
 
 
@@ -851,16 +851,16 @@ void QDoubleSpinBox::setMaximum(double maximum)
 */
 
 bool QDoubleSpinBox::stripSeparator() const
-   {
+{
    Q_D(const QDoubleSpinBox);
    return d->m_stripSeparator;
-   }
+}
 
 void QDoubleSpinBox::setStripSeparator(bool val)
-   {
+{
    Q_D(QDoubleSpinBox);
    d->m_stripSeparator = val;
-   }
+}
 
 /*!
     Convenience function to set the \a minimum and \a maximum values
