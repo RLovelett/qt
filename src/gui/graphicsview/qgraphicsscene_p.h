@@ -94,6 +94,8 @@ public:
     QGraphicsScene::ItemIndexMethod indexMethod;
     QGraphicsSceneIndex *index;
 
+    QGraphicsScene::FocusChangeMethod focusChangeMethod;
+
     int lastItemCount;
 
     QRectF sceneRect;

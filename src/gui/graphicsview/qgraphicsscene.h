@@ -117,6 +117,12 @@ public:
         NoIndex = -1
     };
 
+    enum FocusChangeMethod {
+        FocusChangesOnMousePress = 0,
+        FocusChangesOnMouseRelease = 1
+    };
+
+
     enum SceneLayer {
         ItemLayer = 0x1,
         BackgroundLayer = 0x2,
@@ -143,6 +149,9 @@ public:
 
     ItemIndexMethod itemIndexMethod() const;
     void setItemIndexMethod(ItemIndexMethod method);
+
+    FocusChangeMethod focusChangeMethod() const;
+    void setFocusChangeMethod(FocusChangeMethod method);
 
     bool isSortCacheEnabled() const;
     void setSortCacheEnabled(bool enabled);

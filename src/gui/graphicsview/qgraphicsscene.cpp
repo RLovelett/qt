@@ -332,6 +332,7 @@ void QGraphicsScenePrivate::init()
     changedSignalIndex = signalIndex("changed(QList<QRectF>)");
     processDirtyItemsIndex = q->metaObject()->indexOfSlot("_q_processDirtyItems()");
     polishItemsIndex = q->metaObject()->indexOfSlot("_q_polishItems()");
+    focusChangeMethod = QGraphicsScene::FocusChangesOnMousePress;
 
     qApp->d_func()->scene_list.append(q);
     q->update();
@@ -1819,6 +1820,27 @@ void QGraphicsScene::setItemIndexMethod(ItemIndexMethod method)
         d->index = new QGraphicsSceneLinearIndex(this);
     for (int i = oldItems.size() - 1; i >= 0; --i)
         d->index->addItem(oldItems.at(i));
+}
+
+/*!
+    \property QGraphicsScene::focusChangeMethod
+    \brief the focus change method.
+
+    QGraphicsScene can either change focus on mouse press or on mouse release.
+    By default, focus changes on mouse press.
+*/
+QGraphicsScene::FocusChangeMethod QGraphicsScene::focusChangeMethod() const
+{
+    Q_D(const QGraphicsScene);
+    return d->focusChangeMethod;
+}
+void QGraphicsScene::setFocusChangeMethod(FocusChangeMethod method)
+{
+    Q_D(QGraphicsScene);
+    if (d->focusChangeMethod == method)
+        return;
+
+    d->focusChangeMethod = method;
 }
 
 /*!
