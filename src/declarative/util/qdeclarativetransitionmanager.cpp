@@ -119,6 +119,7 @@ void QDeclarativeTransitionManager::transition(const QList<QDeclarativeAction> &
     cancel();
 
     QDeclarativeStateOperation::ActionList applyList = list;
+    QDeclarativeStateOperation::ActionList reverseList;
     // Determine which actions are binding changes.
     foreach(const QDeclarativeAction &action, applyList) {
         if (action.toBinding)
@@ -126,7 +127,10 @@ void QDeclarativeTransitionManager::transition(const QList<QDeclarativeAction> &
         if (action.fromBinding)
             QDeclarativePropertyPrivate::setBinding(action.property, 0); // Disable current binding
         if (action.event && action.event->changesBindings()) {  //### assume isReversable()?
-            d->bindingsList << action;
+            if (action.reverseEvent)
+                reverseList << action;
+            else
+                d->bindingsList << action;
             action.event->clearBindings();
         }
     }
@@ -140,7 +144,7 @@ void QDeclarativeTransitionManager::transition(const QList<QDeclarativeAction> &
     // This doesn't catch everything, and it might be a little fragile in
     // some cases - but whatcha going to do?
 
-    if (!d->bindingsList.isEmpty()) {
+    if (!d->bindingsList.isEmpty() || !reverseList.isEmpty()) {
 
         // Apply all the property and binding changes
         for (int ii = 0; ii < applyList.size(); ++ii) {
@@ -219,6 +223,11 @@ void QDeclarativeTransitionManager::transition(const QList<QDeclarativeAction> &
         }
     }
 
+    //Reverse before applying new property values
+    foreach(const QDeclarativeAction &action, reverseList)
+        action.event->reverse();
+    reverseList.clear();
+ 
     // Any actions remaining have not been handled by the transition and should
     // be applied immediately.  We skip applying bindings, as they are all
     // applied at the end in applyBindings() to avoid any nastiness mid 
