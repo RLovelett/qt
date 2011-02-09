@@ -153,6 +153,7 @@ public:
     bool isSet(const QString &v); // No compat mapping, no magic variables
     bool isEmpty(const QString &v); // With compat mapping, but no magic variables
     QStringList &values(const QString &v); // With compat mapping and magic variables
+
     QString first(const QString &v); // ditto
     QMap<QString, QStringList> &variables(); // No compat mapping and magic, obviously
 

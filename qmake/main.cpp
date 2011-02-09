@@ -55,6 +55,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "generators/special/filelist.h" // TODO: generalize specials
+
 QT_BEGIN_NAMESPACE
 
 // for Borland, main is defined to qMain which breaks qmake
@@ -138,7 +140,9 @@ int runQMake(int argc, char **argv)
         files = Option::mkfile::project_files;
     for(QStringList::Iterator pfile = files.begin(); pfile != files.end(); pfile++) {
         if(Option::qmake_mode == Option::QMAKE_GENERATE_MAKEFILE ||
-           Option::qmake_mode == Option::QMAKE_GENERATE_PRL) {
+           Option::qmake_mode == Option::QMAKE_GENERATE_PRL ||
+           Option::qmake_mode == Option::QMAKE_GENERATE_SPECIAL
+           ) {
             QString fn = Option::fixPathToLocalOS((*pfile));
             if(!QFile::exists(fn)) {
                 fprintf(stderr, "Cannot find file: %s.\n", fn.toLatin1().constData());
@@ -168,20 +172,26 @@ int runQMake(int argc, char **argv)
                 continue;
         }
 
-        bool success = true;
-        MetaMakefileGenerator *mkfile = MetaMakefileGenerator::createMetaGenerator(&project, QString(), false, &success);
-        if (!success)
-            exit_val = 3;
+        if (Option::qmake_mode == Option::QMAKE_GENERATE_SPECIAL) {
+            if (Option::mkspecial::do_filelist) {
+                FilelistGenerator::run (project);
+            }
+        } else {
+            bool success = true;
+            MetaMakefileGenerator *mkfile = MetaMakefileGenerator::createMetaGenerator(&project, QString(), false, &success);
+            if (!success)
+                exit_val = 3;
 
-        if(mkfile && !mkfile->write(oldpwd)) {
-            if(Option::qmake_mode == Option::QMAKE_GENERATE_PROJECT)
-                fprintf(stderr, "Unable to generate project file.\n");
-            else
-                fprintf(stderr, "Unable to generate makefile for: %s\n", (*pfile).toLatin1().constData());
-            exit_val = 5;
+            if(mkfile && !mkfile->write(oldpwd)) {
+                if(Option::qmake_mode == Option::QMAKE_GENERATE_PROJECT)
+                    fprintf(stderr, "Unable to generate project file.\n");
+                else
+                    fprintf(stderr, "Unable to generate makefile for: %s\n", (*pfile).toLatin1().constData());
+                exit_val = 5;
+            }
+            delete mkfile;
+            mkfile = NULL;
         }
-        delete mkfile;
-        mkfile = NULL;
     }
     qmakeClearCaches();
     return exit_val;

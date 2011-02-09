@@ -1462,7 +1462,7 @@ QMakeProject::read(uchar cmd)
         while(1) {
             bool finished = true;
             for(int i = configs.size()-1; i >= 0; --i) {
-		const QString config = configs[i].toLower();
+                const QString config = configs[i].toLower();
                 if(!processed.contains(config)) {
                     processed.insert(config, true);
                     if(doProjectInclude(config, IncludeFlagFeature, vars) == IncludeSuccess) {
@@ -1648,7 +1648,7 @@ QMakeProject::doProjectInclude(QString file, uchar flags, QMap<QString, QStringL
                 qmakeAddCacheClear(qmakeDeleteCacheClear<QStringList>, (void**)&feature_roots);
             }
             debug_msg(2, "Looking for feature '%s' in (%s)", file.toLatin1().constData(),
-			feature_roots->join("::").toLatin1().constData());
+                        feature_roots->join("::").toLatin1().constData());
             int start_root = 0;
             if(parser.from_file) {
                 QFileInfo currFile(parser.file), prfFile(file);

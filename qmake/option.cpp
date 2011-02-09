@@ -120,6 +120,15 @@ QString Option::mkfile::cachefile;
 QStringList Option::mkfile::project_files;
 QString Option::mkfile::qmakespec_commandline;
 
+//QMAKE_GENERATE_SPECIAL stuff
+bool Option::mkspecial::do_filelist = false;
+bool Option::mkspecial::filelist_relate_filenames = true;
+QString Option::mkspecial::filelist_ui_pattern = "ui_#.h";
+QString Option::mkspecial::filelist_moc_pattern = "moc_#.cpp";
+QString Option::mkspecial::filelist_qrc_pattern = "qrc_#.cpp";
+QString Option::mkspecial::filelist_prefix = "foo";
+QString Option::mkspecial::filelist_relate_to = "";
+
 static Option::QMAKE_MODE default_mode(QString progname)
 {
     int s = progname.lastIndexOf(QDir::separator());
@@ -151,10 +160,12 @@ bool usage(const char *a0)
 {
     fprintf(stdout, "Usage: %s [mode] [options] [files]\n"
             "\n"
-            "QMake has two modes, one mode for generating project files based on\n"
+            "QMake has two main modes, one mode for generating project files based on\n"
             "some heuristics, and the other for generating makefiles. Normally you\n"
             "shouldn't need to specify a mode, as makefile generation is the default\n"
-            "mode for qmake, but you may use this to test qmake on an existing project\n"
+            "mode for qmake, but you may use this to test qmake on an existing project.\n"
+            "A third mode is available for special targets that can be of auxiliary help\n"
+            "usually not needed in most development situations."
             "\n"
             "Mode:\n"
             "  -project       Put qmake into project file generation mode%s\n"
@@ -168,6 +179,9 @@ bool usage(const char *a0)
             "                 In this mode qmake interprets files as project files to\n"
             "                 be processed, if skipped qmake will try to find a project\n"
             "                 file in your current working directory\n"
+            "  -special       Put qmake into special generation mode\n"
+            "                 This mode serves special needs. See below for options\n"
+            "                 available for this mode.\n"
             "\n"
             "Warnings Options:\n"
             "  -Wnone         Turn off all warnings; specific ones may be re-enabled by\n"
@@ -199,6 +213,17 @@ bool usage(const char *a0)
             "  -nodepend      Don't generate dependencies [makefile mode only]\n"
             "  -nomoc         Don't generate moc targets  [makefile mode only]\n"
             "  -nopwd         Don't look for files in pwd [project mode only]\n"
+            "Options for -special mode:\n"
+            "  -filelist      Generate a filelist as often used for autotools builds\n"
+            "                 Several options are available for -filelist:"
+            "     -norelate      Take each filename as is\n"
+            "     -relateto      Path against which each filename is related. Not in effect \n"
+            "                    when -norelate is specified.\n"
+            "     -ui_pattern    Pattern for generated ui-files [default: ui_#.h]\n"
+            "     -moc_pattern   Pattern for generated moc-files [default: moc_#.cpp]\n"
+            "     -qrc_pattern   Pattern for generated qrc-files [default: qrc_#.cpp]\n"
+            "     -prefix        Prefix for generated variable names [default: foo]\n"
+            ""
             ,a0,
             default_mode(a0) == Option::QMAKE_GENERATE_PROJECT  ? " (default)" : "", project_builtin_regx().toLatin1().constData(),
             default_mode(a0) == Option::QMAKE_GENERATE_MAKEFILE ? " (default)" : ""
@@ -230,6 +255,8 @@ Option::parseCommandLine(int argc, char **argv, int skip)
                     Option::qmake_mode = Option::QMAKE_QUERY_PROPERTY;
                 } else if(opt == "makefile") {
                     Option::qmake_mode = Option::QMAKE_GENERATE_MAKEFILE;
+                } else if (opt == "special") {
+                    Option::qmake_mode = Option::QMAKE_GENERATE_SPECIAL;
                 } else {
                     specified = false;
                 }
@@ -322,6 +349,26 @@ Option::parseCommandLine(int argc, char **argv, int skip)
                         fprintf(stderr, "***Unknown option -%s\n", opt.toLatin1().constData());
                         return Option::QMAKE_CMDLINE_SHOW_USAGE | Option::QMAKE_CMDLINE_ERROR;
                     }
+                } else if(Option::qmake_mode == Option::QMAKE_GENERATE_SPECIAL) {
+                    // Maybe a plugin framework would be nicer.
+                    if(opt == "filelist") {
+                        Option::mkspecial::do_filelist = true;
+                    } else if (opt == "norelate") {
+                        Option::mkspecial::filelist_relate_filenames = false;
+                    } else if (opt == "ui_pattern") {
+                        Option::mkspecial::filelist_ui_pattern = argv[++x];
+                    } else if (opt == "moc_pattern") {
+                        Option::mkspecial::filelist_moc_pattern = argv[++x];
+                    } else if (opt == "qrc_pattern") {
+                        Option::mkspecial::filelist_qrc_pattern = argv[++x];
+                    } else if (opt == "prefix") {
+                        Option::mkspecial::filelist_prefix = argv[++x];
+                    } else if (opt == "relateto") {
+                        Option::mkspecial::filelist_relate_to = argv[++x];
+                    } else {
+                        fprintf(stderr, "***Unknown option -%s\n", opt.toLatin1().constData());
+                        return Option::QMAKE_CMDLINE_SHOW_USAGE | Option::QMAKE_CMDLINE_ERROR;
+                    }
                 }
             }
         } else {
@@ -341,7 +388,8 @@ Option::parseCommandLine(int argc, char **argv, int skip)
                     if(!fi.makeAbsolute()) //strange
                         arg = fi.filePath();
                     if(Option::qmake_mode == Option::QMAKE_GENERATE_MAKEFILE ||
-                       Option::qmake_mode == Option::QMAKE_GENERATE_PRL) {
+                       Option::qmake_mode == Option::QMAKE_GENERATE_PRL ||
+                       Option::qmake_mode == Option::QMAKE_GENERATE_SPECIAL) {
                         if(fi.isDir()) {
                             QString proj = detectProjectFile(arg);
                             if (!proj.isNull())
@@ -515,7 +563,8 @@ Option::init(int argc, char **argv)
 
     //last chance for defaults
     if(Option::qmake_mode == Option::QMAKE_GENERATE_MAKEFILE ||
-        Option::qmake_mode == Option::QMAKE_GENERATE_PRL) {
+        Option::qmake_mode == Option::QMAKE_GENERATE_PRL ||
+        Option::qmake_mode == Option::QMAKE_GENERATE_SPECIAL) {
         if(Option::mkfile::qmakespec.isNull() || Option::mkfile::qmakespec.isEmpty())
             Option::mkfile::qmakespec = QString::fromLocal8Bit(qgetenv("QMAKESPEC").constData());
 

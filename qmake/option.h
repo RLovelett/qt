@@ -141,7 +141,9 @@ struct Option
 
     //global qmake mode, can only be in one mode per invocation!
     enum QMAKE_MODE { QMAKE_GENERATE_NOTHING, QMAKE_GENERATE_PROJECT, QMAKE_GENERATE_MAKEFILE,
-                      QMAKE_GENERATE_PRL, QMAKE_SET_PROPERTY, QMAKE_QUERY_PROPERTY };
+                      QMAKE_GENERATE_PRL, QMAKE_SET_PROPERTY, QMAKE_QUERY_PROPERTY,
+                      QMAKE_GENERATE_SPECIAL
+                };
     static QMAKE_MODE qmake_mode;
 
     //all modes
@@ -186,6 +188,17 @@ struct Option
         static int cachefile_depth;
         static QStringList project_files;
         static QString qmakespec_commandline;
+    };
+
+    //QMAKE_GENERATE_SPECIAL options
+    struct mkspecial {
+        static bool do_filelist;
+        static bool filelist_relate_filenames;
+        static QString filelist_ui_pattern;
+        static QString filelist_moc_pattern;
+        static QString filelist_qrc_pattern;
+        static QString filelist_prefix;
+        static QString filelist_relate_to;
     };
 
 private:
