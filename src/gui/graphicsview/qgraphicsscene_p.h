@@ -117,7 +117,8 @@ public:
     quint32 painterStateProtection : 1;
     quint32 sortCacheEnabled : 1; // for compatibility
     quint32 allItemsIgnoreTouchEvents : 1;
-    quint32 padding : 15;
+    quint32 pendingFocusIn: 1;
+    quint32 padding : 14;
 
     QRectF growingItemsBoundingRect;
 
@@ -213,6 +214,7 @@ public:
                         QGraphicsSceneHoverEvent *hoverEvent);
     void sendMouseEvent(QGraphicsSceneMouseEvent *mouseEvent);
     void mousePressEventHandler(QGraphicsSceneMouseEvent *mouseEvent);
+    bool propagateFocus();
     QGraphicsWidget *windowForItem(const QGraphicsItem *item) const;
 
     void drawItemHelper(QGraphicsItem *item, QPainter *painter,

@@ -302,6 +302,7 @@ QGraphicsScenePrivate::QGraphicsScenePrivate()
       painterStateProtection(true),
       sortCacheEnabled(false),
       allItemsIgnoreTouchEvents(true),
+      pendingFocusIn(false),
       selectionChanging(0),
       rectAdjust(2),
       focusItem(0),
@@ -1318,24 +1319,13 @@ void QGraphicsScenePrivate::mousePressEventHandler(QGraphicsSceneMouseEvent *mou
 
     // Set focus on the topmost enabled item that can take focus.
     bool setFocus = false;
-    foreach (QGraphicsItem *item, cachedItemsUnderMouse) {
-        if (item->isBlockedByModalPanel()) {
-            // Make sure we don't clear focus.
-            setFocus = true;
-            break;
-        }
-        if (item->isEnabled() && ((item->flags() & QGraphicsItem::ItemIsFocusable))) {
-            if (!item->isWidget() || ((QGraphicsWidget *)item)->focusPolicy() & Qt::ClickFocus) {
-                setFocus = true;
-                if (item != q->focusItem() && item->d_ptr->mouseSetsFocus)
-                    q->setFocusItem(item, Qt::MouseFocusReason);
-                break;
-            }
-        }
-        if (item->d_ptr->flags & QGraphicsItem::ItemStopsClickFocusPropagation)
-            break;
-        if (item->isPanel())
-            break;
+
+    if (!pendingFocusIn
+        && (focusChangeMethod == QGraphicsScene::FocusChangesOnMouseRelease)) {
+        pendingFocusIn = true;
+        setFocus = true;
+    } else {
+        setFocus = propagateFocus();
     }
 
     // Check for scene modality.
@@ -1348,8 +1338,11 @@ void QGraphicsScenePrivate::mousePressEventHandler(QGraphicsSceneMouseEvent *mou
     }
 
     // If nobody could take focus, clear it.
-    if (!stickyFocus && !setFocus && !sceneModality)
-        q->setFocusItem(0, Qt::MouseFocusReason);
+    if (!stickyFocus && !setFocus && !sceneModality) {
+        if (focusChangeMethod != QGraphicsScene::FocusChangesOnMouseRelease) {
+            q->setFocusItem(0, Qt::MouseFocusReason);
+        }
+    }
 
     // Any item will do.
     if (sceneModality && cachedItemsUnderMouse.isEmpty())
@@ -1436,6 +1429,34 @@ void QGraphicsScenePrivate::mousePressEventHandler(QGraphicsSceneMouseEvent *mou
             q->clearSelection();
         }
     }
+}
+
+bool QGraphicsScenePrivate::propagateFocus()
+{
+    Q_Q(QGraphicsScene);
+    bool setFocus = false;
+
+    foreach (QGraphicsItem *item, cachedItemsUnderMouse) {
+        if (item->isBlockedByModalPanel()) {
+            // Make sure we don't clear focus.
+            setFocus = true;
+            break;
+        }
+        if (item->isEnabled() && ((item->flags() & QGraphicsItem::ItemIsFocusable))) {
+            if (!item->isWidget() || ((QGraphicsWidget *)item)->focusPolicy() & Qt::ClickFocus) {
+                setFocus = true;
+                if (item != q->focusItem() && item->d_ptr->mouseSetsFocus)
+                    q->setFocusItem(item, Qt::MouseFocusReason);
+                break;
+            }
+        }
+        if (item->d_ptr->flags & QGraphicsItem::ItemStopsClickFocusPropagation)
+            break;
+        if (item->isPanel())
+            break;
+    }
+
+    return setFocus;
 }
 
 /*!
@@ -3374,7 +3395,6 @@ bool QGraphicsScene::event(QEvent *event)
     switch (event->type()) {
     case QEvent::GraphicsSceneMousePress:
     case QEvent::GraphicsSceneMouseMove:
-    case QEvent::GraphicsSceneMouseRelease:
     case QEvent::GraphicsSceneMouseDoubleClick:
     case QEvent::GraphicsSceneHoverEnter:
     case QEvent::GraphicsSceneHoverLeave:
@@ -4115,6 +4135,17 @@ void QGraphicsScene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 void QGraphicsScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     Q_D(QGraphicsScene);
+
+    bool setFocus = false;
+    if (d->pendingFocusIn) {
+        setFocus = d->propagateFocus();
+        d->pendingFocusIn = false;
+    }
+
+    if (!setFocus) {
+        setFocusItem(0, Qt::MouseFocusReason);
+    }
+
     if (d->mouseGrabberItems.isEmpty()) {
         mouseEvent->ignore();
         return;
