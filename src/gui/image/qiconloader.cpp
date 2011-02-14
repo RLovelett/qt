@@ -489,18 +489,24 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
     if (basePixmap.isNull())
         basePixmap.load(filename);
 
-    int actualSize = qMin(size.width(), size.height());
+    QSize actualSize = basePixmap.size();
+    if (!actualSize.isNull() && (actualSize.width() > size.width() || actualSize.height() > size.height()))
+        actualSize.scale(size, Qt::KeepAspectRatio);
 
     QString key = QLatin1Literal("$qt_theme_")
                   % HexString<qint64>(basePixmap.cacheKey())
                   % HexString<int>(mode)
                   % HexString<qint64>(qApp->palette().cacheKey())
-                  % HexString<int>(actualSize);
+                  % HexString<int>(actualSize)
+                  % HexString<int>(actualSize.width())
+                  % HexString<int>(actualSize.height());
 
     QPixmap cachedPixmap;
     if (QPixmapCache::find(key, &cachedPixmap)) {
         return cachedPixmap;
     } else {
+        if (basePixmap.size() != actualSize)
+            basePixmap = basePixmap.scaled(actualSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         QStyleOption opt(0);
         opt.palette = qApp->palette();
         cachedPixmap = qApp->style()->generatedIconPixmap(mode, basePixmap, &opt);
