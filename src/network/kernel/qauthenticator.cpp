@@ -1,17 +1,17 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the QtNetwork module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** Commercial Usage
+** Licensees holding valid Qt Commercial licenses may use this file in
+** accordance with the Qt Commercial License Agreement provided with the
+** Software or, alternatively, in accordance with the terms contained in
+** a written agreement between you and Nokia.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -25,16 +25,16 @@
 ** rights.  These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU
+** General Public License version 3.0 as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU General Public License version 3.0 requirements will be
+** met: http://www.gnu.org/copyleft/gpl.html.
+**
 ** If you have questions regarding the use of this file, please contact
 ** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -62,6 +62,10 @@ QT_BEGIN_NAMESPACE
 
 static QByteArray qNtlmPhase1();
 static QByteArray qNtlmPhase3(QAuthenticatorPrivate *ctx, const QByteArray& phase2data);
+#ifdef NTLM_SSPI
+static QByteArray qNtlmPhase1_SSPI(QAuthenticatorPrivate *ctx);
+static QByteArray qNtlmPhase3_SSPI(QAuthenticatorPrivate *ctx, const QByteArray& phase2data);
+#endif
 
 /*!
   \class QAuthenticator
@@ -164,13 +168,9 @@ QAuthenticator &QAuthenticator::operator=(const QAuthenticator &other)
 {
     if (d == other.d)
         return *this;
-
-    if (d && !d->ref.deref())
-        delete d;
-
-    d = other.d;
-    if (d)
-        d->ref.ref();
+    detach();
+    d->user = other.d->user;
+    d->password = other.d->password;
     return *this;
 }
 
@@ -213,29 +213,44 @@ void QAuthenticator::setUser(const QString &user)
     int separatorPosn = 0;
 
     switch(d->method) {
+    case QAuthenticatorPrivate::DigestMd5:
+        if((separatorPosn = user.indexOf(QLatin1String("\\"))) != -1) {
+            //domain name is present
+	    d->userDomain.clear();
+            d->realm = user.left(separatorPosn);
+            d->user = user.mid(separatorPosn + 1);
+        } else if((separatorPosn = user.indexOf(QLatin1String("@"))) != -1) {
+            //domain name is present
+	    d->userDomain.clear();
+            d->realm = user.mid(separatorPosn + 1);
+            d->user = user.left(separatorPosn);
+        } else {
+            d->user = user;
+            d->realm.clear();
+            d->userDomain.clear();
+        }
+        break;
+
     case QAuthenticatorPrivate::Ntlm:
         if((separatorPosn = user.indexOf(QLatin1String("\\"))) != -1) {
             //domain name is present
             d->realm.clear();
             d->userDomain = user.left(separatorPosn);
-            d->extractedUser = user.mid(separatorPosn + 1);
-            d->user = user;
+            d->user = user.mid(separatorPosn + 1);
         } else if((separatorPosn = user.indexOf(QLatin1String("@"))) != -1) {
             //domain name is present
             d->realm.clear();
             d->userDomain = user.left(separatorPosn);
-            d->extractedUser = user.left(separatorPosn);
-            d->user = user;
+            d->user = user.left(separatorPosn);
         } else {
-            d->extractedUser = user;
             d->user = user;
 	    d->realm.clear();
             d->userDomain.clear();
         }
         break;
+    // For other auth mechanisms, domain name will be part of username
     default:
         d->user = user;
-        d->userDomain.clear();
         break;
     }
 }
@@ -454,16 +469,45 @@ QByteArray QAuthenticatorPrivate::calculateResponse(const QByteArray &requestMet
         break;
     case QAuthenticatorPrivate::Ntlm:
         methodString = "NTLM ";
+#ifdef NTLM_SSPI
+		if (challenge.isEmpty()) {
+			QByteArray phase1Token = qNtlmPhase1_SSPI(this);
+			if (!phase1Token.isEmpty()) {
+				response = phase1Token.toBase64();
+				phase = Phase2;
+			}
+			else {
+				response = qNtlmPhase1().toBase64();
+				if (user.isEmpty())
+					phase = Done;
+				else
+					phase = Phase2;
+			}
+		}
+		else {
+			QByteArray phase3Token = qNtlmPhase3_SSPI(this, QByteArray::fromBase64(challenge));
+			if (!phase3Token.isEmpty()) {
+				response = phase3Token.toBase64();
+				phase = Done;
+			}
+			else {
+				response = qNtlmPhase3(this, QByteArray::fromBase64(challenge)).toBase64();
+				phase = Done;
+			}
+		}
+#else
         if (challenge.isEmpty()) {
             response = qNtlmPhase1().toBase64();
             if (user.isEmpty())
                 phase = Done;
             else
                 phase = Phase2;
-        } else {
+        }
+		else {
             response = qNtlmPhase3(this, QByteArray::fromBase64(challenge)).toBase64();
             phase = Done;
         }
+#endif
 
         break;
     }
@@ -1185,7 +1229,7 @@ static QByteArray qCreatev2Hash(const QAuthenticatorPrivate *ctx,
         Q_ASSERT(hashKey.size() == 16);
         // Assuming the user and domain is always unicode in challenge
         QByteArray message =
-                qStringAsUcs2Le(ctx->extractedUser.toUpper()) +
+                qStringAsUcs2Le(ctx->user.toUpper()) +
                 qStringAsUcs2Le(phase3->domainStr);
 
         phase3->v2Hash = qEncodeHmacMd5(hashKey, message);
@@ -1390,8 +1434,8 @@ static QByteArray qNtlmPhase3(QAuthenticatorPrivate *ctx, const QByteArray& phas
         pb.domainStr = ctx->userDomain;
     }
 
-    offset = qEncodeNtlmString(pb.user, offset, ctx->extractedUser, unicode);
-    pb.userStr = ctx->extractedUser;
+    offset = qEncodeNtlmString(pb.user, offset, ctx->user, unicode);
+    pb.userStr = ctx->user;
 
     offset = qEncodeNtlmString(pb.workstation, offset, ctx->workstation, unicode);
     pb.workstationStr = ctx->workstation;
@@ -1423,6 +1467,152 @@ static QByteArray qNtlmPhase3(QAuthenticatorPrivate *ctx, const QByteArray& phas
     return rc;
 }
 
+#ifdef NTLM_SSPI
 
+// See http://davenport.sourceforge.net/ntlm.html
+// and libcurl http_ntlm.c
+
+// Handle of security.dll or secur32.dll, depending on Windows version
+static HMODULE securityDLLHandle = NULL;
+// Pointer to SSPI dispatch table
+static PSecurityFunctionTable pSecurityFunctionTable = NULL;
+
+// Phase 1:
+static QByteArray qNtlmPhase1_SSPI(QAuthenticatorPrivate *ctx)
+{
+	QByteArray result;
+
+	// Initialize security interface
+	if (pSecurityFunctionTable == NULL) {
+		/* Determine Windows version. Security functions are located in
+		 * security.dll on WinNT 4.0 and in secur32.dll on Win9x. Win2K and XP
+		 * contain both these DLLs (security.dll just forwards calls to
+		 * secur32.dll)
+		 */
+		OSVERSIONINFO osver;
+		osver.dwOSVersionInfoSize = sizeof(osver);
+		GetVersionEx(&osver);
+		if (osver.dwPlatformId == VER_PLATFORM_WIN32_NT
+			&& osver.dwMajorVersion == 4)
+			securityDLLHandle = LoadLibrary(L"security.dll");
+		else securityDLLHandle = LoadLibrary(L"secur32.dll");
+		if (securityDLLHandle != NULL) {
+			INIT_SECURITY_INTERFACE pInitSecurityInterface;
+			pInitSecurityInterface =
+			(INIT_SECURITY_INTERFACE)GetProcAddress(securityDLLHandle,
+													"InitSecurityInterfaceW");
+			if (pInitSecurityInterface != NULL)
+				pSecurityFunctionTable = pInitSecurityInterface();
+		}
+	}
+
+	if (pSecurityFunctionTable == NULL)
+		return result;
+
+	// 1. The client obtains a representation of the credential set
+	// for the user via the SSPI AcquireCredentialsHandle function.
+	memset(&ctx->credHandle, 0, sizeof(CredHandle));
+	TimeStamp tsDummy; // For Windows 9x compatibility of SPPI calls
+	SECURITY_STATUS secStatus = pSecurityFunctionTable->AcquireCredentialsHandle(
+		NULL, (SEC_WCHAR*)L"NTLM", SECPKG_CRED_OUTBOUND, NULL, NULL,
+		NULL, NULL, &ctx->credHandle, &tsDummy
+		);
+	if (secStatus != SEC_E_OK)
+		return result;
+
+	// 2. The client calls the SSPI InitializeSecurityContext function
+	// to obtain an authentication request token (in our case, a Type 1 message).
+	// The client sends this token to the server.
+	unsigned char ntlmbuf[1024]; // enough, unless the user+host+domain is very long
+	SecBufferDesc desc;
+	SecBuffer buf;
+	desc.ulVersion = SECBUFFER_VERSION;
+	desc.cBuffers  = 1;
+	desc.pBuffers  = &buf;
+	buf.cbBuffer   = sizeof(ntlmbuf);
+	buf.BufferType = SECBUFFER_TOKEN;
+	buf.pvBuffer   = ntlmbuf;
+	ULONG attrs;
+
+	secStatus = pSecurityFunctionTable->InitializeSecurityContext(&ctx->credHandle, NULL,
+		L"" /* host */,
+		ISC_REQ_CONFIDENTIALITY |
+		ISC_REQ_REPLAY_DETECT |
+		ISC_REQ_CONNECTION,
+		0, SECURITY_NETWORK_DREP,
+		NULL, 0,
+		&ctx->ctxHandle, &desc,
+		&attrs, &tsDummy);
+	if (secStatus == SEC_I_COMPLETE_AND_CONTINUE ||
+		secStatus == SEC_I_CONTINUE_NEEDED) {
+			pSecurityFunctionTable->CompleteAuthToken(&ctx->ctxHandle, &desc);
+	}
+	else if (secStatus != SEC_E_OK) {
+		pSecurityFunctionTable->FreeCredentialsHandle(&ctx->credHandle);
+		return result;
+	}
+
+	result = QByteArray((const char*)ntlmbuf, buf.cbBuffer);
+	return result;
+}
+
+// Phase 2:
+// 3. The server receives the token from the client, and uses it as input to the
+// AcceptSecurityContext SSPI function. This creates a local security context on
+// the server to represent the client, and yields an authentication response token
+// (the Type 2 message), which is sent to the client.
+
+// Phase 3:
+static QByteArray qNtlmPhase3_SSPI(QAuthenticatorPrivate *ctx, const QByteArray& phase2data)
+{
+	// 4. The client receives the response token from the server and calls
+	// InitializeSecurityContext again, passing the server's token as input.
+	// This provides us with another authentication request token (the Type 3 message).
+	// The return value indicates that the security context was successfully initialized;
+	// the token is sent to the server.
+
+	QByteArray result;
+
+	if (pSecurityFunctionTable == NULL)
+		return result;
+
+	unsigned char ntlmbuf[1024]; // enough, unless the user+host+domain is very long
+	SecBuffer type_2, type_3;
+	SecBufferDesc type_2_desc, type_3_desc;
+	ULONG attrs;
+	TimeStamp tsDummy; // For Windows 9x compatibility of SPPI calls
+
+	type_2_desc.ulVersion  = type_3_desc.ulVersion  = SECBUFFER_VERSION;
+	type_2_desc.cBuffers   = type_3_desc.cBuffers   = 1;
+	type_2_desc.pBuffers   = &type_2;
+	type_3_desc.pBuffers   = &type_3;
+
+	type_2.BufferType = SECBUFFER_TOKEN;
+	type_2.pvBuffer   = (PVOID)phase2data.data();
+	type_2.cbBuffer   = phase2data.length();
+	type_3.BufferType = SECBUFFER_TOKEN;
+	type_3.pvBuffer   = ntlmbuf;
+	type_3.cbBuffer   = sizeof(ntlmbuf);
+
+	SECURITY_STATUS secStatus = pSecurityFunctionTable->InitializeSecurityContext(&ctx->credHandle,
+		&ctx->ctxHandle,
+		L"" /* host */,
+		ISC_REQ_CONFIDENTIALITY |
+		ISC_REQ_REPLAY_DETECT |
+		ISC_REQ_CONNECTION,
+		0, SECURITY_NETWORK_DREP, &type_2_desc,
+		0, &ctx->ctxHandle, &type_3_desc,
+		&attrs, &tsDummy);
+
+	pSecurityFunctionTable->FreeCredentialsHandle(&ctx->credHandle);
+	pSecurityFunctionTable->DeleteSecurityContext(&ctx->ctxHandle);
+
+	if (secStatus != SEC_E_OK)
+		return result;
+
+	result = QByteArray((const char*)ntlmbuf, type_3.cbBuffer);
+	return result;
+}
+#endif
 
 QT_END_NAMESPACE
