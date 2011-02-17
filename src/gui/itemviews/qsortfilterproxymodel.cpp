@@ -1221,11 +1221,17 @@ void QSortFilterProxyModelPrivate::_q_sourceAboutToBeReset()
     q->beginResetModel();
 }
 
+void QSortFilterProxyModel::resetInternalData()
+{
+    Q_D(QSortFilterProxyModel);
+    QAbstractProxyModel::resetInternalData();
+    d->clear_mapping();
+}
+
 void QSortFilterProxyModelPrivate::_q_sourceReset()
 {
     Q_Q(QSortFilterProxyModel);
     invalidatePersistentIndexes();
-    clear_mapping();
     // All internal structures are deleted in clear()
     q->endResetModel();
     update_source_sort_column();

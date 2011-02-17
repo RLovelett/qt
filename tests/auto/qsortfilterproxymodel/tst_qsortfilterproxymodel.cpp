@@ -149,6 +149,7 @@ private slots:
     void mapSelectionFromSource();
     void testResetInternalData();
     void filteredColumns();
+    void resetRefilter();
 
 protected:
     void buildHierarchy(const QStringList &data, QAbstractItemModel *model);
@@ -3350,6 +3351,89 @@ void tst_QSortFilterProxyModel::filteredColumns()
     // Parent is QModelIndex()
     insertCommand->doCommand();
 }
+
+class ResetFilterModel : public QSortFilterProxyModel
+{
+  Q_OBJECT
+public:
+  ResetFilterModel(QObject *parent = 0)
+    : QSortFilterProxyModel(parent)
+  {
+
+  }
+
+  void changeFilter(const QString &startsWith)
+  {
+    beginResetModel();
+    m_start = startsWith;
+    endResetModel();
+  }
+
+protected:
+  bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
+  {
+    const QModelIndex index = sourceModel()->index(source_row, 0, source_parent);
+    return index.data().toString().startsWith(m_start);
+  }
+
+private:
+  QString m_start;
+};
+
+class AnotherObserver : public QObject
+{
+  Q_OBJECT
+public:
+  AnotherObserver(QAbstractItemModel *model, QObject *parent)
+    : QObject(parent), m_model(model)
+  {
+    connect(model, SIGNAL(modelReset()), SLOT(onReset()));
+  }
+
+private slots:
+  void onReset()
+  {
+    static int timesCalled = 1;
+    if (timesCalled == 1)
+      Q_ASSERT(m_model->rowCount() == 7);
+    else if (timesCalled == 2)
+      Q_ASSERT(m_model->rowCount() == 2);
+    else if (timesCalled == 3)
+      Q_ASSERT(m_model->rowCount() == 1);
+    ++timesCalled;
+  }
+private:
+  QAbstractItemModel *m_model;
+};
+
+void tst_QSortFilterProxyModel::resetRefilter()
+{
+    QStringListModel strings(QStringList()
+      << "Monday"
+      << "Tuesday"
+      << "Wednesday"
+      << "Thursday"
+      << "Friday"
+      << "Saturday"
+      << "Sunday"
+    );
+
+    ResetFilterModel filter;
+    filter.setDynamicSortFilter(true);
+
+    AnotherObserver *o = new AnotherObserver(&filter, this);
+
+    filter.setSourceModel(&strings);
+
+    filter.changeFilter("T");
+    // Two days of the week begin with 'T' : Today and Tomorrow
+    QVERIFY(filter.rowCount() == 2);
+
+    filter.changeFilter("W");
+
+    QVERIFY(filter.rowCount() == 1);
+}
+
 
 QTEST_MAIN(tst_QSortFilterProxyModel)
 #include "tst_qsortfilterproxymodel.moc"

@@ -107,6 +107,12 @@ QAbstractProxyModel::QAbstractProxyModel(QAbstractProxyModelPrivate &dd, QObject
     setSourceModel(QAbstractItemModelPrivate::staticEmptyModel());
 }
 
+
+void QAbstractProxyModel::resetInternalData()
+{
+    QAbstractItemModel::resetInternalData();
+}
+
 /*!
     Destroys the proxy model.
 */

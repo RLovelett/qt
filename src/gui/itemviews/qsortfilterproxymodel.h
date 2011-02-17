@@ -127,6 +127,9 @@ protected:
     void filterChanged();
     void invalidateFilter();
 
+protected Q_SLOTS:
+    void resetInternalData();
+
 public:
 #ifdef Q_NO_USING_KEYWORD
     inline QObject *parent() const { return QObject::parent(); }
