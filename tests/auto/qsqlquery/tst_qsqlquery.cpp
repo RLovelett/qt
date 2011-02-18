@@ -928,7 +928,6 @@ void tst_QSqlQuery::record()
     QSqlQuery q( db );
     QVERIFY( q.record().isEmpty() );
     QVERIFY_SQL( q, exec( "select id, t_varchar, t_char from " + qtest + " order by id" ) );
-    QSqlRecord rec = q.record();
     QCOMPARE( q.record().fieldName( 0 ).toLower(), QString( "id" ) );
     QCOMPARE( q.record().fieldName( 1 ).toLower(), QString( "t_varchar" ) );
     QCOMPARE( q.record().fieldName( 2 ).toLower(), QString( "t_char" ) );
