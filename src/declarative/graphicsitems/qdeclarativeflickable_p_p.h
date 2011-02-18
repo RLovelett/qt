@@ -145,6 +145,8 @@ public:
     bool pressed : 1;
     bool interactive : 1;
     bool calcVelocity : 1;
+    bool pressDelayed : 1;
+    bool releaseHandled : 1;
     QElapsedTimer lastPosTime;
     QPointF lastPos;
     QPointF pressPos;

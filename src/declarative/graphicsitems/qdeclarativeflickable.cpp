@@ -141,6 +141,7 @@ QDeclarativeFlickablePrivate::QDeclarativeFlickablePrivate()
     , hMoved(false), vMoved(false)
     , movingHorizontally(false), movingVertically(false)
     , stealMouse(false), pressed(false), interactive(true), calcVelocity(false)
+    , pressDelayed(false), releaseHandled(false)
     , deceleration(500), maxVelocity(2000), reportedVelocitySmoothing(100)
     , delayedPressEvent(0), delayedPressTarget(0), pressDelay(0), fixupDuration(600)
     , vTime(0), visibleArea(0)
@@ -1391,11 +1392,23 @@ bool QDeclarativeFlickable::sendMouseEvent(QGraphicsSceneMouseEvent *event)
             d->handleMouseMoveEvent(&mouseEvent);
             break;
         case QEvent::GraphicsSceneMousePress:
+            if (d->releaseHandled) {
+                // releaseHandled set to true indicates that the flickable has
+                // already handled a MouseRelease event for this press. So just
+                // ignore this MousePress. Else we end up into a loop setting
+                // delayedPress for the same mouse event resulting into a stack
+                // overflow. See QTBUG-17361
+                return false;
+            }
+    
             if (d->delayedPressEvent)
                 return false;
 
             d->handleMousePressEvent(&mouseEvent);
             d->captureDelayedPress(event);
+            // Set pressDelayed to true to indicate that the MousePress event
+            // has been delayed
+            d->pressDelayed = true;
             stealThisEvent = d->stealMouse;   // Update stealThisEvent in case changed by function call above
             break;
         case QEvent::GraphicsSceneMouseRelease:
@@ -1410,9 +1423,17 @@ bool QDeclarativeFlickable::sendMouseEvent(QGraphicsSceneMouseEvent *event)
                 // We send the release
                 scene()->sendEvent(s->mouseGrabberItem(), event);
                 // And the event has been consumed
+                // Reset pressDelayed and releaseHandled to false
+                d->pressDelayed = false;
+                d->releaseHandled = false;
                 return true;
             }
             d->handleMouseReleaseEvent(&mouseEvent);
+            if (d->pressDelayed) {
+                // MousePress event was delayed, set releaseHandled to true to
+                // indicate that the flickable has handled the MouseReleaseEvent
+                d->releaseHandled = true;
+            } 
             break;
         default:
             break;
