@@ -3713,7 +3713,7 @@ void QRasterPaintEnginePrivate::rasterizeLine_dashed(QLineF line,
         qreal dash = (pattern.at(*dashIndex) - *dashOffset) * width;
         QLineF l = line;
 
-        if (dash >= length) {
+        if (dash >= length || dash == 0) {
             dash = length;
             *dashOffset += dash / width;
             length = 0;
