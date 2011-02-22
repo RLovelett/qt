@@ -61,6 +61,8 @@
         <file>images/qt-gif-noanim.gif</file>
         <file>images/rect.svg</file>
         <file>images/rect.svgz</file>
+        <file>images/qt-logo-big.wbmp</file>
+        <file>images/qt-logo-small.wbmp</file>
         <file>images/corrupt.svg</file>
         <file>images/corrupt.svgz</file>
         <file>images/qtbug13653-no_eoi.jpg</file>

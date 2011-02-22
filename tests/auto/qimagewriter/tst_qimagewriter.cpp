@@ -204,6 +204,9 @@ void tst_QImageWriter::writeImage_data()
 #if defined QTEST_HAVE_TIFF
     QTest::newRow("TIFF: teapot") << QString("teapot.tiff") << false << QByteArray("tiff");
 #endif
+#if defined QTEST_HAVE_WBMP
+    QTest::newRow("WBMP: mtv-online") << QString("mtv-online.wbmp") << false << QByteArray("wbmp");
+#endif
 }
 
 void tst_QImageWriter::writeImage()
@@ -461,6 +464,10 @@ void tst_QImageWriter::supportsOption_data()
                           << (QIntList() << QImageIOHandler::Size
                               << QImageIOHandler::CompressionRatio);
 #endif
+#if defined QTEST_HAVE_WBMP
+    QTest::newRow("wbmp") << QString("gen-black.wbmp")
+                          << (QIntList() << QImageIOHandler::Size);
+#endif
 }
 
 void tst_QImageWriter::supportsOption()
@@ -509,6 +516,9 @@ void tst_QImageWriter::saveWithNoFormat_data()
     QTest::newRow("pbm") << prefix + QString("gen-out.pbm") << QByteArray("pbm") << QImageWriter::ImageWriterError(0);
 #if defined QTEST_HAVE_TIFF
     QTest::newRow("tiff") << prefix + QString("gen-out.tiff") << QByteArray("tiff") << QImageWriter::ImageWriterError(0);
+#endif
+#if defined QTEST_HAVE_WBMP
+    QTest::newRow("wbmp") << prefix + QString("gen-out.wbmp") << QByteArray("wbmp") << QImageWriter::ImageWriterError(0);
 #endif
 }
 

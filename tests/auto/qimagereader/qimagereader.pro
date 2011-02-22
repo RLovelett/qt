@@ -10,6 +10,7 @@ RESOURCES += qimagereader.qrc
 !contains(QT_CONFIG, no-mng):DEFINES += QTEST_HAVE_MNG
 !contains(QT_CONFIG, no-tiff):DEFINES += QTEST_HAVE_TIFF
 !contains(QT_CONFIG, no-svg):DEFINES += QTEST_HAVE_SVG
+!contains(QT_CONFIG, no-wbmp):DEFINES += QTEST_HAVE_WBMP
 
 win32-msvc:QMAKE_CXXFLAGS -= -Zm200
 win32-msvc:QMAKE_CXXFLAGS += -Zm800

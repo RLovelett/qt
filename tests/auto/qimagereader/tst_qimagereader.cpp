@@ -263,6 +263,10 @@ void tst_QImageReader::readImage_data()
     QTest::newRow("SVG: rect") << QString("rect.svg") << true << QByteArray("svg");
     QTest::newRow("SVGZ: rect") << QString("rect.svgz") << true << QByteArray("svgz");
 #endif
+#if defined QTEST_HAVE_WBMP
+    QTest::newRow("WBMP: big") << QString("qt-logo-big.wbmp") << true << QByteArray("wbmp");
+    QTest::newRow("WBMP: small") << QString("qt-logo-small.wbmp") << true << QByteArray("wbmp");
+#endif
 }
 
 void tst_QImageReader::readImage()
@@ -550,6 +554,10 @@ void tst_QImageReader::imageFormat_data()
 #if defined QTEST_HAVE_GIF
     QTest::newRow("gif-1") << QString("earth.gif") << QByteArray("gif") << QImage::Format_Invalid;
     QTest::newRow("gif-2") << QString("trolltech.gif") << QByteArray("gif") << QImage::Format_Invalid;
+#endif
+#if defined QTEST_HAVE_WBMP
+    QTest::newRow("wbmp-1") << QString("qt-logo-big.wbmp") << QByteArray("wbmp") << QImage::Format_Mono;
+    QTest::newRow("wbmp-2") << QString("qt-logo-big.wbmp") << QByteArray("wbmp") << QImage::Format_Mono;
 #endif
     QTest::newRow("xbm") << QString("gnus.xbm") << QByteArray("xbm") << QImage::Format_MonoLSB;
     QTest::newRow("xpm") << QString("marble.xpm") << QByteArray("xpm") << QImage::Format_Indexed8;
@@ -1367,6 +1375,15 @@ void tst_QImageReader::readFromResources_data()
                                      << QByteArray("svgz") << QSize(0, 0)
                                      << QString("");
 #endif
+#ifdef QTEST_HAVE_WBMP
+    QTest::newRow("qt-logo-big.wbmp") << QString("qt-logo-big.wbmp")
+                                     << QByteArray("wbmp") << QSize(250, 250)
+                                     << QString("");
+    QTest::newRow("qt-logo-small.wbmp") << QString("qt-logo-small.wbmp")
+                                     << QByteArray("wbmp") << QSize(123, 103)
+                                     << QString("");
+#endif
+
     QTest::newRow("image.pbm") << QString("image.pbm")
                                       << QByteArray("pbm") << QSize(16, 6)
                                       << QString("");

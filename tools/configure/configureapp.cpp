@@ -333,6 +333,7 @@ Configure::Configure(int& argc, char** argv)
     dictionary[ "JPEG" ]            = "auto";
     dictionary[ "PNG" ]             = "auto";
     dictionary[ "MNG" ]             = "auto";
+    dictionary[ "WBMP" ]            = "auto";
     dictionary[ "LIBTIFF" ]         = "auto";
     dictionary[ "LIBJPEG" ]         = "auto";
     dictionary[ "LIBPNG" ]          = "auto";
@@ -438,7 +439,7 @@ void Configure::parseCmdLine()
 {
     int argCount = configCmdLine.size();
     int i = 0;
-    const QStringList imageFormats = QStringList() << "gif" << "png" << "mng" << "jpeg" << "tiff";
+    const QStringList imageFormats = QStringList() << "gif" << "png" << "mng" << "jpeg" << "tiff" << "wbmp";
 
 #if !defined(EVAL)
     if (argCount < 1) // skip rest if no arguments
@@ -628,6 +629,11 @@ void Configure::parseCmdLine()
         } else if (configCmdLine.at(i) == "-system-libmng") {
             dictionary[ "LIBMNG" ] = "system";
         }
+
+        else if (configCmdLine.at(i) == "-no-wbmp")
+            dictionary[ "WBMP" ] = "no";
+        else if (configCmdLine.at(i) == "-wbmp")
+            dictionary[ "WBMP" ] = (dictionary[ "SHARED" ] == "yes") ? "plugin" : "yes";
 
         // Text Rendering --------------------------------------------
         else if (configCmdLine.at(i) == "-no-freetype")
@@ -1681,8 +1687,8 @@ bool Configure::displayHelp()
                     "[-qt-zlib] [-system-zlib] [-no-gif] [-no-libpng]\n"
                     "[-qt-libpng] [-system-libpng] [-no-libtiff] [-qt-libtiff]\n"
                     "[-system-libtiff] [-no-libjpeg] [-qt-libjpeg] [-system-libjpeg]\n"
-                    "[-no-libmng] [-qt-libmng] [-system-libmng] [-no-qt3support] [-mmx]\n"
-                    "[-no-mmx] [-3dnow] [-no-3dnow] [-sse] [-no-sse] [-sse2] [-no-sse2]\n"
+                    "[-no-libmng] [-qt-libmng] [-system-libmng] [-no-wbmp] [-wbmp] [-no-qt3support]\n"
+                    "[-mmx] [-no-mmx] [-3dnow] [-no-3dnow] [-sse] [-no-sse] [-sse2] [-no-sse2]\n"
                     "[-no-iwmmxt] [-iwmmxt] [-openssl] [-openssl-linked]\n"
                     "[-no-openssl] [-no-dbus] [-dbus] [-dbus-linked] [-platform <spec>]\n"
                     "[-qtnamespace <namespace>] [-qtlibinfix <infix>] [-no-phonon]\n"
@@ -1821,6 +1827,9 @@ bool Configure::displayHelp()
         desc("LIBMNG", "no",    "-no-libmng",           "Do not compile MNG support.");
         desc("LIBMNG", "qt",    "-qt-libmng",           "Use the libmng bundled with Qt.");
         desc("LIBMNG", "system","-system-libmng",       "Use libmng from the operating system.\nSee See http://www.libmng.com\n");
+
+        desc("WBMP", "yes",      "-wbmp",               "Enable WBMP image format support.");
+        desc("WBMP", "no",       "-no-wbmp",            "Do not compile WBMP support.\n");
 
         desc("LIBTIFF", "no",    "-no-libtiff",         "Do not compile TIFF support.");
         desc("LIBTIFF", "qt",    "-qt-libtiff",         "Use the libtiff bundled with Qt.");
@@ -2047,6 +2056,10 @@ QString Configure::defaultTo(const QString &option)
     // PNG is always built-in, never a plugin
     if (option == "PNG")
         return "yes";
+
+    // WBMP is disabled by default
+    if (option == "WBMP")
+        return "no";
 
     // These database drivers and image formats can be built-in or plugins.
     // Prefer plugins when Qt is shared.
@@ -2284,6 +2297,8 @@ void Configure::autoDetection()
         dictionary["PNG"] = defaultTo("PNG");
     if (dictionary["MNG"] == "auto")
         dictionary["MNG"] = defaultTo("MNG");
+    if (dictionary["WBMP"] == "auto")
+        dictionary["WBMP"] = defaultTo("WBMP");
     if (dictionary["TIFF"] == "auto")
         dictionary["TIFF"] = dictionary["ZLIB"] == "no" ? "no" : defaultTo("TIFF");
     if (dictionary["LIBJPEG"] == "auto")
@@ -2437,7 +2452,7 @@ bool Configure::verifyConfiguration()
      system-png no-png png
      system-zlib no-zlib zlib
      system-tiff no-tiff tiff
-     no-gif gif
+     no-gif gif no-wbmp wbmp
      dll staticlib
 
      nocrosscompiler
@@ -2568,6 +2583,11 @@ void Configure::generateOutputVars()
         qtConfig += "mng";
     if (dictionary[ "LIBMNG" ] == "system")
         qtConfig += "system-mng";
+
+    if (dictionary[ "WBMP" ] == "no")
+        qtConfig += "no-wbmp";
+    else if (dictionary[ "WBMP" ] == "yes")
+        qtConfig += "wbmp";
 
     // Text rendering --------------------------------------------------
     if (dictionary[ "FREETYPE" ] == "yes")
@@ -3163,6 +3183,7 @@ void Configure::generateConfigfiles()
         if (dictionary["GIF"] == "yes")              qconfigList += "QT_BUILTIN_GIF_READER=1";
         if (dictionary["PNG"] != "yes")              qconfigList += "QT_NO_IMAGEFORMAT_PNG";
         if (dictionary["MNG"] != "yes")              qconfigList += "QT_NO_IMAGEFORMAT_MNG";
+        if (dictionary["WBMP"] != "yes")             qconfigList += "QT_NO_IMAGEFORMAT_WBMP";
         if (dictionary["JPEG"] != "yes")             qconfigList += "QT_NO_IMAGEFORMAT_JPEG";
         if (dictionary["TIFF"] != "yes")             qconfigList += "QT_NO_IMAGEFORMAT_TIFF";
         if (dictionary["ZLIB"] == "no") {
@@ -3491,6 +3512,7 @@ void Configure::displayConfig()
     cout << "    JPEG support............" << dictionary[ "JPEG" ] << endl;
     cout << "    PNG support............." << dictionary[ "PNG" ] << endl;
     cout << "    MNG support............." << dictionary[ "MNG" ] << endl;
+    cout << "    WBMP support............" << dictionary[ "WBMP" ] << endl;
     cout << "    FreeType support........" << dictionary[ "FREETYPE" ] << endl << endl;
 
     cout << "Styles:" << endl;

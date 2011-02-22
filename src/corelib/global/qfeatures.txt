@@ -848,6 +848,13 @@ Requires:
 Name: BMP Image Format
 SeeAlso: ???
 
+Feature: IMAGEFORMAT_WBMP
+Description: Supports Wireless Application Protocol Bitmap file format.
+Section: Images
+Requires:
+Name: WBMP Image Format
+SeeAlso: ???
+
 Feature: IMAGEFORMAT_PPM
 Description: Supports the Portable Pixmap image file format.
 Section: Images
