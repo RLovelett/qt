@@ -370,10 +370,21 @@ bool QDeclarativeImportsPrivate::importExtension(const QString &absoluteFilePath
         return false;
     }
     QDir dir = QFileInfo(file).dir();
+    QUrl url = QUrl::fromLocalFile(absoluteFilePath);
 
     QDeclarativeDirParser qmldirParser;
     qmldirParser.setSource(filecontent);
-    qmldirParser.parse();
+    qmldirParser.setUrl(url);
+
+    if (qmldirParser.parse()) {
+        // Report errors encountered while parsing qmldir file
+        QList<QDeclarativeError> errorList = qmldirParser.errors();
+
+        foreach (const QDeclarativeError &error, errorList)
+            qWarning() << error;
+
+        return false;
+    }
 
     if (! qmlDirFilesForWhichPluginsHaveBeenLoaded.contains(absoluteFilePath)) {
         qmlDirFilesForWhichPluginsHaveBeenLoaded.insert(absoluteFilePath);
