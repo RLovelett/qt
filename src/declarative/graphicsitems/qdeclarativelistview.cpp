@@ -3145,7 +3145,7 @@ void QDeclarativeListView::itemsMoved(int from, int to, int count)
             FxListItem *movedItem = moved.take(item->index);
             if (!movedItem)
                 movedItem = d->createItem(item->index);
-            if (item->index <= firstVisible->index)
+            if (item->index < firstVisible->index)
                 moveBy -= movedItem->size();
             it = d->visibleItems.insert(it, movedItem);
             ++it;
