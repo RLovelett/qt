@@ -48,6 +48,9 @@
 #include "testresult.h"
 #include "pips.h"
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
 
 class TestRunner : public QObject
 {
@@ -62,17 +65,14 @@ public:
         EPaused   = 4
     };
 
-    TestRunner(QObject* parent = 0);
+    TestRunner(QObject *parent = 0);
     virtual ~TestRunner();
 
     void addTestCase(TestCase *testCase);
-
     TestConfig *testConfig();
     void setTestConfig(TestConfig *testConfig);
-
     TestResult *testResult();
     void setTestResult(TestResult *testResult);
-
     CaseRunningState testState();
 
 private:
@@ -100,17 +100,19 @@ signals:
     void paused();
 
 private:
-    QList<TestCase*> caseList;
-    TestConfig *config;
-    TestResult *result;
+    QList<TestCase *>   caseList;
+    TestConfig          *config;
+    TestResult          *result;
 
-    int caseIndex;
-    PipsProcess *process;
-    CaseRunningState state;
-    bool stopFlag;
-    bool pauseFlag;
-
-
+    int                 caseIndex;
+    PipsProcess         *process;
+    CaseRunningState    state;
+    bool                stopFlag;
+    bool                pauseFlag;
 };
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // TESTRUNNER_H

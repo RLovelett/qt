@@ -49,7 +49,9 @@
 #include <unistd.h>
 #endif
 
-TestRunner::TestRunner(QObject* parent):
+QT_BEGIN_NAMESPACE
+
+TestRunner::TestRunner(QObject *parent):
         QObject(parent),
         config(NULL),
         result(NULL),
@@ -62,7 +64,7 @@ TestRunner::TestRunner(QObject* parent):
 
 TestRunner::~TestRunner()
 {
-    for(int i = (caseList.size()-1); i >= 0 ; i--) {
+    for (int i = (caseList.size()-1); i >= 0 ; i--) {
         delete caseList[i];
         caseList.removeAt(i);
     }
@@ -120,8 +122,8 @@ void TestRunner::runCommand(QString command)
 
     connect(process, SIGNAL(error(QProcess::ProcessError)),
             this, SLOT(processError(QProcess::ProcessError)));
-    connect(process, SIGNAL(finished(int,QProcess::ExitStatus)),
-            this, SLOT(processFinished(int,QProcess::ExitStatus)));
+    connect(process, SIGNAL(finished(int, QProcess::ExitStatus)),
+            this, SLOT(processFinished(int, QProcess::ExitStatus)));
     connect(process, SIGNAL(readyReadStandardError()),
             this, SLOT(processReadyStdErr()));
     connect(process, SIGNAL(readyReadStandardOutput()),
@@ -148,7 +150,7 @@ void TestRunner::start()
     pauseFlag = false;
     if (caseIndex == 0) {
         int range = 0;
-        for(int i=0; i < caseList.size(); i++) {
+        for (int i=0; i < caseList.size(); i++) {
             caseList[i]->clearResult();
             caseList[i]->setOutputType(config->outputType());
             range += caseList[i]->functionList().size();
@@ -162,7 +164,7 @@ void TestRunner::start()
     QString command = createCommand(caseList.at(caseIndex));
     state = ERunning;
     emit started();
-    result->textOut(command+"\n");
+    result->textOut(command + "\n");
     runCommand(command);
 
 }
@@ -175,7 +177,7 @@ void TestRunner::stop()
     } else {
         state = EStopped;
         caseIndex = 0;
-        result->textOut("stopped\n");
+        result->textOut(tr("stopped\n"));
         emit stoped();
     }
 }
@@ -183,7 +185,7 @@ void TestRunner::stop()
 void TestRunner::pause()
 {
     pauseFlag = true;
-    result->textOut("Waiting for pause...\n");
+    result->textOut(tr("Waiting for pause...\n"));
 }
 
 void TestRunner::processReadyStdErr()
@@ -203,7 +205,7 @@ void TestRunner::progressSteps(int stepNum)
     int pass = 0;
     int fail = 0;
     int skip = 0;
-    for(int i=0; i < caseList.size(); i++) {
+    for (int i=0; i < caseList.size(); i++) {
         pass += caseList[i]->passNum();
         fail += caseList[i]->failNum();
         skip += caseList[i]->skipNum();
@@ -216,27 +218,27 @@ void TestRunner::processError(QProcess::ProcessError error)
 {
     switch (error) {
     case QProcess::FailedToStart:
-        result->textOut("Process error: FailedToStart.\n");
+        result->textOut(tr("Process error: FailedToStart.\n"));
         processFinished(error, QProcess::CrashExit);
         break;
     case QProcess::Crashed:
-        result->textOut("Process error: Crashed.\n");
+        result->textOut(tr("Process error: Crashed.\n"));
         break;
     case QProcess::Timedout:
-        result->textOut("Process error: Timedout.\n");
+        result->textOut(tr("Process error: Timedout.\n"));
         break;
     case QProcess::WriteError:
-        result->textOut("Process error: WriteError.\n");
+        result->textOut(tr("Process error: WriteError.\n"));
         break;
     case QProcess::ReadError:
-        result->textOut("Process error: ReadError.\n");
+        result->textOut(tr("Process error: ReadError.\n"));
         break;
     default:
-        result->textOut("Process error: UnknownError.\n");
+        result->textOut(tr("Process error: UnknownError.\n"));
     }
 }
 
-void TestRunner::processFinished(int exitCode, QProcess::ExitStatus exitStatus )
+void TestRunner::processFinished(int /*exitCode*/, QProcess::ExitStatus /*exitStatus*/ )
 {
     if (process) {
         process->disconnect();
@@ -257,7 +259,7 @@ void TestRunner::processFinished(int exitCode, QProcess::ExitStatus exitStatus )
     if ((caseIndex) >= caseList.size()) {
         state = EFinished;
         caseIndex = 0;
-        result->textOut("All finished.\n");
+        result->textOut(tr("All finished.\n"));
         result->createReport(&caseList);
         emit finished();
         return;
@@ -265,13 +267,13 @@ void TestRunner::processFinished(int exitCode, QProcess::ExitStatus exitStatus )
 
     if (pauseFlag == true) {
         state = EPaused;
-        result->textOut("paused\n");
+        result->textOut(tr("paused\n"));
         emit paused();
         return;
     }
 
     QString command = createCommand(caseList[caseIndex]);
-    result->textOut(command+"\n");
+    result->textOut(command + "\n");
     runCommand(command);
 
 }
@@ -282,7 +284,7 @@ void TestRunner::showOutputFile()
     QString outputFile = config->outputFilePath() + caseList[caseIndex]->logFileName();
     QFile file(outputFile);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        result->textOut("\nCould not open the output file: "+ outputFile +"\n");
+        result->textOut(tr("\nCould not open the output file: ")+ outputFile +"\n");
         return;
     }
 
@@ -296,3 +298,5 @@ void TestRunner::showOutputFile()
     file.close();
 
 }
+QT_END_NAMESPACE
+

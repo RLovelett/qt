@@ -47,7 +47,9 @@
 #include <unistd.h>
 #endif
 
-TabWidget::TabWidget(QWidget* parent) :
+QT_BEGIN_NAMESPACE
+
+TabWidget::TabWidget(QWidget *parent) :
     QTabWidget(parent),
     tabCase(NULL),
     treeCase(NULL),
@@ -111,9 +113,9 @@ void TabWidget::loadTreeCase()
 
     treeCase = new QTreeWidget(tabCase);
     treeCase->setObjectName(QString::fromUtf8("treeCase"));
-    treeCase->headerItem()->setText(0, tr(""));
+    treeCase->headerItem()->setText(0, "");
 
-    QGridLayout* treeLayout = new QGridLayout(tabCase);
+    QGridLayout *treeLayout = new QGridLayout(tabCase);
     treeLayout->setContentsMargins(0, 0, 0, 0);
     treeLayout->setObjectName(QString::fromUtf8("treeLayout"));
 
@@ -124,7 +126,7 @@ void TabWidget::loadTreeCase()
 void TabWidget::loadTextRun()
 {
 
-    QGridLayout* textLayout = new QGridLayout(tabRun);
+    QGridLayout *textLayout = new QGridLayout(tabRun);
     textLayout->setContentsMargins(0, 0, 0, 0);
     textLayout->setObjectName(QString::fromUtf8("textLayout"));
 
@@ -157,7 +159,7 @@ void TabWidget::loadTableReport()
     tableReport = new QTableWidget(tabReport);
     tableReport->setObjectName(QString::fromUtf8("tableReport"));
 
-    QGridLayout* tableLayout = new QGridLayout(tabReport);
+    QGridLayout *tableLayout = new QGridLayout(tabReport);
     tableLayout->setContentsMargins(0, 0, 0, 0);
     tableLayout->setObjectName(QString::fromUtf8("tableLayout"));
 
@@ -177,9 +179,8 @@ void TabWidget::loadPopulatedTests()
     foreach (QString name, testCfg->testNames()) {
         QString execFileName = testCfg->executableFile(name);
         if (execFileName == "") {
-            addToMissingMandatoryParamList(name + tr("/path"));
-        }
-        else {
+            addToMissingMandatoryParamList(name + "/path");
+        } else {
             tests->addItem(execFileName, testCfg->selectedCases(name));
             // Populated test executable not found.
             if (!checkFileExistence(execFileName))
@@ -196,41 +197,45 @@ void TabWidget::loadPopulatedTests()
 
 void TabWidget::showTests()
 {
-    foreach(QString path, tests->getPaths()) {
+    foreach (QString path, tests->getPaths()) {
         QString baseName = tests->getBaseName(path);
-        if (treeCase->findItems(baseName, Qt::MatchExactly).isEmpty()) {
+        if (treeCase->findItems(baseName, Qt::MatchExactly).isEmpty()
+            && !nonExistentFiles.contains(path)) {
             QTreeWidgetItem *testItem = new QTreeWidgetItem(treeCase);
-            testItem->setFlags(testItem->flags() | Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsTristate);
+            testItem->setFlags(testItem->flags()
+                               | Qt::ItemIsEnabled
+                               | Qt::ItemIsSelectable
+                               | Qt::ItemIsUserCheckable
+                               | Qt::ItemIsTristate);
             testItem->setText(0, baseName);
 
-            if (nonExistentFiles.contains(path)) {
-                testItem->setDisabled(true);
-            } else {
-                QString funcs = tests->getFunctions(path).trimmed();
-                QStringList funcList = funcs.split(QRegExp("\\s+"));
-                funcList.removeAll(tr(""));
-                QStringList caseList = fetchCases(path).split(QRegExp("\\s+"));
+            QString functions = tests->getFunctions(path).trimmed();
+            QStringList funcList = functions.split(QRegExp("\\s+"));
+            funcList.removeAll("");
+            QStringList caseList = fetchCases(path).split(QRegExp("\\s+"));
 
-                foreach(QString name, caseList) {
-                    if (!name.isEmpty()) {
-                        QTreeWidgetItem *functionItem = new QTreeWidgetItem(testItem);
-                        functionItem->setFlags(functionItem->flags() | Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsTristate);
-                        QString caseName = name.section('(', 0, 0);
-                        functionItem->setText(0, caseName);
-                        if (funcs.isEmpty() || funcList.contains(caseName) || funcList.contains(name)) {
-                            functionItem->setCheckState(0,Qt::Checked);
-                            // Keep non-existent cases in the list.
-                            if (!funcList.removeOne(name))
-                                funcList.removeOne(caseName);
-                        }
-                        else
-                            functionItem->setCheckState(0, Qt::Unchecked);
-                    }
+            foreach (QString name, caseList) {
+                if (!name.isEmpty()) {
+                    QTreeWidgetItem *functionItem = new QTreeWidgetItem(testItem);
+                    functionItem->setFlags(functionItem->flags()
+                                           | Qt::ItemIsEnabled
+                                           | Qt::ItemIsSelectable
+                                           | Qt::ItemIsUserCheckable
+                                           | Qt::ItemIsTristate);
+                    QString caseName = name.section('(', 0, 0);
+                    functionItem->setText(0, caseName);
+                    if (functions.isEmpty() || funcList.contains(caseName) || funcList.contains(name)) {
+                        functionItem->setCheckState(0, Qt::Checked);
+                        // Keep non-existent cases in the list.
+                        if (!funcList.removeOne(name))
+                            funcList.removeOne(caseName);
+                    } else
+                        functionItem->setCheckState(0, Qt::Unchecked);
                 }
+            }
 
-                foreach (QString nonExistentCase, funcList) {
-                    addToNonExistentCaseList(baseName + tr("::") + nonExistentCase.section('(', 0, 0));
-                }
+            foreach (QString nonExistentCase, funcList) {
+                addToNonExistentCaseList(baseName + "::" + nonExistentCase.section('(', 0, 0));
             }
         }
     }
@@ -247,7 +252,7 @@ void TabWidget::fetchAllCases()
 QString TabWidget::fetchCases(QString path)
 {
     if (path.isEmpty())
-        return "";
+        return QString();
 
 #if defined(Q_OS_SYMBIAN)
     QString filePath = tests->getBaseName(path);
@@ -262,19 +267,22 @@ QString TabWidget::fetchCases(QString path)
 #endif
     cmdProcess->start(filePath);
     cmdProcess->waitForFinished();
-    QString funcs = cmdProcess->readAllStandardOutput();
+    QString functions = cmdProcess->readAllStandardOutput();
     delete cmdProcess;
 
-    stripAdditionalInfo(funcs);
-    return funcs;
+    stripAdditionalInfo(functions);
+    return functions;
 }
 
 void TabWidget::addTest()
 {
+    if (currentPath.isEmpty())
+        currentPath = QDir::currentPath();
+
     QString filePath = QFileDialog::getOpenFileName(
         this,
         tr("Select test"),
-        QDir::currentPath(),
+        currentPath,
 #if defined(Q_OS_LINUX)
         tr("All files (*);;Test (*.exe)") );
 #else
@@ -282,6 +290,8 @@ void TabWidget::addTest()
 #endif
     if (filePath.isNull())
         return;
+
+    currentPath = QDir(filePath).absolutePath();
 
     tests->addItem(filePath, fetchCases(filePath));
 
@@ -346,7 +356,10 @@ void TabWidget::about()
 {
     QMessageBox::information(this,
                              tr("QTestUI"),
-                             tr("QTestUI %1.%2.%3").arg(MAJOR_VERSION).arg(MINOR_VERSION).arg(BUILD_VERSION));
+                             tr("QTestUI %1.%2.%3")
+                                .arg(MAJOR_VERSION)
+                                .arg(MINOR_VERSION)
+                                .arg(BUILD_VERSION));
 }
 
 void TabWidget::runnerStarted(){
@@ -363,25 +376,51 @@ void TabWidget::runnerPaused(){
 
 void TabWidget::loadOutputSettings()
 {
-    emit outputSettingsDlgDataLoaded(const_cast<GlobalConfig*>(testCfg->globalConfig()));
+    emit outputSettingsDlgDataLoaded(const_cast<GlobalConfig *>(testCfg->globalConfig()));
 }
 
 void TabWidget::loadEventSettings()
 {
-    emit eventSettingsDlgDataLoaded(const_cast<GlobalConfig*>(testCfg->globalConfig()));
+    emit eventSettingsDlgDataLoaded(const_cast<GlobalConfig *>(testCfg->globalConfig()));
 }
 
 void TabWidget::loadBMSettings()
 {
-    emit bmSettingsDlgDataLoaded(const_cast<GlobalConfig*>(testCfg->globalConfig()));
+    emit bmSettingsDlgDataLoaded(const_cast<GlobalConfig *>(testCfg->globalConfig()));
 }
 
-void TabWidget::saveSettings(const GlobalConfig& cfg)
+void TabWidget::saveCases()
 {
-    testCfg->saveGlobalConfig(cfg);
+    for (int i = 0; i < treeCase->topLevelItemCount(); ++i) {
+        QTreeWidgetItem* item = treeCase->topLevelItem(i);
+        Qt::CheckState checkState = item->checkState(0);
+        if (checkState == Qt::Checked || checkState == Qt::PartiallyChecked) {
+            QString cases;
+            for (int j = 0; j < item->childCount(); ++j) {
+                QTreeWidgetItem *child = item->child(j);
+                if (child->checkState(0) == Qt::Checked) {
+                    cases += child->text(0) + " ";
+                }
+            }
+            cases = cases.trimmed();
+            testCfg->saveSelectedCases(item->text(0), tests->getPath(item->text(0)), cases);
+        } else {
+            // Remove unchecked cases if saved previously
+            testCfg->removeUnselectedCases(item->text(0));
+        }
+    }
 }
 
-void TabWidget::stripAdditionalInfo(QString& testCases)
+void TabWidget::saveSettings(const GlobalConfig &config)
+{
+    testCfg->saveGlobalConfig(config);
+}
+
+void TabWidget::stripAdditionalInfo(QString &
+#if defined(Q_OS_LINUX)
+        testCases
+#endif
+        )
 {
 #if defined(Q_OS_LINUX)
     const QString tag = "Available testfunctions:\n";
@@ -397,19 +436,18 @@ int TabWidget::addSelectedTestCases()
 
     int count = 0;
     for (int i = 0; i < treeCase->topLevelItemCount(); ++i) {
-        QTreeWidgetItem* item = treeCase->topLevelItem(i);
+        QTreeWidgetItem *item = treeCase->topLevelItem(i);
         Qt::CheckState chkState = item->checkState(0);
         if (chkState == Qt::Checked || chkState == Qt::PartiallyChecked) {
             ++count;
-            TestCase* testCase = new TestCase();
+            TestCase *testCase = new TestCase();
             testCase->setFullPath(tests->getPath(item->text(0)));
             testCase->setName(item->text(0));
             for (int j = 0; j < item->childCount(); ++j) {
-                QTreeWidgetItem* child = item->child(j);
+                QTreeWidgetItem *child = item->child(j);
                 Qt::CheckState childChkState = child->checkState(0);
-                if (childChkState == Qt::Checked || childChkState == Qt::PartiallyChecked) {
+                if (childChkState == Qt::Checked || childChkState == Qt::PartiallyChecked)
                     testCase->addFunction(child->text(0));
-                }
             }
             runner->addTestCase(testCase);
         }
@@ -421,24 +459,24 @@ QString TabWidget::findConfigFile()
 {
 #if defined (Q_OS_SYMBIAN)
     QStringList listOfLocations;
-    listOfLocations << "E:\\QTestUI.ini"
-            << "F:\\QTestUI.ini"
-            << "C:\\QTestUI.ini";
+    listOfLocations << "E:/QTestUI.ini"
+            << "F:/QTestUI.ini"
+            << "C:/QTestUI.ini";
     foreach (QString temp, listOfLocations) {
         if (QFile::exists(temp))
             return temp;
     }
-    return "";
+    return QString();
 #endif
 
-    const static QString LOC_CURRENT_DIR = ".//QTestUI.ini";
+    const static QString LOC_CURRENT_DIR = "./QTestUI.ini";
     if (QFile::exists(LOC_CURRENT_DIR))
         return LOC_CURRENT_DIR;
     else
-        return "";
+        return QString();
 }
 
-bool TabWidget::checkFileExistence(const QString& fileName)
+bool TabWidget::checkFileExistence(const QString &fileName)
 {
     return QFile::exists(fileName);
 }
@@ -462,9 +500,8 @@ void TabWidget::showNonExistentErrDlg(QStringList nonExistentNames, QString errM
 {
     if (!nonExistentNames.isEmpty()) {
         QString msg = errMsg;
-        foreach (QString name, nonExistentNames) {
+        foreach (QString name, nonExistentNames)
             msg += tr("\n") + tr("\"") + name + tr("\"");
-        }
         QMessageBox::critical(this, tr("ERROR"), msg);
     }
 }
@@ -474,20 +511,20 @@ TestFileCaseList::TestFileCaseList(QObject *parent):
 {
 }
 
-void TestFileCaseList::addItem(QString path, QString funcs)
+void TestFileCaseList::addItem(QString path, QString functions)
 {
     QMap<QString, QString>::iterator iter = fileCaseList.find(path);
     if (iter != fileCaseList.end())
-        iter.value() += " " + funcs;
+        iter.value() += " " + functions;
     else
-        fileCaseList[path] = funcs;
+        fileCaseList[path] = functions;
 }
 
-void TestFileCaseList::addFunc(QString path, QString func)
+void TestFileCaseList::addFunc(QString path, QString function)
 {
     QMap<QString, QString>::iterator iter = fileCaseList.find(path);
     if (iter != fileCaseList.end())
-        iter.value() = func;
+        iter.value() = function;
 }
 
 void TestFileCaseList::removeItem(QString path)
@@ -495,11 +532,11 @@ void TestFileCaseList::removeItem(QString path)
     fileCaseList.remove(path);
 }
 
-void TestFileCaseList::removeFunc(QString path, QString func)
+void TestFileCaseList::removeFunc(QString path, QString function)
 {
     QMap<QString, QString>::iterator iter = fileCaseList.find(path);
     if (iter != fileCaseList.end())
-        iter.value().remove(func);
+        iter.value().remove(function);
 }
 
 QString TestFileCaseList::getFunctions(QString path)
@@ -508,7 +545,7 @@ QString TestFileCaseList::getFunctions(QString path)
     if (iter != fileCaseList.end())
         return iter.value();
     else
-        return "";
+        return QString();
 }
 
 QStringList TestFileCaseList::getPaths()
@@ -524,9 +561,11 @@ QString TestFileCaseList::getBaseName(QString path)
 
 QString TestFileCaseList::getPath(QString baseName)
 {
-    foreach(QString path, fileCaseList.keys()) {
+    foreach (QString path, fileCaseList.keys()) {
         if (baseName == getBaseName(path))
             return path;
     }
-    return "";
+    return QString();
 }
+
+QT_END_NAMESPACE

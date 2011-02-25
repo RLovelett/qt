@@ -42,6 +42,8 @@
 #include <QtGui/QApplication>
 #include "inc/mainwindow.h"
 
+QT_BEGIN_NAMESPACE
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -50,3 +52,6 @@ int main(int argc, char *argv[])
 
     return a.exec();
 }
+
+QT_END_NAMESPACE
+

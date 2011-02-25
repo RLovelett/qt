@@ -44,6 +44,10 @@
 
 #include <QtGui>
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
 class TabWidget;
 class OutputOptDlg;
 class EventOptDlg;
@@ -64,7 +68,7 @@ public:
         EPaused   = 4,
     };
 
-    MainWindow(QWidget* parent = 0);
+    MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 private:
@@ -76,30 +80,30 @@ private:
 
 public slots:
     void setMenuBar(MainWindow::MenuBarState state);
-    void openOutputSettingsDlg(GlobalConfig* cfg);
-    void openEventSettingsDlg(GlobalConfig* cfg);
-    void openBMSettingsDlg(GlobalConfig* cfg);
+    void openOutputSettingsDlg(GlobalConfig *config);
+    void openEventSettingsDlg(GlobalConfig *config);
+    void openBMSettingsDlg(GlobalConfig *config);
 
 private:
     TabWidget       *tabWidget;
     OutputOptDlg    *outputOptDlg;
     EventOptDlg     *eventOptDlg;
-    BenchmarkOptDlg *bmOptDlg;
-
-    QAction *addAction;
-    QAction *runAction;
-    QAction *stopAction;
-    QAction *pauseAction;
-    QAction *aboutAction;
-    QAction *exitAction;
-    QMenu   *settingsMenu;
-    QAction *outputOptAction;
-    QAction *eventOptAction;
-    QAction *benchmarkOptActoin;
-
+    BenchmarkOptDlg *benchmarkOptDlg;
+    QAction         *addAction;
+    QAction         *runAction;
+    QAction         *stopAction;
+    QAction         *pauseAction;
+    QAction         *aboutAction;
+    QAction         *exitAction;
+    QMenu           *settingsMenu;
+    QAction         *outputOptAction;
+    QAction         *eventOptAction;
+    QAction         *benchmarkOptActoin;
+    QAction         *saveCasesAction;
 };
 
+QT_END_NAMESPACE
 
-
+QT_END_HEADER
 
 #endif // MAINWINDOW_H

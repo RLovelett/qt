@@ -44,6 +44,10 @@
 
 #include <QDialog>
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
 class QCheckBox;
 class QLabel;
 class QLineEdit;
@@ -51,21 +55,19 @@ class QComboBox;
 class QPushButton;
 class GlobalConfig;
 
-class OutputOptDlg: public QDialog
+class OutputOptDlg : public QDialog
 {
     Q_OBJECT
 
 public:
-    OutputOptDlg(GlobalConfig *config = 0, QWidget* parent = 0);
+    OutputOptDlg(GlobalConfig *config = 0, QWidget *parent = 0);
     virtual ~OutputOptDlg();
 
 private:
     void createWidgets();
     void setupWidgetsEventHandlers();
-
     void load();
     void setLayout();
-
     void changeBtnSaveEnableState();
 
 private slots:
@@ -83,30 +85,33 @@ private slots:
     void showHelp();
 
 signals:
-    void outputOptSaved(const GlobalConfig&);
+    void outputOptSaved(const GlobalConfig &);
 
 private:
-    GlobalConfig    *initCfg;
-    GlobalConfig    *savedCfg;
+    GlobalConfig    *initConfig;
+    GlobalConfig    *savedConfig;
 
-    QLabel          *lblOutputFmt;
-    QComboBox       *cbOutputFormat;
-    QCheckBox       *chkbUseOutputFile;
-    QLineEdit       *leOutputName;
-    QCheckBox       *chkbSilent;
-    QCheckBox       *chkbVerbose;
-    QComboBox       *cbVerbose;
-    QCheckBox       *chkbMaxWarnings;
-    QLineEdit       *leMaxWarnings;
-    QCheckBox       *chkbFlush;
+    QLabel          *labelOutputFormat;
+    QComboBox       *comboBoxOutputFormat;
+    QCheckBox       *checkboxUseOutputFile;
+    QLineEdit       *lineEditOutputName;
+    QCheckBox       *checkboxSilent;
+    QCheckBox       *checkboxVerbose;
+    QComboBox       *comboBoxVerbose;
+    QCheckBox       *checkboxMaxWarnings;
+    QLineEdit       *lineEditMaxWarnings;
+    QCheckBox       *checkboxFlush;
 
-    QStringList listFormats;
-    QStringList listVbLevel;
+    QStringList     listFormats;
+    QStringList     listVbLevel;
 
-    QPushButton *btnSave;
-    QPushButton *btnCancel;
-    QPushButton *btnHelp;
-
+    QPushButton     *buttonSave;
+    QPushButton     *buttonCancel;
+    QPushButton     *buttonHelp;
 };
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // OUTPUTOPTDLG_H

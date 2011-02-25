@@ -51,28 +51,24 @@
 #include "inc/eventoptdlg.h"
 #include "inc/testconfig.h"
 
-const static QString EVENT_OPT_WIN_TITLE = "Event Settings";
-const static QString BTN_SAVE = "Save";
-const static QString BTN_CANCEL = "Cancel";
-const static QString BTN_HELP = "Help";
+QT_BEGIN_NAMESPACE
 
 EventOptDlg::EventOptDlg(GlobalConfig *config, QWidget *parent):
         QDialog(parent),
-        initCfg(config),
-        savedCfg(NULL)
+        initConfig(config),
+        savedConfig(NULL)
 {
     setContextMenuPolicy(Qt::NoContextMenu);
-    setWindowTitle(EVENT_OPT_WIN_TITLE);
+    setWindowTitle(tr("Event Settings"));
     load();
     setLayout();
-    if (initCfg != NULL) {
-        savedCfg = new GlobalConfig(*initCfg);
-        savedCfg->setParent(this);
-    }
-    else {
-        savedCfg = new GlobalConfig(this);
-        initCfg = new GlobalConfig(*savedCfg);
-        initCfg->setParent(this);
+    if (initConfig != NULL) {
+        savedConfig = new GlobalConfig(*initConfig);
+        savedConfig->setParent(this);
+    } else {
+        savedConfig = new GlobalConfig(this);
+        initConfig = new GlobalConfig(*savedConfig);
+        initConfig->setParent(this);
     }
     this->setAttribute(Qt::WA_DeleteOnClose);
 }
@@ -83,52 +79,52 @@ EventOptDlg::~EventOptDlg()
 
 void EventOptDlg::createWidgets()
 {
-    chkbEventDelay = new QCheckBox(EVENTDELAY + ": ", this);
-    chkbEventDelay->setChecked(initCfg != NULL && initCfg->eventDelay() != -1);
-    leEventDelay = new QLineEdit(this);
-    leEventDelay->setEnabled(chkbEventDelay->isChecked());
-    if (leEventDelay->isEnabled())
-        leEventDelay->setText(tr("%1").arg(initCfg->eventDelay()));
+    checkboxEventDelay = new QCheckBox(GlobalConfig::EVENTDELAY + ": ", this);
+    checkboxEventDelay->setChecked(initConfig != NULL && initConfig->eventDelay() != -1);
+    lineEditEventDelay = new QLineEdit(this);
+    lineEditEventDelay->setEnabled(checkboxEventDelay->isChecked());
+    if (lineEditEventDelay->isEnabled())
+        lineEditEventDelay->setText(tr("%1").arg(initConfig->eventDelay()));
 
-    chkbKeyDelay = new QCheckBox(KEYDELAY + ": ", this);
-    chkbKeyDelay->setChecked(initCfg != NULL && initCfg->keyDelay() != -1);
-    leKeyDelay = new QLineEdit(this);
-    leKeyDelay->setEnabled(chkbKeyDelay->isChecked());
-    if (leKeyDelay->isEnabled())
-        leKeyDelay->setText(tr("%1").arg(initCfg->keyDelay()));
+    checkboxKeyDelay = new QCheckBox(GlobalConfig::KEYDELAY + ": ", this);
+    checkboxKeyDelay->setChecked(initConfig != NULL && initConfig->keyDelay() != -1);
+    lineEditKeyDelay = new QLineEdit(this);
+    lineEditKeyDelay->setEnabled(checkboxKeyDelay->isChecked());
+    if (lineEditKeyDelay->isEnabled())
+        lineEditKeyDelay->setText(tr("%1").arg(initConfig->keyDelay()));
 
-    chkbMouseDelay = new QCheckBox(MOUSEDELAY + ": ", this);
-    chkbMouseDelay->setChecked(initCfg != NULL && initCfg->mouseDelay() != -1);
-    leMouseDelay = new QLineEdit(this);
-    leMouseDelay->setEnabled(chkbMouseDelay->isChecked());
-    if (leMouseDelay->isEnabled())
-        leMouseDelay->setText(tr("%1").arg(initCfg->mouseDelay()));
+    checkboxMouseDelay = new QCheckBox(GlobalConfig::MOUSEDELAY + ": ", this);
+    checkboxMouseDelay->setChecked(initConfig != NULL && initConfig->mouseDelay() != -1);
+    lineEditMouseDelay = new QLineEdit(this);
+    lineEditMouseDelay->setEnabled(checkboxMouseDelay->isChecked());
+    if (lineEditMouseDelay->isEnabled())
+        lineEditMouseDelay->setText(tr("%1").arg(initConfig->mouseDelay()));
 
-    chkbKeyEventVerbose = new QCheckBox(KEYEVENTVERBOSE, this);
-    chkbKeyEventVerbose->setChecked(initCfg != NULL && initCfg->keyEventVerbose());
+    checkboxKeyEventVerbose = new QCheckBox(GlobalConfig::KEYEVENTVERBOSE, this);
+    checkboxKeyEventVerbose->setChecked(initConfig != NULL && initConfig->keyEventVerbose());
 
-    chkbCrashHandler = new QCheckBox(NOCRASHHANDLER, this);
-    chkbCrashHandler->setChecked(initCfg != NULL && initCfg->noCrashHandler());
+    checkboxCrashHandler = new QCheckBox(GlobalConfig::NOCRASHHANDLER, this);
+    checkboxCrashHandler->setChecked(initConfig != NULL && initConfig->noCrashHandler());
 
-    btnSave = new QPushButton(BTN_SAVE, this);
-    btnSave->setEnabled(false);
-    btnCancel = new QPushButton(BTN_CANCEL, this);
-    btnHelp = new QPushButton(BTN_HELP, this);
+    buttonSave = new QPushButton(tr("Save"), this);
+    buttonSave->setEnabled(false);
+    buttonCancel = new QPushButton(tr("Cancel"), this);
+    buttonHelp = new QPushButton(tr("Help"), this);
 }
 
 void EventOptDlg::setupWidgetsEventHandlers()
 {
-    connect(chkbEventDelay, SIGNAL(stateChanged(int)), this, SLOT(changeEventDelayState(int)));
-    connect(chkbKeyDelay, SIGNAL(stateChanged(int)), this, SLOT(changeKeyDelayState(int)));
-    connect(chkbMouseDelay, SIGNAL(stateChanged(int)), this, SLOT(changeMouseDelayState(int)));
-    connect(chkbKeyEventVerbose, SIGNAL(stateChanged(int)), this, SLOT(changeKeyEventVB(int)));
-    connect(chkbCrashHandler, SIGNAL(stateChanged(int)), this, SLOT(changeNoCrashHandler(int)));
-    connect(leEventDelay, SIGNAL(textChanged(QString)), this, SLOT(changeEventDelay(QString)));
-    connect(leKeyDelay, SIGNAL(textChanged(QString)), this, SLOT(changeKeyDelay(QString)));
-    connect(leMouseDelay, SIGNAL(textChanged(QString)), this, SLOT(changeMouseDelay(QString)));
-    connect(btnSave, SIGNAL(clicked()), this, SLOT(saveOpt()));
-    connect(btnCancel, SIGNAL(clicked()), this, SLOT(closeDlg()));
-    connect(btnHelp, SIGNAL(clicked()), this, SLOT(showHelp()));
+    connect(checkboxEventDelay, SIGNAL(stateChanged(int)), this, SLOT(changeEventDelayState(int)));
+    connect(checkboxKeyDelay, SIGNAL(stateChanged(int)), this, SLOT(changeKeyDelayState(int)));
+    connect(checkboxMouseDelay, SIGNAL(stateChanged(int)), this, SLOT(changeMouseDelayState(int)));
+    connect(checkboxKeyEventVerbose, SIGNAL(stateChanged(int)), this, SLOT(changeKeyEventVB(int)));
+    connect(checkboxCrashHandler, SIGNAL(stateChanged(int)), this, SLOT(changeNoCrashHandler(int)));
+    connect(lineEditEventDelay, SIGNAL(textChanged(QString)), this, SLOT(changeEventDelay(QString)));
+    connect(lineEditKeyDelay, SIGNAL(textChanged(QString)), this, SLOT(changeKeyDelay(QString)));
+    connect(lineEditMouseDelay, SIGNAL(textChanged(QString)), this, SLOT(changeMouseDelay(QString)));
+    connect(buttonSave, SIGNAL(clicked()), this, SLOT(saveOpt()));
+    connect(buttonCancel, SIGNAL(clicked()), this, SLOT(closeDlg()));
+    connect(buttonHelp, SIGNAL(clicked()), this, SLOT(showHelp()));
 }
 
 void EventOptDlg::load()
@@ -139,55 +135,55 @@ void EventOptDlg::load()
 
 void EventOptDlg::setLayout()
 {
-    QWidget* hbWidget1 = new QWidget(this);
-    QHBoxLayout* layout1 = new QHBoxLayout(hbWidget1);
-    layout1->addWidget(chkbEventDelay);
-    layout1->addWidget(leEventDelay);
+    QWidget *hbWidget1 = new QWidget(this);
+    QHBoxLayout *layout1 = new QHBoxLayout(hbWidget1);
+    layout1->addWidget(checkboxEventDelay);
+    layout1->addWidget(lineEditEventDelay);
     hbWidget1->setLayout(layout1);
 
-    QWidget* hbWidget2 = new QWidget(this);
-    QHBoxLayout* layout2 = new QHBoxLayout(hbWidget2);
-    layout2->addWidget(chkbKeyDelay);
-    layout2->addWidget(leKeyDelay);
+    QWidget *hbWidget2 = new QWidget(this);
+    QHBoxLayout *layout2 = new QHBoxLayout(hbWidget2);
+    layout2->addWidget(checkboxKeyDelay);
+    layout2->addWidget(lineEditKeyDelay);
     hbWidget2->setLayout(layout2);
 
-    QWidget* hbWidget3 = new QWidget(this);
-    QHBoxLayout* layout3 = new QHBoxLayout(hbWidget3);
-    layout3->addWidget(chkbMouseDelay);
-    layout3->addWidget(leMouseDelay);
+    QWidget *hbWidget3 = new QWidget(this);
+    QHBoxLayout *layout3 = new QHBoxLayout(hbWidget3);
+    layout3->addWidget(checkboxMouseDelay);
+    layout3->addWidget(lineEditMouseDelay);
     hbWidget3->setLayout(layout3);
 
-    QWidget* btnLayoutWidget = new QWidget(this);
-    QHBoxLayout* btnLayout = new QHBoxLayout(btnLayoutWidget);
-    btnLayout->addWidget(btnSave);
-    btnLayout->addWidget(btnCancel);
-    btnLayout->addWidget(btnHelp);
+    QWidget *btnLayoutWidget = new QWidget(this);
+    QHBoxLayout *btnLayout = new QHBoxLayout(btnLayoutWidget);
+    btnLayout->addWidget(buttonSave);
+    btnLayout->addWidget(buttonCancel);
+    btnLayout->addWidget(buttonHelp);
     btnLayoutWidget->setLayout(btnLayout);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(hbWidget1);
     mainLayout->addWidget(hbWidget2);
     mainLayout->addWidget(hbWidget3);
-    mainLayout->addWidget(chkbKeyEventVerbose);
-    mainLayout->addWidget(chkbCrashHandler);
+    mainLayout->addWidget(checkboxKeyEventVerbose);
+    mainLayout->addWidget(checkboxCrashHandler);
     mainLayout->addWidget(btnLayoutWidget);
 }
 
 void EventOptDlg::changeBtnSaveEnableState()
 {
-    btnSave->setEnabled(!initCfg->equalsTo(savedCfg));
+    buttonSave->setEnabled(!initConfig->equalsTo(savedConfig));
 }
 
 void EventOptDlg::changeEventDelayState(int state)
 {
-    leEventDelay->setEnabled(state == Qt::Checked);
-    if (!leEventDelay->isEnabled()) {
-        leEventDelay->clear();
-        savedCfg->setEventDelay(-1);
+    lineEditEventDelay->setEnabled(state == Qt::Checked);
+    if (!lineEditEventDelay->isEnabled()) {
+        lineEditEventDelay->clear();
+        savedConfig->setEventDelay(-1);
     } else {
-        if (initCfg->eventDelay() != -1) {
-            leEventDelay->setText(tr("%1").arg(initCfg->eventDelay()));
-            savedCfg->setEventDelay(initCfg->eventDelay());
+        if (initConfig->eventDelay() != -1) {
+            lineEditEventDelay->setText(tr("%1").arg(initConfig->eventDelay()));
+            savedConfig->setEventDelay(initConfig->eventDelay());
         }
     }
     changeBtnSaveEnableState();
@@ -195,14 +191,14 @@ void EventOptDlg::changeEventDelayState(int state)
 
 void EventOptDlg::changeKeyDelayState(int state)
 {
-    leKeyDelay->setEnabled(state == Qt::Checked);
-    if (!leKeyDelay->isEnabled()) {
-        leKeyDelay->clear();
-        savedCfg->setKeyDelay(-1);
+    lineEditKeyDelay->setEnabled(state == Qt::Checked);
+    if (!lineEditKeyDelay->isEnabled()) {
+        lineEditKeyDelay->clear();
+        savedConfig->setKeyDelay(-1);
     } else {
-        if (initCfg->keyDelay() != -1) {
-            leKeyDelay->setText(tr("%1").arg(initCfg->keyDelay()));
-            savedCfg->setKeyDelay(initCfg->keyDelay());
+        if (initConfig->keyDelay() != -1) {
+            lineEditKeyDelay->setText(tr("%1").arg(initConfig->keyDelay()));
+            savedConfig->setKeyDelay(initConfig->keyDelay());
         }
     }
     changeBtnSaveEnableState();
@@ -210,14 +206,14 @@ void EventOptDlg::changeKeyDelayState(int state)
 
 void EventOptDlg::changeMouseDelayState(int state)
 {
-    leMouseDelay->setEnabled(state == Qt::Checked);
-    if (!leMouseDelay->isEnabled()) {
-        leMouseDelay->clear();
-        savedCfg->setMouseDelay(-1);
+    lineEditMouseDelay->setEnabled(state == Qt::Checked);
+    if (!lineEditMouseDelay->isEnabled()) {
+        lineEditMouseDelay->clear();
+        savedConfig->setMouseDelay(-1);
     } else {
-        if (initCfg->mouseDelay() != -1) {
-            leMouseDelay->setText(tr("%1").arg(initCfg->mouseDelay()));
-            savedCfg->setMouseDelay(initCfg->mouseDelay());
+        if (initConfig->mouseDelay() != -1) {
+            lineEditMouseDelay->setText(tr("%1").arg(initConfig->mouseDelay()));
+            savedConfig->setMouseDelay(initConfig->mouseDelay());
         }
     }
     changeBtnSaveEnableState();
@@ -225,13 +221,13 @@ void EventOptDlg::changeMouseDelayState(int state)
 
 void EventOptDlg::changeKeyEventVB(int state)
 {
-    savedCfg->setKeyEventVerbose(state == Qt::Checked);
+    savedConfig->setKeyEventVerbose(state == Qt::Checked);
     changeBtnSaveEnableState();
 }
 
 void EventOptDlg::changeNoCrashHandler(int state)
 {
-    savedCfg->setNoCrashHandler(state == Qt::Checked);
+    savedConfig->setNoCrashHandler(state == Qt::Checked);
     changeBtnSaveEnableState();
 }
 
@@ -240,7 +236,7 @@ void EventOptDlg::changeEventDelay(QString text)
     bool ok = false;
     int val = text.toInt(&ok);
     if (!ok) val = -1;
-    savedCfg->setEventDelay(val);
+    savedConfig->setEventDelay(val);
     changeBtnSaveEnableState();
 }
 
@@ -249,7 +245,7 @@ void EventOptDlg::changeKeyDelay(QString text)
     bool ok = false;
     int val = text.toInt(&ok);
     if (!ok) val = -1;
-    savedCfg->setKeyDelay(val);
+    savedConfig->setKeyDelay(val);
     changeBtnSaveEnableState();
 }
 
@@ -258,15 +254,15 @@ void EventOptDlg::changeMouseDelay(QString text)
     bool ok = false;
     int val = text.toInt(&ok);
     if (!ok) val = -1;
-    savedCfg->setMouseDelay(val);
+    savedConfig->setMouseDelay(val);
     changeBtnSaveEnableState();
 }
 
 void EventOptDlg::saveOpt()
 {
-    *initCfg = *savedCfg;
+    *initConfig = *savedConfig;
     changeBtnSaveEnableState();
-    emit eventOptSaved(*savedCfg);
+    emit eventOptSaved(*savedConfig);
     closeDlg();
 }
 
@@ -284,3 +280,6 @@ void EventOptDlg::showHelp()
                                + tr("nocrashhandler: Disables the crash handler.");
     QMessageBox::information(this, tr("Event Options"), msg);
 }
+
+QT_END_NAMESPACE
+

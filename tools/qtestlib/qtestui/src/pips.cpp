@@ -45,7 +45,9 @@
 #include <unistd.h>
 #endif
 
-PipsProcess::PipsProcess(QObject* parent):
+QT_BEGIN_NAMESPACE
+
+PipsProcess::PipsProcess(QObject *parent):
         QObject(parent),
         usePips(false),
         process(NULL),
@@ -72,8 +74,8 @@ void PipsProcess::start(const QString & program)
         process = new QProcess(this);
         connect(process, SIGNAL(error(QProcess::ProcessError)),
                 this, SLOT(processError(QProcess::ProcessError)));
-        connect(process, SIGNAL(finished(int,QProcess::ExitStatus)),
-                this, SLOT(processFinished(int,QProcess::ExitStatus)));
+        connect(process, SIGNAL(finished(int, QProcess::ExitStatus)),
+                this, SLOT(processFinished(int, QProcess::ExitStatus)));
         connect(process, SIGNAL(readyReadStandardError()),
                 this, SLOT(processReadyStdErr()));
         connect(process, SIGNAL(readyReadStandardOutput()),
@@ -90,14 +92,14 @@ void PipsProcess::start(const QString & program)
         }
 
         QByteArray commandChar = program.toAscii();
-        childProcessStream = popen(commandChar.data(),"r");
+        childProcessStream = popen(commandChar.data(), "r");
 
         if (childProcessStream != NULL) {
             childProcessFD = childProcessStream->_file;
-            memset(buffer,0,sizeof(buffer));
+            memset(buffer, 0, sizeof(buffer));
 
             do {
-                nbytes = read(childProcessFD,buffer,sizeof(buffer));
+                nbytes = read(childProcessFD, buffer, sizeof(buffer));
                 if (nbytes > 0 ) {
                     readBuffer.append(QByteArray(buffer, nbytes));
                     emit readyReadStandardOutput();
@@ -171,4 +173,6 @@ void PipsProcess::processReadyStdOut()
 {
     emit this->readyReadStandardOutput();
 }
+
+QT_END_NAMESPACE
 

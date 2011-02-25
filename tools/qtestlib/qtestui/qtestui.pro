@@ -1,12 +1,8 @@
-
-QT       += core gui
-
+QT += core \
+    gui
 TARGET = qtestui
 TEMPLATE = app
-
-
-SOURCES += \
-    src/mainwindow.cpp \
+SOURCES += src/mainwindow.cpp \
     src/main.cpp \
     src/tabwidget.cpp \
     src/testrunner.cpp \
@@ -17,8 +13,7 @@ SOURCES += \
     src/outputoptdlg.cpp \
     src/eventoptdlg.cpp \
     src/benchmarkoptdlg.cpp
-
-HEADERS  += \
+HEADERS += qtestui.loc \
     inc/mainwindow.h \
     inc/tabwidget.h \
     inc/testrunner.h \
@@ -30,20 +25,13 @@ HEADERS  += \
     inc/eventoptdlg.h \
     inc/benchmarkoptdlg.h \
     inc/version.h
-
-RESOURCES += \
-    resource/qtestui.qrc
-
-CONFIG += mobility
-MOBILITY =
-
-symbian {
+RESOURCES += resource/qtestui.qrc
+symbian { 
     TARGET.UID3 = 0x200345D5
-    TARGET.CAPABILITY += All -TCB
+    TARGET.CAPABILITY += AllFiles \
+        PowerMgmt
     TARGET.EPOCSTACKSIZE = 0x14000
-    TARGET.EPOCHEAPSIZE = 0x020000 0x800000
-
+    TARGET.EPOCHEAPSIZE = 0x020000 \
+        0x800000
 }
-
-OTHER_FILES += \
-    resource/qss/blue.qss
+OTHER_FILES += resource/qss/blue.qss

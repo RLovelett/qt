@@ -41,15 +41,16 @@
 
 #include "inc/testcase.h"
 
+QT_BEGIN_NAMESPACE
 
-TestCase::TestCase(QObject* parent) :
+TestCase::TestCase(QObject *parent) :
         QObject(parent),
         pass(0),
         fail(0),
         skip(0),
-        type(TestConfig::ETxt),
         progressPos(0),
-        progressIndex(0)
+        progressIndex(0),
+        type(TestConfig::ETxt)
 {
 }
 
@@ -101,8 +102,8 @@ QString TestCase::command()
 #else
     QString command = path;
 #endif
-    command += " ";
-    command += functions.join(" ");
+    command += tr(" ");
+    command += functions.join(tr(" "));
     return command;
 }
 
@@ -237,12 +238,12 @@ void TestCase::xmlParser()
         if (matchPosType != -1) {
             progressPos = matchPosType + rxType.matchedLength();
             if ((rxType.cap(1) == "pass")
-                ||(rxType.cap(1) == "xfail"))
+                ||(rxType.cap(1) == "xfail")) {
                 pass += 1;
-            else if ((rxType.cap(1) == "fail")
-                ||(rxType.cap(1) == "xpass"))
+            } else if ((rxType.cap(1) == "fail")
+                ||(rxType.cap(1) == "xpass")) {
                 fail += 1;
-            else if (rxType.cap(2) == "skip") {
+            } else if (rxType.cap(2) == "skip") {
                 pass += 1;
                 skip += 1;
             }
@@ -315,3 +316,6 @@ int TestCase::remainingSteps()
 {
     return functions.size() - progressIndex;
 }
+
+QT_END_NAMESPACE
+

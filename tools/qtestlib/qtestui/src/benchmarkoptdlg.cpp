@@ -51,29 +51,27 @@
 #include "inc/benchmarkoptdlg.h"
 #include "inc/testconfig.h"
 
-const static QString BENCHMARK_OPT_WIN_TITLE = "Benchmark Settings";
-const static QString BTN_SAVE = "Save";
-const static QString BTN_CANCEL = "Cancel";
-const static QString BTN_HELP = "Help";
+QT_BEGIN_NAMESPACE
 
-BenchmarkOptDlg::BenchmarkOptDlg(GlobalConfig *config, QWidget *parent):
+BenchmarkOptDlg::BenchmarkOptDlg(GlobalConfig *config, QWidget *parent) :
         QDialog(parent),
-        initCfg(config),
-        savedCfg(NULL)
+        initConfig(config),
+        savedConfig(NULL)
 {
     setContextMenuPolicy(Qt::NoContextMenu);
-    setWindowTitle(BENCHMARK_OPT_WIN_TITLE);
+    setWindowTitle(tr("Benchmark Settings"));
     load();
     setLayout();
-    if (initCfg != NULL) {
-        savedCfg = new GlobalConfig(*initCfg);
-        savedCfg->setParent(this);
+
+    if (initConfig != NULL) {
+        savedConfig = new GlobalConfig(*initConfig);
+        savedConfig->setParent(this);
+    } else {
+        savedConfig = new GlobalConfig(this);
+        initConfig = new GlobalConfig(*savedConfig);
+        initConfig->setParent(this);
     }
-    else {
-        savedCfg = new GlobalConfig(this);
-        initCfg = new GlobalConfig(*savedCfg);
-        initCfg->setParent(this);
-    }
+
     this->setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -83,67 +81,64 @@ BenchmarkOptDlg::~BenchmarkOptDlg()
 
 void BenchmarkOptDlg::createWidgets()
 {
-    chkbVb = new QCheckBox(VERBOSEBENCHMARK, this);
-    chkbVb->setChecked(initCfg != NULL && initCfg->verboseBenchMarking());
+    checkboxVerbose = new QCheckBox(GlobalConfig::VERBOSEBENCHMARK, this);
+    checkboxVerbose->setChecked(initConfig != NULL && initConfig->verboseBenchMarking());
 
-    chkbTickCounter = new QCheckBox(TICKCOUNTER, this);
-    chkbTickCounter->setChecked(initCfg != NULL && initCfg->tickCounter());
+    checkboxTickCounter = new QCheckBox(GlobalConfig::TICKCOUNTER, this);
+    checkboxTickCounter->setChecked(initConfig != NULL && initConfig->tickCounter());
 
-    chkbEventCounter = new QCheckBox(EVENTCOUNTER, this);
-    chkbEventCounter->setChecked(initCfg != NULL && initCfg->eventCounter());
+    checkboxEventCounter = new QCheckBox(GlobalConfig::EVENTCOUNTER, this);
+    checkboxEventCounter->setChecked(initConfig != NULL && initConfig->eventCounter());
 
-    chkbMinVal = new QCheckBox(MINIMUMVALUE + ": ", this);
-    chkbMinVal->setChecked(initCfg != NULL && initCfg->minimumValue() != -1);
-    leMinVal = new QLineEdit(this);
-    leMinVal->setEnabled(chkbMinVal->isChecked());
-    if (leMinVal->isEnabled()) {
-        leMinVal->setText(tr("%1").arg(initCfg->minimumValue()));
-    }
+    checkboxMinValue = new QCheckBox(GlobalConfig::MINIMUMVALUE + ": ", this);
+    checkboxMinValue->setChecked(initConfig != NULL && initConfig->minimumValue() != -1);
+    lineEditMinVal = new QLineEdit(this);
+    lineEditMinVal->setEnabled(checkboxMinValue->isChecked());
+    if (lineEditMinVal->isEnabled())
+        lineEditMinVal->setText(tr("%1").arg(initConfig->minimumValue()));
 
-    chkbIters = new QCheckBox(ITERATIONS, this);
-    chkbIters->setChecked(initCfg != NULL && initCfg->minimumValue() != -1);
-    leIters = new QLineEdit(this);
-    leIters->setEnabled(chkbIters->isChecked());
-    if (leIters->isEnabled()) {
-        leIters->setText(tr("%1").arg(initCfg->iterations()));
-    }
+    checkboxIterations = new QCheckBox(GlobalConfig::ITERATIONS, this);
+    checkboxIterations->setChecked(initConfig != NULL && initConfig->iterations() != -1);
+    lineEditIterations = new QLineEdit(this);
+    lineEditIterations->setEnabled(checkboxIterations->isChecked());
+    if (lineEditIterations->isEnabled())
+        lineEditIterations->setText(tr("%1").arg(initConfig->iterations()));
 
-    chkbMedian = new QCheckBox(MEDIAN, this);
-    chkbMedian->setChecked(initCfg != NULL && initCfg->median() != -1);
-    leMedian = new QLineEdit(this);
-    leMedian->setEnabled(chkbMedian->isChecked());
-    if (leMedian->isEnabled()) {
-        leMedian->setText(tr("%1").arg(initCfg->median()));
-    }
+    checkboxMedian = new QCheckBox(GlobalConfig::MEDIAN, this);
+    checkboxMedian->setChecked(initConfig != NULL && initConfig->median() != -1);
+    lineEditMedian = new QLineEdit(this);
+    lineEditMedian->setEnabled(checkboxMedian->isChecked());
+    if (lineEditMedian->isEnabled())
+        lineEditMedian->setText(tr("%1").arg(initConfig->median()));
 
 #if defined (Q_OS_LINUX)
-    chkbCallGrind = new QCheckBox(CALLGRIND, this);
-    chkbCallGrind->setChecked(initCfg != NULL && initCfg->callGrind());
+    checkboxCallGrind = new QCheckBox(GlobalConfig::CALLGRIND, this);
+    checkboxCallGrind->setChecked(initConfig != NULL && initConfig->callGrind());
 #endif
 
-    btnSave = new QPushButton(BTN_SAVE, this);
-    btnSave->setEnabled(false);
-    btnCancel = new QPushButton(BTN_CANCEL, this);
-    btnHelp = new QPushButton(BTN_HELP, this);
+    buttonSave = new QPushButton(tr("Save"), this);
+    buttonSave->setEnabled(false);
+    buttonCancel = new QPushButton(tr("Cancel"), this);
+    buttonHelp = new QPushButton(tr("Help"), this);
 }
 
 void BenchmarkOptDlg::setupWidgetsEventHandlers()
 {
-    connect(chkbVb, SIGNAL(stateChanged(int)), this, SLOT(changeVbBenchmarkState(int)));
-    connect(chkbTickCounter, SIGNAL(stateChanged(int)), this, SLOT(changeTickCounterState(int)));
-    connect(chkbEventCounter, SIGNAL(stateChanged(int)), this, SLOT(changeEventCounterState(int)));
-    connect(chkbMinVal, SIGNAL(stateChanged(int)), this, SLOT(changeMinValState(int)));
-    connect(chkbIters, SIGNAL(stateChanged(int)), this, SLOT(changeIterState(int)));
-    connect(chkbMedian, SIGNAL(stateChanged(int)), this, SLOT(changeMedianState(int)));
+    connect(checkboxVerbose, SIGNAL(stateChanged(int)), this, SLOT(changeVbBenchmarkState(int)));
+    connect(checkboxTickCounter, SIGNAL(stateChanged(int)), this, SLOT(changeTickCounterState(int)));
+    connect(checkboxEventCounter, SIGNAL(stateChanged(int)), this, SLOT(changeEventCounterState(int)));
+    connect(checkboxMinValue, SIGNAL(stateChanged(int)), this, SLOT(changeMinValState(int)));
+    connect(checkboxIterations, SIGNAL(stateChanged(int)), this, SLOT(changeIterState(int)));
+    connect(checkboxMedian, SIGNAL(stateChanged(int)), this, SLOT(changeMedianState(int)));
 #if defined (Q_OS_LINUX)
-    connect(chkbCallGrind, SIGNAL(stateChanged(int)), this, SLOT(changeCallGrindState(int)));
+    connect(checkboxCallGrind, SIGNAL(stateChanged(int)), this, SLOT(changeCallGrindState(int)));
 #endif
-    connect(leMinVal, SIGNAL(textChanged(QString)), this, SLOT(changeMinVal(QString)));
-    connect(leIters, SIGNAL(textChanged(QString)), this, SLOT(changeIter(QString)));
-    connect(leMedian, SIGNAL(textChanged(QString)), this, SLOT(changeMedian(QString)));
-    connect(btnSave, SIGNAL(clicked()), this, SLOT(saveOpt()));
-    connect(btnCancel, SIGNAL(clicked()), this, SLOT(closeDlg()));
-    connect(btnHelp, SIGNAL(clicked()), this, SLOT(showHelp()));
+    connect(lineEditMinVal, SIGNAL(textChanged(QString)), this, SLOT(changeMinVal(QString)));
+    connect(lineEditIterations, SIGNAL(textChanged(QString)), this, SLOT(changeIter(QString)));
+    connect(lineEditMedian, SIGNAL(textChanged(QString)), this, SLOT(changeMedian(QString)));
+    connect(buttonSave, SIGNAL(clicked()), this, SLOT(saveOpt()));
+    connect(buttonCancel, SIGNAL(clicked()), this, SLOT(closeDlg()));
+    connect(buttonHelp, SIGNAL(clicked()), this, SLOT(showHelp()));
 }
 
 void BenchmarkOptDlg::load()
@@ -154,42 +149,42 @@ void BenchmarkOptDlg::load()
 
 void BenchmarkOptDlg::setLayout()
 {
-    QWidget* hbWidget1 = new QWidget(this);
-    QHBoxLayout* layout1 = new QHBoxLayout(hbWidget1);
-    layout1->addWidget(chkbTickCounter);
-    layout1->addWidget(chkbEventCounter);
+    QWidget *hbWidget1 = new QWidget(this);
+    QHBoxLayout *layout1 = new QHBoxLayout(hbWidget1);
+    layout1->addWidget(checkboxTickCounter);
+    layout1->addWidget(checkboxEventCounter);
     hbWidget1->setLayout(layout1);
 
-    QWidget* hbWidget2 = new QWidget(this);
-    QHBoxLayout* layout2 = new QHBoxLayout(hbWidget2);
-    layout2->addWidget(chkbVb);
-    layout2->addWidget(chkbIters);
-    layout2->addWidget(leIters);
+    QWidget *hbWidget2 = new QWidget(this);
+    QHBoxLayout *layout2 = new QHBoxLayout(hbWidget2);
+    layout2->addWidget(checkboxVerbose);
+    layout2->addWidget(checkboxIterations);
+    layout2->addWidget(lineEditIterations);
     hbWidget2->setLayout(layout2);
 
-    QWidget* hbWidget3 = new QWidget(this);
-    QHBoxLayout* layout3 = new QHBoxLayout(hbWidget3);
-    layout3->addWidget(chkbMedian);
-    layout3->addWidget(leMedian);
+    QWidget *hbWidget3 = new QWidget(this);
+    QHBoxLayout *layout3 = new QHBoxLayout(hbWidget3);
+    layout3->addWidget(checkboxMedian);
+    layout3->addWidget(lineEditMedian);
 #if defined (Q_OS_LINUX)
-    layout3->addWidget(chkbCallGrind);
+    layout3->addWidget(checkboxCallGrind);
 #endif
     hbWidget3->setLayout(layout3);
 
-    QWidget* hbWidget4 = new QWidget(this);
-    QHBoxLayout* layout4 = new QHBoxLayout(hbWidget4);
-    layout4->addWidget(chkbMinVal);
-    layout4->addWidget(leMinVal);
+    QWidget *hbWidget4 = new QWidget(this);
+    QHBoxLayout *layout4 = new QHBoxLayout(hbWidget4);
+    layout4->addWidget(checkboxMinValue);
+    layout4->addWidget(lineEditMinVal);
     hbWidget4->setLayout(layout4);
 
-    QWidget* btnLayoutWidget = new QWidget(this);
-    QHBoxLayout* btnLayout = new QHBoxLayout(btnLayoutWidget);
-    btnLayout->addWidget(btnSave);
-    btnLayout->addWidget(btnCancel);
-    btnLayout->addWidget(btnHelp);
+    QWidget *btnLayoutWidget = new QWidget(this);
+    QHBoxLayout *btnLayout = new QHBoxLayout(btnLayoutWidget);
+    btnLayout->addWidget(buttonSave);
+    btnLayout->addWidget(buttonCancel);
+    btnLayout->addWidget(buttonHelp);
     btnLayoutWidget->setLayout(btnLayout);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(hbWidget1);
     mainLayout->addWidget(hbWidget2);
     mainLayout->addWidget(hbWidget3);
@@ -199,37 +194,37 @@ void BenchmarkOptDlg::setLayout()
 
 void BenchmarkOptDlg::changeBtnSaveEnableState()
 {
-    btnSave->setEnabled(!initCfg->equalsTo(savedCfg));
+    buttonSave->setEnabled(!initConfig->equalsTo(savedConfig));
 }
 
 void BenchmarkOptDlg::changeVbBenchmarkState(int state)
 {
-    savedCfg->setVerboseBenchMarking(state == Qt::Checked);
+    savedConfig->setVerboseBenchMarking(state == Qt::Checked);
     changeBtnSaveEnableState();
 }
 
 void BenchmarkOptDlg::changeTickCounterState(int state)
 {
-    savedCfg->setTickCounter(state == Qt::Checked);
+    savedConfig->setTickCounter(state == Qt::Checked);
     changeBtnSaveEnableState();
 }
 
 void BenchmarkOptDlg::changeEventCounterState(int state)
 {
-    savedCfg->setEventCounter(state == Qt::Checked);
+    savedConfig->setEventCounter(state == Qt::Checked);
     changeBtnSaveEnableState();
 }
 
 void BenchmarkOptDlg::changeMinValState(int state)
 {
-    leMinVal->setEnabled(state == Qt::Checked);
-    if (!leMinVal->isEnabled()) {
-        leMinVal->clear();
-        savedCfg->setMinimumValue(-1);
+    lineEditMinVal->setEnabled(state == Qt::Checked);
+    if (!lineEditMinVal->isEnabled()) {
+        lineEditMinVal->clear();
+        savedConfig->setMinimumValue(-1);
     } else {
-        if (initCfg->minimumValue() != -1) {
-            leMinVal->setText(tr("%1").arg(initCfg->minimumValue()));
-            savedCfg->setMinimumValue(initCfg->minimumValue());
+        if (initConfig->minimumValue() != -1) {
+            lineEditMinVal->setText(tr("%1").arg(initConfig->minimumValue()));
+            savedConfig->setMinimumValue(initConfig->minimumValue());
         }
     }
     changeBtnSaveEnableState();
@@ -237,14 +232,14 @@ void BenchmarkOptDlg::changeMinValState(int state)
 
 void BenchmarkOptDlg::changeIterState(int state)
 {
-    leIters->setEnabled(state == Qt::Checked);
-    if (!leIters->isEnabled()) {
-        leIters->clear();
-        savedCfg->setIterations(-1);
+    lineEditIterations->setEnabled(state == Qt::Checked);
+    if (!lineEditIterations->isEnabled()) {
+        lineEditIterations->clear();
+        savedConfig->setIterations(-1);
     } else {
-        if (initCfg->iterations() != -1) {
-            leIters->setText(tr("%1").arg(initCfg->iterations()));
-            savedCfg->setIterations(initCfg->iterations());
+        if (initConfig->iterations() != -1) {
+            lineEditIterations->setText(tr("%1").arg(initConfig->iterations()));
+            savedConfig->setIterations(initConfig->iterations());
         }
     }
     changeBtnSaveEnableState();
@@ -252,14 +247,14 @@ void BenchmarkOptDlg::changeIterState(int state)
 
 void BenchmarkOptDlg::changeMedianState(int state)
 {
-    leMedian->setEnabled(state == Qt::Checked);
-    if (!leMedian->isEnabled()) {
-        leMedian->clear();
-        savedCfg->setMedian(-1);
+    lineEditMedian->setEnabled(state == Qt::Checked);
+    if (!lineEditMedian->isEnabled()) {
+        lineEditMedian->clear();
+        savedConfig->setMedian(-1);
     } else {
-        if (initCfg->median() != -1) {
-            leMedian->setText(tr("%1").arg(initCfg->median()));
-            savedCfg->setMedian(initCfg->median());
+        if (initConfig->median() != -1) {
+            lineEditMedian->setText(tr("%1").arg(initConfig->median()));
+            savedConfig->setMedian(initConfig->median());
         }
     }
     changeBtnSaveEnableState();
@@ -270,7 +265,7 @@ void BenchmarkOptDlg::changeMinVal(QString text)
     bool ok = false;
     int val = text.toInt(&ok);
     if (!ok) val = -1;
-    savedCfg->setMinimumValue(val);
+    savedConfig->setMinimumValue(val);
     changeBtnSaveEnableState();
 }
 
@@ -279,7 +274,7 @@ void BenchmarkOptDlg::changeIter(QString text)
     bool ok = false;
     int val = text.toInt(&ok);
     if (!ok) val = -1;
-    savedCfg->setIterations(val);
+    savedConfig->setIterations(val);
     changeBtnSaveEnableState();
 }
 
@@ -288,23 +283,27 @@ void BenchmarkOptDlg::changeMedian(QString text)
     bool ok = false;
     int val = text.toInt(&ok);
     if (!ok) val = -1;
-    savedCfg->setMedian(val);
+    savedConfig->setMedian(val);
     changeBtnSaveEnableState();
 }
 
-void BenchmarkOptDlg::changeCallGrindState(int state)
+void BenchmarkOptDlg::changeCallGrindState(int
+#if defined(Q_OS_LINUX)
+        state
+#endif
+        )
 {
 #if defined (Q_OS_LINUX)
-    savedCfg->setCallGrind(state == Qt::Checked);
+    savedConfig->setCallGrind(state == Qt::Checked);
     changeBtnSaveEnableState();
 #endif
 }
 
 void BenchmarkOptDlg::saveOpt()
 {
-    *initCfg = *savedCfg;
+    *initConfig = *savedConfig;
     changeBtnSaveEnableState();
-    emit bmOptSaved(*savedCfg);
+    emit bmOptSaved(*savedConfig);
     closeDlg();
 }
 
@@ -326,3 +325,6 @@ void BenchmarkOptDlg::showHelp()
                                + tr("vb: Print out verbose benchmarking information.");
     QMessageBox::information(this, tr("Output Options"), msg);
 }
+
+QT_END_NAMESPACE
+

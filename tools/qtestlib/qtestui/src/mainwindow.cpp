@@ -46,11 +46,14 @@
 #include "inc/eventoptdlg.h"
 #include "inc/benchmarkoptdlg.h"
 
+QT_BEGIN_NAMESPACE
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     outputOptDlg(NULL),
     eventOptDlg(NULL),
-    bmOptDlg(NULL)
+    benchmarkOptDlg(NULL),
+    saveCasesAction(NULL)
 {
     setWindowTitle(tr("QTestUI"));
 
@@ -67,43 +70,49 @@ MainWindow::~MainWindow()
 {
 }
 
-
 void MainWindow::createMenus()
 {
-    connect(tabWidget, SIGNAL(menuStateChanged(MainWindow::MenuBarState)), this, SLOT(setMenuBar(MainWindow::MenuBarState)));
+    connect(tabWidget, SIGNAL(menuStateChanged(MainWindow::MenuBarState)),
+            this, SLOT(setMenuBar(MainWindow::MenuBarState)));
 
     addAction = new QAction(tr("Add Test"), this);
     connect(addAction, SIGNAL(triggered()), tabWidget, SLOT(addTest()));
 
-    runAction= new QAction(tr("Run"), this);
+    runAction = new QAction(tr("Run"), this);
     connect(runAction, SIGNAL(triggered()), tabWidget, SLOT(runTest()));
 
     settingsMenu = new QMenu(tr("Settings"), this);
 
     outputOptAction = new QAction(tr("Output Settings..."), settingsMenu);
     connect(outputOptAction, SIGNAL(triggered()), tabWidget, SLOT(loadOutputSettings()));
-    connect(tabWidget, SIGNAL(outputSettingsDlgDataLoaded(GlobalConfig*)), this, SLOT(openOutputSettingsDlg(GlobalConfig*)));
+    connect(tabWidget, SIGNAL(outputSettingsDlgDataLoaded(GlobalConfig *)),
+            this, SLOT(openOutputSettingsDlg(GlobalConfig *)));
 
     eventOptAction = new QAction(tr("Event Settings..."), settingsMenu);
     connect(eventOptAction, SIGNAL(triggered()), tabWidget, SLOT(loadEventSettings()));
-    connect(tabWidget, SIGNAL(eventSettingsDlgDataLoaded(GlobalConfig*)), this, SLOT(openEventSettingsDlg(GlobalConfig*)));
+    connect(tabWidget, SIGNAL(eventSettingsDlgDataLoaded(GlobalConfig *)),
+            this, SLOT(openEventSettingsDlg(GlobalConfig *)));
 
     benchmarkOptActoin = new QAction(tr("Benchmark Settings..."), settingsMenu);
     connect(benchmarkOptActoin, SIGNAL(triggered()), tabWidget, SLOT(loadBMSettings()));
-    connect(tabWidget, SIGNAL(bmSettingsDlgDataLoaded(GlobalConfig*)), this, SLOT(openBMSettingsDlg(GlobalConfig*)));
+    connect(tabWidget, SIGNAL(bmSettingsDlgDataLoaded(GlobalConfig *)),
+            this, SLOT(openBMSettingsDlg(GlobalConfig *)));
 
-    stopAction= new QAction(tr("Stop"), this);
+    stopAction = new QAction(tr("Stop"), this);
     connect(stopAction, SIGNAL(triggered()), tabWidget, SLOT(stopTest()));
 
-    pauseAction= new QAction(tr("Pause"), this);
+    pauseAction = new QAction(tr("Pause"), this);
     connect(pauseAction, SIGNAL(triggered()), tabWidget, SLOT(pauseTest()));
+
+    saveCasesAction = new QAction(tr("SaveCases"), this);
+    connect(saveCasesAction, SIGNAL(triggered()), tabWidget, SLOT(saveCases()));
 
     aboutAction = new QAction(tr("About"), this);
     connect(aboutAction, SIGNAL(triggered()), tabWidget, SLOT(about()));
 
     exitAction = new QAction(tr("Exit"), this);
+    connect(exitAction, SIGNAL(triggered()), tabWidget, SLOT(saveCases()));
     connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
-
 }
 
 void MainWindow::loadMenus()
@@ -118,6 +127,7 @@ void MainWindow::loadMenus()
     menuBar()->addAction(settingsMenu->menuAction());
     menuBar()->addAction(stopAction);
     menuBar()->addAction(pauseAction);
+    menuBar()->addAction(saveCasesAction);
 
     menuBar()->addAction(aboutAction);
     menuBar()->addAction(exitAction);
@@ -129,6 +139,7 @@ void MainWindow::setMenuBar(MainWindow::MenuBarState state)
     case EInit:
         addAction->setVisible(true);
         runAction->setVisible(true);
+        saveCasesAction->setVisible(true);
         stopAction->setVisible(false);
         pauseAction->setVisible(false);
         break;
@@ -153,40 +164,42 @@ void MainWindow::setMenuBar(MainWindow::MenuBarState state)
     }
 }
 
-void MainWindow::openOutputSettingsDlg(GlobalConfig* cfg)
+void MainWindow::openOutputSettingsDlg(GlobalConfig *config)
 {
     if (outputOptDlg == NULL) {
-        outputOptDlg = new OutputOptDlg(cfg, this);
-        connect(outputOptDlg, SIGNAL(outputOptSaved(const GlobalConfig&)), tabWidget, SLOT(saveSettings(const GlobalConfig&)));
+        outputOptDlg = new OutputOptDlg(config, this);
+        connect(outputOptDlg, SIGNAL(outputOptSaved(const GlobalConfig &)),
+                tabWidget, SLOT(saveSettings(const GlobalConfig &)));
     }
     outputOptDlg->exec();
     outputOptDlg = NULL; // The dialog is deleted upon close.
 }
 
-void MainWindow::openEventSettingsDlg(GlobalConfig* cfg)
+void MainWindow::openEventSettingsDlg(GlobalConfig *config)
 {
     if (eventOptDlg == NULL) {
-        eventOptDlg = new EventOptDlg(cfg, this);
-        connect(eventOptDlg, SIGNAL(eventOptSaved(const GlobalConfig&)), tabWidget, SLOT(saveSettings(const GlobalConfig&)));
+        eventOptDlg = new EventOptDlg(config, this);
+        connect(eventOptDlg, SIGNAL(eventOptSaved(const GlobalConfig &)),
+                tabWidget, SLOT(saveSettings(const GlobalConfig &)));
     }
     eventOptDlg->exec();
     eventOptDlg = NULL; // The dialog is deleted upon close.
 }
 
-void MainWindow::openBMSettingsDlg(GlobalConfig* cfg)
+void MainWindow::openBMSettingsDlg(GlobalConfig *config)
 {
-    if (bmOptDlg == NULL) {
-        bmOptDlg = new BenchmarkOptDlg(cfg, this);
-        connect(bmOptDlg, SIGNAL(bmOptSaved(const GlobalConfig&)), tabWidget, SLOT(saveSettings(const GlobalConfig&)));
+    if (benchmarkOptDlg == NULL) {
+        benchmarkOptDlg = new BenchmarkOptDlg(config, this);
+        connect(benchmarkOptDlg, SIGNAL(bmOptSaved(const GlobalConfig &)),
+                tabWidget, SLOT(saveSettings(const GlobalConfig &)));
     }
-    bmOptDlg->exec();
-    bmOptDlg = NULL; // The dialog is deleted upon close.
+    benchmarkOptDlg->exec();
+    benchmarkOptDlg = NULL; // The dialog is deleted upon close.
 }
 
 void MainWindow::loadWidgets()
 {
-
-    QWidget* centralWidget;
+    QWidget *centralWidget;
     centralWidget = new QWidget(this);
     centralWidget->setContextMenuPolicy(Qt::NoContextMenu);
     setCentralWidget(centralWidget);
@@ -206,9 +219,12 @@ void MainWindow::loadStyleSheet()
 {
     QFile file(":/qss/blue.qss");
 
-    if(file.open(QFile::ReadOnly)) {
+    if (file.open(QFile::ReadOnly)) {
         QString style = file.readAll();
         qApp->setStyleSheet(style);
         file.close();
     }
 }
+
+QT_END_NAMESPACE
+

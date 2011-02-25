@@ -45,12 +45,16 @@
 #include <QtGui>
 #include "testcase.h"
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
 class DialogLog : public QDialog
 {
     Q_OBJECT
 
 public:
-    DialogLog(QWidget* parent = 0);
+    DialogLog(QWidget *parent = 0);
     virtual ~DialogLog();
 
 public slots:
@@ -68,38 +72,46 @@ class TestResult : public QObject
     Q_OBJECT
 
 public:
-    TestResult(QObject* parent = 0);
+    TestResult(QObject *parent = 0);
     virtual ~TestResult();
 
     void setTextWidget(QTextEdit *widget);
     void setProgressWidget(QProgressBar *widget);
     void setProgressTextWidget(QLabel *pass, QLabel *fail, QLabel *skip);
     void setReportWidget(QTableWidget *widget);
-
     void textOut(QString text);
     void textClear();
     void setProgressRange(int minimum, int maximum);
     void progressClear();
     void setProgressText(int pass, int fail, int skip);
-    void createReport(QList<TestCase*> *caseList);
+    void createReport(QList<TestCase *> *caseList);
     void clearReport();
 
 private:
     void setReportSize(int size);
-    void setReportItem(int index, QTableWidgetItem *name, QTableWidgetItem *pass, QTableWidgetItem *fail, QTableWidgetItem *skip);
+    void setReportItem(int index,
+                       QTableWidgetItem *name,
+                       QTableWidgetItem *pass,
+                       QTableWidgetItem *fail,
+                       QTableWidgetItem *skip);
 
 public slots:
     void progressSteps(int steps);
     void showCaseLog(int row, int column);
 
 private:
-    QTextEdit       *textWidget;
-    QProgressBar    *progressBar;
-    QLabel          *passWidget;
-    QLabel          *failWidget;
-    QLabel          *skipWidget;
-    QTableWidget    *reportWidget;
-    QList<TestCase*> *caseList;
+    QTextEdit           *textWidget;
+    QProgressBar        *progressBar;
+    QLabel              *passWidget;
+    QLabel              *failWidget;
+    QLabel              *skipWidget;
+    QTableWidget        *reportWidget;
+    QList<TestCase *>   *caseList;
 
 };
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
 #endif // TESTRESULT_H

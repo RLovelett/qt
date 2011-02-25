@@ -41,26 +41,22 @@
 
 #include "inc/testconfig.h"
 #include <QSettings>
+#include <QDir>
 
-const static QString ORG = "Nokia";
-const static QString APP = "QTestUI";
+QT_BEGIN_NAMESPACE
 
-const static QString DELIMETER = "/";
+// Constants
+const QString TestConfig::ORG = "Nokia";
+const QString TestConfig::APP = "QTestUI";
+const QString TestConfig::DELIMETER = "/";
+const QString TestConfig::EXEPATH = "path";
+const QString TestConfig::SELECTEDCASES = "selectedcases";
+const QString TestConfig::GLOBALCFG = "global";
+const QString TestConfig::OPTCHAR = "-";
+const QString TestConfig::INTARG = " %1";
+const QString TestConfig::PATHDELI = "/";
 
-const static QString EXEPATH = "path";
-const static QString SELECTEDCASES = "selectedcases";
-
-const static QString GLOBALCFG = "global";
-const static QString OPTCHAR = "-";
-const static QString INTARG = " %1";
-
-#if defined(Q_OS_LINUX)
-const static QString PATHDELI = "/";
-#else
-const static QString PATHDELI = "\\";
-#endif
-
-TestConfig::TestConfig(QObject* parent):
+TestConfig::TestConfig(QObject *parent):
         QObject(parent),
         config(NULL),
         globalCfg(NULL)
@@ -69,7 +65,7 @@ TestConfig::TestConfig(QObject* parent):
     loadGlobalConfig();
 }
 
-TestConfig::TestConfig(const QString& path, QObject* parent):
+TestConfig::TestConfig(const QString &path, QObject *parent):
         QObject(parent),
         config(NULL)
 {
@@ -83,7 +79,7 @@ TestConfig::~TestConfig()
         delete config;
 }
 
-const GlobalConfig* TestConfig::globalConfig()
+const GlobalConfig *TestConfig::globalConfig()
 {
     return globalCfg;
 }
@@ -91,9 +87,8 @@ const GlobalConfig* TestConfig::globalConfig()
 QString TestConfig::configStr()
 {
     QString str;
-    if (globalCfg != NULL) {
+    if (globalCfg != NULL)
         str += globalCfg->configStr();
-    }
     return str;
 }
 
@@ -119,32 +114,45 @@ QString TestConfig::outputFilePath()
     if (globalCfg != NULL)
         return globalCfg->outputPath();
     else
-        return "";
+        return QString();
 }
 
-QString TestConfig::selectedCases(const QString& testName)
+QString TestConfig::selectedCases(const QString &testName)
 {
-    return config->value(testName + DELIMETER + SELECTEDCASES).toString();
+    return config->value(testName + TestConfig::DELIMETER + TestConfig::SELECTEDCASES).toString();
 }
 
-QString TestConfig::executableFile(const QString& testName)
+void TestConfig::saveSelectedCases(const QString &testName, const QString &path, const QString &testCases)
 {
-    return config->value(testName + DELIMETER + EXEPATH).toString();
+    config->setValue(testName + TestConfig::DELIMETER + TestConfig::EXEPATH, path);
+    config->setValue(testName + TestConfig::DELIMETER + TestConfig::SELECTEDCASES, testCases);
+}
+
+void TestConfig::removeUnselectedCases(const QString &testName)
+{
+    config->remove(testName);
+    config->remove(testName + TestConfig::DELIMETER + TestConfig::EXEPATH);
+    config->remove(testName + TestConfig::DELIMETER + TestConfig::SELECTEDCASES);
+}
+
+QString TestConfig::executableFile(const QString &testName)
+{
+    return config->value(testName + TestConfig::DELIMETER + TestConfig::EXEPATH).toString();
 }
 
 QStringList TestConfig::testNames()
 {
     QStringList names = config->childGroups();
-    names.removeAll(GLOBALCFG);
+    names.removeAll(TestConfig::GLOBALCFG);
     return names;
 }
 
 void TestConfig::loadConfig()
 {
-    config = new QSettings(QSettings::IniFormat, QSettings::UserScope, ORG, APP, this);
+    config = new QSettings(QSettings::IniFormat, QSettings::UserScope, TestConfig::ORG, TestConfig::APP, this);
 }
 
-void TestConfig::loadAlternativeConfig(const QString& path)
+void TestConfig::loadAlternativeConfig(const QString &path)
 {
     config = new QSettings(path, QSettings::IniFormat, this);
 }
@@ -153,59 +161,79 @@ void TestConfig::loadGlobalConfig()
 {
     globalCfg = new GlobalConfig(this);
     QStringList sectionList = config->childGroups();
-    if (sectionList.contains(GLOBALCFG)) {
-        config->beginGroup(GLOBALCFG);
+    if (sectionList.contains(TestConfig::GLOBALCFG)) {
+        config->beginGroup(TestConfig::GLOBALCFG);
 #if defined(Q_OS_LINUX)
-        globalCfg->setCallGrind(config->value(/*GLOBALCFG + DELIMETER + */CALLGRIND, false).toBool());
+        globalCfg->setCallGrind(config->value(GlobalConfig::CALLGRIND, false).toBool());
 #endif
-        globalCfg->setEventCounter(config->value(/*GLOBALCFG + DELIMETER + */EVENTCOUNTER, false).toBool());
-        globalCfg->setOutputFormat(config->value(/*GLOBALCFG + DELIMETER + */OUTPUTFORMAT).toString());
-        globalCfg->setOutputPath(config->value(/*GLOBALCFG + DELIMETER + */OUTPUTPATH).toString());
-        globalCfg->setFlush(config->value(/*GLOBALCFG + DELIMETER + */FLUSH, false).toBool());
-        globalCfg->setSilent(config->value(/*GLOBALCFG + DELIMETER + */SILENT, false).toBool());
-        globalCfg->setVerbose(config->value(/*GLOBALCFG + DELIMETER + */VERBOSE).toString());
-        globalCfg->setEventDelay(config->value(/*GLOBALCFG + DELIMETER + */EVENTDELAY, -1).toInt());
-        globalCfg->setKeyDelay(config->value(/*GLOBALCFG + DELIMETER + */KEYDELAY, -1).toInt());
-        globalCfg->setMouseDelay(config->value(/*GLOBALCFG + DELIMETER + */MOUSEDELAY, -1).toInt());
-        globalCfg->setKeyEventVerbose(config->value(/*GLOBALCFG + DELIMETER + */KEYEVENTVERBOSE, false).toBool());
-        globalCfg->setMaxWarnings(config->value(/*GLOBALCFG + DELIMETER + */MAXWARNINGS, -1).toInt());
-        globalCfg->setNoCrashHandler(config->value(/*GLOBALCFG + DELIMETER + */NOCRASHHANDLER, false).toBool());
-        globalCfg->setTickCounter(config->value(/*GLOBALCFG + DELIMETER + */TICKCOUNTER, false).toBool());
-        globalCfg->setMinimumValue(config->value(/*GLOBALCFG + DELIMETER + */MINIMUMVALUE, -1).toInt());
-        globalCfg->setIterations(config->value(/*GLOBALCFG + DELIMETER + */ITERATIONS, -1).toInt());
-        globalCfg->setMedian(config->value(/*GLOBALCFG + DELIMETER + */MEDIAN, -1).toInt());
-        globalCfg->setVerboseBenchMarking(config->value(/*GLOBALCFG + DELIMETER + */VERBOSEBENCHMARK, false).toBool());
+        globalCfg->setEventCounter(config->value(GlobalConfig::EVENTCOUNTER, false).toBool());
+        globalCfg->setOutputFormat(config->value(GlobalConfig::OUTPUTFORMAT).toString());
+        globalCfg->setOutputPath(config->value(GlobalConfig::OUTPUTPATH).toString());
+        globalCfg->setFlush(config->value(GlobalConfig::FLUSH, false).toBool());
+        globalCfg->setSilent(config->value(GlobalConfig::SILENT, false).toBool());
+        globalCfg->setVerbose(config->value(GlobalConfig::VERBOSE).toString());
+        globalCfg->setEventDelay(config->value(GlobalConfig::EVENTDELAY, -1).toInt());
+        globalCfg->setKeyDelay(config->value(GlobalConfig::KEYDELAY, -1).toInt());
+        globalCfg->setMouseDelay(config->value(GlobalConfig::MOUSEDELAY, -1).toInt());
+        globalCfg->setKeyEventVerbose(config->value(GlobalConfig::KEYEVENTVERBOSE, false).toBool());
+        globalCfg->setMaxWarnings(config->value(GlobalConfig::MAXWARNINGS, -1).toInt());
+        globalCfg->setNoCrashHandler(config->value(GlobalConfig::NOCRASHHANDLER, false).toBool());
+        globalCfg->setTickCounter(config->value(GlobalConfig::TICKCOUNTER, false).toBool());
+        globalCfg->setMinimumValue(config->value(GlobalConfig::MINIMUMVALUE, -1).toInt());
+        globalCfg->setIterations(config->value(GlobalConfig::ITERATIONS, -1).toInt());
+        globalCfg->setMedian(config->value(GlobalConfig::MEDIAN, -1).toInt());
+        globalCfg->setVerboseBenchMarking(config->value(GlobalConfig::VERBOSEBENCHMARK, false).toBool());
         config->endGroup();
     }
 }
 
-void TestConfig::saveGlobalConfig(const GlobalConfig& cfg)
+void TestConfig::saveGlobalConfig(const GlobalConfig &cfg)
 {
-    config->beginGroup(GLOBALCFG);
+    config->beginGroup(TestConfig::GLOBALCFG);
 #if defined(Q_OS_LINUX)
-    config->setValue(CALLGRIND, cfg.callGrind());
+    config->setValue(GlobalConfig::CALLGRIND, cfg.callGrind());
 #endif
-    config->setValue(EVENTCOUNTER, cfg.eventCounter());
-    config->setValue(OUTPUTFORMAT, cfg.outputFormat());
+    config->setValue(GlobalConfig::EVENTCOUNTER, cfg.eventCounter());
+    config->setValue(GlobalConfig::OUTPUTFORMAT, cfg.outputFormat());
     QString path = cfg.outputPath();
     if (path != "" && path.endsWith('/')) path.remove(path.length() - 1, 1);
-    config->setValue(OUTPUTPATH, path);
-    config->setValue(FLUSH, cfg.flush());
-    config->setValue(SILENT, cfg.silent());
-    config->setValue(VERBOSE, cfg.verbose());
-    config->setValue(EVENTDELAY, cfg.eventDelay());
-    config->setValue(KEYDELAY, cfg.keyDelay());
-    config->setValue(MOUSEDELAY, cfg.mouseDelay());
-    config->setValue(KEYEVENTVERBOSE, cfg.keyEventVerbose());
-    config->setValue(MAXWARNINGS, cfg.maxWarnings());
-    config->setValue(NOCRASHHANDLER, cfg.noCrashHandler());
-    config->setValue(TICKCOUNTER, cfg.tickCounter());
-    config->setValue(MINIMUMVALUE, cfg.minimumValue());
-    config->setValue(ITERATIONS, cfg.iterations());
-    config->setValue(MEDIAN, cfg.median());
-    config->setValue(VERBOSEBENCHMARK, cfg.verboseBenchMarking());
+    config->setValue(GlobalConfig::OUTPUTPATH, path);
+    config->setValue(GlobalConfig::FLUSH, cfg.flush());
+    config->setValue(GlobalConfig::SILENT, cfg.silent());
+    config->setValue(GlobalConfig::VERBOSE, cfg.verbose());
+    config->setValue(GlobalConfig::EVENTDELAY, cfg.eventDelay());
+    config->setValue(GlobalConfig::KEYDELAY, cfg.keyDelay());
+    config->setValue(GlobalConfig::MOUSEDELAY, cfg.mouseDelay());
+    config->setValue(GlobalConfig::KEYEVENTVERBOSE, cfg.keyEventVerbose());
+    config->setValue(GlobalConfig::MAXWARNINGS, cfg.maxWarnings());
+    config->setValue(GlobalConfig::NOCRASHHANDLER, cfg.noCrashHandler());
+    config->setValue(GlobalConfig::TICKCOUNTER, cfg.tickCounter());
+    config->setValue(GlobalConfig::MINIMUMVALUE, cfg.minimumValue());
+    config->setValue(GlobalConfig::ITERATIONS, cfg.iterations());
+    config->setValue(GlobalConfig::MEDIAN, cfg.median());
+    config->setValue(GlobalConfig::VERBOSEBENCHMARK, cfg.verboseBenchMarking());
     config->endGroup();
 }
+
+// Constants
+const QString GlobalConfig::OUTPUTFORMAT = tr("outputformat");
+const QString GlobalConfig::OUTPUTPATH = tr("outputpath");
+const QString GlobalConfig::FLUSH = tr("flush");
+const QString GlobalConfig::SILENT = tr("silent");
+const QString GlobalConfig::VERBOSE = tr("verbose");
+const QString GlobalConfig::EVENTDELAY = tr("eventdelay");
+const QString GlobalConfig::KEYDELAY = tr("keydelay");
+const QString GlobalConfig::MOUSEDELAY = tr("mousedelay");
+const QString GlobalConfig::KEYEVENTVERBOSE = tr("keyevent-verbose");
+const QString GlobalConfig::MAXWARNINGS = tr("maxwarnings");
+const QString GlobalConfig::NOCRASHHANDLER = tr("nocrashhandler");
+const QString GlobalConfig::CALLGRIND = tr("callgrind");
+const QString GlobalConfig::TICKCOUNTER = tr("tickcounter");
+const QString GlobalConfig::EVENTCOUNTER = tr("eventcounter");
+const QString GlobalConfig::MINIMUMVALUE = tr("minimumvalue");
+const QString GlobalConfig::ITERATIONS = tr("iterations");
+const QString GlobalConfig::MEDIAN = tr("median");
+const QString GlobalConfig::VERBOSEBENCHMARK = tr("vb");
 
 GlobalConfig::GlobalConfig(QObject *parent):
         QObject(parent),
@@ -229,7 +257,7 @@ GlobalConfig::GlobalConfig(QObject *parent):
 {
 }
 
-GlobalConfig::GlobalConfig(const GlobalConfig& cfg):
+GlobalConfig::GlobalConfig(const GlobalConfig &cfg):
         QObject(cfg.parent()),
         m_outputFormat(cfg.m_outputFormat),
         m_outputPath(cfg.m_outputPath),
@@ -262,35 +290,63 @@ QString GlobalConfig::configStr()
 {
     QString str;
 #if defined(Q_OS_LINUX)
-    if (this->m_callGrind) str += " " + OPTCHAR + CALLGRIND;
+    if (this->m_callGrind) str += " " + TestConfig::OPTCHAR + GlobalConfig::CALLGRIND;
 #endif
-    if (this->m_eventCounter) str += " " + OPTCHAR + EVENTCOUNTER;
-    if (this->m_outputFormat != "")  str += " " + OPTCHAR + this->m_outputFormat;
-    if (this->m_flush) str += " " + OPTCHAR + FLUSH;
-    if (this->m_silent) str += " " + OPTCHAR + SILENT;
-    if (this->m_verbose != "") str += " " + OPTCHAR + this->m_verbose;
-    if (this->m_eventDelay != -1) str += " " + OPTCHAR + EVENTDELAY + INTARG.arg(this->m_eventDelay);
-    if (this->m_keyDelay != -1)  str += " " + OPTCHAR + KEYDELAY + INTARG.arg(this->m_keyDelay);
-    if (this->m_mouseDelay != -1) str += " " + OPTCHAR + MOUSEDELAY + INTARG.arg(this->m_mouseDelay);
-    if (this->m_keyEventVerbose) str += " " + OPTCHAR + KEYEVENTVERBOSE;
-    if (this->m_maxWarnings != -1) str += " " + OPTCHAR + MAXWARNINGS + INTARG.arg(this->m_maxWarnings);
-    if (this->m_noCrashHandler) str += " " + OPTCHAR + NOCRASHHANDLER;
-    if (this->m_tickCounter) str += " " + OPTCHAR + TICKCOUNTER;
-    if (this->m_minimumValue != -1) str += " " + OPTCHAR + MINIMUMVALUE + INTARG.arg(this->m_minimumValue);
-    if (this->m_iterations != -1) str += " " + OPTCHAR + ITERATIONS + INTARG.arg(this->m_iterations);
-    if (this->m_median != -1) str += " " + OPTCHAR + MEDIAN + INTARG.arg(this->m_median);
-    if (this->m_verboseBenchMarking) str += " " + OPTCHAR + VERBOSEBENCHMARK;
+    if (this->m_eventCounter) str += " " + TestConfig::OPTCHAR + GlobalConfig::EVENTCOUNTER;
+    if (this->m_outputFormat != "")  str += " " + TestConfig::OPTCHAR + this->m_outputFormat;
+    if (this->m_flush) str += " " + TestConfig::OPTCHAR + GlobalConfig::FLUSH;
+    if (this->m_silent) str += " " + TestConfig::OPTCHAR + GlobalConfig::SILENT;
+    if (this->m_verbose != "") str += " " + TestConfig::OPTCHAR + this->m_verbose;
+    if (this->m_eventDelay != -1) str += " "
+                                         + TestConfig::OPTCHAR
+                                         + GlobalConfig::EVENTDELAY
+                                         + TestConfig::INTARG.arg(this->m_eventDelay);
+    if (this->m_keyDelay != -1)  str += " "
+                                        + TestConfig::OPTCHAR
+                                        + GlobalConfig::KEYDELAY
+                                        + TestConfig::INTARG.arg(this->m_keyDelay);
+    if (this->m_mouseDelay != -1) str += " "
+                                         + TestConfig::OPTCHAR
+                                         + GlobalConfig::MOUSEDELAY
+                                         + TestConfig::INTARG.arg(this->m_mouseDelay);
+    if (this->m_keyEventVerbose) str += " " + TestConfig::OPTCHAR + GlobalConfig::KEYEVENTVERBOSE;
+    if (this->m_maxWarnings != -1) str += " "
+                                          + TestConfig::OPTCHAR
+                                          + GlobalConfig::MAXWARNINGS
+                                          + TestConfig::INTARG.arg(this->m_maxWarnings);
+    if (this->m_noCrashHandler) str += " " + TestConfig::OPTCHAR + GlobalConfig::NOCRASHHANDLER;
+    if (this->m_tickCounter) str += " " + TestConfig::OPTCHAR + GlobalConfig::TICKCOUNTER;
+    if (this->m_minimumValue != -1) str += " "
+                                           + TestConfig::OPTCHAR
+                                           + GlobalConfig::MINIMUMVALUE
+                                           + TestConfig::INTARG.arg(this->m_minimumValue);
+    if (this->m_iterations != -1) str += " "
+                                         + TestConfig::OPTCHAR
+                                         + GlobalConfig::ITERATIONS
+                                         + TestConfig::INTARG.arg(this->m_iterations);
+    if (this->m_median != -1) str += " "
+                                     + TestConfig::OPTCHAR
+                                     + GlobalConfig::MEDIAN
+                                     + TestConfig::INTARG.arg(this->m_median);
+    if (this->m_verboseBenchMarking) str += " " + TestConfig::OPTCHAR + GlobalConfig::VERBOSEBENCHMARK;
     return str;
 }
 
 QString GlobalConfig::outputPath() const
 {
     QString str;
-    if (this->m_outputPath != "") str += /*" " + OPTCHAR + "o" + " " + */this->m_outputPath + PATHDELI;
+    if (this->m_outputPath != "") {
+        QDir path(this->m_outputPath);
+        if (!path.exists()) {
+            if (!path.mkpath(this->m_outputPath))
+                return "";
+        }
+        str += this->m_outputPath + TestConfig::PATHDELI;
+    }
     return str;
 }
 
-bool GlobalConfig::equalsTo(const GlobalConfig* cfg)
+bool GlobalConfig::equalsTo(const GlobalConfig *cfg)
 {
     if (cfg == NULL)
         return false;
@@ -322,7 +378,7 @@ bool GlobalConfig::equalsTo(const GlobalConfig* cfg)
     return true;
 }
 
-GlobalConfig& GlobalConfig::operator=(const GlobalConfig& other)
+GlobalConfig &GlobalConfig::operator=(const GlobalConfig &other)
 {
     this->m_outputPath = other.m_outputPath;
     this->m_outputFormat = other.m_outputFormat;
@@ -528,4 +584,6 @@ bool GlobalConfig::verboseBenchMarking() const
 {
     return m_verboseBenchMarking;
 }
+
+QT_END_NAMESPACE
 

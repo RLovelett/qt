@@ -44,6 +44,10 @@
 
 #include <QDialog>
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
 class QCheckBox;
 class QLabel;
 class QLineEdit;
@@ -51,21 +55,19 @@ class QComboBox;
 class QPushButton;
 class GlobalConfig;
 
-class BenchmarkOptDlg: public QDialog
+class BenchmarkOptDlg : public QDialog
 {
     Q_OBJECT
 
 public:
-    BenchmarkOptDlg(GlobalConfig *config = 0, QWidget* parent = 0);
+    BenchmarkOptDlg(GlobalConfig *config = 0, QWidget *parent = 0);
     virtual ~BenchmarkOptDlg();
 
 private:
     void createWidgets();
     void setupWidgetsEventHandlers();
-
     void load();
     void setLayout();
-
     void changeBtnSaveEnableState();
 
 private slots:
@@ -78,37 +80,36 @@ private slots:
     void changeMinVal(QString text);
     void changeIter(QString text);
     void changeMedian(QString text);
-
     void changeCallGrindState(int state);
-
     void saveOpt();
     void closeDlg();
     void showHelp();
 
 signals:
-    void bmOptSaved(const GlobalConfig&);
+    void bmOptSaved(const GlobalConfig &);
 
 private:
-    GlobalConfig    *initCfg;
-    GlobalConfig    *savedCfg;
-
-    QCheckBox       *chkbVb;
-    QCheckBox       *chkbTickCounter;
-    QCheckBox       *chkbEventCounter;
-    QCheckBox       *chkbMinVal;
-    QLineEdit       *leMinVal;
-    QCheckBox       *chkbIters;
-    QLineEdit       *leIters;
-    QCheckBox       *chkbMedian;
-    QLineEdit       *leMedian;
-
+    GlobalConfig    *initConfig;
+    GlobalConfig    *savedConfig;
+    QCheckBox       *checkboxVerbose;
+    QCheckBox       *checkboxTickCounter;
+    QCheckBox       *checkboxEventCounter;
+    QCheckBox       *checkboxMinValue;
+    QLineEdit       *lineEditMinVal;
+    QCheckBox       *checkboxIterations;
+    QLineEdit       *lineEditIterations;
+    QCheckBox       *checkboxMedian;
+    QLineEdit       *lineEditMedian;
 #if defined (Q_OS_LINUX)
-    QCheckBox       *chkbCallGrind;
+    QCheckBox       *checkboxCallGrind;
 #endif
-
-    QPushButton *btnSave;
-    QPushButton *btnCancel;
-    QPushButton *btnHelp;
+    QPushButton     *buttonSave;
+    QPushButton     *buttonCancel;
+    QPushButton     *buttonHelp;
 };
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // BENCHMARKOPTDLG_H

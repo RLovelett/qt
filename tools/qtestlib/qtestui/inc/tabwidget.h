@@ -44,9 +44,12 @@
 
 #include <QtGui>
 #include <QMap>
-
 #include "mainwindow.h"
 #include "testrunner.h"
+
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
 
 class TestFileCaseList;
 class TestConfig;
@@ -57,7 +60,7 @@ class TabWidget : public QTabWidget
     Q_OBJECT
 
 public:
-    TabWidget(QWidget* parent = 0);
+    TabWidget(QWidget *parent = 0);
     virtual ~TabWidget();
 
 private:
@@ -69,16 +72,15 @@ private:
     void loadTextRun();
     void loadTableReport();
     void loadPopulatedTests();
-
     void showTests();
     void fetchAllCases();
     QString fetchCases(QString path);
     int addSelectedTestCases();
 
     // helpers.
-    void stripAdditionalInfo(QString& testCases);
+    void stripAdditionalInfo(QString &testCases);
     QString findConfigFile();
-    bool checkFileExistence(const QString& fileName);
+    bool checkFileExistence(const QString &fileName);
     void addToNonExistentFileList(QString fileName);
     void addToNonExistentCaseList(QString qualifiedCaseName);
     void addToMissingMandatoryParamList(QString paramName);
@@ -87,10 +89,8 @@ private:
 private slots:
     void addTest();
     void runTest();
-
     void stopTest();
     void pauseTest();
-
     void about();
 
 public slots:
@@ -98,16 +98,16 @@ public slots:
     void runnerStoped();
     void runnerPaused();
     void loadOutputSettings();
-    void saveSettings(const GlobalConfig& cfg);
+    void saveSettings(const GlobalConfig &config);
     void loadEventSettings();
     void loadBMSettings();
+    void saveCases();
 
-public:
 signals:
     void menuStateChanged(MainWindow::MenuBarState state);
-    void outputSettingsDlgDataLoaded(GlobalConfig * cfg);
-    void eventSettingsDlgDataLoaded(GlobalConfig* cfg);
-    void bmSettingsDlgDataLoaded(GlobalConfig* cfg);
+    void outputSettingsDlgDataLoaded(GlobalConfig *config);
+    void eventSettingsDlgDataLoaded(GlobalConfig *config);
+    void bmSettingsDlgDataLoaded(GlobalConfig *config);
 
 private:
     //Tab Case
@@ -115,37 +115,38 @@ private:
     QTreeWidget *treeCase;
 
     //Tab Run
-    QWidget         *tabRun;
-    QTextEdit       *textRun;
-    QLabel          *passRun;
-    QLabel          *failRun;
-    QLabel          *skipRun;
-    QProgressBar    *progressRun;
+    QWidget             *tabRun;
+    QTextEdit           *textRun;
+    QLabel              *passRun;
+    QLabel              *failRun;
+    QLabel              *skipRun;
+    QProgressBar        *progressRun;
 
     //Tab Report
-    QWidget         *tabReport;
-    QTableWidget    *tableReport;
+    QWidget             *tabReport;
+    QTableWidget        *tableReport;
 
-    TestRunner  *runner;
-
-    QString testOutput;
-    QStringList nonExistentFiles;
-    QStringList nonExistentCases;
-    QStringList missingMandatoryParams;
-    TestFileCaseList *tests;
-    TestConfig *testCfg;
+    TestRunner          *runner;
+    QString             testOutput;
+    QStringList         nonExistentFiles;
+    QStringList         nonExistentCases;
+    QStringList         missingMandatoryParams;
+    TestFileCaseList    *tests;
+    TestConfig          *testCfg;
+    QString             currentPath;
 
 };
 
-class TestFileCaseList: public QObject
+class TestFileCaseList : public QObject
 {
     Q_OBJECT
+
 public:
     TestFileCaseList(QObject *parent = 0);
-    void addItem(QString path, QString funcs);
-    void addFunc(QString path, QString func);
+    void addItem(QString path, QString functions);
+    void addFunc(QString path, QString function);
     void removeItem(QString path);
-    void removeFunc(QString path, QString func);
+    void removeFunc(QString path, QString function);
     QString getFunctions(QString path);
     QStringList getPaths();
     QString getBaseName(QString path);
@@ -155,5 +156,8 @@ private:
     QMap<QString, QString> fileCaseList;
 };
 
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // TABWIDGET_H

@@ -46,13 +46,16 @@
 #include <QStringList>
 #include "testconfig.h"
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
 class TestCase : public QObject
 {
     Q_OBJECT
 
 public:
-
-    TestCase(QObject* parent = 0);
+    TestCase(QObject *parent = 0);
     virtual ~TestCase();
 
     QString caseName();
@@ -60,10 +63,8 @@ public:
     QString fullPath();
     void setFullPath(QString path);
     QStringList functionList();
-
     QString logFileName();
     QString command();
-
     void addFunction(QString function);
     int passNum();
     void setPassNum(int passNum);
@@ -75,7 +76,6 @@ public:
     void setOutputType(TestConfig::OutputType outputType);
     QString testOutput();
     void outputAppend(QString str);
-
     int remainingSteps();
     void clearResult();
 
@@ -88,19 +88,23 @@ signals:
     void steps(int stepNum);
 
 private:
-    QString name;
-    QString path;
+    QString     name;
+    QString     path;
     QStringList functions;
 
-    int pass;
-    int fail;
-    int skip;
-    QString output;
+    int         pass;
+    int         fail;
+    int         skip;
+    QString     output;
+    int         progressPos;
+    int         progressIndex;
+
     TestConfig::OutputType type;
-    int progressPos;
-    int progressIndex;
 
 };
 
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // TESTCASE_H

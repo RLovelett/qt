@@ -46,16 +46,32 @@
 #include <QObject>
 #include <QStringList>
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
 class QSettings;
 class GlobalConfig;
 
-class TestConfig: public QObject
+class TestConfig : public QObject
 {
     Q_OBJECT
 
 public:
-    TestConfig(QObject* parent = 0);
-    TestConfig(const QString& path, QObject* parent = 0);
+    // Constants
+    const static QString ORG;
+    const static QString APP;
+    const static QString DELIMETER;
+    const static QString EXEPATH;
+    const static QString SELECTEDCASES;
+    const static QString GLOBALCFG;
+    const static QString OPTCHAR;
+    const static QString INTARG;
+    const static QString PATHDELI;
+
+public:
+    TestConfig(QObject *parent = 0);
+    TestConfig(const QString &path, QObject *parent = 0);
     enum OutputType
     {
         ETxt = 1,
@@ -65,21 +81,23 @@ public:
 
     virtual ~TestConfig();
 
-    const GlobalConfig* globalConfig();
+    const GlobalConfig *globalConfig();
 
     bool useOutputFile();
     QString outputFilePath();
     OutputType outputType();
     QString configStr();
-    QString selectedCases(const QString& testName);
-    QString executableFile(const QString& testName);
+    QString selectedCases(const QString &testName);
+    void saveSelectedCases(const QString &testName, const QString &path, const QString &testCases);
+    void removeUnselectedCases(const QString &testName);
+    QString executableFile(const QString &testName);
     QStringList testNames();
 
-    void saveGlobalConfig(const GlobalConfig& cfg);
+    void saveGlobalConfig(const GlobalConfig &cfg);
 
 private:
     void loadConfig();
-    void loadAlternativeConfig(const QString& path);
+    void loadAlternativeConfig(const QString &path);
     void loadGlobalConfig();
 
 private:
@@ -87,39 +105,41 @@ private:
     GlobalConfig    *globalCfg;
 };
 
-const static QString OUTPUTFORMAT = "outputformat";
-const static QString OUTPUTPATH = "outputpath";
-const static QString FLUSH = "flush";
-const static QString SILENT = "silent";
-const static QString VERBOSE = "verbose";
-const static QString EVENTDELAY = "eventdelay";
-const static QString KEYDELAY = "keydelay";
-const static QString MOUSEDELAY = "mousedelay";
-const static QString KEYEVENTVERBOSE = "keyevent-verbose";
-const static QString MAXWARNINGS = "maxwarnings";
-const static QString NOCRASHHANDLER = "nocrashhandler";
-const static QString CALLGRIND = "callgrind";
-const static QString TICKCOUNTER = "tickcounter";
-const static QString EVENTCOUNTER = "eventcounter";
-const static QString MINIMUMVALUE = "minimumvalue";
-const static QString ITERATIONS = "iterations";
-const static QString MEDIAN = "median";
-const static QString VERBOSEBENCHMARK = "vb";
-
 // Internal data class
-class GlobalConfig: public QObject
+class GlobalConfig : public QObject
 {
     Q_OBJECT
 
 public:
+    // Constants
+    const static QString OUTPUTFORMAT;
+    const static QString OUTPUTPATH;
+    const static QString FLUSH;
+    const static QString SILENT;
+    const static QString VERBOSE;
+    const static QString EVENTDELAY;
+    const static QString KEYDELAY;
+    const static QString MOUSEDELAY;
+    const static QString KEYEVENTVERBOSE;
+    const static QString MAXWARNINGS;
+    const static QString NOCRASHHANDLER;
+    const static QString CALLGRIND;
+    const static QString TICKCOUNTER;
+    const static QString EVENTCOUNTER;
+    const static QString MINIMUMVALUE;
+    const static QString ITERATIONS;
+    const static QString MEDIAN;
+    const static QString VERBOSEBENCHMARK;
+
+public:
     GlobalConfig(QObject *parent =0);
-    GlobalConfig(const GlobalConfig& cfg);
+    GlobalConfig(const GlobalConfig &cfg);
     virtual ~GlobalConfig();
     QString configStr();
     QString outputPath() const;
-    bool equalsTo(const GlobalConfig* cfg);
+    bool equalsTo(const GlobalConfig *cfg);
 
-    GlobalConfig& operator = (const GlobalConfig& other);
+    GlobalConfig &operator = (const GlobalConfig &other);
 
     void setOutputFormat(QString outputFormat);
     void setOutputPath(QString outputPath);
@@ -167,8 +187,6 @@ public:
     bool    verboseBenchMarking() const;
 
 private:
-
-private:
     QString m_outputFormat;
     QString m_outputPath;
     QString m_verbose;
@@ -191,7 +209,10 @@ private:
     int     m_iterations;
     int     m_median;
     bool    m_verboseBenchMarking;
-
 };
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // TESTCONFIG_H

@@ -44,6 +44,10 @@
 
 #include <QDialog>
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
 class QCheckBox;
 class QLabel;
 class QLineEdit;
@@ -51,21 +55,19 @@ class QComboBox;
 class QPushButton;
 class GlobalConfig;
 
-class EventOptDlg: public QDialog
+class EventOptDlg : public QDialog
 {
     Q_OBJECT
 
 public:
-    EventOptDlg(GlobalConfig *config = 0, QWidget* parent = 0);
+    EventOptDlg(GlobalConfig *config = 0, QWidget *parent = 0);
     virtual ~EventOptDlg();
 
 private:
     void createWidgets();
     void setupWidgetsEventHandlers();
-
     void load();
     void setLayout();
-
     void changeBtnSaveEnableState();
 
 private slots:
@@ -82,25 +84,27 @@ private slots:
     void showHelp();
 
 signals:
-    void eventOptSaved(const GlobalConfig&);
+    void eventOptSaved(const GlobalConfig &);
 
 private:
-    GlobalConfig    *initCfg;
-    GlobalConfig    *savedCfg;
+    GlobalConfig    *initConfig;
+    GlobalConfig    *savedConfig;
+    QCheckBox       *checkboxEventDelay;
+    QLineEdit       *lineEditEventDelay;
+    QCheckBox       *checkboxKeyDelay;
+    QLineEdit       *lineEditKeyDelay;
+    QCheckBox       *checkboxMouseDelay;
+    QLineEdit       *lineEditMouseDelay;
+    QCheckBox       *checkboxKeyEventVerbose;
+    QCheckBox       *checkboxCrashHandler;
 
-    QCheckBox       *chkbEventDelay;
-    QLineEdit       *leEventDelay;
-    QCheckBox       *chkbKeyDelay;
-    QLineEdit       *leKeyDelay;
-    QCheckBox       *chkbMouseDelay;
-    QLineEdit       *leMouseDelay;
-    QCheckBox       *chkbKeyEventVerbose;
-    QCheckBox       *chkbCrashHandler;
-
-    QPushButton *btnSave;
-    QPushButton *btnCancel;
-    QPushButton *btnHelp;
-
+    QPushButton     *buttonSave;
+    QPushButton     *buttonCancel;
+    QPushButton     *buttonHelp;
 };
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // EVENTOPTDLG_H

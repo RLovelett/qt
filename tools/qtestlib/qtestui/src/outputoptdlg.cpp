@@ -51,35 +51,24 @@
 #include "inc/outputoptdlg.h"
 #include "inc/testconfig.h"
 
-const static QString OUTPUT_OPT_WIN_TITLE = "Output Settings";
-const static QString FMT_XUNITXML = "xunitxml";
-const static QString FMT_XML = "xml";
-const static QString FMT_LIGHTXML = "lightxml";
-const static QString VERBOSE_LEVEL1 = "v1";
-const static QString VERBOSE_LEVEL2 = "v2";
-const static QString VERBOSE_LEVEL_S = "vs";
-const static QString OUTPUT_FMT = "output format:";
-const static QString BTN_SAVE = "Save";
-const static QString BTN_CANCEL = "Cancel";
-const static QString BTN_HELP = "Help";
+QT_BEGIN_NAMESPACE
 
 OutputOptDlg::OutputOptDlg(GlobalConfig *config, QWidget *parent):
         QDialog(parent),
-        initCfg(config),
-        savedCfg(NULL)
+        initConfig(config),
+        savedConfig(NULL)
 {
     setContextMenuPolicy(Qt::NoContextMenu);
-    setWindowTitle(OUTPUT_OPT_WIN_TITLE);
+    setWindowTitle(tr("Output Settings"));
     load();
     setLayout();
-    if (initCfg != NULL) {
-        savedCfg = new GlobalConfig(*initCfg);
-        savedCfg->setParent(this);
-    }
-    else {
-        savedCfg = new GlobalConfig(this);
-        initCfg = new GlobalConfig(*savedCfg);
-        initCfg->setParent(this);
+    if (initConfig != NULL) {
+        savedConfig = new GlobalConfig(*initConfig);
+        savedConfig->setParent(this);
+    } else {
+        savedConfig = new GlobalConfig(this);
+        initConfig = new GlobalConfig(*savedConfig);
+        initConfig->setParent(this);
     }
     this->setAttribute(Qt::WA_DeleteOnClose);
 }
@@ -96,91 +85,91 @@ void OutputOptDlg::load()
 
 void OutputOptDlg::createWidgets()
 {
-    chkbUseOutputFile = new QCheckBox(OUTPUTPATH + ": ", this);
-    chkbUseOutputFile->setChecked(initCfg != NULL && !(initCfg->outputPath().isEmpty()));
+    checkboxUseOutputFile = new QCheckBox(GlobalConfig::OUTPUTPATH + ": ", this);
+    checkboxUseOutputFile->setChecked(initConfig != NULL && !(initConfig->outputPath().isEmpty()));
 
-    lblOutputFmt = new QLabel(OUTPUT_FMT, this);
+    labelOutputFormat = new QLabel(tr("output format:"), this);
 
-    cbOutputFormat = new QComboBox(this);
-    listFormats << "" << FMT_XML << FMT_LIGHTXML << FMT_XUNITXML;
-    cbOutputFormat->addItems(listFormats);
-    if (initCfg != NULL && !initCfg->outputFormat().isEmpty())
-        cbOutputFormat->setCurrentIndex(listFormats.indexOf(initCfg->outputFormat()));
+    comboBoxOutputFormat = new QComboBox(this);
+    listFormats << "" << "xml" << "lightxml" << "xunitxml";
+    comboBoxOutputFormat->addItems(listFormats);
+    if (initConfig != NULL && !initConfig->outputFormat().isEmpty())
+        comboBoxOutputFormat->setCurrentIndex(listFormats.indexOf(initConfig->outputFormat()));
 
-    leOutputName = new QLineEdit(this);
-    leOutputName->setEnabled(initCfg != NULL && !(initCfg->outputPath().isEmpty()));
-    if (leOutputName->isEnabled()) {
-        QString path = initCfg->outputPath();
+    lineEditOutputName = new QLineEdit(this);
+    lineEditOutputName->setEnabled(initConfig != NULL && !(initConfig->outputPath().isEmpty()));
+    if (lineEditOutputName->isEnabled()) {
+        QString path = initConfig->outputPath();
         // Get rid of extra "/" at the end
         if (path != "" && path.endsWith('/')) path.remove(path.length() - 1, 1);
-        leOutputName->setText(path);
+        lineEditOutputName->setText(path);
     }
 
-    chkbSilent = new QCheckBox(SILENT, this);
-    chkbSilent->setChecked(initCfg != NULL && initCfg->silent());
+    checkboxSilent = new QCheckBox(GlobalConfig::SILENT, this);
+    checkboxSilent->setChecked(initConfig != NULL && initConfig->silent());
 
-    chkbVerbose = new QCheckBox(VERBOSE, this);
-    chkbVerbose->setChecked(initCfg != NULL && !(initCfg->verbose().isEmpty()));
+    checkboxVerbose = new QCheckBox(GlobalConfig::VERBOSE, this);
+    checkboxVerbose->setChecked(initConfig != NULL && !(initConfig->verbose().isEmpty()));
 
-    listVbLevel << "" << VERBOSE_LEVEL1 << VERBOSE_LEVEL2 << VERBOSE_LEVEL_S;
-    cbVerbose = new QComboBox(this);
-    cbVerbose->addItems(listVbLevel);
-    cbVerbose->setEnabled(chkbVerbose->isChecked());
-    if (cbVerbose->isEnabled())
-        cbVerbose->setCurrentIndex(listVbLevel.indexOf(initCfg->verbose()));
+    listVbLevel << "" << "v1" << "v2" << "vs";
+    comboBoxVerbose = new QComboBox(this);
+    comboBoxVerbose->addItems(listVbLevel);
+    comboBoxVerbose->setEnabled(checkboxVerbose->isChecked());
+    if (comboBoxVerbose->isEnabled())
+        comboBoxVerbose->setCurrentIndex(listVbLevel.indexOf(initConfig->verbose()));
 
-    chkbMaxWarnings = new QCheckBox(MAXWARNINGS + ": ", this);
-    chkbMaxWarnings->setChecked(initCfg != NULL && initCfg->maxWarnings() != -1);
-    leMaxWarnings = new QLineEdit(this);
-    leMaxWarnings->setEnabled(chkbMaxWarnings->isChecked());
-    if (leMaxWarnings->isEnabled())
-        leMaxWarnings->setText(tr("%1").arg(initCfg->maxWarnings()));
+    checkboxMaxWarnings = new QCheckBox(GlobalConfig::MAXWARNINGS + ": ", this);
+    checkboxMaxWarnings->setChecked(initConfig != NULL && initConfig->maxWarnings() != -1);
+    lineEditMaxWarnings = new QLineEdit(this);
+    lineEditMaxWarnings->setEnabled(checkboxMaxWarnings->isChecked());
+    if (lineEditMaxWarnings->isEnabled())
+        lineEditMaxWarnings->setText(tr("%1").arg(initConfig->maxWarnings()));
 
-    chkbFlush = new QCheckBox(FLUSH, this);
-    chkbFlush->setChecked(initCfg != NULL && initCfg->flush());
+    checkboxFlush = new QCheckBox(GlobalConfig::FLUSH, this);
+    checkboxFlush->setChecked(initConfig != NULL && initConfig->flush());
 
-    btnSave = new QPushButton(BTN_SAVE, this);
-    btnSave->setEnabled(false);
-    btnCancel = new QPushButton(BTN_CANCEL, this);
-    btnHelp = new QPushButton(BTN_HELP, this);
+    buttonSave = new QPushButton(tr("Save"), this);
+    buttonSave->setEnabled(false);
+    buttonCancel = new QPushButton(tr("Cancel"), this);
+    buttonHelp = new QPushButton(tr("Help"), this);
 }
 
 void OutputOptDlg::setLayout()
 {
-    QWidget* outputLayoutWidget = new QWidget(this);
-    QHBoxLayout* layout = new QHBoxLayout(outputLayoutWidget);
-    layout->addWidget(chkbUseOutputFile);
-    layout->addWidget(leOutputName);
+    QWidget *outputLayoutWidget = new QWidget(this);
+    QHBoxLayout *layout = new QHBoxLayout(outputLayoutWidget);
+    layout->addWidget(checkboxUseOutputFile);
+    layout->addWidget(lineEditOutputName);
     outputLayoutWidget->setLayout(layout);
 
-    QWidget* fmtLayoutWidget = new QWidget(this);
-    QHBoxLayout* fmtLayout = new QHBoxLayout(fmtLayoutWidget);
-    fmtLayout->addWidget(lblOutputFmt);
-    fmtLayout->addWidget(cbOutputFormat);
+    QWidget *fmtLayoutWidget = new QWidget(this);
+    QHBoxLayout *fmtLayout = new QHBoxLayout(fmtLayoutWidget);
+    fmtLayout->addWidget(labelOutputFormat);
+    fmtLayout->addWidget(comboBoxOutputFormat);
     fmtLayoutWidget->setLayout(fmtLayout);
 
-    QWidget* vbLayoutWidget = new QWidget(this);
-    QHBoxLayout* layoutVb = new QHBoxLayout(vbLayoutWidget);
-    layoutVb->addWidget(chkbSilent);
-    layoutVb->addWidget(chkbVerbose);
-    layoutVb->addWidget(cbVerbose);
+    QWidget *vbLayoutWidget = new QWidget(this);
+    QHBoxLayout *layoutVb = new QHBoxLayout(vbLayoutWidget);
+    layoutVb->addWidget(checkboxSilent);
+    layoutVb->addWidget(checkboxVerbose);
+    layoutVb->addWidget(comboBoxVerbose);
     vbLayoutWidget->setLayout(layoutVb);
 
-    QWidget* mLayoutWidget = new QWidget(this);
-    QHBoxLayout* mLayout = new QHBoxLayout(mLayoutWidget);
-    mLayout->addWidget(chkbFlush);
-    mLayout->addWidget(chkbMaxWarnings);
-    mLayout->addWidget(leMaxWarnings);
+    QWidget *mLayoutWidget = new QWidget(this);
+    QHBoxLayout *mLayout = new QHBoxLayout(mLayoutWidget);
+    mLayout->addWidget(checkboxFlush);
+    mLayout->addWidget(checkboxMaxWarnings);
+    mLayout->addWidget(lineEditMaxWarnings);
     mLayoutWidget->setLayout(mLayout);
 
-    QWidget* btnLayoutWidget = new QWidget(this);
-    QHBoxLayout* btnLayout = new QHBoxLayout(btnLayoutWidget);
-    btnLayout->addWidget(btnSave);
-    btnLayout->addWidget(btnCancel);
-    btnLayout->addWidget(btnHelp);
+    QWidget *btnLayoutWidget = new QWidget(this);
+    QHBoxLayout *btnLayout = new QHBoxLayout(btnLayoutWidget);
+    btnLayout->addWidget(buttonSave);
+    btnLayout->addWidget(buttonCancel);
+    btnLayout->addWidget(buttonHelp);
     btnLayoutWidget->setLayout(btnLayout);
 
-    QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(outputLayoutWidget);
     mainLayout->addWidget(fmtLayoutWidget);
     mainLayout->addWidget(vbLayoutWidget);
@@ -190,89 +179,92 @@ void OutputOptDlg::setLayout()
 
 void OutputOptDlg::setupWidgetsEventHandlers()
 {
-    connect(chkbUseOutputFile, SIGNAL(stateChanged(int)), this, SLOT(changeOutputFile(int)));
-    connect(chkbSilent, SIGNAL(stateChanged(int)), this, SLOT(changeSilent(int)));
-    connect(leOutputName, SIGNAL(textChanged(QString)), this, SLOT(changeOutputFilePath(QString)));
-    connect(cbOutputFormat, SIGNAL(currentIndexChanged(QString)), this, SLOT(changeOutputFormat(QString)));
-    connect(chkbVerbose, SIGNAL(stateChanged(int)), this, SLOT(changeVerboseState(int)));
-    connect(cbVerbose, SIGNAL(currentIndexChanged(QString)), this, SLOT(changeVerboseLevel(QString)));
-    connect(chkbFlush, SIGNAL(stateChanged(int)), this, SLOT(changeFlush(int)));
-    connect(chkbMaxWarnings, SIGNAL(stateChanged(int)), this, SLOT(changeMaxWarningsState(int)));
-    connect(leMaxWarnings, SIGNAL(textChanged(QString)), this, SLOT(changeMaxWarnings(QString)));
-    connect(btnSave, SIGNAL(clicked()), this, SLOT(saveOutputOpt()));
-    connect(btnCancel, SIGNAL(clicked()), this, SLOT(closeDlg()));
-    connect(btnHelp, SIGNAL(clicked()), this, SLOT(showHelp()));
+    connect(checkboxUseOutputFile, SIGNAL(stateChanged(int)), this, SLOT(changeOutputFile(int)));
+    connect(checkboxSilent, SIGNAL(stateChanged(int)), this, SLOT(changeSilent(int)));
+    connect(lineEditOutputName, SIGNAL(textChanged(QString)), this, SLOT(changeOutputFilePath(QString)));
+    connect(comboBoxOutputFormat, SIGNAL(currentIndexChanged(QString)),
+            this, SLOT(changeOutputFormat(QString)));
+    connect(checkboxVerbose, SIGNAL(stateChanged(int)), this, SLOT(changeVerboseState(int)));
+    connect(comboBoxVerbose, SIGNAL(currentIndexChanged(QString)), this, SLOT(changeVerboseLevel(QString)));
+    connect(checkboxFlush, SIGNAL(stateChanged(int)), this, SLOT(changeFlush(int)));
+    connect(checkboxMaxWarnings, SIGNAL(stateChanged(int)), this, SLOT(changeMaxWarningsState(int)));
+    connect(lineEditMaxWarnings, SIGNAL(textChanged(QString)), this, SLOT(changeMaxWarnings(QString)));
+    connect(buttonSave, SIGNAL(clicked()), this, SLOT(saveOutputOpt()));
+    connect(buttonCancel, SIGNAL(clicked()), this, SLOT(closeDlg()));
+    connect(buttonHelp, SIGNAL(clicked()), this, SLOT(showHelp()));
 }
 
 void OutputOptDlg::changeBtnSaveEnableState()
 {
-    btnSave->setEnabled(!initCfg->equalsTo(savedCfg));
+    buttonSave->setEnabled(!initConfig->equalsTo(savedConfig));
 }
 
 void OutputOptDlg::changeOutputFile(int state)
 {
-    leOutputName->setEnabled(state == Qt::Checked);
-    if (!leOutputName->isEnabled()) {
-        leOutputName->clear();
-        savedCfg->setOutputPath(tr(""));
+    lineEditOutputName->setEnabled(state == Qt::Checked);
+    if (!lineEditOutputName->isEnabled()) {
+        lineEditOutputName->clear();
+        savedConfig->setOutputPath("");
     } else {
-        QString path = initCfg->outputPath();
+        QString path = initConfig->outputPath();
         // Get rid of extra "/" at the end
         if (path != "" && path.endsWith('/')) path.remove(path.length() - 1, 1);
-        leOutputName->setText(path);
-        savedCfg->setOutputPath(path);
+        lineEditOutputName->setText(path);
+        savedConfig->setOutputPath(path);
     }
-    cbOutputFormat->setCurrentIndex(initCfg != NULL && !initCfg->outputFormat().isEmpty() ? listFormats.indexOf(initCfg->outputFormat()) : 0);
+    comboBoxOutputFormat->setCurrentIndex(initConfig != NULL && !initConfig->outputFormat().isEmpty()
+                                          ? listFormats.indexOf(initConfig->outputFormat()) : 0);
     changeBtnSaveEnableState();
 }
 
 void OutputOptDlg::changeSilent(int state)
 {
-    savedCfg->setSilent(state == Qt::Checked);
+    savedConfig->setSilent(state == Qt::Checked);
     changeBtnSaveEnableState();
 }
 
 void OutputOptDlg::changeOutputFilePath(QString text)
 {
-    savedCfg->setOutputPath(text);
+    savedConfig->setOutputPath(text);
     changeBtnSaveEnableState();
 }
 
 void OutputOptDlg::changeOutputFormat(QString text)
 {
-    savedCfg->setOutputFormat(text);
+    savedConfig->setOutputFormat(text);
     changeBtnSaveEnableState();
 }
 
 void OutputOptDlg::changeVerboseState(int state)
 {
-    cbVerbose->setEnabled(state == Qt::Checked);
-    cbVerbose->setCurrentIndex(cbVerbose->isEnabled() ? listVbLevel.indexOf(initCfg->verbose()) : 0);
+    comboBoxVerbose->setEnabled(state == Qt::Checked);
+    comboBoxVerbose->setCurrentIndex(comboBoxVerbose->isEnabled()
+                                     ? listVbLevel.indexOf(initConfig->verbose()) : 0);
     changeBtnSaveEnableState();
 }
 
 void OutputOptDlg::changeVerboseLevel(QString text)
 {
-    savedCfg->setVerbose(text);
+    savedConfig->setVerbose(text);
     changeBtnSaveEnableState();
 }
 
 void OutputOptDlg::changeFlush(int state)
 {
-    savedCfg->setFlush(state == Qt::Checked);
+    savedConfig->setFlush(state == Qt::Checked);
     changeBtnSaveEnableState();
 }
 
 void OutputOptDlg::changeMaxWarningsState(int state)
 {
-    leMaxWarnings->setEnabled(state == Qt::Checked);
-    if (!leMaxWarnings->isEnabled()) {
-        leMaxWarnings->clear();
-        savedCfg->setMaxWarnings(-1);
+    lineEditMaxWarnings->setEnabled(state == Qt::Checked);
+    if (!lineEditMaxWarnings->isEnabled()) {
+        lineEditMaxWarnings->clear();
+        savedConfig->setMaxWarnings(-1);
     } else {
-        if (initCfg->maxWarnings() != -1) {
-            leMaxWarnings->setText(tr("%1").arg(initCfg->maxWarnings()));
-            savedCfg->setMaxWarnings(initCfg->maxWarnings());
+        if (initConfig->maxWarnings() != -1) {
+            lineEditMaxWarnings->setText(tr("%1").arg(initConfig->maxWarnings()));
+            savedConfig->setMaxWarnings(initConfig->maxWarnings());
         }
     }
 }
@@ -282,23 +274,23 @@ void OutputOptDlg::changeMaxWarnings(QString text)
     bool ok = false;
     int val = text.toInt(&ok);
     if (!ok) val = -1;
-    savedCfg->setMaxWarnings(val);
+    savedConfig->setMaxWarnings(val);
     changeBtnSaveEnableState();
 }
 
 void OutputOptDlg::saveOutputOpt()
 {
-    QString savedPath = savedCfg->outputPath();
+    QString savedPath = savedConfig->outputPath();
     QDir path(savedPath);
     if (!path.exists()) {
-        if (!path.mkdir(savedPath)) {
-            QMessageBox::information(this, tr("ERROR"), tr("Invalid file/directory name: ") + savedPath);
+        if (!path.mkpath(savedPath)) {
+            QMessageBox::information(this, tr("ERROR"), tr("Failed to create dir: ") + savedPath);
             return;
         }
     }
-    *initCfg = *savedCfg;
+    *initConfig = *savedConfig;
     changeBtnSaveEnableState();
-    emit outputOptSaved(*savedCfg);
+    emit outputOptSaved(*savedConfig);
     closeDlg();
 }
 
@@ -311,10 +303,13 @@ void OutputOptDlg::showHelp()
 {
     const static QString msg = tr("silent: Only outputs warnings and failures.\n")
                                + tr("verbose:\n")
-                               + tr(" v1: Print enter msg for each test func.\n")
+                               + tr(" v1: Print enter msg for each test function.\n")
                                + tr(" v2: each QVERIFY/QCOMPARE/QTEST and v1.\n")
                                + tr(" vs: Print every signal emitted.\n")
                                + tr("flush: Flushes the results.\n")
                                + tr("maxwarnings: Max amount of msg to output.(0: unlimited, default: 2000)");
     QMessageBox::information(this, tr("Output Options"), msg);
 }
+
+QT_END_NAMESPACE
+

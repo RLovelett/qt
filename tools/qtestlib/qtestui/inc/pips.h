@@ -44,17 +44,20 @@
 
 #include <QProcess>
 
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
 class PipsProcess : public QObject
 {
     Q_OBJECT
 
 public:
-    PipsProcess(QObject* parent = 0);
+    PipsProcess(QObject *parent = 0);
     virtual ~PipsProcess();
 
     void setUsePips(bool usePipsAPI);
-
-    void start(const QString & program);
+    void start(const QString &program);
     bool waitForFinished();
     void kill();
     QByteArray readAllStandardError();
@@ -75,7 +78,6 @@ signals:
 private:
     bool        usePips;
     QProcess    *process;
-
     FILE        *childProcessStream;
     int         childProcessFD;
     char        *buffer;
@@ -83,5 +85,9 @@ private:
     int         nbytes;
 
 };
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // PIPS_H

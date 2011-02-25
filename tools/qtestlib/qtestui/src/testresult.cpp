@@ -41,8 +41,9 @@
 
 #include "inc/testresult.h"
 
+QT_BEGIN_NAMESPACE
 
-TestResult::TestResult(QObject* parent):
+TestResult::TestResult(QObject *parent):
         QObject(parent),
         textWidget(NULL),
         progressBar(NULL),
@@ -122,7 +123,7 @@ void TestResult::setReportWidget(QTableWidget *widget)
     widget->setRowCount(0);
     if (widget->isSortingEnabled())
         widget->setSortingEnabled(false);
-    connect(widget, SIGNAL(cellDoubleClicked(int, int)),this, SLOT(showCaseLog(int, int)));
+    connect(widget, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(showCaseLog(int, int)));
 }
 
 void TestResult::setReportSize(int size)
@@ -131,7 +132,11 @@ void TestResult::setReportSize(int size)
         reportWidget->setRowCount(size);
 }
 
-void TestResult::setReportItem(int index, QTableWidgetItem *name, QTableWidgetItem *pass, QTableWidgetItem *fail, QTableWidgetItem *skip)
+void TestResult::setReportItem(int index,
+                               QTableWidgetItem *name,
+                               QTableWidgetItem *pass,
+                               QTableWidgetItem *fail,
+                               QTableWidgetItem *skip)
 {
     if (reportWidget)
     {
@@ -158,7 +163,7 @@ void TestResult::textClear()
         textWidget->clear();
 }
 
-void TestResult::createReport(QList<TestCase*> *caseList)
+void TestResult::createReport(QList<TestCase *> *caseList)
 {
     this->caseList = caseList;
 
@@ -172,7 +177,7 @@ void TestResult::createReport(QList<TestCase*> *caseList)
         fail += testCase->failNum();
         skip += testCase->skipNum();
     }
-    QTableWidgetItem *summaryItem = new QTableWidgetItem("Summary:");
+    QTableWidgetItem *summaryItem = new QTableWidgetItem(tr("Summary:"));
     QTableWidgetItem *passCountItem = new QTableWidgetItem(QString::number(pass));
     QTableWidgetItem *failCountItem = new QTableWidgetItem(QString::number(fail));
     QTableWidgetItem *skipCountItem = new QTableWidgetItem(QString::number(skip));
@@ -200,7 +205,7 @@ void TestResult::clearReport()
     setReportSize(0);
 }
 
-void TestResult::showCaseLog(int row, int column)
+void TestResult::showCaseLog(int row, int /*column*/)
 {
     if (row > 0) {
         DialogLog dlgLog(reportWidget);
@@ -208,7 +213,7 @@ void TestResult::showCaseLog(int row, int column)
     }
 }
 
-DialogLog::DialogLog(QWidget* parent):
+DialogLog::DialogLog(QWidget *parent):
         QDialog(parent)
 {
     setModal(true);
@@ -220,7 +225,7 @@ DialogLog::~DialogLog()
 
 void DialogLog::showLog(QString text)
 {
-    QGridLayout* layout = new QGridLayout(this);
+    QGridLayout *layout = new QGridLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
 
     textWidget = new QTextEdit(this);
@@ -242,9 +247,11 @@ void DialogLog::showLog(QString text)
     connect(buttonClose, SIGNAL(clicked()), this, SLOT(close()));
     layout->addWidget(buttonClose, 1, 2);
 
-
     textWidget->insertPlainText(text);
 
     this->showMaximized();
     this->exec();
 }
+
+QT_END_NAMESPACE
+
