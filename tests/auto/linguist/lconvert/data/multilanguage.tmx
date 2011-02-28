@@ -43,5 +43,21 @@
     <seg>Teil 1<bpt i="2" x="2">&lt;u></bpt>Teil 3<ept i="2">&lt;/u></ept> <bpt i="1" x="1">&lt;b></bpt>Teil 2<ept i="1">&lt;/b></ept>Teil 4</seg>
    </tuv>
   </tu>
+  <tu tuid="4">
+   <tuv xml:lang="FI">
+    <seg>kissa</seg>
+   </tuv>
+   <tuv xml:lang="EN">
+    <seg>Cat</seg>
+   </tuv>
+  </tu>
+  <tu tuid="4">
+   <tuv xml:lang="FI">
+    <seg>koira</seg>
+   </tuv>
+   <tuv xml:lang="DE">
+    <seg>Hund</seg>
+   </tuv>
+  </tu>
  </body>
 </tmx>
