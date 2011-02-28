@@ -112,10 +112,10 @@ void tst_lconvert::doCompare(QIODevice *actualDev, const QString &expectedFn,
 
     if (!toBeReplaced.isEmpty()) {
         QList<QByteArray> modifiedExpected;
-        for (int i=0; i < expected.size(); i++){
-            QString line = expected.at(i);
+        for (int i = 0; i < expected.size(); i++) {
+            QString line = QString::fromLatin1(expected.at(i));
             line.replace(QRegExp(toBeReplaced), replacement);
-            modifiedExpected.append(QByteArray(line.toStdString().c_str()));
+            modifiedExpected.append(QByteArray(line.toLatin1()));
         }
         expected = modifiedExpected;
     }
@@ -198,7 +198,7 @@ void tst_lconvert::convertChain(const QString &_inFileName, const QString &_outF
         doWait(cvt, ++st);
 
     if (!QTest::currentTestFailed())
-        doCompare(cvts.last(), outFileName, NULL, NULL);
+        doCompare(cvts.last(), outFileName, QString(), QString());
 
     qDeleteAll(cvts);
 }
@@ -249,12 +249,12 @@ void tst_lconvert::converts_data()
     QTest::newRow("escapes") << "test-escapes.po" << "test-escapes.po.out" << "po" << "" << "";
     QTest::newRow("tmx multilanguage to tmx") << "multilanguage.tmx" << "multilanguage.tmx.out" << "tmx"
                    << "creationtoolversion=\"TOOLVERSION\""
-                   << QString("creationtoolversion=\"%1\"").arg(QT_VERSION_STR);
+                   << "creationtoolversion=\"" QT_VERSION_STR "\"";
     QTest::newRow("tmx multilanguage to ts") << "multilanguage.tmx" << "multilanguage.ts" << "ts" << "" << "";
     QTest::newRow("tmx multilanguage to qph") << "multilanguage.tmx" << "multilanguage.qph" << "qph" << "" << "";
     QTest::newRow("qph to tmx") << "phrasebook.qph" << "phrasebook.qph.tmx.out" << "tmx"
                   << "creationtoolversion=\"TOOLVERSION\""
-                  << QString("creationtoolversion=\"%1\"").arg(QT_VERSION_STR);
+                  << "creationtoolversion=\"" QT_VERSION_STR "\"";
 }
 
 void tst_lconvert::converts()
