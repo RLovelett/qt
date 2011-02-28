@@ -3437,8 +3437,8 @@ int QApplication::x11ProcessEvent(XEvent* event)
             break;
         // fall through intended
     case ButtonPress:
-        if (event->xbutton.root != RootWindow(X11->display, widget->x11Info().screen())
-            && ! qt_xdnd_dragging) {
+        if (event->type == ButtonPress && ! qt_xdnd_dragging &&
+	    event->xbutton.root != RootWindow(X11->display, widget->x11Info().screen())) {
             while (activePopupWidget())
                 activePopupWidget()->close();
             return 1;
