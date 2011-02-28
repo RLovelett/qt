@@ -1255,6 +1255,7 @@ qint64 QTextStream::pos() const
                 return qint64(-1);
         }
         thatd->readBufferOffset = oldReadBufferOffset;
+        thatd->readConverterSavedStateOffset = 0;
 
         // Return the device position.
         return d->device->pos();
