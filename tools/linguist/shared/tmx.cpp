@@ -80,8 +80,8 @@ private:
     void readSegElement();
     void skipUnknownElement();
 
-    enum DataField {NoField, SourceField, TargetField, DefinitionField};
-    enum LangSet {NothingSet, SourceSet, BothSet};
+    enum DataField { NoField, SourceField, TargetField, DefinitionField };
+    enum LangSet { NothingSet, SourceSet, BothSet };
     DataField m_currentField;
     LangSet m_languageState;
     QString m_currentSource;
@@ -157,15 +157,15 @@ void TMXReader::readTuElement(Translator &translator)
                     *  the first language found for the rest of the document.
                     */
                     switch (m_languageState) {
-                    case NothingSet :
+                    case NothingSet:
                         translator.setSourceLanguageCode(langAttr);
                         m_languageState = SourceSet;
                         break;
-                    case SourceSet :
+                    case SourceSet:
                         translator.setLanguageCode(langAttr);
                         m_languageState = BothSet;
                         break;
-                    case BothSet :
+                    case BothSet:
                         break;
                     }
 
@@ -185,7 +185,7 @@ void TMXReader::readTuElement(Translator &translator)
         }
     }
 
-    if (!m_currentTarget.isEmpty()) {
+    if (!m_currentTarget.isEmpty() && !m_currentSource.isEmpty()) {
         TranslatorMessage msg;
         msg.setSourceText(m_currentSource);
         msg.setTranslation(m_currentTarget);
@@ -281,10 +281,14 @@ static bool saveTMX(const Translator &translator, QIODevice &dev, ConversionData
     t << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     t << "<!DOCTYPE tmx SYSTEM \"tmx14.dtd\">\n";
     t << "<tmx version=\"1.4\">\n";
-    t << "    <header creationtool=\"linguist\" creationtoolversion=\"" ;
-    t << QT_VERSION_STR << "\" segtype=\"paragraph\" o-encoding=\"UTF-8\" ";
-    t << "adminlang=\"" << languageCode << "\" srclang=\"" << languageCode;
-    t << "\" o-tmf=\"unknown\" datatype=\"plaintext\" />\n";
+    t << "    <header creationtool=\"linguist\"";
+    t << " creationtoolversion=\"" QT_VERSION_STR  "\"";
+    t << " segtype=\"paragraph\"";
+    t << " o-encoding=\"UTF-8\"";
+    t << " adminlang=\"" << languageCode << "\"";
+    t << " srclang=\"" << languageCode << "\"";
+    t << " o-tmf=\"unknown\"";
+    t << " datatype=\"plaintext\"/>\n";
     t << "    <body>\n";
 
     int counter = 1;

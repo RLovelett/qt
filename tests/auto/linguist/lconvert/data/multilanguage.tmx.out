@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE tmx SYSTEM "tmx14.dtd">
 <tmx version="1.4">
-    <header creationtool="linguist" creationtoolversion="TOOLVERSION" segtype="paragraph" o-encoding="UTF-8" adminlang="EN" srclang="EN" o-tmf="unknown" datatype="plaintext" />
+    <header creationtool="linguist" creationtoolversion="TOOLVERSION" segtype="paragraph" o-encoding="UTF-8" adminlang="EN" srclang="EN" o-tmf="unknown" datatype="plaintext"/>
     <body>
         <tu tuid="1">
             <tuv xml:lang="EN">
