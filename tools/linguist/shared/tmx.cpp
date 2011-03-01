@@ -50,14 +50,13 @@
 #include "translator.h"
 
 #include <QtCore/QByteArray>
-#include <QtCore/QDebug>
 #include <QtCore/QTextCodec>
 #include <QtCore/QTextStream>
 
 #include <QtXml/QXmlStreamReader>
 #include <QtXml/QXmlStreamAttribute>
 
-#include <iostream>
+#include <stdio.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -189,6 +188,12 @@ void TMXReader::readTuElement(Translator &translator)
         msg.setTranslation(m_currentTarget);
         msg.setComment(m_currentDefinition);
         translator.append(msg);
+    } else {
+        fprintf(stderr, "The following entry was dropped: ");
+        if (m_currentTarget.isEmpty())
+            fprintf(stderr, "no translation for: %s\n", m_currentSource.toStdString().c_str());
+        else
+            fprintf(stderr, "no source language entry for: %s\n", m_currentTarget.toStdString().c_str());
     }
 
     m_currentSource.clear();
