@@ -80,7 +80,7 @@ private:
     bool getNextElement();
     void skipUnknownElement();
 
-    enum DataField { NoField, SourceField, TargetField, DefinitionField };
+    enum DataField { NoField, SourceField, TargetField, UnknownLanguage };
     enum LangSet { NothingSet, SourceSet, BothSet };
     DataField m_currentField;
     LangSet m_languageState;
@@ -148,10 +148,12 @@ void TMXReader::readTuElement(Translator &translator)
                     case NothingSet:
                         translator.setSourceLanguageCode(langAttr);
                         m_languageState = SourceSet;
+                        m_cd.appendError(QString::fromLatin1("source language set to: %1").arg(langAttr));
                         break;
                     case SourceSet:
                         translator.setLanguageCode(langAttr);
                         m_languageState = BothSet;
+                        m_cd.appendError(QString::fromLatin1("target language set to: %1").arg(langAttr));
                         break;
                     case BothSet:
                         break;
@@ -164,7 +166,9 @@ void TMXReader::readTuElement(Translator &translator)
                         m_currentField = TargetField;
                         readTuvElement();
                     } else {
-                        skipUnknownElement();
+                        m_currentField = UnknownLanguage;
+                        m_cd.appendError(QString::fromLatin1("wrong language: %1").arg(langAttr));
+                        readTuvElement();
                     }
                 }
             } else {
@@ -181,11 +185,15 @@ void TMXReader::readTuElement(Translator &translator)
         translator.append(msg);
         msg.setType(TranslatorMessage::Finished);
     } else {
-        QString errMsg = QString::fromLatin1("The following entry was dropped: ");
-        if (m_currentTarget.isEmpty())
-            errMsg.append(QString::fromLatin1("no translation for: %1").arg(m_currentSource));
-        else
-            errMsg.append(QString::fromLatin1("no source language entry for: %1").arg(m_currentTarget));
+        QString errMsg;
+        if (m_currentTarget.isEmpty() && !m_currentSource.isEmpty())
+            errMsg.append(QString::fromLatin1("the following entry was dropped: %1 (no translation in target language %2 available)")
+                          .arg(m_currentSource)
+                          .arg(translator.languageCode()));
+        else if (!m_currentTarget.isEmpty() && m_currentSource.isEmpty())
+            errMsg.append(QString::fromLatin1("the following entry was dropped: %1 (no translation in source language %2 available)")
+                          .arg(m_currentTarget)
+                          .arg(translator.sourceLanguageCode()));
 
         m_cd.appendError(errMsg);
     }
@@ -209,10 +217,20 @@ void TMXReader::readTuvElement()
 
 void TMXReader::readSegElement()
 {
-    if (m_currentField == SourceField)
+    switch (m_currentField) {
+    case SourceField:
         m_currentSource = readElementText(IncludeChildElements);
-    else if (m_currentField == TargetField)
+        break;
+    case TargetField:
         m_currentTarget = readElementText(IncludeChildElements);
+        break;
+    case UnknownLanguage:
+        m_cd.appendError(QString::fromLatin1("the following entry was dropped: %1 (wrong language)")
+                         .arg(readElementText(IncludeChildElements)));
+        break;
+    case NoField:
+        break;
+    }
 }
 
 bool TMXReader::getNextElement()

@@ -59,5 +59,13 @@
     <seg>Hund</seg>
    </tuv>
   </tu>
+  <tu tuid="6">
+   <tuv xml:lang="FI">
+    <seg>hiiri</seg>
+   </tuv>
+   <tuv xml:lang="FR">
+    <seg>souris</seg>
+   </tuv>
+  </tu>
  </body>
 </tmx>
