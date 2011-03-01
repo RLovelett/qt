@@ -148,11 +148,9 @@ void TMXReader::readTuElement(Translator &translator)
                 QString lang = QLatin1String("xml:lang");
                 if (attributes().hasAttribute(lang)) {
                     QString langAttr = attributes().value(lang).toString();
-                    /*
-                    *  A TMX file can contain more than one translation for
-                    *  an expression. To keep it simple this code just parses
-                    *  the first language found for the rest of the document.
-                    */
+                    //  A TMX file can contain more than one translation for
+                    //  an expression. To keep it simple this code just parses
+                    //  the first language found for the rest of the document.
                     switch (m_languageState) {
                     case NothingSet:
                         translator.setSourceLanguageCode(langAttr);
@@ -217,7 +215,7 @@ void TMXReader::readTuvElement()
 
 void TMXReader::readSegElement()
 {
-    if ( m_currentField == SourceField )
+    if (m_currentField == SourceField)
         m_currentSource = readElementText(IncludeChildElements);
     else if (m_currentField == TargetField)
         m_currentTarget = readElementText(IncludeChildElements);
@@ -292,7 +290,7 @@ static bool saveTMX(const Translator &translator, QIODevice &dev, ConversionData
     t << "<!DOCTYPE tmx SYSTEM \"tmx14.dtd\">\n";
     t << "<tmx version=\"1.4\">\n";
     t << "    <header creationtool=\"linguist\"";
-    t << " creationtoolversion=\"" QT_VERSION_STR  "\"";
+    t << " creationtoolversion=\"" QT_VERSION_STR "\"";
     t << " segtype=\"paragraph\"";
     t << " o-encoding=\"UTF-8\"";
     t << " adminlang=\"" << languageCode << "\"";
