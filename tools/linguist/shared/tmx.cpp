@@ -94,8 +94,7 @@ bool TMXReader::read(Translator &translator)
 {
     m_currentField = NoField;
     m_languageState = NothingSet;
-    while (!atEnd()) {
-        readNext();
+    while(getNextElement()) {
         if (isStartElement()) {
             if (name() == QLatin1String("tmx"))
                 readTMXElement(translator);
@@ -112,9 +111,7 @@ bool TMXReader::read(Translator &translator)
 
 void TMXReader::readTMXElement(Translator &translator)
 {
-    while (!atEnd()) {
-        if (getNextElement())
-            break;
+    while (getNextElement()) {
         if (isStartElement()) {
             if (name() == "body")
                 readBodyElement(translator);
@@ -126,9 +123,7 @@ void TMXReader::readTMXElement(Translator &translator)
 
 void TMXReader::readBodyElement(Translator &translator)
 {
-    while (!atEnd()) {
-        if (getNextElement())
-            break;
+    while (getNextElement()) {
         if (isStartElement()) {
             if (name() == "tu")
                 readTuElement(translator);
@@ -140,9 +135,7 @@ void TMXReader::readBodyElement(Translator &translator)
 
 void TMXReader::readTuElement(Translator &translator)
 {
-    while (!atEnd()) {
-        if (getNextElement())
-            break;
+    while (getNextElement()) {
         if (isStartElement()) {
             if (name() == "tuv") {
                 QString lang = QLatin1String("xml:lang");
@@ -204,9 +197,7 @@ void TMXReader::readTuElement(Translator &translator)
 
 void TMXReader::readTuvElement()
 {
-    while (!atEnd()) {
-        if (getNextElement())
-            break;
+    while (getNextElement()) {
         if (isStartElement()) {
             if (name() == "seg")
                 readSegElement();
@@ -226,18 +217,19 @@ void TMXReader::readSegElement()
 
 bool TMXReader::getNextElement()
 {
-    readNext();
-    if (isEndElement())
-        return true;
+    while (!atEnd()) {
+        readNext();
+        if (isEndElement())
+            return false;
 
+        return true;
+    }
     return false;
 }
 
 void TMXReader::skipUnknownElement()
 {
-    while (!atEnd()) {
-        if (getNextElement())
-            break;
+    while (getNextElement()) {
         if (isStartElement())
             skipUnknownElement();
     }
