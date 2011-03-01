@@ -78,6 +78,7 @@ private:
     void readTuElement(Translator &translator);
     void readTuvElement();
     void readSegElement();
+    bool getNextElement();
     void skipUnknownElement();
 
     enum DataField { NoField, SourceField, TargetField, DefinitionField };
@@ -113,8 +114,7 @@ bool TMXReader::read(Translator &translator)
 void TMXReader::readTMXElement(Translator &translator)
 {
     while (!atEnd()) {
-        readNext();
-        if (isEndElement())
+        if (getNextElement())
             break;
         if (isStartElement()) {
             if (name() == "body")
@@ -128,8 +128,7 @@ void TMXReader::readTMXElement(Translator &translator)
 void TMXReader::readBodyElement(Translator &translator)
 {
     while (!atEnd()) {
-        readNext();
-        if (isEndElement())
+        if (getNextElement())
             break;
         if (isStartElement()) {
             if (name() == "tu")
@@ -143,8 +142,7 @@ void TMXReader::readBodyElement(Translator &translator)
 void TMXReader::readTuElement(Translator &translator)
 {
     while (!atEnd()) {
-        readNext();
-        if (isEndElement())
+        if (getNextElement())
             break;
         if (isStartElement()) {
             if (name() == "tuv") {
@@ -201,8 +199,7 @@ void TMXReader::readTuElement(Translator &translator)
 void TMXReader::readTuvElement()
 {
     while (!atEnd()) {
-        readNext();
-        if (isEndElement())
+        if (getNextElement())
             break;
         if (isStartElement()) {
             if (name() == "seg")
@@ -221,11 +218,19 @@ void TMXReader::readSegElement()
         m_currentTarget = readElementText(IncludeChildElements);
 }
 
+bool TMXReader::getNextElement()
+{
+    readNext();
+    if (isEndElement())
+        return true;
+
+    return false;
+}
+
 void TMXReader::skipUnknownElement()
 {
     while (!atEnd()) {
-        readNext();
-        if (isEndElement())
+        if (getNextElement())
             break;
         if (isStartElement())
             skipUnknownElement();
