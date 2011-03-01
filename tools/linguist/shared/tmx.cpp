@@ -186,12 +186,15 @@ void TMXReader::readTuElement(Translator &translator)
         msg.setTranslation(m_currentTarget);
         msg.setComment(m_currentDefinition);
         translator.append(msg);
+        msg.setType(TranslatorMessage::Finished);
     } else {
-        fprintf(stderr, "The following entry was dropped: ");
+        QString errMsg = QString::fromLatin1("The following entry was dropped: ");
         if (m_currentTarget.isEmpty())
-            fprintf(stderr, "no translation for: %s\n", m_currentSource.toStdString().c_str());
+            errMsg.append(QString::fromLatin1("no translation for: %1").arg(m_currentSource));
         else
-            fprintf(stderr, "no source language entry for: %s\n", m_currentTarget.toStdString().c_str());
+            errMsg.append(QString::fromLatin1("no source language entry for: %1").arg(m_currentTarget));
+
+        m_cd.appendError(errMsg);
     }
 
     m_currentSource.clear();
