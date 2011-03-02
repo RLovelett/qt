@@ -531,7 +531,9 @@ QOleDropSource::QueryContinueDrag(BOOL fEscapePressed, DWORD grfKeyState)
         // therefore we need to check the state manually
         return ResultFromScode(DRAGDROP_S_DROP);
     } else {
-#if !defined(Q_OS_WINCE)
+#if defined(Q_OS_WINCE)
+        Sleep(100);
+#else
         if (currentButtons == Qt::NoButton) {
             currentButtons = keystate_to_mousebutton(grfKeyState);
         } else {
