@@ -152,6 +152,9 @@ inline bool QBasicAtomicInt::testAndSetRelaxed(int expectedValue, int newValue)
     asm volatile("0:\n"
                  "ldrex %[result], [%[_q_value]]\n"
                  "eors %[result], %[result], %[expectedValue]\n"
+#ifdef __thumb__
+                 "itt eq\n"
+#endif
                  "strexeq %[result], %[newValue], [%[_q_value]]\n"
                  "teqeq %[result], #1\n"
                  "beq 0b\n"
@@ -210,6 +213,9 @@ Q_INLINE_TEMPLATE bool QBasicAtomicPointer<T>::testAndSetRelaxed(T *expectedValu
     asm volatile("0:\n"
                  "ldrex %[result], [%[_q_value]]\n"
                  "eors %[result], %[result], %[expectedValue]\n"
+#ifdef __thumb__
+                 "itt eq\n"
+#endif
                  "strexeq %[result], %[newValue], [%[_q_value]]\n"
                  "teqeq %[result], #1\n"
                  "beq 0b\n"
