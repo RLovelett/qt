@@ -482,6 +482,7 @@ void QTextControlPrivate::setContent(Qt::TextFormat format, const QString &text,
             doc->setUndoRedoEnabled(false);
         }
         cursor = QTextCursor(doc);
+        cursor.movePosition(QTextCursor::End);
     } else if (clearDocument) {
         doc->clear();
     }
