@@ -207,6 +207,10 @@ public:
     virtual void flush() = 0;
     virtual bool isWritable() const = 0;
     virtual QString fileName() const = 0;
+    
+#ifndef QT_NO_TEXTCODEC
+    static void setDefaultIniCodec(QTextCodec *codec) { defaultIniCodec = codec; }
+#endif
 
     QString actualKey(const QString &key) const;
     void beginGroupOrArray(const QSettingsGroup &group);
@@ -255,6 +259,7 @@ public:
     QString organizationName;
     QString applicationName;
     QTextCodec *iniCodec;
+    static QTextCodec *defaultIniCodec;
 
 protected:
     QStack<QSettingsGroup> groupStack;

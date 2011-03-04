@@ -176,6 +176,8 @@ public:
     QString applicationName() const;
 
 #ifndef QT_NO_TEXTCODEC
+    static void setDefaultIniCodec(QTextCodec *codec);
+    static void setDefaultIniCodec(const char *codecName);
     void setIniCodec(QTextCodec *codec);
     void setIniCodec(const char *codecName);
     QTextCodec *iniCodec() const;

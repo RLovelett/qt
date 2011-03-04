@@ -126,6 +126,8 @@ Q_GLOBAL_STATIC(CustomFormatVector, customFormatVectorFunc)
 Q_GLOBAL_STATIC(QMutex, globalMutex)
 static QSettings::Format globalDefaultFormat = QSettings::NativeFormat;
 
+QTextCodec * QSettingsPrivate::defaultIniCodec = 0;
+
 #ifndef Q_OS_WIN
 inline bool qt_isEvilFsTypeName(const char *name)
 {
@@ -301,7 +303,7 @@ void QConfFile::clearCache()
 // QSettingsPrivate
 
 QSettingsPrivate::QSettingsPrivate(QSettings::Format format)
-    : format(format), scope(QSettings::UserScope /* nothing better to put */), iniCodec(0), spec(0), fallbacks(true),
+    : format(format), scope(QSettings::UserScope /* nothing better to put */), iniCodec(defaultIniCodec), spec(0), fallbacks(true),
       pendingChanges(false), status(QSettings::NoError)
 {
 }
@@ -309,7 +311,7 @@ QSettingsPrivate::QSettingsPrivate(QSettings::Format format)
 QSettingsPrivate::QSettingsPrivate(QSettings::Format format, QSettings::Scope scope,
                                    const QString &organization, const QString &application)
     : format(format), scope(scope), organizationName(organization), applicationName(application),
-      iniCodec(0), spec(0), fallbacks(true), pendingChanges(false), status(QSettings::NoError)
+      iniCodec(defaultIniCodec), spec(0), fallbacks(true), pendingChanges(false), status(QSettings::NoError)
 {
 }
 
@@ -2878,16 +2880,57 @@ QString QSettings::applicationName() const
 /*!
     \since 4.5
 
+    Sets the default codec for accessing INI files (including \c .conf files on Unix)
+    to \a codec. The codec is used for decoding any data that is read from
+    the INI file, and for encoding any data that is written to the file.
+    Default codec can be redefined for specific QSettings instance with setIniCodec().
+    By default no codec is used and non-ASCII characters are encoded using
+    standard INI escape sequences.
+
+    \warning This function affects QSettings instances created only after this call.
+
+    \sa iniCodec() setIniCodec()
+*/
+void QSettings::setDefaultIniCodec(QTextCodec *codec)
+{
+    QSettingsPrivate::setDefaultIniCodec(codec);
+}
+
+/*!
+    \since 4.5
+
+    Sets the default codec for accessing INI files (including \c .conf files on Unix)
+    to the QTextCodec for the encoding specified by \a codecName. Common
+    values for \c codecName include "ISO 8859-1", "UTF-8", and "UTF-16".
+    If the encoding isn't recognized, nothing happens.
+    Default codec can be redefined for specific QSettings instance with setIniCodec().
+    By default no codec is used and non-ASCII characters are encoded using
+    standard INI escape sequences.
+
+    \warning This function affects QSettings instances created only after this call.
+
+    \sa iniCodec() setIniCodec()
+*/
+void QSettings::setDefaultIniCodec(const char *codecName)
+{
+    if (QTextCodec *codec = QTextCodec::codecForName(codecName))
+        QSettingsPrivate::setDefaultIniCodec(codec);
+}
+
+/*!
+    \since 4.5
+
     Sets the codec for accessing INI files (including \c .conf files on Unix)
     to \a codec. The codec is used for decoding any data that is read from
     the INI file, and for encoding any data that is written to the file. By
-    default, no codec is used, and non-ASCII characters are encoded using
+    default, no codec is used (unless the codec default codec is specified with
+    setDefaultIniCodec()), and non-ASCII characters are encoded using
     standard INI escape sequences.
 
     \warning The codec must be set immediately after creating the QSettings
     object, before accessing any data.
 
-    \sa iniCodec()
+    \sa iniCodec() setDefaultIniCodec()
 */
 void QSettings::setIniCodec(QTextCodec *codec)
 {
@@ -2904,7 +2947,7 @@ void QSettings::setIniCodec(QTextCodec *codec)
     values for \c codecName include "ISO 8859-1", "UTF-8", and "UTF-16".
     If the encoding isn't recognized, nothing happens.
 
-    \sa QTextCodec::codecForName()
+    \sa QTextCodec::codecForName() setDefaultIniCodec()
 */
 void QSettings::setIniCodec(const char *codecName)
 {
