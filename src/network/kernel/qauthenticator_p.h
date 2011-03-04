@@ -59,6 +59,16 @@
 #include <qauthenticator.h>
 #include <qvariant.h>
 
+#ifdef Q_OS_WIN32
+#define NTLM_SSPI
+#endif
+
+#ifdef NTLM_SSPI
+#include <rpc.h>
+#define SECURITY_WIN32 1
+#include <Security.h>
+#endif
+
 QT_BEGIN_NAMESPACE
 
 class QHttpResponseHeader;
@@ -93,6 +103,12 @@ public:
     // ntlm specific
     QString workstation;
     QString userDomain;
+
+#ifdef NTLM_SSPI
+    // SSPI specific
+    CredHandle credHandle;
+    CtxtHandle ctxHandle;
+#endif
 
     QByteArray calculateResponse(const QByteArray &method, const QByteArray &path);
 
