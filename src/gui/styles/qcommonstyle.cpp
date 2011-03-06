@@ -771,6 +771,8 @@ void QCommonStyle::drawPrimitive(PrimitiveElement pe, const QStyleOption *opt, Q
                 p->fillRect(vopt->rect, vopt->palette.brush(cg, QPalette::Highlight));
             else if (vopt->features & QStyleOptionViewItemV2::Alternate)
                 p->fillRect(vopt->rect, vopt->palette.brush(cg, QPalette::AlternateBase));
+            else
+                p->fillRect(vopt->rect, vopt->palette.brush(cg, QPalette::Base));
         }
         break;
     case PE_PanelItemViewItem:
