@@ -809,6 +809,7 @@ void QApplicationPrivate::construct(
     initResources();
 
     qt_is_gui_used = (qt_appType != QApplication::Tty);
+    load_testability = !qgetenv("QT_LOAD_TESTABILITY").isNull();
     process_cmdline();
     // the environment variable has the lowest precedence of runtime graphicssystem switches
     if (graphics_system_name.isEmpty())
