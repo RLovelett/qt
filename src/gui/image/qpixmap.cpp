@@ -1034,8 +1034,8 @@ qint64 QPixmap::cacheKey() const
     if (isNull())
         return 0;
 
-    Q_ASSERT(data);
-    return data->cacheKey();
+    Q_ASSERT(pixmapData());
+    return pixmapData()->cacheKey();
 }
 
 static void sendResizeEvents(QWidget *target)
