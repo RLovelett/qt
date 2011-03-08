@@ -446,6 +446,7 @@ public:
 
     void writeCDATA(const QString &text);
     void writeCharacters(const QString &text);
+    void writeIndentedCharacters(const QString& text, const int indentOffset = 0);
     void writeComment(const QString &text);
 
     void writeDTD(const QString &dtd);

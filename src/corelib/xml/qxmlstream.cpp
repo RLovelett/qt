@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "QtCore/qxmlstream.h"
+#include "QtCore/qstringlist.h"
 
 #if defined(QT_BUILD_XML_LIB) && defined(Q_OS_MAC64)
 // No need to define this in the 64-bit Mac libraries.
@@ -3502,6 +3503,54 @@ void QXmlStreamWriter::writeCharacters(const QString &text)
     Q_D(QXmlStreamWriter);
     d->finishStartElement();
     d->writeEscaped(text);
+}
+
+
+/*!
+    \since 4.8
+
+  Writes \a text indented to the current indentation level. The parameter
+  \a indentOffset controls the relative offset applied to the current
+  indentation level when writing \a text. Multi-line strings in \a text are
+  handled correctly whilst keeping empty lines. The characters "<", "&", and "\""
+  are escaped as entity references "&lt;", "&amp;, and "&quot;". To avoid the
+  forbidden sequence "]]>", ">" is also escaped as "&gt;".
+
+  \sa writeEntityReference()
+ */
+void QXmlStreamWriter::writeIndentedCharacters(const QString& text, const int indentOffset)
+{
+    Q_D(QXmlStreamWriter);
+    d->finishStartElement();
+
+    int indentation = (d->tagStack.size() + indentOffset) * autoFormattingIndent();
+
+    QString indentationString = QString(qAbs(indentation),
+                                        QChar((indentation < 0) ?
+                                               QLatin1Char('\t') :
+                                               QLatin1Char(' ')));
+
+    QStringList lines = text.split(QChar(QLatin1Char('\n')), QString::KeepEmptyParts);
+    QString indentedString;
+    indentedString.clear();
+
+    for (int i = 0; i < lines.size(); ++i)
+        if (!i) {
+            // first
+            indentedString.append(indentationString + lines.at(i));
+        } else if (i == lines.size() - 1) {
+            // last
+            if (lines.at(i).size()) {
+                indentedString.append(QChar(QLatin1Char('\n')) + indentationString + lines.at(i) + QChar(QLatin1Char('\n')));
+            } else {
+                indentedString.append(QChar(QLatin1Char('\n')));
+            }
+        } else {
+            // other
+            indentedString.append(QChar(QLatin1Char('\n')) + indentationString + lines.at(i));
+        }
+
+    d->writeEscaped(indentedString);
 }
 
 
