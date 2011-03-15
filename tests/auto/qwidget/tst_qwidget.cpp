@@ -411,6 +411,7 @@ private slots:
 #endif
 
     void nativeChildFocus();
+    void taskQTBUG_18446();
 
 private:
     bool ensureScreenSize(int width, int height);
@@ -10610,6 +10611,13 @@ void tst_QWidget::nativeChildFocus()
 
     QCOMPARE(QApplication::activeWindow(), &w);
     QCOMPARE(QApplication::focusWidget(), p1);
+}
+
+void tst_QWidget::taskQTBUG_18446()
+{
+    QWidget * tstwgt = new QWidget;    
+    tstwgt->setAttribute(Qt::WA_WState_Created, true);
+    tstwgt->effectiveWinId();
 }
 
 QTEST_MAIN(tst_QWidget)

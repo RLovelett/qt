@@ -2563,8 +2563,9 @@ WId QWidget::effectiveWinId() const
     if (id || !testAttribute(Qt::WA_WState_Created))
         return id;
     QWidget *realParent = nativeParentWidget();
-    Q_ASSERT(realParent);
-    Q_ASSERT(realParent->internalWinId());
+    if (!realParent)
+        return 0;
+
     return realParent->internalWinId();
 }
 
