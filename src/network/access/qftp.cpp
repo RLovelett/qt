@@ -103,6 +103,9 @@ public:
 
     static bool parseDir(const QByteArray &buffer, const QString &userName, QUrlInfo *info);
 
+    qint64 readBufferSize();
+    void setReadBufferSize(qint64 size);
+
 signals:
     void listInfo(const QUrlInfo&);
     void readyRead();
@@ -456,6 +459,19 @@ void QFtpDTP::abortConnection()
 
     if (socket)
         socket->abort();
+}
+
+qint64 QFtpDTP::readBufferSize()
+{
+    if (socket)
+        return socket->readBufferSize();
+    return 0;
+}
+
+void QFtpDTP::setReadBufferSize(qint64 size)
+{
+    if (socket)
+        socket->setReadBufferSize(size);
 }
 
 static void _q_fixupDateTime(QDateTime *dateTime)
@@ -2203,6 +2219,39 @@ QFtp::Error QFtp::error() const
 QString QFtp::errorString() const
 {
     return d_func()->errorString;
+}
+
+/*!
+    \since 4.8
+
+    Returns the size of the read buffer, in bytes.
+
+    \sa setReadBufferSize()
+*/
+qint64 QFtp::readBufferSize()
+{
+    return d_func()->pi.dtp.readBufferSize();
+}
+
+/*!
+    \since 4.8
+
+    Sets the size of the read buffer to be \a size bytes. The read
+    buffer is the buffer that holds data that is being downloaded off
+    the network, before it is read with read(). Setting the
+    buffer size to 0 will make the buffer unlimited in size.
+
+    QFtp will try to stop reading from the network once this
+    buffer is full (i.e., bytesAvailable() returns \a size or more),
+    thus causing the download to throttle down as well. If the buffer
+    is not limited in size, QFtp will try to download as fast
+    as possible from the network.
+
+    \sa readBufferSize()
+*/
+void QFtp::setReadBufferSize(qint64 size)
+{
+    d_func()->pi.dtp.setReadBufferSize(size);
 }
 
 /*! \internal

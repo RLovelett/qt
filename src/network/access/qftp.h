@@ -141,6 +141,9 @@ public:
     Error error() const;
     QString errorString() const;
 
+    qint64 readBufferSize();
+    void setReadBufferSize(qint64 size);
+
 public Q_SLOTS:
     void abort();
 
