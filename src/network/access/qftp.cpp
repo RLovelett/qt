@@ -60,6 +60,18 @@
 
 QT_BEGIN_NAMESPACE
 
+#ifndef QFTP_DEFAULTBUFFERCHUNK
+#define QFTP_DEFAULTBUFFERCHUNK Q_INT64_C(16384)
+#endif
+
+#define CHECK_MAXLEN(function, returnType) \
+    do { \
+        if (maxSize < 0) { \
+            qWarning("QIODevice::"#function": Called with maxSize < 0"); \
+            return returnType; \
+        } \
+    } while (0)
+
 class QFtpPI;
 
 /*
@@ -2041,6 +2053,66 @@ qint64 QFtp::bytesAvailable() const
 qint64 QFtp::read(char *data, qint64 maxlen)
 {
     return d_func()->pi.dtp.read(data, maxlen);
+}
+
+/*!
+    \since 4.8
+
+    \overload
+
+    Reads at most \a maxSize bytes from the data socket, and returns the
+    data read as a QByteArray.
+
+    This function has no way of reporting errors; returning an empty
+    QByteArray() can mean either that no data was currently available
+    for reading, or that an error occurred.
+*/
+QByteArray QFtp::read(qint64 maxSize)
+{
+    Q_D(QFtp);
+    QByteArray result;
+
+    CHECK_MAXLEN(read, result);
+
+#if defined QFTP_DEBUG
+    printf("%p QFtp::read(%d), d->pos = %d, d->buffer.size() = %d\n",
+           this, int(maxSize), int(d->pos), int(d->buffer.size()));
+#else
+    Q_UNUSED(d);
+#endif
+
+    if (maxSize != qint64(int(maxSize))) {
+        qWarning("QFtp::read: maxSize argument exceeds QByteArray size limit");
+        maxSize = INT_MAX;
+    }
+
+    qint64 buffersize = readBufferSize();
+    if (buffersize == 0)
+        buffersize = QFTP_DEFAULTBUFFERCHUNK;
+
+    qint64 readBytes = 0;
+    if (maxSize) {
+        result.resize(int(maxSize));
+        if (!result.size()) {
+            // If resize fails, read incrementally.
+            qint64 readResult;
+            do {
+                result.resize(int(qMin(maxSize, result.size() + buffersize)));
+                readResult = read(result.data() + readBytes, result.size() - readBytes);
+                if (readResult > 0 || readBytes == 0)
+                    readBytes += readResult;
+            } while (readResult == buffersize);
+        } else {
+            readBytes = read(result.data(), result.size());
+        }
+    }
+
+    if (readBytes <= 0)
+        result.clear();
+    else
+        result.resize(int(readBytes));
+
+    return result;
 }
 
 /*!
