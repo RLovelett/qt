@@ -346,6 +346,7 @@ public:
 #ifndef QT_NO_DATASTREAM
     , saveOp(0), loadOp(0)
 #endif
+    , alias(-1)
     {}
 
     QByteArray typeName;
