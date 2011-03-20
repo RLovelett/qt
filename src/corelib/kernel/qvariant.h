@@ -89,6 +89,15 @@ inline QVariant qVariantFromValue(const T &);
 template<typename T>
 inline T qvariant_cast(const QVariant &);
 
+namespace QtPrivate {
+
+    template<typename T, bool isQObject>
+    struct CanConvertChecker
+    {
+        static inline bool canConvert(const QVariant &v);
+    };
+}
+
 class Q_CORE_EXPORT QVariant
 {
  public:
@@ -337,8 +346,8 @@ class Q_CORE_EXPORT QVariant
     { return qVariantFromValue(value); }
 
     template<typename T>
-    bool canConvert() const
-    { return canConvert(Type(qMetaTypeId<T>())); }
+    inline bool canConvert() const
+    { return QtPrivate::CanConvertChecker<T, QtPrivate::QMetaTypeInfo<T>::isQObjectPointer>::canConvert(*this); }
 
  public:
 #ifndef qdoc
@@ -408,6 +417,9 @@ class Q_CORE_EXPORT QVariant
 
 protected:
     friend inline bool qvariant_cast_helper(const QVariant &, QVariant::Type, void *);
+    friend inline QObject* qvariant_cast_to_qobject_helper(const QVariant &);
+    template<typename T>
+    friend inline bool qvariant_can_convert_qobject_helper(const QVariant &);
     friend int qRegisterGuiVariant();
     friend int qUnregisterGuiVariant();
     friend inline bool operator==(const QVariant &, const QVariantComparisonHelper &);
@@ -447,10 +459,82 @@ typedef QHash<QString, QVariant> QVariantHash;
 inline bool qvariant_cast_helper(const QVariant &v, QVariant::Type tp, void *ptr)
 { return QVariant::handler->convert(&v.d, tp, ptr, 0); }
 
+#ifndef QT_NO_QOBJECT
+inline QObject* qvariant_cast_to_qobject_helper(const QVariant &v)
+{ return ( v.d.type == QMetaType::QObjectStar
+        || v.d.type == QMetaType::QWidgetStar
+        || v.d.type == QMetaType::QObjectDerivedPointer) ? v.d.data.o : 0; }
+
+template<typename T>
+inline bool qvariant_can_convert_qobject_helper(const QVariant &v)
+{
+  return (v.d.type == QMetaType::QObjectStar
+       || v.d.type == QMetaType::QWidgetStar
+       || v.d.type == QMetaType::QObjectDerivedPointer) && v.d.data.o->inherits(T::staticMetaObject.className());
+}
+
+template<>
+inline bool qvariant_can_convert_qobject_helper<QObject>(const QVariant &v)
+{
+    return v.d.type == QMetaType::QObjectStar
+        || v.d.type == QMetaType::QWidgetStar
+        || v.d.type == QMetaType::QObjectDerivedPointer;
+}
+#endif
+
+namespace QtPrivate {
+  template<typename T, bool>
+  struct QVariantFromValueHelper
+  {
+    static QVariant fromValue(const T &t)
+    { return QVariant(qMetaTypeId<T>(reinterpret_cast<T *>(0)), &t, QTypeInfo<T>::isPointer); }
+  };
+
+  template<typename T, bool>
+  struct MetaTypeRegistrationHelper
+  {
+      static int registerMetaType()
+      {
+        return 0;
+      }
+  };
+
+  template<typename T>
+  struct MetaTypeRegistrationHelper<T, true>
+  {
+      static int registerMetaType()
+      {
+        return qRegisterMetaType<T>();
+      }
+  };
+
+  template<typename T>
+  struct QVariantFromValueHelper<T, true>
+  {
+    static QVariant fromValue(const T &t)
+    {
+      MetaTypeRegistrationHelper<T, QMetaTypeId<T>::Defined>::registerMetaType();
+      return QVariant(QMetaType::QObjectDerivedPointer, &t, true);
+    }
+  };
+  template<>
+  struct QVariantFromValueHelper<QObject*, true>
+  {
+    static QVariant fromValue(QObject *obj)
+    { return QVariant(QMetaType::QObjectStar, &obj, true); }
+  };
+  template<>
+  struct QVariantFromValueHelper<QWidget*, true>
+  {
+    static QVariant fromValue(QWidget *widget)
+    { return QVariant(QMetaType::QWidgetStar, &widget, true); }
+  };
+}
+
 template <typename T>
 inline QVariant qVariantFromValue(const T &t)
 {
-    return QVariant(qMetaTypeId<T>(reinterpret_cast<T *>(0)), &t, QTypeInfo<T>::isPointer);
+    return QtPrivate::QVariantFromValueHelper<T, QtPrivate::QMetaTypeInfo<T>::isQObjectPointer>::fromValue(t);
 }
 
 template <>
@@ -567,18 +651,58 @@ inline bool operator!=(const QVariant &v1, const QVariantComparisonHelper &v2)
 }
 #endif
 
+namespace QtPrivate {
+    template<typename T, bool isQObject>
+    inline bool CanConvertChecker<T, isQObject>::canConvert(const QVariant &v)
+    { return v.canConvert(QVariant::Type(qMetaTypeId<T>())); }
+
+#ifndef QT_NO_QOBJECT
+    template<typename T>
+    struct CanConvertChecker<T*, true>
+    {
+        static inline bool canConvert(const QVariant &v)
+        { return qvariant_can_convert_qobject_helper<T>(v); }
+    };
+#endif
+
+    template<typename T> inline T do_cast(const QVariant &v)
+    {
+        const int vid = qMetaTypeId<T>(static_cast<T *>(0));
+        if (vid == v.userType())
+            return *reinterpret_cast<const T *>(v.constData());
+        if (vid < int(QMetaType::User)) {
+            T t;
+            if (qvariant_cast_helper(v, QVariant::Type(vid), &t))
+                return t;
+        }
+        return T();
+    }
+
+    template<typename T, bool>
+    struct QVariantCaster
+    {
+        static inline T cast(const QVariant &v)
+        {
+            return do_cast<T>(v);
+        }
+    };
+
+#ifndef QT_NO_QOBJECT
+    template<typename T>
+    struct QVariantCaster<T, true>
+    {
+        static inline T cast(const QVariant &v)
+        {
+            return qobject_cast<T>(qvariant_cast_to_qobject_helper(v));
+        }
+    };
+#endif
+}
+
 #ifndef QT_MOC
 template<typename T> inline T qvariant_cast(const QVariant &v)
 {
-    const int vid = qMetaTypeId<T>(static_cast<T *>(0));
-    if (vid == v.userType())
-        return *reinterpret_cast<const T *>(v.constData());
-    if (vid < int(QMetaType::User)) {
-        T t;
-        if (qvariant_cast_helper(v, QVariant::Type(vid), &t))
-            return t;
-    }
-    return T();
+    return QtPrivate::QVariantCaster<T, QtPrivate::QMetaTypeInfo<T>::isQObjectPointer>::cast(v);
 }
 
 template<> inline QVariant qvariant_cast<QVariant>(const QVariant &v)

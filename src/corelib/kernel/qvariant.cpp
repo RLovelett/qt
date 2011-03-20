@@ -168,6 +168,7 @@ static void construct(QVariant::Private *x, const void *copy)
         x->data.f = copy ? *static_cast<const float*>(copy) : 0.0f;
         break;
     case QMetaType::QObjectStar:
+    case QMetaType::QObjectDerivedPointer:
         x->data.o = copy ? *static_cast<QObject *const*>(copy) : 0;
         break;
     case QVariant::LongLong:
@@ -275,6 +276,7 @@ static void clear(QVariant::Private *d)
     case QVariant::Double:
     case QMetaType::Float:
     case QMetaType::QObjectStar:
+    case QMetaType::QObjectDerivedPointer:
         break;
     case QVariant::Invalid:
     case QVariant::UserType:
@@ -442,6 +444,7 @@ static bool compare(const QVariant::Private *a, const QVariant::Private *b)
     case QMetaType::Float:
         return a->data.f == b->data.f;
     case QMetaType::QObjectStar:
+    case QMetaType::QObjectDerivedPointer:
         return a->data.o == b->data.o;
     case QVariant::Date:
         return *v_cast<QDate>(a) == *v_cast<QDate>(b);
@@ -1076,6 +1079,7 @@ static void streamDebug(QDebug dbg, const QVariant &v)
         dbg.nospace() << v.toFloat();
         break;
     case QMetaType::QObjectStar:
+    case QMetaType::QObjectDerivedPointer:
         dbg.nospace() << qvariant_cast<QObject *>(v);
         break;
     case QVariant::Double:
@@ -1781,6 +1785,14 @@ QVariant::Type QVariant::type() const
 
 int QVariant::userType() const
 {
+#ifndef QT_NO_QOBJECT
+    if (d.type == QMetaType::QObjectDerivedPointer) {
+        const int type = QMetaType::type(d.data.o->metaObject()->className() + QByteArray("*"));
+        if (type <= 0)
+            return QMetaType::QObjectStar;
+        return type;
+    }
+#endif
     return d.type;
 }
 

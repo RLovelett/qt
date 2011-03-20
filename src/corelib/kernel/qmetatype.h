@@ -86,8 +86,8 @@ public:
         FirstCoreExtType = 128 /* VoidStar */,
         VoidStar = 128, Long = 129, Short = 130, Char = 131, ULong = 132,
         UShort = 133, UChar = 134, Float = 135, QObjectStar = 136, QWidgetStar = 137,
-        QVariant = 138,
-        LastCoreExtType = QVariant,
+        QVariant = 138, QObjectDerivedPointer = 139,
+        LastCoreExtType = QObjectDerivedPointer,
 
 // This logic must match the one in qglobal.h
 #if defined(QT_COORD_TYPE)
@@ -169,6 +169,8 @@ struct QMetaTypeId2
     static inline int qt_metatype_id() { return QMetaTypeId<T>::qt_metatype_id(); }
 };
 
+class QObject;
+
 namespace QtPrivate {
     template <typename T, bool Defined = QMetaTypeId2<T>::Defined>
     struct QMetaTypeIdHelper {
@@ -178,6 +180,32 @@ namespace QtPrivate {
     template <typename T> struct QMetaTypeIdHelper<T, false> {
         static inline int qt_metatype_id()
         { return -1; }
+    };
+
+    template<typename T>
+    struct QMetaTypeInfo
+    {
+        enum { isQObjectPointer = false };
+    };
+
+    // Specialize to avoid sizeof(void) warning
+    template<>
+    struct QMetaTypeInfo<void*>
+    {
+        enum { isQObjectPointer = false };
+    };
+
+    template<typename T>
+    struct QMetaTypeInfo<T*>
+    {
+        typedef int yes_type;
+        typedef char no_type;
+
+#ifndef QT_NO_QOBJECT
+        static yes_type check(QObject* );
+#endif
+        static no_type check(...);
+        enum { isQObjectPointer = (sizeof(check(static_cast<T*>(0))) + 0 * sizeof(T)) == sizeof(yes_type) };
     };
 }
 

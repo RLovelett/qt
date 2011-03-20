@@ -191,6 +191,8 @@ private slots:
 
     void qvariant_cast_QObject_data();
     void qvariant_cast_QObject();
+    void qvariant_cast_QObject_derived();
+    void qvariant_cast_QObject_forwarddeclared();
 
     void toLocale();
 
@@ -2656,22 +2658,208 @@ void tst_QVariant::invalidQColor() const
     QVERIFY(!qvariant_cast<QColor>(va).isValid());
 }
 
-void tst_QVariant::qvariant_cast_QObject_data() {
+class CustomQObject : public QObject {
+    Q_OBJECT
+public:
+    CustomQObject(QObject *parent = 0) : QObject(parent) {}
+};
+class CustomQWidget : public QWidget {
+    Q_OBJECT
+public:
+    CustomQWidget(QWidget *parent = 0) : QWidget(parent) {}
+};
+Q_DECLARE_METATYPE(CustomQObject*)
+Q_DECLARE_METATYPE(CustomQWidget*)
 
+class CustomNonQObject { };
+Q_DECLARE_METATYPE(CustomNonQObject)
+Q_DECLARE_METATYPE(CustomNonQObject*)
+
+void tst_QVariant::qvariant_cast_QObject_data()
+{
     QTest::addColumn<QVariant>("data");
     QTest::addColumn<bool>("success");
-    QTest::newRow("from QObject") << QVariant(QMetaType::QObjectStar, new QObject(this)) << true;
+    QTest::newRow("from QObject") << QVariant::fromValue(new QObject(this)) << true;
     QTest::newRow("from String") << QVariant(QLatin1String("1, 2, 3")) << false;
     QTest::newRow("from int") << QVariant((int) 123) << false;
+    QTest::newRow("from QWidget") << QVariant::fromValue(new QWidget) << true;
+    QTest::newRow("from Derived QObject") << QVariant::fromValue(new CustomQObject(this)) << true;
+    QTest::newRow("from Derived QWidget") << QVariant::fromValue(new CustomQWidget) << true;
+    QTest::newRow("from custom Object") << QVariant::fromValue(CustomNonQObject()) << false;
+    QTest::newRow("from custom ObjectStar") << QVariant::fromValue(new CustomNonQObject()) << false;
 }
 
-
-void tst_QVariant::qvariant_cast_QObject() {
+void tst_QVariant::qvariant_cast_QObject()
+{
     QFETCH(QVariant, data);
     QFETCH(bool, success);
 
+    QCOMPARE(data.canConvert<QObject*>(), success);
     QObject *o = qvariant_cast<QObject *>(data);
     QCOMPARE(o != 0, success);
+    delete o;
+}
+
+class CustomQObjectDerived : public CustomQObject {
+    Q_OBJECT
+public:
+    CustomQObjectDerived(QObject *parent = 0) : CustomQObject(parent) {}
+};
+Q_DECLARE_METATYPE(CustomQObjectDerived*)
+
+class CustomQObjectMissingQOBJECTMacro : public QObject {
+public:
+    CustomQObjectMissingQOBJECTMacro(QObject *parent = 0) : QObject(parent) {}
+};
+Q_DECLARE_METATYPE(CustomQObjectMissingQOBJECTMacro*)
+
+class CustomQObjectFromMissingQOBJECT : public CustomQObjectMissingQOBJECTMacro {
+    Q_OBJECT
+public:
+    CustomQObjectFromMissingQOBJECT(QObject *parent = 0) : CustomQObjectMissingQOBJECTMacro(parent) {}
+};
+Q_DECLARE_METATYPE(CustomQObjectFromMissingQOBJECT*)
+
+class CustomQObjectNoMetaType : public QObject {
+    Q_OBJECT
+public:
+    CustomQObjectNoMetaType(QObject *parent = 0) : QObject(parent) {}
+};
+
+class ForwardDeclared;
+class ForwardDeclaredWithMetaType;
+Q_DECLARE_METATYPE(ForwardDeclaredWithMetaType*)
+
+void tst_QVariant::qvariant_cast_QObject_derived()
+{
+    {
+        CustomQObjectDerived *cod = new CustomQObjectDerived(this);
+        QVariant data = QVariant::fromValue(cod);
+        QVERIFY(data.userType() == qMetaTypeId<CustomQObjectDerived*>());
+        {
+            QVERIFY(data.canConvert<QObject*>());
+            QObject *o = qvariant_cast<QObject *>(data);
+            QVERIFY(o != 0);
+        }
+        {
+            QVERIFY(data.canConvert<CustomQObjectDerived*>());
+            CustomQObjectDerived *o = qvariant_cast<CustomQObjectDerived *>(data);
+            QVERIFY(o != 0);
+        }
+        {
+            QVERIFY(data.canConvert<CustomQObject*>());
+            CustomQObject *o = qvariant_cast<CustomQObject *>(data);
+            QVERIFY(o != 0);
+        }
+        {
+            QVERIFY(!data.canConvert<CustomQWidget*>());
+            CustomQWidget *o = qvariant_cast<CustomQWidget*>(data);
+            QVERIFY(o == 0);
+        }
+    }
+    {
+        CustomQObjectMissingQOBJECTMacro *missingQObject = new CustomQObjectMissingQOBJECTMacro(this);
+        QVariant data = QVariant::fromValue(missingQObject);
+        QVERIFY(data.userType() == QMetaType::QObjectStar);
+        {
+            QVERIFY(data.canConvert<QObject*>());
+            QObject *o = qvariant_cast<QObject*>(data);
+            QVERIFY(o != 0);
+        }
+        {
+            // Missing Macro -> compile fail
+            QVERIFY(data.canConvert<CustomQObjectMissingQOBJECTMacro*>());
+//             CustomQObjectMissingQOBJECTMacro *o = qvariant_cast<CustomQObjectMissingQOBJECTMacro*>(data);
+//             QVERIFY(o == 0);
+        }
+    }
+
+    {
+        CustomQObjectFromMissingQOBJECT *object = new CustomQObjectFromMissingQOBJECT(this);
+        QVariant data = QVariant::fromValue(object);
+        {
+            QVERIFY(data.canConvert<QObject*>());
+            QObject *o = qvariant_cast<QObject*>(data);
+            QVERIFY(o != 0);
+        }
+        {
+            // Missing Macro -> compile fail
+//             QVERIFY(data.canConvert<CustomQObjectMissingQOBJECTMacro*>());
+//             CustomQObjectMissingQOBJECTMacro *o = qvariant_cast<CustomQObjectMissingQOBJECTMacro*>(data);
+//             QVERIFY(o != 0);
+        }
+        {
+            QVERIFY(data.canConvert<CustomQObjectFromMissingQOBJECT*>());
+            CustomQObjectFromMissingQOBJECT *o = qvariant_cast<CustomQObjectFromMissingQOBJECT*>(data);
+            QVERIFY(o != 0);
+        }
+    }
+    {
+        QObject *object = new CustomQObjectNoMetaType(this);
+        QVariant data = QVariant::fromValue(object);
+        QVERIFY(data.userType() == QMetaType::QObjectStar);
+        {
+            QVERIFY(data.canConvert<QObject*>());
+            QObject *o = qvariant_cast<QObject*>(data);
+            QVERIFY(o != 0);
+        }
+        {
+            QVERIFY(data.canConvert<CustomQObjectNoMetaType*>());
+            CustomQObjectNoMetaType *o = qvariant_cast<CustomQObjectNoMetaType*>(data);
+            QVERIFY(o != 0);
+        }
+    }
+    {
+        CustomQObjectNoMetaType *object = new CustomQObjectNoMetaType(this);
+        QVariant data = QVariant::fromValue(object);
+        QVERIFY(data.userType() == QMetaType::QObjectStar);
+        {
+            QVERIFY(data.canConvert<QObject*>());
+            QObject *o = qvariant_cast<QObject*>(data);
+            QVERIFY(o != 0);
+        }
+        {
+            QVERIFY(data.canConvert<CustomQObjectNoMetaType*>());
+            CustomQObjectNoMetaType *o = qvariant_cast<CustomQObjectNoMetaType*>(data);
+            QVERIFY(o != 0);
+        }
+    }
+    // Attempting to use QtPrivate::QMetaTypeInfo with an incomplete type
+    // fails to compile.
+//     QtPrivate::QMetaTypeInfo<ForwardDeclared*>::isQObjectPointer;
+//     QtPrivate::QMetaTypeInfo<ForwardDeclaredWithMetaType*>::isQObjectPointer;
+}
+
+class ForwardDeclared : public QObject
+{
+  Q_OBJECT
+public:
+  ForwardDeclared(QObject *parent = 0) : QObject(parent) {}
+};
+
+class ForwardDeclaredWithMetaType : public QObject
+{
+  Q_OBJECT
+public:
+  ForwardDeclaredWithMetaType(QObject *parent = 0) : QObject(parent) {}
+};
+
+void tst_QVariant::qvariant_cast_QObject_forwarddeclared()
+{
+    {
+        ForwardDeclared *object = new ForwardDeclared(this);
+        QVariant data = QVariant::fromValue(object);
+        QVERIFY(data.userType() == QMetaType::QObjectStar);
+        QVERIFY(qvariant_cast<ForwardDeclared*>(data) == object);
+        QVERIFY(qvariant_cast<QObject*>(data) == object);
+    }
+    {
+        ForwardDeclaredWithMetaType *object = new ForwardDeclaredWithMetaType(this);
+        QVariant data = QVariant::fromValue(object);
+        QVERIFY(data.userType() == qMetaTypeId<ForwardDeclaredWithMetaType*>());
+        QVERIFY(qvariant_cast<ForwardDeclaredWithMetaType*>(data) == object);
+        QVERIFY(qvariant_cast<QObject*>(data) == object);
+    }
 }
 
 Q_DECLARE_METATYPE(qint8);
