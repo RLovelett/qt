@@ -461,6 +461,18 @@ void deployPlugins(const ApplicationBundleInfo &appBundleInfo, const QString &pl
             // Deploy the script plugins if QtScript.framework is in use
             if (deployedFrameworks.indexOf("QtScript.framework") == -1 && pluginName.contains("script"))
                 continue;
+
+            // Deploy the bearer plugin if QtNetwork.framework is in use
+            if (deployedFrameworks.indexOf("QtNetwork.framework") == -1 && pluginName.contains("bearer"))
+                continue;
+
+            // Deploy the qtracegraphicssystem plugin if QtNetwork.framework is in use
+            if (deployedFrameworks.indexOf("QtNetwork.framework") == -1 && pluginName.contains("qtracegraphicssystem"))
+                continue;
+
+            // Deploy the tcpserver plugin (from qmltooling folder) if QtDeclarative.framework is in use
+            if (deployedFrameworks.indexOf("QtDeclarative.framework") == -1 && pluginName.contains("tcpserver"))
+                continue;
         }
 
         QDir dir;
