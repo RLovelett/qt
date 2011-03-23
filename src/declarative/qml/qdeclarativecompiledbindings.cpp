@@ -2796,7 +2796,8 @@ bool QDeclarativeBindingCompiler::isValid() const
 */
 int QDeclarativeBindingCompiler::compile(const Expression &expression, QDeclarativeEnginePrivate *engine)
 {
-    if (!expression.expression.asAST()) return false;
+    if (!expression.expression.asAST())
+        return -1;
 
     if (!qmlExperimental() && expression.property->isValueTypeSubProperty)
         return -1;
