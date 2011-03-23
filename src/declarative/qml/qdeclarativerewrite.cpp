@@ -111,7 +111,7 @@ QString RewriteBinding::operator()(QDeclarativeJS::AST::Node *node, const QStrin
     TextWriter w;
     _writer = &w;
     _position = expression ? expression->firstSourceLocation().begin() : statement->firstSourceLocation().begin();
-    _inLoop = 0;
+    _scopeCount = 0;
 
     accept(node);
 
@@ -153,7 +153,7 @@ QString RewriteBinding::rewrite(QString code, unsigned position,
     TextWriter w;
     _writer = &w;
     _position = position;
-    _inLoop = 0;
+    _scopeCount = 0;
 
     accept(node);
 
@@ -194,7 +194,7 @@ bool RewriteBinding::visit(AST::Block *ast)
 
 bool RewriteBinding::visit(AST::ExpressionStatement *ast)
 {
-    if (! _inLoop) {
+    if (!_scopeCount) {
         unsigned startOfExpressionStatement = ast->firstSourceLocation().begin() - _position;
         _writer->replace(startOfExpressionStatement, 0, QLatin1String("return "));
     }
@@ -204,68 +204,79 @@ bool RewriteBinding::visit(AST::ExpressionStatement *ast)
 
 bool RewriteBinding::visit(AST::DoWhileStatement *)
 {
-    ++_inLoop;
+    ++_scopeCount;
     return true;
 }
 
 void RewriteBinding::endVisit(AST::DoWhileStatement *)
 {
-    --_inLoop;
+    --_scopeCount;
 }
 
 bool RewriteBinding::visit(AST::WhileStatement *)
 {
-    ++_inLoop;
+    ++_scopeCount;
     return true;
 }
 
 void RewriteBinding::endVisit(AST::WhileStatement *)
 {
-    --_inLoop;
+    --_scopeCount;
 }
 
 bool RewriteBinding::visit(AST::ForStatement *)
 {
-    ++_inLoop;
+    ++_scopeCount;
     return true;
 }
 
 void RewriteBinding::endVisit(AST::ForStatement *)
 {
-    --_inLoop;
+    --_scopeCount;
 }
 
 bool RewriteBinding::visit(AST::LocalForStatement *)
 {
-    ++_inLoop;
+    ++_scopeCount;
     return true;
 }
 
 void RewriteBinding::endVisit(AST::LocalForStatement *)
 {
-    --_inLoop;
+    --_scopeCount;
 }
 
 bool RewriteBinding::visit(AST::ForEachStatement *)
 {
-    ++_inLoop;
+    ++_scopeCount;
     return true;
 }
 
 void RewriteBinding::endVisit(AST::ForEachStatement *)
 {
-    --_inLoop;
+    --_scopeCount;
 }
 
 bool RewriteBinding::visit(AST::LocalForEachStatement *)
 {
-    ++_inLoop;
+    ++_scopeCount;
     return true;
 }
 
 void RewriteBinding::endVisit(AST::LocalForEachStatement *)
 {
-    --_inLoop;
+    --_scopeCount;
+}
+
+bool RewriteBinding::visit(AST::SwitchStatement *)
+{
+    ++_scopeCount;
+    return true;
+}
+
+void RewriteBinding::endVisit(AST::SwitchStatement *)
+{
+    --_scopeCount;
 }
 
 } // namespace QDeclarativeRewrite

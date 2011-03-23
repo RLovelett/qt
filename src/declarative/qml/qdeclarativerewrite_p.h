@@ -115,8 +115,11 @@ protected:
     virtual bool visit(AST::LocalForEachStatement *ast);
     virtual void endVisit(AST::LocalForEachStatement *ast);
 
+    virtual bool visit(AST::SwitchStatement *ast);
+    virtual void endVisit(AST::SwitchStatement *ast);
+
 private:
-    int _inLoop;
+    int _scopeCount;
 };
 
 } // namespace QDeclarativeRewrite
