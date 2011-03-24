@@ -56,6 +56,7 @@
 #ifndef QT_NO_IM
 
 #include "qinputcontext.h"
+#include "..\..\plugins\s60\src\qccpueditorinterface_p.h"
 #include <qhash.h>
 #include <qtimer.h>
 #include <private/qcore_symbian_p.h>
@@ -63,17 +64,47 @@
 
 #include <fepbase.h>
 #include <aknedsts.h>
+#include <eikccpu.h>
+#include <coedef.h>
 
 QT_BEGIN_NAMESPACE
+
+class QCoeFepInputMaskHandler
+{
+public:
+    QCoeFepInputMaskHandler(const QString &mask);
+    ~QCoeFepInputMaskHandler();
+    bool canPasteClipboard(const QString &text);
+private:
+    bool isValidInput(QChar key, QChar mask) const;
+private:
+    struct MaskInputData {
+        enum Casemode { NoCaseMode, Upper, Lower };
+        QChar maskChar;
+        bool separator;
+        Casemode caseMode;
+    };
+    QString m_inputMask;
+    int m_maxLength;
+    QChar m_blank;
+    MaskInputData *m_maskData;
+};
 
 class Q_AUTOTEST_EXPORT QCoeFepInputContext : public QInputContext,
                                               public MCoeFepAwareTextEditor,
                                               public MCoeFepAwareTextEditor_Extension1,
-                                              public MObjectProvider
+                                              public MObjectProvider,
+                                              public QCcpuEditorInterface
+
 {
     Q_OBJECT
 
 public:
+    enum OperationType {
+        Cut,
+        Copy
+    };
+
     QCoeFepInputContext(QObject *parent = 0);
     ~QCoeFepInputContext();
 
@@ -134,6 +165,29 @@ private:
     void DoCommitFepInlineEditL();
     MCoeFepAwareTextEditor_Extension1* Extension1(TBool& aSetToTrue);
     void ReportAknEdStateEvent(MAknEdStateObserver::EAknEdwinStateEvent aEventType);
+private:
+
+    void deleteProxyObject();
+    MEikCcpuEditor* ccpuProxyObject(QCcpuEditorInterface *interface);
+    void enableSymbianCcpuSupport(bool support);
+    void changeCBA(bool showCopyAndOrPaste);
+    void copyOrCutTextToClipboard(OperationType type);
+
+    //From QCcpuEditorInterface interface
+public:
+    TBool CcpuIsFocused() const;
+    TBool CcpuCanCut() const;
+    void CcpuCutL();
+    TBool CcpuCanCopy() const;
+    void CcpuCopyL();
+    TBool CcpuCanPaste() const;
+    void CcpuPasteL();
+    TBool CcpuCanUndo() const;
+    void CcpuUndoL();
+
+private slots:
+    void copy();
+    void paste();
 
     // From MCoeFepAwareTextEditor_Extension1
 public:
@@ -163,6 +217,13 @@ private:
     int m_splitViewResizeBy;
     Qt::WindowStates m_splitViewPreviousWindowStates;
     QRectF m_transformation;
+
+    CAknCcpuSupport *m_ccpu;
+    MEikCcpuEditor *m_ccpuProxy;
+    QAction *m_copyAction;
+    QAction *m_pasteAction;
+    QPointer<QWidget> lastFocusedEditor;
+    OperationType m_type;
 
     friend class tst_QInputContext;
 };

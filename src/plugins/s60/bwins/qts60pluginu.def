@@ -5,4 +5,6 @@ EXPORTS
 	?defaultGetShortDateFormatSpec@@YA?AVTPtrC16@@AAVTExtendedLocale@@@Z @ 4 NONAME ; class TPtrC16 defaultGetShortDateFormatSpec(class TExtendedLocale &)
 	?localizedDirectoryName@@YA?AVQString@@AAV1@@Z @ 5 NONAME ; class QString localizedDirectoryName(class QString &)
 	?systemDrive@@YA?AW4TDriveNumber@@AAVRFs@@@Z @ 6 NONAME ; enum TDriveNumber systemDrive(class RFs &)
+	?deleteProxy@@YAXXZ @ 7 NONAME ; void deleteProxy(void)
+	?proxyObject@@YAPAVMEikCcpuEditor@@PAVQCcpuEditorInterface@@@Z @ 8 NONAME ; class MEikCcpuEditor * proxyObject(class QCcpuEditorInterface *)
 
