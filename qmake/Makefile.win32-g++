@@ -11,7 +11,7 @@ endif
 #
 # specific stuff for mingw g++ make
 #
-CXX	    =	g++
+CXX	    =	$(CROSS_COMPILE)g++
 CFLAGS	    =	-c -o$@ -O \
 		-I. -Igenerators -Igenerators/unix \
 		-Igenerators/win32 -Igenerators/mac \
@@ -29,7 +29,7 @@ CFLAGS	    =	-c -o$@ -O \
 CXXFLAGS    =   $(CFLAGS)
 LFLAGS	    = -static-libgcc -static-libstdc++ -s
 LIBS	    = -lole32 -luuid
-LINKQMAKE   =	g++ $(LFLAGS) -o qmake.exe $(OBJS) $(QTOBJS) $(LIBS)
+LINKQMAKE   =	$(CROSS_COMPILE)g++ $(LFLAGS) -o qmake.exe $(OBJS) $(QTOBJS) $(LIBS)
 ADDCLEAN    =
 
 
