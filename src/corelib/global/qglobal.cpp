@@ -2855,6 +2855,42 @@ int qrand()
 */
 
 /*!
+    \macro Q_LIKELY(expr)
+    \relates <QtGlobal>
+    \since 4.8
+
+    \brief Instructs the compiler about the expected result of a boolean
+    expression.
+
+    This macro, used as an expression in \c if statements, can help the compiler
+    to optimize the code generation.
+
+    Example:
+
+    \snippet doc/src/snippets/code/src_corelib_global_qglobal.cpp qlikely
+
+    \sa Q_UNLIKELY()
+*/
+
+/*!
+    \macro Q_UNLIKELY(expr)
+    \relates <QtGlobal>
+    \since 4.8
+
+    \brief Instructs the compiler about the expected result of a boolean
+    expression.
+
+    This macro, used as an expression in \c if statements, can help the compiler
+    to optimize the code generation.
+
+    Example:
+
+    \snippet doc/src/snippets/code/src_corelib_global_qglobal.cpp qunlikely
+
+    \sa Q_LIKELY()
+*/
+
+/*!
     \macro QT_POINTER_SIZE
     \relates <QtGlobal>
 
