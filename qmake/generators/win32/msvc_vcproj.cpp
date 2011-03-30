@@ -1425,12 +1425,8 @@ void VcprojGenerator::initOld()
     // Decode version, and add it to $$MSVCPROJ_VERSION --------------
     if(!project->values("VERSION").isEmpty()) {
         QString version = project->values("VERSION")[0];
-        int firstDot = version.indexOf(".");
-        QString major = version.left(firstDot);
-        QString minor = version.right(version.length() - firstDot - 1);
-        minor.replace(QRegExp("\\."), "");
-        project->values("MSVCPROJ_VERSION").append("/VERSION:" + major + "." + minor);
-        project->values("QMAKE_LFLAGS").append("/VERSION:" + major + "." + minor);
+        project->values("MSVCPROJ_VERSION").append("/VERSION:" + version);
+        project->values("QMAKE_LFLAGS").append("/VERSION:" + version);
     }
 
     project->values("QMAKE_LIBS") += escapeFilePaths(project->values("LIBS"));
