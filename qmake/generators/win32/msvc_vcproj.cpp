@@ -704,7 +704,9 @@ void VcprojGenerator::init()
                 + (Option::cpp_ext.count() ? Option::cpp_ext.at(0) : QLatin1String(".cpp"));
             project->values("GENERATED_SOURCES") += precompCPP;
         } else if (!precompCPP.isEmpty()) {
-            project->values("SOURCES") += precompCPP;
+            precompCPP.replace("/", "\\");
+            if (!project->values("SOURCES").contains(precompCPP))
+                project->values("SOURCES") += precompCPP;
         }
     }
 
