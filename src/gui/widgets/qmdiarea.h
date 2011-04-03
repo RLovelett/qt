@@ -75,7 +75,8 @@ class Q_GUI_EXPORT QMdiArea : public QAbstractScrollArea
     Q_ENUMS(WindowOrder)
 public:
     enum AreaOption {
-        DontMaximizeSubWindowOnActivation = 0x1
+        DontMaximizeSubWindowOnActivation = 0x1,
+        DontUpdateWindowTitle = 0x2
     };
     Q_DECLARE_FLAGS(AreaOptions, AreaOption)
 

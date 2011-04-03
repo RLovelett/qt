@@ -121,6 +121,10 @@
     is maximized, the default behavior is to maximize the next
     subwindow that is activated. Set this option if you do not want
     this behavior.
+
+    \value DontUpdateWindowTitle Do not manipulate the title for the QMainWindow
+    the child might belong to.
+    \since 4.8
 */
 
 /*!

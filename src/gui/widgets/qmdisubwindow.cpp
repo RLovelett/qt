@@ -247,6 +247,15 @@ static inline bool isChildOfTabbedQMdiArea(const QMdiSubWindow *child)
     return false;
 }
 
+static inline bool canUpdateWindowTitle(const QMdiSubWindow *child)
+{
+    Q_ASSERT(child);
+    if (QMdiArea *mdiArea = child->mdiArea()) {
+      return !mdiArea->testOption(QMdiArea::DontUpdateWindowTitle);
+    }
+    return true;
+}
+
 template<typename T>
 static inline ControlElement<T> *ptr(QWidget *widget)
 {
@@ -276,10 +285,10 @@ void QMdiSubWindowPrivate::setNewWindowTitle()
         return;
     QString original = originalWindowTitle();
     if (!original.isEmpty()) {
-        if (!original.contains(QMdiSubWindow::tr("- [%1]").arg(childTitle)))
+        if (!original.contains(QMdiSubWindow::tr("- [%1]").arg(childTitle)) && canUpdateWindowTitle(q))
             q->window()->setWindowTitle(QMdiSubWindow::tr("%1 - [%2]").arg(original, childTitle));
 
-    } else {
+    } else if (canUpdateWindowTitle(q)) {
         q->window()->setWindowTitle(childTitle);
     }
 }
@@ -1010,7 +1019,7 @@ void QMdiSubWindowPrivate::removeBaseWidget()
         layout->removeWidget(baseWidget);
     if (baseWidget->windowTitle() == q->windowTitle()) {
         ignoreWindowTitleChange = true;
-        q->setWindowTitle(QString());
+	q->setWindowTitle(QString());
         ignoreWindowTitleChange = false;
         q->setWindowModified(false);
     }
