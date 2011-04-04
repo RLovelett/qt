@@ -87,6 +87,8 @@ public:
 
     void setBaseUrl(const QUrl &);
     QUrl baseUrl() const;
+    
+    QString getStringId(const QObject *) const;
 
 private:
     friend class QDeclarativeVME;

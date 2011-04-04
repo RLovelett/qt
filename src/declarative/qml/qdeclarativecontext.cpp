@@ -470,6 +470,15 @@ QUrl QDeclarativeContext::baseUrl() const
         return QUrl();
 }
 
+/*!
+    Returns the id string of an object in this context.
+*/
+QString QDeclarativeContext::getStringId(const QObject *obj) const
+{
+    Q_D(const QDeclarativeContext);
+    return d->data->findObjectId(obj);
+}
+
 int QDeclarativeContextPrivate::context_count(QDeclarativeListProperty<QObject> *prop)
 {
     QDeclarativeContext *context = static_cast<QDeclarativeContext*>(prop->object);
