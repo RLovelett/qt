@@ -273,6 +273,12 @@ void QTextOdfWriter::writeBlock(QXmlStreamWriter &writer, const QTextBlock &bloc
                 writer.writeEndElement(); // list-item
         }
     }
+    
+    QTextBlockFormat blockFormat = block.blockFormat();
+    if (blockFormat.hasProperty(QTextFormat::BlockTrailingHorizontalRulerWidth)) {
+        writer.writeEmptyElement(textNS, QString::fromLatin1("p"));
+        writer.writeAttribute(textNS, QString::fromLatin1("style-name"), "HorizontalLine");
+    }
 
     if (block.length() == 1) { // only a linefeed
         writer.writeEmptyElement(textNS, QString::fromLatin1("p"));
@@ -439,8 +445,23 @@ void QTextOdfWriter::writeFormats(QXmlStreamWriter &writer, QSet<int> formats) c
     writer.writeEndElement(); // automatic-styles
 }
 
+void QTextOdfWriter::writeHorizontalLineFormat(QXmlStreamWriter &writer) const
+{
+    writer.writeStartElement(styleNS, QString::fromLatin1("style"));
+    writer.writeAttribute(styleNS, QString::fromLatin1("name"), QString::fromLatin1("HorizontalLine"));
+    writer.writeAttribute(styleNS, QString::fromLatin1("family"), QString::fromLatin1("paragraph"));
+    writer.writeStartElement(styleNS, QString::fromLatin1("paragraph-properties"));
+
+    writer.writeAttribute(foNS, QString::fromLatin1("border-bottom"), "0.04cm solid #000000");
+    writer.writeEndElement();
+    writer.writeEndElement();
+}
+
 void QTextOdfWriter::writeBlockFormat(QXmlStreamWriter &writer, QTextBlockFormat format, int formatIndex) const
 {
+    if(format.hasProperty(QTextFormat::BlockTrailingHorizontalRulerWidth))
+        writeHorizontalLineFormat(writer);
+
     writer.writeStartElement(styleNS, QString::fromLatin1("style"));
     writer.writeAttribute(styleNS, QString::fromLatin1("name"), QString::fromLatin1("p%1").arg(formatIndex));
     writer.writeAttribute(styleNS, QString::fromLatin1("family"), QString::fromLatin1("paragraph"));

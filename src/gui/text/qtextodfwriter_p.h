@@ -90,6 +90,7 @@ public:
     void writeBlock(QXmlStreamWriter &writer, const QTextBlock &block);
     void writeFormats(QXmlStreamWriter &writer, QSet<int> formatIds) const;
     void writeBlockFormat(QXmlStreamWriter &writer, QTextBlockFormat format, int formatIndex) const;
+    void writeHorizontalLineFormat(QXmlStreamWriter &writer) const;
     void writeCharacterFormat(QXmlStreamWriter &writer, QTextCharFormat format, int formatIndex) const;
     void writeListFormat(QXmlStreamWriter &writer, QTextListFormat format, int formatIndex) const;
     void writeFrameFormat(QXmlStreamWriter &writer, QTextFrameFormat format, int formatIndex) const;

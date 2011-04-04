@@ -1189,6 +1189,9 @@ void QTextHtmlParserNode::initializeProperties(const QTextHtmlParserNode *parent
         case Html_sup:
             charFormat.setVerticalAlignment(QTextCharFormat::AlignSuperScript);
             break;
+        case Html_hr:
+            blockFormat.setProperty(QTextFormat::BlockTrailingHorizontalRulerWidth, QVariant(true));
+            break;
         default: break;
     }
 }
