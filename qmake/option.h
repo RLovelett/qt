@@ -141,7 +141,7 @@ struct Option
 
     //global qmake mode, can only be in one mode per invocation!
     enum QMAKE_MODE { QMAKE_GENERATE_NOTHING, QMAKE_GENERATE_PROJECT, QMAKE_GENERATE_MAKEFILE,
-                      QMAKE_GENERATE_PRL, QMAKE_SET_PROPERTY, QMAKE_QUERY_PROPERTY };
+                      QMAKE_GENERATE_PRL, QMAKE_SET_PROPERTY, QMAKE_QUERY_PROPERTY, QMAKE_UNSET_PROPERTY };
     static QMAKE_MODE qmake_mode;
 
     //all modes
