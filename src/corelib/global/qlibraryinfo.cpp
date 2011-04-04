@@ -85,6 +85,7 @@ class QLibraryInfoPrivate
 {
 public:
     static QSettings *findConfiguration();
+    static bool fixupRelativePrefixDefault(QSettings *, const QLatin1String &, const QLatin1String &, const QLatin1String &, const char *);
     static void cleanup()
     {
         QLibrarySettings *ls = qt_library_settings();
@@ -104,6 +105,60 @@ QLibrarySettings::QLibrarySettings()
 #ifndef BOOTSTRAPPING
     qAddPostRoutine(QLibraryInfoPrivate::cleanup);
 #endif
+}
+
+// The readGroup is used to check for explicit configuration of this item
+//  this should always be set by the user manually.
+// The writeGroup is used to store away any automatically configured values,
+//  since we never want to make these value look like they were explicitly
+//  configured by the user we need to keep it in a separate INI section.
+// Ideally we want to use qsettings->setValue() with an extra argument which
+//  instructs QSettings to never persist this entry (but keep it available
+//  for read operations).
+bool QLibraryInfoPrivate::fixupRelativePrefixDefault(QSettings *qsettings, const QLatin1String &readGroup, const QLatin1String &writeGroup, const QLatin1String &key, const char *hardwired_default_value)
+{
+    const QLatin1String K_Prefix = QLatin1String("Prefix");
+    bool bf = false;
+
+    qsettings->beginGroup(readGroup);
+    if(!qsettings->contains(key)) {	// We never overwrite explicit configuration
+        qsettings->endGroup();
+        qsettings->beginGroup(writeGroup);	// Flip section
+
+        QString defaultValue = QString();
+        if(key == K_Prefix) {
+            // Compute the new prefix based on qt.conf location
+            const QString fileName = qsettings->fileName();
+            QFileInfo fileInfo = QFileInfo(fileName);	// C:\Qt\2010.10\qt\bin\qt.conf
+            if(fileInfo.exists()) {
+                QDir qdir = fileInfo.absoluteDir();
+                if(qdir.cdUp()) {
+                    defaultValue = QString(qdir.absolutePath().toLocal8Bit().data());	// C:\Qt\2010.10\qt
+                    bf = true;
+                }
+            }
+        } else {
+            // For all other non "Prefix" properties, we compute based on the "Prefix" property
+            const char *tmpHardwiredPrefixPath = QT_CONFIGURE_PREFIX_PATH;
+            QString hardwiredPrefixPath = QString(tmpHardwiredPrefixPath);	// stem value to remove
+            QString hardwiredDefaultValue = QString(hardwired_default_value);	// remove from this variable
+            QString prefixValue = QString(qsettings->value(K_Prefix).toString());	// value to use instead
+
+            if(hardwiredDefaultValue.startsWith(hardwiredPrefixPath)) {
+                  QString newDefaultValue = hardwiredDefaultValue.mid(hardwiredPrefixPath.length());	// removal
+                  newDefaultValue = prefixValue + newDefaultValue;	// fixup
+                  defaultValue = QString(newDefaultValue);
+            }
+        }
+        if(!defaultValue.isNull()) {
+            qsettings->setValue(key, defaultValue);
+            bf = true;
+        }
+    } else {
+        bf = true;
+    }
+    qsettings->endGroup();
+    return bf;
 }
 
 QSettings *QLibraryInfoPrivate::findConfiguration()
@@ -134,8 +189,88 @@ QSettings *QLibraryInfoPrivate::findConfiguration()
 	    }
     }
 #endif
+    QSettings *qsettings = NULL;
     if (QFile::exists(qtconfig))
-        return new QSettings(qtconfig, QSettings::IniFormat);
+        qsettings = new QSettings(qtconfig, QSettings::IniFormat);
+    if (qsettings) {
+        // Check for settings section and key in INI:
+        // [SDK]
+        // fixupRelativePrefixDefault=1
+        // 
+        // If set, then (for each not otherwise configured [Path] item) we fixup
+        //  the default by using the location of the qt.conf file itself as the
+        //  marker for how to resolve QT_INSTALL_PREFIX.
+        // looking up hardcoded qt_prfxpath=
+        // looking up the hardcoded variable (say qt_libspath=) and removing
+        //  the old prefix and replacing with the one we just calculated.
+        // 
+        // This allows anyone to create a relocatable toolchain/SDK build of Qt
+        //  provide a static qt.conf file with the [SDK] section and it to
+        //  just-work(tm) without requiring binary patching or user-configuration.
+        qsettings->beginGroup(QLatin1String("SDK"));
+        QVariant val = qsettings->value(QLatin1String("fixupRelativePrefixDefault"), (const char *)NULL);
+        qsettings->endGroup();
+
+        QString valString = NULL;
+        if(!val.isNull())
+            valString = val.toString();
+
+        if(valString == QLatin1String("true") || valString == QChar(QLatin1Char('1'))) {
+            const QLatin1String K_AutoPaths = QLatin1String("AutoPaths");
+            const QLatin1String K_Paths = QLatin1String("Paths");
+            const char *path;
+#ifdef QT_CONFIGURE_PREFIX_PATH
+            // Always do "Prefix" first
+            path = QT_CONFIGURE_PREFIX_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Prefix"), path);
+#endif
+#ifdef QT_CONFIGURE_DOCUMENTATION_PATH
+            path = QT_CONFIGURE_DOCUMENTATION_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Documentation"), path);
+#endif
+#ifdef QT_CONFIGURE_HEADERS_PATH
+            path = QT_CONFIGURE_HEADERS_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Headers"), path);
+#endif
+#ifdef QT_CONFIGURE_LIBRARIES_PATH
+            path = QT_CONFIGURE_LIBRARIES_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Libraries"), path);
+#endif
+#ifdef QT_CONFIGURE_BINARIES_PATH
+            path = QT_CONFIGURE_BINARIES_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Binaries"), path);
+#endif
+#ifdef QT_CONFIGURE_PLUGINS_PATH
+            path = QT_CONFIGURE_PLUGINS_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Plugins"), path);
+#endif
+#ifdef QT_CONFIGURE_IMPORTS_PATH
+            path = QT_CONFIGURE_IMPORTS_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Imports"), path);
+#endif
+#ifdef QT_CONFIGURE_DATA_PATH
+            path = QT_CONFIGURE_DATA_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Data"), path);
+#endif
+#ifdef QT_CONFIGURE_TRANSLATIONS_PATH
+            path = QT_CONFIGURE_TRANSLATIONS_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Translations"), path);
+#endif
+#ifdef QT_CONFIGURE_SETTINGS_PATH
+            path = QT_CONFIGURE_SETTINGS_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Settings"), path);
+#endif
+#ifdef QT_CONFIGURE_EXAMPLES_PATH
+            path = QT_CONFIGURE_EXAMPLES_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Examples"), path);
+#endif
+#ifdef QT_CONFIGURE_DEMOS_PATH
+            path = QT_CONFIGURE_DEMOS_PATH;
+            fixupRelativePrefixDefault(qsettings, K_Paths, K_AutoPaths, QLatin1String("Demos"), path);
+#endif
+        }
+        return qsettings;
+    }
     return 0;     //no luck
 }
 
@@ -428,6 +563,20 @@ QLibraryInfo::location(LibraryLocation loc)
                 }
             }
             ret = config->value(subKey + key, defaultValue).toString();
+            // SUPPORT for vvv: [SDK]fixupRelativePrefixDefault=1
+            if(ret == NULL) {
+                // Kludge!  As we can't use config->setValue() to instruct QSettings to never persist this value
+                //  so we use a different INI section to persist auto-configured values too.
+                config->endGroup();
+                config->beginGroup(QLatin1String("AutoPaths"));
+                // Try AutoPaths 2nd
+                ret = config->value(subKey + key, defaultValue).toString();
+                if(ret == NULL) {  // ah well, go back FWIW
+                    config->endGroup();
+                    config->beginGroup(QLatin1String("Paths"));
+                }
+            }
+            // SUPPORT for ^^^: [SDK]fixupRelativePrefixDefault=1
             // expand environment variables in the form $(ENVVAR)
             int rep;
             QRegExp reg_var(QLatin1String("\\$\\(.*\\)"));
