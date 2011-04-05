@@ -161,7 +161,7 @@ QMakeProperty::setValue(QString var, const QString &val)
 }
 
 void
-QMakeProperty::remove(QString var)
+QMakeProperty::remove(const QString &var)
 {
     initSettings();
     settings->remove(keyBase() + var);
