@@ -127,7 +127,7 @@ extern "C" {
     Q_CORE_EXPORT int q_atomic_fetch_and_add_acquire_int(volatile int *ptr, int value);
     Q_CORE_EXPORT int q_atomic_fetch_and_add_release_int(volatile int *ptr, int value);
 
-    Q_CORE_EXPORT int q_atomic_test_and_set_ptr(volatile void *ptr, void *expected, void *newval);
+    Q_CORE_EXPORT int q_atomic_test_and_set_ptr(volatile void *ptr, const volatile void *expected, const volatile void *newval);
     Q_CORE_EXPORT int q_atomic_test_and_set_acquire_ptr(volatile void *ptr,
                                                         void *expected,
                                                         void *newval);
