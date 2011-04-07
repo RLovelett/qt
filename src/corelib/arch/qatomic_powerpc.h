@@ -478,7 +478,7 @@ extern "C" {
     int q_atomic_test_and_set_int(volatile int *ptr, int expectedValue, int newValue);
     int q_atomic_test_and_set_acquire_int(volatile int *ptr, int expectedValue, int newValue);
     int q_atomic_test_and_set_release_int(volatile int *ptr, int expectedValue, int newValue);
-    int q_atomic_test_and_set_ptr(volatile void *ptr, void *expectedValue, void *newValue);
+    int q_atomic_test_and_set_ptr(volatile void *ptr, const volatile void *expected, const volatile void *newval);
     int q_atomic_test_and_set_acquire_ptr(volatile void *ptr, void *expectedValue, void *newValue);
     int q_atomic_test_and_set_release_ptr(volatile void *ptr, void *expectedValue, void *newValue);
     int q_atomic_increment(volatile int *);
