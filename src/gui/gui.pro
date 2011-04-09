@@ -91,7 +91,11 @@ contains(QMAKE_MAC_XARCH, no) {
                 mmx_compiler.commands += -Xarch_i386 -mmmx
                 mmx_compiler.commands += -Xarch_x86_64 -mmmx
             } else {
-                mmx_compiler.commands += -mmmx
+		solaris-cc* {
+			mmx_compiler.commands += -xarch=sse2
+		} else{
+                	mmx_compiler.commands += -mmmx
+		}
             }
 
             mmx_compiler.commands += $(CXXFLAGS) $(INCPATH) ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
@@ -110,7 +114,11 @@ contains(QMAKE_MAC_XARCH, no) {
                 mmx3dnow_compiler.commands += -Xarch_i386 -m3dnow -Xarch_i386 -mmmx
                 mmx3dnow_compiler.commands += -Xarch_x86_64 -m3dnow -Xarch_x86_64 -mmmx
             } else {
-                mmx3dnow_compiler.commands += -m3dnow -mmmx
+		solaris-cc* {
+                    mmx3dnow_compiler.commands += -xarch=pentium_proa
+                } else {
+                    mmx3dnow_compiler.commands += -m3dnow -mmmx
+                }
             }
 
             mmx3dnow_compiler.commands += $(CXXFLAGS) $(INCPATH) ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
@@ -128,7 +136,11 @@ contains(QMAKE_MAC_XARCH, no) {
                     sse3dnow_compiler.commands += -Xarch_i386 -m3dnow -Xarch_i386 -msse
                     sse3dnow_compiler.commands += -Xarch_x86_64 -m3dnow -Xarch_x86_64 -msse
                 } else {
-                    sse3dnow_compiler.commands += -m3dnow -msse
+		    solaris-cc* {
+                        sse3dnow_compiler.commands += -xarch=ssea
+                    } else {
+                        sse3dnow_compiler.commands += -m3dnow -msse
+                    }
                 }
 
                 sse3dnow_compiler.commands += $(CXXFLAGS) $(INCPATH) ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
@@ -148,7 +160,11 @@ contains(QMAKE_MAC_XARCH, no) {
                 sse_compiler.commands += -Xarch_i386 -msse
                 sse_compiler.commands += -Xarch_x86_64 -msse
             } else {
-                sse_compiler.commands += -msse
+		solaris-cc* {
+                    sse_compiler.commands += -xarch=sse
+                } else {
+                    sse_compiler.commands += -msse
+                }
             }
 
             sse_compiler.commands += $(CXXFLAGS) $(INCPATH) ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
@@ -167,7 +183,11 @@ contains(QMAKE_MAC_XARCH, no) {
                 sse2_compiler.commands += -Xarch_i386 -msse2
                 sse2_compiler.commands += -Xarch_x86_64 -msse2
             } else {
-                sse2_compiler.commands += -msse2
+		solaris-cc* {
+                    sse2_compiler.commands += -xarch=sse2
+                } else {
+                    sse2_compiler.commands += -msse2
+                }
             }
 
             sse2_compiler.commands += $(CXXFLAGS) $(INCPATH) ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
@@ -186,7 +206,11 @@ contains(QMAKE_MAC_XARCH, no) {
                 ssse3_compiler.commands += -Xarch_i386 -mssse3
                 ssse3_compiler.commands += -Xarch_x86_64 -mssse3
             } else {
-                ssse3_compiler.commands += -mssse3
+		solaris-cc* {
+                    ssse3_compiler.commands += -xarch=ssse3
+                } else {
+                    ssse3_compiler.commands += -mssse3
+                }
             }
 
             ssse3_compiler.commands += $(CXXFLAGS) $(INCPATH) ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}

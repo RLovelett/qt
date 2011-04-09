@@ -63,7 +63,7 @@ QT_BEGIN_HEADER
 #endif
 
 // SSE intrinsics
-#if defined(QT_HAVE_SSE2) && (defined(__SSE2__) || defined(Q_CC_MSVC))
+#if defined(QT_HAVE_SSE2) && (defined(__SSE2__) || defined(Q_CC_MSVC) || defined(Q_CC_SUN))
 #if defined(QT_LINUXBASE)
 /// this is an evil hack - the posix_memalign declaration in LSB
 /// is wrong - see http://bugs.linuxbase.org/show_bug.cgi?id=2431
@@ -78,22 +78,22 @@ QT_BEGIN_HEADER
 #endif
 
 // SSE3 intrinsics
-#if defined(QT_HAVE_SSE3) && (defined(__SSE3__) || defined(Q_CC_MSVC))
+#if defined(QT_HAVE_SSE3) && (defined(__SSE3__) || defined(Q_CC_MSVC) || defined(Q_CC_SUN))
 #include <pmmintrin.h>
 #endif
 
 // SSSE3 intrinsics
-#if defined(QT_HAVE_SSSE3) && (defined(__SSSE3__) || defined(Q_CC_MSVC))
+#if defined(QT_HAVE_SSSE3) && (defined(__SSSE3__) || defined(Q_CC_MSVC) || defined(Q_CC_SUN))
 #include <tmmintrin.h>
 #endif
 
 // SSE4.1 intrinsics
-#if defined(QT_HAVE_SSE4_1) && (defined(__SSE4_1__) || defined(Q_CC_MSVC))
+#if defined(QT_HAVE_SSE4_1) && (defined(__SSE4_1__) || defined(Q_CC_MSVC) || defined(Q_CC_SUN))
 #include <smmintrin.h>
 #endif
 
 // SSE4.2 intrinsics
-#if defined(QT_HAVE_SSE4_2) && (defined(__SSE4_2__) || defined(Q_CC_MSVC))
+#if defined(QT_HAVE_SSE4_2) && (defined(__SSE4_2__) || defined(Q_CC_MSVC) || defined(Q_CC_SUN))
 #include <nmmintrin.h>
 #endif
 
