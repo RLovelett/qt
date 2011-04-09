@@ -286,7 +286,7 @@ void QMenuPrivate::updateActionRects() const
     bool previousWasSeparator = true; // this is true to allow removing the leading separators
     for(int i = 0; i <= lastVisibleAction; i++) {
         QAction *action = actions.at(i);
-
+        if(action->isSeparator() && !action->isVisible() && action->text() == "newColumn")  y = vmargin;//reset column height
         if (!action->isVisible() ||
             (collapsibleSeparators && previousWasSeparator && action->isSeparator()))
             continue; // we continue, this action will get an empty QRect
@@ -361,13 +361,14 @@ void QMenuPrivate::updateActionRects() const
 
     for(int i = 0; i < actions.count(); i++) {
         QRect &rect = actionRects[i];
-        if (rect.isNull())
-            continue;
-        if (!scroll &&
-           y+rect.height() > dh - deskFw * 2) {
+        QAction *action = actions.at(i);//cortopassi
+        if ((!scroll && y+rect.height() > dh - deskFw * 2)  ||  (action->isSeparator() && !action->isVisible() && action->text() == "newColumn")) {
             x += max_column_width + hmargin;
             y = base_y;
         }
+        if (rect.isNull())
+            continue;
+
         rect.translate(x, y);                        //move
         rect.setWidth(max_column_width); //uniform width
 
@@ -1521,6 +1522,16 @@ QAction *QMenu::addSeparator()
     action->setSeparator(true);
     addAction(action);
     return action;
+}
+
+/*!
+    Adds a column break to the menu. The next action added will appear at the top of the menu one column to the right of the previous action
+*/
+void QMenu::newColumn()
+{//a new column is an invisible separator with name "newColumn"
+    QAction* action = addAction("newColumn");
+    action->setSeparator(true);
+    action->setVisible(false);
 }
 
 /*!
