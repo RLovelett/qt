@@ -3310,8 +3310,6 @@ bool QAbstractTableModel::dropMimeData(const QMimeData *data, Qt::DropAction act
 
     // if the drop is on an item, replace the data in the items
     if (parent.isValid() && row == -1 && column == -1) {
-        int top = INT_MAX;
-        int left = INT_MAX;
         QVector<int> rows, columns;
         QVector<QMap<int, QVariant> > data;
 
@@ -3322,13 +3320,13 @@ bool QAbstractTableModel::dropMimeData(const QMimeData *data, Qt::DropAction act
             rows.append(r);
             columns.append(c);
             data.append(v);
-            top = qMin(r, top);
-            left = qMin(c, left);
         }
 
+        int touchRow = rows.at(0);
+        int touchColumn = columns.at(0);
         for (int i = 0; i < data.size(); ++i) {
-            int r = (rows.at(i) - top) + parent.row();
-            int c = (columns.at(i) - left) + parent.column();
+            int r = rows.at(i) + parent.row() - touchRow;
+            int c = columns.at(i) + parent.column() - touchColumn;
             if (hasIndex(r, c))
                 setItemData(index(r, c), data.at(i));
         }

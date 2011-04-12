@@ -3429,6 +3429,18 @@ void QAbstractItemView::startDrag(Qt::DropActions supportedActions)
 {
     Q_D(QAbstractItemView);
     QModelIndexList indexes = d->selectedDraggableIndexes();
+
+    // Replacing touched item to first position
+    int touchRow = currentIndex().row();
+    int touchColumn = currentIndex().column();
+    for (int i = 0; i < indexes.size(); i++) {
+        if (touchRow == indexes.at(i).row()
+            && touchColumn == indexes.at(i).column()) {
+            indexes.swap(0,i);
+            break;
+        }
+    }
+
     if (indexes.count() > 0) {
         QMimeData *data = d->model->mimeData(indexes);
         if (!data)

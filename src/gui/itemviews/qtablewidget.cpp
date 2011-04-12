@@ -2643,35 +2643,45 @@ bool QTableWidget::event(QEvent *e)
 /*! \reimp */
 void QTableWidget::dropEvent(QDropEvent *event) {
     Q_D(QTableWidget);
+    
+    QModelIndex topIndex;
+    int col = -1;
+    int row = -1;
+    if (!d->dropOn(event, &row, &col, &topIndex)) {
+        QTableView::dropEvent(event);
+        return;
+    }
+    
+    QModelIndexList indexes = selectedIndexes();
     if (event->source() == this && (event->dropAction() == Qt::MoveAction ||
                                     dragDropMode() == QAbstractItemView::InternalMove)) {
-        QModelIndex topIndex;
-        int col = -1;
-        int row = -1;
-        if (d->dropOn(event, &row, &col, &topIndex)) {
-            QModelIndexList indexes = selectedIndexes();
-            int top = INT_MAX;
-            int left = INT_MAX;
-            for (int i = 0; i < indexes.count(); ++i) {
-                top = qMin(indexes.at(i).row(), top);
-                left = qMin(indexes.at(i).column(), left);
-            }
+        QList<QTableWidgetItem *> taken;
+        for (int i = 0; i < indexes.count(); ++i)
+            taken.append(takeItem(indexes.at(i).row(), indexes.at(i).column()));
 
-            QList<QTableWidgetItem *> taken;
-            for (int i = 0; i < indexes.count(); ++i)
-                taken.append(takeItem(indexes.at(i).row(), indexes.at(i).column()));
-
-            for (int i = 0; i < indexes.count(); ++i) {
-                QModelIndex index = indexes.at(i);
-                int r = index.row() - top + topIndex.row();
-                int c = index.column() - left + topIndex.column();
-                setItem(r, c, taken.takeFirst());
-            }
-
-            event->accept();
-            // Don't want QAbstractItemView to delete it because it was "moved" we already did it
-            event->setDropAction(Qt::CopyAction);
+        int touchRow = currentIndex().row();
+        int touchColumn = currentIndex().column();
+        for (int i = 0; i < indexes.count(); ++i) {
+            QModelIndex index = indexes.at(i);
+            int r = index.row() + topIndex.row() - touchRow;
+            int c = index.column() + topIndex.column() - touchColumn;
+            setItem(r, c, taken.takeFirst());
         }
+
+        event->accept();
+        // Don't want QAbstractItemView to delete it because it was "moved" we already did it
+        event->setDropAction(Qt::CopyAction);
+    }
+
+    // Make destination items selected
+    clearSelection();
+    int touchRow = currentIndex().row();
+    int touchColumn = currentIndex().column();
+    for (int i = 0; i < indexes.count(); ++i) {
+        QModelIndex index = indexes.at(i);
+        int r = index.row() + topIndex.row() - touchRow;
+        int c = index.column() + topIndex.column() - touchColumn;
+        setCurrentCell(r, c, QItemSelectionModel::Select);
     }
 
     QTableView::dropEvent(event);
