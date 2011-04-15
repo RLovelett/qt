@@ -133,15 +133,15 @@ bool QLibraryInfoPrivate::fixupRelativePrefixDefault(QSettings *qsettings, const
             if(fileInfo.exists()) {
                 QDir qdir = fileInfo.absoluteDir();
                 if(qdir.cdUp()) {
-                    defaultValue = QString(qdir.absolutePath().toLocal8Bit().data());	// C:\Qt\2010.10\qt
+                    defaultValue = QString::fromLocal8Bit(qdir.absolutePath().toLocal8Bit().data());	// C:\Qt\2010.10\qt
                     bf = true;
                 }
             }
         } else {
             // For all other non "Prefix" properties, we compute based on the "Prefix" property
             const char *tmpHardwiredPrefixPath = QT_CONFIGURE_PREFIX_PATH;
-            QString hardwiredPrefixPath = QString(tmpHardwiredPrefixPath);	// stem value to remove
-            QString hardwiredDefaultValue = QString(hardwired_default_value);	// remove from this variable
+            QString hardwiredPrefixPath = QString::fromLocal8Bit(tmpHardwiredPrefixPath);	// stem value to remove
+            QString hardwiredDefaultValue = QString::fromLocal8Bit(hardwired_default_value);	// remove from this variable
             QString prefixValue = QString(qsettings->value(K_Prefix).toString());	// value to use instead
 
             if(hardwiredDefaultValue.startsWith(hardwiredPrefixPath)) {
@@ -208,10 +208,10 @@ QSettings *QLibraryInfoPrivate::findConfiguration()
         //  provide a static qt.conf file with the [SDK] section and it to
         //  just-work(tm) without requiring binary patching or user-configuration.
         qsettings->beginGroup(QLatin1String("SDK"));
-        QVariant val = qsettings->value(QLatin1String("fixupRelativePrefixDefault"), (const char *)NULL);
+        QVariant val = qsettings->value(QLatin1String("fixupRelativePrefixDefault"), QVariant());
         qsettings->endGroup();
 
-        QString valString = NULL;
+        QString valString = QString();
         if(!val.isNull())
             valString = val.toString();
 
@@ -564,14 +564,14 @@ QLibraryInfo::location(LibraryLocation loc)
             }
             ret = config->value(subKey + key, defaultValue).toString();
             // SUPPORT for vvv: [SDK]fixupRelativePrefixDefault=1
-            if(ret == NULL) {
+            if(ret.isNull()) {
                 // Kludge!  As we can't use config->setValue() to instruct QSettings to never persist this value
                 //  so we use a different INI section to persist auto-configured values too.
                 config->endGroup();
                 config->beginGroup(QLatin1String("AutoPaths"));
                 // Try AutoPaths 2nd
                 ret = config->value(subKey + key, defaultValue).toString();
-                if(ret == NULL) {  // ah well, go back FWIW
+                if(ret.isNull()) {  // ah well, go back FWIW
                     config->endGroup();
                     config->beginGroup(QLatin1String("Paths"));
                 }
