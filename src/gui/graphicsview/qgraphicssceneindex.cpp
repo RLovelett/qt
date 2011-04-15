@@ -150,9 +150,9 @@ public:
                                      ? brect.translated(itemd->sceneTransform.dx(),
                                                         itemd->sceneTransform.dy())
                                      : itemd->sceneTransform.mapRect(brect);
-			// Make an 1x1 device rect and map it to a scene rect for testing. This solves the problem
-			// when the view scale is higher than 1 and an 1x1 scene rect contains more than 1x1
-			// device pixels.
+            // Make an 1x1 device rect and map it to a scene rect for testing. This solves the problem
+            // when the view scale is higher than 1 and an 1x1 scene rect contains more than 1x1
+            // device pixels.
             QPointF devicePoint = deviceTransform.map(scenePoint);
             QRectF scenePointRect = deviceTransform.inverted().mapRect(QRectF(devicePoint, QSizeF(1, 1)));
             keep = sceneBoundingRect.intersects(scenePointRect);
@@ -425,11 +425,11 @@ QList<QGraphicsItem *> QGraphicsSceneIndex::items(const QPointF &pos, Qt::ItemSe
     Q_D(const QGraphicsSceneIndex);
     QList<QGraphicsItem *> itemList;
     d->pointIntersector->scenePoint = pos;
-	// Make an 1x1 device rect and map it to a scene rect for testing. This solves the problem
-	// when the view scale is higher than 1 and an 1x1 scene rect contains more than 1x1
-	// device pixels.
-	QPointF devicePoint = deviceTransform.map(pos);
-	QRectF scenePointRect = deviceTransform.inverted().mapRect(QRectF(devicePoint, QSizeF(1, 1)));
+    // Make an 1x1 device rect and map it to a scene rect for testing. This solves the problem
+    // when the view scale is higher than 1 and an 1x1 scene rect contains more than 1x1
+    // device pixels.
+    QPointF devicePoint = deviceTransform.map(pos);
+    QRectF scenePointRect = deviceTransform.inverted().mapRect(QRectF(devicePoint, QSizeF(1, 1)));
     d->items_helper(scenePointRect, d->pointIntersector, &itemList, deviceTransform, mode, order);
     return itemList;
 }

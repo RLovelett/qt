@@ -1081,14 +1081,14 @@ QList<QGraphicsItem *> QGraphicsScenePrivate::itemsAtPosition(const QPoint &scre
     if (!view)
         return q->items(scenePos, Qt::IntersectsItemShape, Qt::DescendingOrder, QTransform());
 
-	// Make an 1x1 device rect and map it to a scene rect for testing. This solves the problem
-	// when the view scale is higher than 1 and an 1x1 scene rect contains more than 1x1
-	// device pixels.
-	QRect deviceRect(view->viewport()->mapFromGlobal(screenPos), QSize(1, 1));
+    // Make an 1x1 device rect and map it to a scene rect for testing. This solves the problem
+    // when the view scale is higher than 1 and an 1x1 scene rect contains more than 1x1
+    // device pixels.
+    QRect deviceRect(view->viewport()->mapFromGlobal(screenPos), QSize(1, 1));
     const QRectF pointRect = view->mapToScene(deviceRect).boundingRect();
     if (!view->isTransformed())
         return q->items(pointRect, Qt::IntersectsItemShape, Qt::DescendingOrder);
-    
+
     const QTransform viewTransform = view->viewportTransform();
     return q->items(pointRect, Qt::IntersectsItemShape,
                     Qt::DescendingOrder, viewTransform);
