@@ -96,7 +96,7 @@ public:
     QMenu *addMenu(const QIcon &icon, const QString &title);
 
     QAction *addSeparator();
-    void     newColumn();
+    QAction *addVerticalSeparator();
 
     QAction *insertMenu(QAction *before, QMenu *menu);
     QAction *insertSeparator(QAction *before);
