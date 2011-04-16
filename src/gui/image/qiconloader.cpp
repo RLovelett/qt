@@ -497,7 +497,6 @@ QPixmap PixmapEntry::pixmap(const QSize &size, QIcon::Mode mode, QIcon::State st
                   % HexString<qint64>(basePixmap.cacheKey())
                   % HexString<int>(mode)
                   % HexString<qint64>(qApp->palette().cacheKey())
-                  % HexString<int>(actualSize)
                   % HexString<int>(actualSize.width())
                   % HexString<int>(actualSize.height());
 
