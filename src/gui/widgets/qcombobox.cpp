@@ -707,8 +707,10 @@ void QComboBoxPrivateContainer::hideEvent(QHideEvent *)
     // QGraphicsScenePrivate::removePopup closes the combo box popup, it hides it non-explicitly.
     // Hiding/showing the QComboBox after this will unexpectedly show the popup as well.
     // Re-hiding the popup container makes sure it is explicitly hidden.
+#ifndef QT_NO_GRAPHICSVIEW
     if (QGraphicsProxyWidget *proxy = graphicsProxyWidget())
         proxy->hide();
+#endif
 }
 
 void QComboBoxPrivateContainer::mousePressEvent(QMouseEvent *e)
