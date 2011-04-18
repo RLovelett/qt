@@ -1398,6 +1398,9 @@ void QDeclarativeVisualDataModel::_q_layoutChanged()
 
 void QDeclarativeVisualDataModel::_q_modelReset()
 {
+    Q_D(QDeclarativeVisualDataModel);
+    if (d->m_abstractItemModel->canFetchMore(d->m_root))
+        d->m_abstractItemModel->fetchMore(d->m_root);
     emit modelReset();
 }
 
