@@ -100,6 +100,7 @@ private Q_SLOTS:
     void continueExecute();
 
 protected:
+    virtual void changeEvent(QEvent *);
     virtual void resizeEvent(QResizeEvent *);
     virtual void paintEvent(QPaintEvent *event);
     virtual void timerEvent(QTimerEvent*);

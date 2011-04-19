@@ -47,6 +47,7 @@
 #include <qdeclarativecontext.h>
 #include <qdeclarativeglobal_p.h>
 #include <qdeclarativeguard_p.h>
+#include <qdeclarativepixmapcache_p.h>
 
 #include <private/qdeclarativedebugtrace_p.h>
 
@@ -662,6 +663,12 @@ QGraphicsObject *QDeclarativeView::rootObject() const
 {
     Q_D(const QDeclarativeView);
     return d->root;
+}
+
+void QDeclarativeView::changeEvent(QEvent *e)
+{
+  if (e->type() == QEvent::LanguageChange)
+    QDeclarativePixmap::clearCache();
 }
 
 /*!

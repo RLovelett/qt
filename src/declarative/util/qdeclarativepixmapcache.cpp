@@ -683,6 +683,11 @@ void QDeclarativePixmapStore::timerEvent(QTimerEvent *)
     }
 }
 
+void QDeclarativePixmap::clearCache()
+{
+    pixmapStore()->m_cache.clear();
+}
+
 QDeclarativePixmapReply::QDeclarativePixmapReply(QDeclarativePixmapData *d)
 : data(d), reader(0), requestSize(d->requestSize), loading(false), redirectCount(0)
 {
