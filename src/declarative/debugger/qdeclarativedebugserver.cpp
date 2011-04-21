@@ -115,6 +115,7 @@ void QDeclarativeDebugServerPrivate::advertisePlugins()
 
 QDeclarativeDebugServerConnection *QDeclarativeDebugServerPrivate::loadConnectionPlugin()
 {
+#ifndef QT_NO_LIBRARY
     QStringList pluginCandidates;
     const QStringList paths = QCoreApplication::libraryPaths();
     foreach (const QString &libPath, paths) {
@@ -140,6 +141,7 @@ QDeclarativeDebugServerConnection *QDeclarativeDebugServerPrivate::loadConnectio
             return connection;
         loader.unload();
     }
+#endif
     return 0;
 }
 
