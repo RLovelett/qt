@@ -61,7 +61,7 @@ public:
 
 QStringList QICOPlugin::keys() const
 {
-    return QStringList() << QLatin1String("ico");
+    return QStringList() << QLatin1String("ico") << QLatin1String("cur");
 }
 
 QImageIOPlugin::Capabilities QICOPlugin::capabilities(QIODevice *device, const QByteArray &format) const
