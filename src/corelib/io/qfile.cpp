@@ -286,7 +286,7 @@ QFilePrivate::setError(QFile::FileError err, int errNum)
     \value ReadError        An error occurred when reading from the file.
     \value WriteError       An error occurred when writing to the file.
     \value FatalError       A fatal error occurred.
-    \value ResourceError
+    \value ResourceError    Disk full or too many files open.
     \value OpenError        The file could not be opened.
     \value AbortError       The operation was aborted.
     \value TimeOutError     A timeout occurred.
