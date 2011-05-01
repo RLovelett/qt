@@ -689,7 +689,7 @@ QList<QByteArray> QImageWriter::supportedImageFormats()
     QSet<QByteArray> formats;
     formats << "bmp";
 #ifndef QT_NO_IMAGEFORMAT_PPM
-    formats << "ppm";
+    formats << "ppm" << "pbm" << "pgm";
 #endif
 #ifndef QT_NO_IMAGEFORMAT_XBM
     formats << "xbm";
