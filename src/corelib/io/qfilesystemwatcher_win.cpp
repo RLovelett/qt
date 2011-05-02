@@ -110,8 +110,11 @@ QStringList QWindowsFileSystemWatcherEngine::addPaths(const QStringList &paths,
         // qDebug()<<"Looking for a thread/handle for"<<normalPath;
 
         const QString absolutePath = isDir ? fileInfo.absoluteFilePath() : fileInfo.absolutePath();
+
+	// For directory, subscribe to file modified notifications
         const uint flags = isDir
                            ? (FILE_NOTIFY_CHANGE_DIR_NAME
+                              | FILE_NOTIFY_CHANGE_LAST_WRITE
                               | FILE_NOTIFY_CHANGE_FILE_NAME)
                            : (FILE_NOTIFY_CHANGE_DIR_NAME
                               | FILE_NOTIFY_CHANGE_FILE_NAME

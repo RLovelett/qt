@@ -80,6 +80,10 @@ private slots:
     void nonExistingFile();
 
     void removeFileAndUnWatch();
+	
+    // This test is used to check that directoryChanged signal is emitted when file is updated
+    void watchFileUpdate_data() { basicTest_data(); }
+    void watchFileUpdate();
 
     void cleanup();
 
@@ -550,6 +554,79 @@ void tst_QFileSystemWatcher::removeFileAndUnWatch()
         testFile.close();
     }
     watcher.addPath(filename);
+}
+
+void tst_QFileSystemWatcher::watchFileUpdate()
+{
+    QFETCH(QString, backend);
+    qDebug() << "Testing" << backend << "engine";
+	
+    QDir().mkdir("testDir");
+    QDir testDir("testDir");
+
+    QString testFileName = testDir.filePath("testFileUpdate.txt");
+
+    // create test file
+    QFile testFile(testFileName);
+    testFile.setPermissions(QFile::ReadOwner | QFile::WriteOwner);
+    testFile.remove();
+    QVERIFY(testFile.open(QIODevice::WriteOnly | QIODevice::Append));
+    testFile.close();
+
+    // set some file permissions
+    testFile.setPermissions(QFile::ReadOwner | QFile::WriteOwner);
+
+    // create watcher, forcing it to use a specific backend
+    QFileSystemWatcher watcher;
+    watcher.setObjectName(QLatin1String("_qt_autotest_force_engine_") + backend);
+    watcher.addPath(testDir.dirName());
+
+    QSignalSpy changedSpy(&watcher, SIGNAL(directoryChanged(const QString &)));
+    QEventLoop eventLoop;
+    QTimer timer;
+    connect(&timer, SIGNAL(timeout()), &eventLoop, SLOT(quit()));
+
+    // modify the file, should get a signal from the watcher
+
+    // resolution of the modification time is system dependent, but it's at most 1 second when using
+    // the polling engine. I've heard rumors that FAT32 has a 2 second resolution. So, we have to
+    // wait a bit before we can modify the file (hrmph)...
+#ifndef Q_OS_WINCE
+    QTest::qWait(2000);
+#else
+    // WinCE is always a little bit slower. Give it a little bit more time
+    QTest::qWait(5000);
+#endif
+
+    testFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    testFile.write(QByteArray("hello world"));
+    testFile.close();
+
+    // qDebug() << "waiting max 5 seconds for notification for file modification to trigger(1)";
+    timer.start(5000);
+    eventLoop.exec();
+
+    QCOMPARE(changedSpy.count(), 1);
+    QCOMPARE(changedSpy.at(0).count(), 1);
+    QString dirName = changedSpy.at(0).at(0).toString();
+    QCOMPARE(dirName, testDir.dirName());
+
+    changedSpy.clear();
+
+    // remove the watch and modify the file, should not get a signal from the watcher
+    watcher.removePath(testDir.dirName());
+    testFile.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    testFile.write(QByteArray("hello universe!"));
+    testFile.close();
+
+    // qDebug() << "waiting max 5 seconds for notification for file modification to trigger (2)";
+    timer.start(5000);
+    eventLoop.exec();
+
+    QCOMPARE(changedSpy.count(), 0);
+
+    QVERIFY(testFile.remove());
+    QVERIFY(QDir().rmdir("testDir"));
 }
 
 class SomeSingleton : public QObject

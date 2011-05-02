@@ -464,7 +464,8 @@ QFileSystemWatcher::~QFileSystemWatcher()
     If \a path specifies a directory, the directoryChanged() signal
     will be emitted when \a path is modified or removed from disk;
     otherwise the fileChanged() signal is emitted when \a path is
-    modified, renamed or removed.
+    modified, renamed or removed. The directoryChanged() signal will
+    also be emitted in case file contents are modifed.
 
     \note There is a system dependent limit to the number of files and
     directories that can be monitored simultaneously. If this limit
