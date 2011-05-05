@@ -1403,6 +1403,8 @@ bool QOCICols::execBatch(QOCIResultPrivate *d, QVector<QVariant> &boundValues, b
             if (val.isNull()){
                 columns[i].indicators[row] = -1;
                 columns[i].lengths[row] = 0;
+                if (row == 0 && col.recordCount == 1) // empty list
+                    col.curelep = 0;
             } else {
                 columns[i].indicators[row] = 0;
                 char *dataPtr = columns[i].data + (columns[i].maxLen * row);
