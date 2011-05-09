@@ -1170,7 +1170,7 @@ void QDirectFBPaintEnginePrivate::drawTiledPixmap(const QRectF &dest, const QPix
     const QTransform &transform = q->state()->matrix;
     Q_ASSERT(!(getTransformationType(transform) & Matrix_BlitsUnsupported) &&
              !(getTransformationType(pixmapTransform) & Matrix_BlitsUnsupported));
-    const QRect destinationRect = transform.mapRect(dest).toRect().normalized();
+    const QRect destinationRect = dest.toRect();
     QRect newClip = destinationRect;
     if (!currentClip.isEmpty())
         newClip &= currentClip;
@@ -1186,7 +1186,7 @@ void QDirectFBPaintEnginePrivate::drawTiledPixmap(const QRectF &dest, const QPix
     };
     surface->SetClip(surface, &clip);
 
-    QPointF offset = pixmapTransform.inverted().map(off);
+    QPointF offset = off;
     Q_ASSERT(transform.type() <= QTransform::TxScale);
     QPixmapData *data = pixmap.pixmapData();
     Q_ASSERT(data->classId() == QPixmapData::DirectFBClass);
