@@ -1061,7 +1061,7 @@ void QDirectFBPaintEnginePrivate::setRenderHints(QPainter::RenderHints hints)
 void QDirectFBPaintEnginePrivate::prepareForBlit(uint flags)
 {
     DFBSurfaceBlittingFlags blittingFlags = DSBLIT_NOFX;
-    if (flags & Premultiplied)
+    if (!(flags & Premultiplied))
         blittingFlags |= DSBLIT_SRC_PREMULTIPLY;
     if (flags & HasAlpha)
         blittingFlags |= DSBLIT_BLEND_ALPHACHANNEL;
