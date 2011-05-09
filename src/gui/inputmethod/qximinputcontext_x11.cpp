@@ -101,7 +101,7 @@ static const XIMStyle xim_default_style = XIMPreeditCallbacks | XIMStatusNothing
 
 extern "C" {
 #ifdef USE_X11R6_XIM
-    static void xim_create_callback(XIM /*im*/,
+    static void xim_create_callback(XID /*id*/,
                                     XPointer client_data,
                                     XPointer /*call_data*/)
     {
@@ -118,7 +118,7 @@ extern "C" {
         // qDebug("xim_destroy_callback");
         qic->close_xim();
         XRegisterIMInstantiateCallback(X11->display, 0, 0, 0,
-                                       (XIMProc) xim_create_callback, reinterpret_cast<char *>(qic));
+                                       (XIDProc) xim_create_callback, reinterpret_cast<char *>(qic));
     }
 #endif // USE_X11R6_XIM
 
@@ -371,7 +371,7 @@ QXIMInputContext::QXIMInputContext()
         qWarning("Qt: Cannot set locale modifiers: %s", ximServerName.constData());
     else
         XRegisterIMInstantiateCallback(X11->display, 0, 0, 0,
-                                       (XIMProc) xim_create_callback, reinterpret_cast<char *>(this));
+                                       (XIDProc) xim_create_callback, reinterpret_cast<char *>(this));
 #else // !USE_X11R6_XIM
     else if (XSetLocaleModifiers ("") == 0)
         qWarning("Qt: Cannot set locale modifiers");
@@ -475,7 +475,7 @@ void QXIMInputContext::create_xim()
 
 #ifdef USE_X11R6_XIM
             XUnregisterIMInstantiateCallback(X11->display, 0, 0, 0,
-                                             (XIMProc) xim_create_callback, reinterpret_cast<char *>(this));
+                                             (XIDProc) xim_create_callback, reinterpret_cast<char *>(this));
 #endif // USE_X11R6_XIM
 
             if (QWidget *focusWidget = QApplication::focusWidget()) {

@@ -60,6 +60,17 @@
 // the following is necessary to work around breakage in many versions
 // of XFree86's Xlib.h still in use
 // ### which versions?
+// NOTE: This issue has been reported against the latest LSB packages (LSB 4.1 beta).
+//       For details, see http://bugs.linuxbase.org/show_bug.cgi?id=3145
+//       The prevalent implementations of XRegisterIMInstantiateCallback and
+//       XUnregisterIMInstantiateCallback are actually consistent with the
+//       function prototypes that LSB's Xlib.h defines, even though this is
+//       inconsistent with the Xlib specification. We therefore must keep
+//       the LSB-defined function prototypes or else client code will pass
+//       invalid data to the fifth and sixth parameters of these two functions.
+#if defined(__LSB_VERSION__)
+#include <X11/Xlib.h>
+#else
 #if defined(_XLIB_H_) // crude hack, but...
 #error "cannot include <X11/Xlib.h> before this file"
 #endif
@@ -70,6 +81,7 @@
 #undef XRegisterIMInstantiateCallback
 #undef XUnregisterIMInstantiateCallback
 #undef XSetIMValues
+#endif
 
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
@@ -253,6 +265,8 @@ typedef int (*PtrXSelectExtensionEvent)(Display *, Window, XEventClass *, int);
 //######### Many old X11R6 header files lack XSetIMValues.
 //######### Therefore, we have to declare these functions ourselves.
 
+// NOTE: LSB versions need to be kept as they are. See comments near top of this file.
+#if !defined(__LSB_VERSION__)
 extern "C" Bool XRegisterIMInstantiateCallback(
     Display*,
     struct _XrmHashBucketRec*,
@@ -272,7 +286,7 @@ extern "C" Bool XUnregisterIMInstantiateCallback(
 );
 
 extern "C" char *XSetIMValues(XIM /* im */, ...);
-
+#endif  // __LSB_VERSION__
 #endif
 
 #ifndef QT_NO_FONTCONFIG
