@@ -323,7 +323,7 @@ static bool equalImageContents(const QImage &image1, const QImage &image2)
     case QImage::Format_Indexed8:
         for (int y = 0; y < image1.height(); ++y)
             for (int x = 0; x < image1.width(); ++x)
-                if (image1.pixel(x, y) != image2.pixel(x, y))
+                if (qGray(image1.color(image1.pixelIndex(x, y))) != qGray(image2.color(image2.pixelIndex(x, y))))
                     return false;
         return true;
     default:
