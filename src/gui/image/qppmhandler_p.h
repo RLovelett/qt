@@ -68,8 +68,6 @@ public:
     bool read(QImage *image);
     bool write(const QImage &image);
 
-    QByteArray name() const;
-
     static bool canRead(QIODevice *device, QByteArray *subType = 0);
 
     QVariant option(ImageOption option) const;
@@ -87,8 +85,11 @@ private:
     char type;
     int width;
     int height;
-    int mcc;
-    mutable QByteArray subType;
+    int maxval;
+    int depth;
+    QByteArray tupltype;
+
+    QImage::Format image_format;
 };
 
 QT_END_NAMESPACE

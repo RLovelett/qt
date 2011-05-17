@@ -51,10 +51,79 @@
 QT_BEGIN_NAMESPACE
 
 /*****************************************************************************
+  Mapping from type to format
+
+  Warning ! Format is the format string returned by 
+      QByteArray QImageIOHandler::format () const
+  Not the enum QImage::Format !!!
+
+  In this implementation, with option set to ImageOption::SubType
+      QVariant QPpmHandler::option (ImageOption option) const
+  returns 
+      QByteArray QImageIOHandler::format ()
+
+  Vice-versa, with option set to ImageOption::SubType
+      void QPpmHandler::setOption ( ImageOption option, const QVariant & value )
+  calls 
+      void QImageIOHandler::setFormat ( const QByteArray & format) 
+
+*****************************************************************************/
+
+static QByteArray type_to_format(char type)
+{
+    switch(type) {
+    case '1':
+    case '4':
+        return QByteArray("pbm");
+    case '2':
+    case '5':
+        return QByteArray("pgm");
+    case '3':
+    case '6':
+        return QByteArray("ppm");
+    }
+    return QByteArray();
+}
+
+static char format_to_type(const QByteArray &subType)
+{
+    if (subType.startsWith("pbm"))
+        return '4';
+    else if (subType.startsWith("pgm"))
+        return '5';
+    else if (subType.startsWith("ppm"))
+        return '6';
+    return ' ';
+}
+
+/*****************************************************************************
+  Test if we can read this file
+*****************************************************************************/
+
+static bool can_read(QIODevice *device, char & type)
+{
+    if (!device) {
+        qWarning("QPpmHandler::canRead() called with no device");
+        return false;
+    }
+
+    char head[2];
+    if (device->peek(head, sizeof(head)) != sizeof(head))
+        return false;
+
+    if (head[0] != 'P')
+        return false;
+
+    type = head[1];
+
+    return ('1' <= type && type <= '6'); 
+}
+ 
+/*****************************************************************************
   PBM/PGM/PPM (ASCII and RAW) image read/write functions
  *****************************************************************************/
 
-static int read_pbm_int(QIODevice *d)
+static int pnm_read_int(QIODevice *d)
 {
     char c;
     int          val = -1;
@@ -87,7 +156,7 @@ static int read_pbm_int(QIODevice *d)
     return val;
 }
 
-static bool read_pbm_header(QIODevice *device, char& type, int& w, int& h, int& mcc)
+static bool pnm_read_header(QIODevice *device, char& type, int& w, int& h, int& mcc, QImage::Format& image_format)
 {
     char buf[3];
     if (device->read(buf, 3) != 3)                        // read P[1-6]<white-space>
@@ -100,42 +169,52 @@ static bool read_pbm_header(QIODevice *device, char& type, int& w, int& h, int& 
     if (type < '1' || type > '6')
         return false;
 
-    w = read_pbm_int(device);                        // get image width
-    h = read_pbm_int(device);                        // get image height
+    w = pnm_read_int(device);                        // get image width
+    h = pnm_read_int(device);                        // get image height
 
     if (type == '1' || type == '4')
         mcc = 1;                                  // ignore max color component
     else
-        mcc = read_pbm_int(device);               // get max color component
+        mcc = pnm_read_int(device);               // get max color component
 
     if (w <= 0 || w > 32767 || h <= 0 || h > 32767 || mcc <= 0)
         return false;                                        // weird P.M image
 
+    switch (type) {
+        case '1':                                // ascii PBM
+        case '4':                                // raw PBM
+            image_format = QImage::Format_Mono;
+            break;
+        case '2':                                // ascii PGM
+        case '5':                                // raw PGM
+            image_format = QImage::Format_Indexed8;
+            break;
+        case '3':                                // ascii PPM
+        case '6':                                // raw PPM
+            image_format = QImage::Format_RGB32;
+            break;
+        default:
+            return false;
+    }
+
     return true;
 }
 
-static bool read_pbm_body(QIODevice *device, char type, int w, int h, int mcc, QImage *outImage)
+static bool pnm_read_body(QIODevice *device, char type, int w, int h, int mcc, QImage::Format image_format,  QImage *outImage)
 {
     int nbits, y;
     int pbm_bpl;
     bool raw;
 
-    QImage::Format format;
-    switch (type) {
-        case '1':                                // ascii PBM
-        case '4':                                // raw PBM
+    switch (image_format) {
+        case QImage::Format_Mono:
             nbits = 1;
-            format = QImage::Format_Mono;
             break;
-        case '2':                                // ascii PGM
-        case '5':                                // raw PGM
+        case QImage::Format_Indexed8: 
             nbits = 8;
-            format = QImage::Format_Indexed8;
             break;
-        case '3':                                // ascii PPM
-        case '6':                                // raw PPM
+        case QImage::Format_RGB32:
             nbits = 32;
-            format = QImage::Format_RGB32;
             break;
         default:
             return false;
@@ -145,11 +224,6 @@ static bool read_pbm_body(QIODevice *device, char type, int w, int h, int mcc, Q
     int maxc = mcc;
     if (maxc > 255)
         maxc = 255;
-    if (outImage->size() != QSize(w, h) || outImage->format() != format) {
-        *outImage = QImage(w, h, format);
-        if (outImage->isNull())
-            return false;
-    }
 
     pbm_bpl = (nbits*w+7)/8;                        // bytes per scanline in PBM
 
@@ -200,7 +274,7 @@ static bool read_pbm_body(QIODevice *device, char type, int w, int h, int mcc, Q
                     b = 0;
                     for (int i=0; i<8; i++) {
                         if (i < bitsLeft)
-                            b = (b << 1) | (read_pbm_int(device) & 1);
+                            b = (b << 1) | (pnm_read_int(device) & 1);
                         else
                             b = (b << 1) | (0 & 1); // pad it our self if we need to
                     }
@@ -210,11 +284,11 @@ static bool read_pbm_body(QIODevice *device, char type, int w, int h, int mcc, Q
             } else if (nbits == 8) {
                 if (mcc == maxc) {
                     while (n--) {
-                        *p++ = read_pbm_int(device);
+                        *p++ = pnm_read_int(device);
                     }
                 } else {
                     while (n--) {
-                        *p++ = read_pbm_int(device) * maxc / mcc;
+                        *p++ = pnm_read_int(device) * maxc / mcc;
                     }
                 }
             } else {                                // 32 bits
@@ -222,17 +296,17 @@ static bool read_pbm_body(QIODevice *device, char type, int w, int h, int mcc, Q
                 int r, g, b;
                 if (mcc == maxc) {
                     while (n--) {
-                        r = read_pbm_int(device);
-                        g = read_pbm_int(device);
-                        b = read_pbm_int(device);
+                        r = pnm_read_int(device);
+                        g = pnm_read_int(device);
+                        b = pnm_read_int(device);
                         *((QRgb*)p) = qRgb(r, g, b);
                         p += 4;
                     }
                 } else {
                     while (n--) {
-                        r = read_pbm_int(device) * maxc / mcc;
-                        g = read_pbm_int(device) * maxc / mcc;
-                        b = read_pbm_int(device) * maxc / mcc;
+                        r = pnm_read_int(device) * maxc / mcc;
+                        g = pnm_read_int(device) * maxc / mcc;
+                        b = pnm_read_int(device) * maxc / mcc;
                         *((QRgb*)p) = qRgb(r, g, b);
                         p += 4;
                     }
@@ -254,7 +328,7 @@ static bool read_pbm_body(QIODevice *device, char type, int w, int h, int mcc, Q
     return true;
 }
 
-static bool write_pbm_image(QIODevice *out, const QImage &sourceImage, const QByteArray &sourceFormat)
+static bool pnm_write_image(QIODevice *out, const QImage &sourceImage, const QByteArray &sourceFormat)
 {
     QByteArray str;
     QImage image = sourceImage;
@@ -393,6 +467,10 @@ static bool write_pbm_image(QIODevice *out, const QImage &sourceImage, const QBy
     return true;
 }
 
+/*****************************************************************************
+
+ *****************************************************************************/
+
 QPpmHandler::QPpmHandler()
     : state(Ready)
 {
@@ -400,24 +478,35 @@ QPpmHandler::QPpmHandler()
 
 bool QPpmHandler::readHeader()
 {
-    state = Error;
-    if (!read_pbm_header(device(), type, width, height, mcc))
+    if (!canRead()) {
         return false;
-    state = ReadHeader;
+    }
+
+    if(state == Ready) {
+        type = format_to_type(format());
+
+        if (('1' <= type) && (type <= '6') && !pnm_read_header(device(), type, width, height, maxval, image_format)) {
+            state = Error;
+            return false;
+        }
+
+        state = ReadHeader;
+    }
+
     return true;
 }
 
 bool QPpmHandler::canRead() const
 {
-    if (state == Ready && !canRead(device(), &subType))
-        return false;
-
-    if (state != Error) {
-        setFormat(subType);
-        return true;
+    if (state == Ready) {
+        QByteArray subType;
+        if (canRead(device(), &subType))
+            setFormat(subType);
+	else
+            return false;
     }
 
-    return false;
+    return (state == Error)?false:true;
 }
 
 bool QPpmHandler::canRead(QIODevice *device, QByteArray *subType)
@@ -427,39 +516,30 @@ bool QPpmHandler::canRead(QIODevice *device, QByteArray *subType)
         return false;
     }
 
-    char head[2];
-    if (device->peek(head, sizeof(head)) != sizeof(head))
+    char type;
+    if(!can_read(device, type))
         return false;
 
-    if (head[0] != 'P')
-        return false;
+    if(subType)
+        *subType = type_to_format(type);
 
-    if (head[1] == '1' || head[1] == '4') {
-        if (subType)
-            *subType = "pbm";
-    } else if (head[1] == '2' || head[1] == '5') {
-        if (subType)
-            *subType = "pgm";
-    } else if (head[1] == '3' || head[1] == '6') {
-        if (subType)
-            *subType = "ppm";
-    } else {
-        return false;
-    }
     return true;
 }
 
 bool QPpmHandler::read(QImage *image)
 {
-    if (state == Error)
+    if (!readHeader())
         return false;
 
-    if (state == Ready && !readHeader()) {
-        state = Error;
-        return false;
+    if (image->size() != QSize(width, height) || image->format() != image_format) {
+        *image = QImage(width, height, image_format);
+        if (image->isNull()) {
+            state = Error;
+            return false;
+        }
     }
 
-    if (!read_pbm_body(device(), type, width, height, mcc, image)) {
+    if (('1' <= type) && (type <= '6') && !pnm_read_body(device(), type, width, height, maxval, image_format, image)) {
         state = Error;
         return false;
     }
@@ -470,7 +550,7 @@ bool QPpmHandler::read(QImage *image)
 
 bool QPpmHandler::write(const QImage &image)
 {
-    return write_pbm_image(device(), image, subType);
+    return pnm_write_image(device(), image, format());
 }
 
 bool QPpmHandler::supportsOption(ImageOption option) const
@@ -482,50 +562,23 @@ bool QPpmHandler::supportsOption(ImageOption option) const
 
 QVariant QPpmHandler::option(ImageOption option) const
 {
-    if (option == SubType) {
-        return subType;
-    } else if (option == Size) {
-        if (state == Error)
-            return QVariant();
-        if (state == Ready && !const_cast<QPpmHandler*>(this)->readHeader())
-            return QVariant();
+    if (!const_cast<QPpmHandler *>(this)->readHeader())
+        return false;
+
+    if (option == SubType)
+        return format();
+    else if (option == Size)
         return QSize(width, height);
-    } else if (option == ImageFormat) {
-        if (state == Error)
-            return QVariant();
-        if (state == Ready && !const_cast<QPpmHandler*>(this)->readHeader())
-            return QVariant();
-        QImage::Format format = QImage::Format_Invalid;
-        switch (type) {
-            case '1':                                // ascii PBM
-            case '4':                                // raw PBM
-            format = QImage::Format_Mono;
-            break;
-            case '2':                                // ascii PGM
-            case '5':                                // raw PGM
-                format = QImage::Format_Indexed8;
-                break;
-            case '3':                                // ascii PPM
-            case '6':                                // raw PPM
-                format = QImage::Format_RGB32;
-                break;
-            default:
-                break;
-        }
-        return format;
-    }
+    else if (option == ImageFormat)
+        return image_format;
+
     return QVariant();
 }
 
 void QPpmHandler::setOption(ImageOption option, const QVariant &value)
 {
     if (option == SubType)
-        subType = value.toByteArray().toLower();
-}
-
-QByteArray QPpmHandler::name() const
-{
-    return subType.isEmpty() ? QByteArray("ppm") : subType;
+        setFormat(value.toByteArray().toLower());
 }
 
 QT_END_NAMESPACE
