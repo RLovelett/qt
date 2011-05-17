@@ -213,7 +213,8 @@ static QImageIOHandler *createWriteHandlerHelper(QIODevice *device,
 #endif
 #ifndef QT_NO_IMAGEFORMAT_PPM
         } else if (testFormat == "pbm" || testFormat == "pbmraw" || testFormat == "pgm"
-                 || testFormat == "pgmraw" || testFormat == "ppm" || testFormat == "ppmraw") {
+                 || testFormat == "pgmraw" || testFormat == "ppm" || testFormat == "ppmraw"
+                 || testFormat == "pam") {
             handler = new QPpmHandler;
             handler->setOption(QImageIOHandler::SubType, testFormat);
 #endif
@@ -689,7 +690,7 @@ QList<QByteArray> QImageWriter::supportedImageFormats()
     QSet<QByteArray> formats;
     formats << "bmp";
 #ifndef QT_NO_IMAGEFORMAT_PPM
-    formats << "ppm" << "pbm" << "pgm";
+    formats << "ppm" << "pbm" << "pgm" << "pam";
 #endif
 #ifndef QT_NO_IMAGEFORMAT_XBM
     formats << "xbm";

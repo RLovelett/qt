@@ -182,6 +182,7 @@ enum _qt_BuiltInFormatType {
     _qt_PpmFormat,
     _qt_PgmFormat,
     _qt_PbmFormat,
+    _qt_PamFormat,
 #endif
 #ifndef QT_NO_IMAGEFORMAT_XBM
     _qt_XbmFormat,
@@ -220,6 +221,7 @@ static const _qt_BuiltInFormatStruct _qt_BuiltInFormats[] = {
     {_qt_PpmFormat, "ppm"},
     {_qt_PgmFormat, "pgm"},
     {_qt_PbmFormat, "pbm"},
+    {_qt_PamFormat, "pam"},
 #endif
 #ifndef QT_NO_IMAGEFORMAT_XBM
     {_qt_XbmFormat, "xbm"},
@@ -371,7 +373,8 @@ static QImageIOHandler *createReadHandlerHelper(QIODevice *device,
 #endif
 #ifndef QT_NO_IMAGEFORMAT_PPM
         } else if (testFormat == "pbm" || testFormat == "pbmraw" || testFormat == "pgm"
-                   || testFormat == "pgmraw" || testFormat == "ppm" || testFormat == "ppmraw") {
+                   || testFormat == "pgmraw" || testFormat == "ppm" || testFormat == "ppmraw"
+                   || testFormat == "pam") {
             handler = new QPpmHandler;
             handler->setOption(QImageIOHandler::SubType, testFormat);
 #endif
@@ -472,6 +475,7 @@ static QImageIOHandler *createReadHandlerHelper(QIODevice *device,
             case _qt_PbmFormat:
             case _qt_PgmFormat:
             case _qt_PpmFormat:
+            case _qt_PamFormat:
                 if (QPpmHandler::canRead(device, &subType)) {
                     handler = new QPpmHandler;
                     handler->setOption(QImageIOHandler::SubType, subType);

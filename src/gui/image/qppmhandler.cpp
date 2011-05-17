@@ -81,6 +81,8 @@ static QByteArray type_to_format(char type)
     case '3':
     case '6':
         return QByteArray("ppm");
+    case '7':
+        return QByteArray("pam");
     }
     return QByteArray();
 }
@@ -93,6 +95,8 @@ static char format_to_type(const QByteArray &subType)
         return '5';
     else if (subType.startsWith("ppm"))
         return '6';
+    else if (subType.startsWith("pam"))
+        return '7';
     return ' ';
 }
 
@@ -116,7 +120,298 @@ static bool can_read(QIODevice *device, char & type)
 
     type = head[1];
 
-    return ('1' <= type && type <= '6'); 
+    return ('1' <= type && type <= '7'); 
+}
+
+/*****************************************************************************
+  PAM image read/write functions
+*****************************************************************************/
+
+static bool pam_read_header(QIODevice *device, char& type, int& width, int& height, int& maxval, int& depth, QByteArray& tupltype, QImage::Format& image_format)
+{
+    type = ' ';
+    width = 0;
+    height = 0;
+    maxval = 0;
+    depth = 0;
+    tupltype.clear();
+
+    bool res = true;
+    while (res) {
+        /* read line by line */
+        QByteArray line = device->readLine();
+
+        if (line.isEmpty() && device->atEnd())
+            res = false;
+        else if (line.startsWith("ENDHDR"))
+            break;
+        else if (line.startsWith('P'))
+            type = line[1];
+        else if (line.startsWith("WIDTH"))
+            width = line.remove(0, sizeof("WIDTH")).trimmed().toInt(&res);
+        else if (line.startsWith("HEIGHT"))
+            height = line.remove(0, sizeof("HEIGHT")).trimmed().toInt(&res);
+        else if (line.startsWith("MAXVAL"))
+            maxval = line.remove(0, sizeof("MAXVAL")).trimmed().toInt(&res);
+        else if (line.startsWith("DEPTH"))
+            depth = line.remove(0, sizeof("DEPTH")).trimmed().toInt(&res);
+        else if (line.startsWith("TUPLTYPE"))
+            tupltype = line.remove(0, sizeof("TUPLTYPE")).trimmed(); // should be += !!!! according to the spec
+    }
+        
+    //qWarning("QPpmHandler : pam_read_header : type='%c', width=%d, height=%d, maxval=%d, depth=%d, tupltype='%s'\n", type, width, height, maxval, depth, tupltype.data());
+
+    if (!res ||
+	(type != '7') ||
+        (width < 1)  || (32767 < width) ||
+        (height < 1) || (32726 < height) ||
+        (maxval < 1) || (65535 < maxval) ||
+        (depth < 1)  || (4 < depth) ||
+        (tupltype.isEmpty())) {
+        return false;
+    }
+    else if ((tupltype == "BLACKANDWHITE") && (depth == 1) && (maxval == 1))
+        image_format = QImage::Format_Mono;
+    else if ((tupltype == "GRAYSCALE") && (depth == 1))
+        image_format = QImage::Format_Indexed8;
+    else if ((tupltype == "RGB") && (depth == 3))
+        image_format = QImage::Format_RGB32;
+    else if ((tupltype == "RGB_ALPHA") && (depth == 4))
+        image_format = QImage::Format_ARGB32;
+    else
+        return false;
+
+    return true;
+}
+
+static bool pam_read_body(QIODevice *device, char type, int width, int height, int maxval, int depth, const QByteArray& tupltype, QImage::Format image_format, QImage *outImage)
+{
+    Q_UNUSED(type);
+    Q_UNUSED(depth);
+    Q_UNUSED(tupltype);
+    int bpl; /* bytes per line */
+
+    switch (image_format) {
+    case QImage::Format_Mono :
+        bpl = width;
+        break;
+    case QImage::Format_Indexed8 :
+        bpl = width;
+        break;
+    case QImage::Format_RGB32 :
+        bpl = width * 3;
+        break;
+    case QImage::Format_ARGB32 :
+        bpl = width * 4;
+        break;
+    default :
+        return false;
+    }
+
+    if (255 < maxval) {
+        bpl *= 2;
+    }
+
+    /* set palette */
+    if (image_format == QImage::Format_Mono) {
+        outImage->setColorCount(2);
+        outImage->setColor(0, qRgb(0,0,0));       // white
+        outImage->setColor(1, qRgb(255,255,255)); // black
+    }
+    else if (image_format == QImage::Format_Indexed8) {
+        outImage->setColorCount(256);
+        for (int i=0; i<256; i++)
+            outImage->setColor(i, qRgb(i,i,i));
+    }
+
+    /* set pixels */
+    uchar *buffer = new uchar[bpl];
+    for (int y=0; y<height; y++) {
+        if (device->read((char *)buffer, bpl) != bpl) {
+            delete[] buffer;
+            return false;
+        }
+        uchar * p_buff = buffer;
+        for (int x=0; x<width; x++) {
+            uint pix;
+            unsigned i, r, g, b, a;
+            switch (image_format) {
+            case QImage::Format_Mono:
+                pix = p_buff[0]?1:0;
+                p_buff++;
+                break;
+            case QImage::Format_Indexed8:
+                if(maxval < 256) {
+                    i = p_buff[0]; 
+                    p_buff++;
+                }
+                else {
+                    i = (p_buff[0] << 8) | p_buff[1];
+                    p_buff+=2;
+                }
+                pix = i * 255 / maxval;
+                break;
+            case QImage::Format_RGB32:
+                if(maxval < 256) {
+                    r = p_buff[0];
+                    g = p_buff[1];
+                    b = p_buff[2];
+                    p_buff+=3;
+                }
+                else {
+                    r = (p_buff[0] << 8) | p_buff[1];
+                    g = (p_buff[2] << 8) | p_buff[3];
+                    b = (p_buff[4] << 8) | p_buff[5];
+                    p_buff+=6;
+                }
+                pix = qRgb (r * 255 / maxval, g * 255 / maxval, b * 255 / maxval);
+                break;
+            case QImage::Format_ARGB32:
+                if(maxval < 256) {
+                    r = p_buff[0];
+                    g = p_buff[1];
+                    b = p_buff[2];
+                    a = p_buff[3];
+                    p_buff+=4;
+                }
+                else {
+                    r = (p_buff[0] << 8) | p_buff[1];
+                    g = (p_buff[2] << 8) | p_buff[3];
+                    b = (p_buff[4] << 8) | p_buff[5];
+                    a = (p_buff[6] << 8) | p_buff[7];
+                    p_buff+=8;
+                }
+                pix = qRgba (r * 255 / maxval, g * 255 / maxval, b / maxval, a * 255 / maxval);
+                break;
+            default :
+                break;
+            }
+            outImage->setPixel (x, y, pix);
+        }
+    }
+    delete[] buffer;
+       
+    return true;
+}
+
+static bool pam_write_image(QIODevice *out, const QImage &sourceImage)
+{
+    QImage image = sourceImage;
+
+    int width = sourceImage.width();
+    int height = sourceImage.height();
+    int maxval = 255;
+    int depth = (7 + sourceImage.depth()) / 8;
+
+    /* reformat */
+    switch (image.format()) {
+    case QImage::Format_MonoLSB:
+        image = image.convertToFormat(QImage::Format_Mono);
+    case QImage::Format_Mono:
+        maxval = 1;
+    case QImage::Format_Indexed8:
+        depth = 1;
+        break;
+    case QImage::Format_RGB16:
+    case QImage::Format_RGB666:
+    case QImage::Format_RGB555:
+    case QImage::Format_RGB888:
+    case QImage::Format_RGB444:
+        image = image.convertToFormat(QImage::Format_RGB32);
+    case QImage::Format_RGB32:
+        depth = 3;
+        break;
+    case QImage::Format_ARGB32_Premultiplied:
+    case QImage::Format_ARGB8565_Premultiplied:
+    case QImage::Format_ARGB6666_Premultiplied:
+    case QImage::Format_ARGB8555_Premultiplied:
+    case QImage::Format_ARGB4444_Premultiplied:
+        image = image.convertToFormat(QImage::Format_ARGB32);
+    case QImage::Format_ARGB32:
+        depth = 4;
+        break;
+    default:
+        qWarning("pam_writer input format %d not handled", image.format());
+        return false;
+    }
+
+    /* header */
+    QByteArray header;
+    /* magic */
+    header = "P7\n";
+    /* width */
+    header += "WIDTH " + QByteArray::number(width) + "\n";
+    /* height */
+    header += "HEIGHT " + QByteArray::number(height) + "\n";
+    /* maxval */
+    header += "MAXVAL " + QByteArray::number(maxval) + "\n";
+    /* depth */
+    header += "DEPTH " + QByteArray::number(depth) + "\n";
+    /* tupltype */
+    header += "TUPLTYPE ";
+    switch (image.format()) {
+    case QImage::Format_Mono:
+        header += "BLACKANDWHITE";
+        break;
+    case QImage::Format_Indexed8:
+        header += "GRAYSCALE";
+        break;
+    case QImage::Format_RGB32:
+        header += "RGB";
+        break;
+    case QImage::Format_ARGB32:
+        header += "RGB_ALPHA";
+        break;
+    default:
+        break;
+    }
+    header += '\n';
+    /* end of header */
+    header += "ENDHDR\n";
+
+    /* write header */
+    if (out->write(header, header.length()) != header.length())
+        return false;
+
+    /* write line by line */
+    uint bpl = width * depth;
+    uchar *line = new uchar[bpl];
+    for (int y=0; y<height; y++) {
+        uchar * p_line = line;
+        for (int x=0; x<width; x++) {
+            QRgb pix;
+            switch (image.format()) {
+            case QImage::Format_Mono:
+                pix = image.color(image.pixelIndex(x, y));
+                p_line[0] = qGray(pix);
+                break;
+            case QImage::Format_Indexed8:
+                pix = image.color(image.pixelIndex(x, y));
+                p_line[0] = qGray(pix);
+                break;
+            case QImage::Format_RGB32:
+                pix = image.pixel(x, y);
+                p_line[0] = qRed(pix);
+                p_line[1] = qGreen(pix);
+                p_line[2] = qBlue(pix);
+                break;
+            case QImage::Format_ARGB32:
+                pix = image.pixel(x, y);
+                p_line[0] = qRed(pix);
+                p_line[1] = qGreen(pix);
+                p_line[2] = qBlue(pix);
+                p_line[3] = qAlpha(pix);
+                break;
+            default:
+                break;
+            }
+            p_line+=depth;
+        }
+        if (bpl != (uint)out->write((char*)line, bpl))
+            return false;
+    }
+
+    return true;
 }
  
 /*****************************************************************************
@@ -489,6 +784,10 @@ bool QPpmHandler::readHeader()
             state = Error;
             return false;
         }
+        else if ((type == '7') && !pam_read_header(device(), type, width, height, maxval, depth, tupltype, image_format)) {
+            state = Error;
+            return false;
+        } 
 
         state = ReadHeader;
     }
@@ -502,7 +801,7 @@ bool QPpmHandler::canRead() const
         QByteArray subType;
         if (canRead(device(), &subType))
             setFormat(subType);
-	else
+        else
             return false;
     }
 
@@ -543,6 +842,10 @@ bool QPpmHandler::read(QImage *image)
         state = Error;
         return false;
     }
+    else if ((type == '7') && !pam_read_body(device(), type, width, height, maxval, depth, tupltype, image_format, image)) {
+        state = Error;
+        return false;
+    }
 
     state = Ready;
     return true;
@@ -550,7 +853,10 @@ bool QPpmHandler::read(QImage *image)
 
 bool QPpmHandler::write(const QImage &image)
 {
-    return pnm_write_image(device(), image, format());
+    if (format() == "pam")
+        return pam_write_image(device(), image);
+    else
+        return pnm_write_image(device(), image, format());
 }
 
 bool QPpmHandler::supportsOption(ImageOption option) const
