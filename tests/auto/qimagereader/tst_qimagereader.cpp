@@ -143,6 +143,9 @@ private slots:
     void imageFormatBeforeRead_data();
     void imageFormatBeforeRead();
 
+    void ppmHandlerFormatAndSubtype_data();
+    void ppmHandlerFormatAndSubtype();
+
 #if defined QTEST_HAVE_GIF
     void gifHandlerBugs();
     void animatedGif();
@@ -781,6 +784,42 @@ void tst_QImageReader::imageFormatBeforeRead()
         QVERIFY(reader.read(&image));
         QCOMPARE(image.format(), fileFormat);
     }
+}
+
+void tst_QImageReader::ppmHandlerFormatAndSubtype_data()
+{
+    QTest::addColumn<QString>("fileName");
+    QTest::addColumn<QByteArray>("format");
+    QTest::addColumn<bool>("expectedResult");
+
+    // whatever the format that we pass to the function 
+    // QImageReader.setFormat (), QPpmHandler.format () 
+    // will always have an internal "short" representation.
+    QTest::newRow("pbm") << QString("image.pbm") << QByteArray("pbm") << true;
+    QTest::newRow("pbmascii") << QString("image.pbm") << QByteArray("pbmascii") << false;
+    QTest::newRow("pgm") << QString("image.pgm") << QByteArray("pgm") << true;
+    QTest::newRow("pgmascii") << QString("image.gpm") << QByteArray("pgmascii") << false;
+    QTest::newRow("ppm") << QString("test.ppm") << QByteArray("ppm") << true;
+    QTest::newRow("ppmraw") << QString("test.ppm") << QByteArray("ppmraw") << false;
+}
+
+void tst_QImageReader::ppmHandlerFormatAndSubtype()
+{
+    QFETCH(QString, fileName);
+    QFETCH(QByteArray, format);
+    QFETCH(bool, expectedResult);
+
+    QImageReader reader(prefix + fileName);
+    
+    reader.setFormat(format);
+    if (reader.format() != format)
+        qWarning() << "QImageReader.format() gives for " << fileName << " " << reader.format() << ", expected " << format;
+    QVERIFY(reader.format() == format);
+    
+    reader.setFormat(QByteArray()); // fallback to the QImageIOHandler format()
+    if ((reader.format() == format) != expectedResult)
+        qWarning() << "QPpmHandler.format() gives for " << fileName << " " << reader.format() << ", expected " << format;
+    QVERIFY((reader.format() == format) == expectedResult);
 }
 
 #if defined QTEST_HAVE_GIF
