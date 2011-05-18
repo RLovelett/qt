@@ -198,6 +198,7 @@ void tst_QImageWriter::writeImage_data()
     QTest::newRow("XPM: marble") << QString("marble.xpm") << false << QByteArray("xpm");
     QTest::newRow("PNG: kollada") << QString("kollada.png") << false << QByteArray("png");
     QTest::newRow("PPM: teapot") << QString("teapot.ppm") << false << QByteArray("ppm");
+    QTest::newRow("PAM: rgb") << QString("test_pam_rgb.pam") << false << QByteArray("pam");
     QTest::newRow("PBM: ship63") << QString("ship63.pbm") << true << QByteArray("pbm");
     QTest::newRow("XBM: gnus") << QString("gnus.xbm") << false << QByteArray("xbm");
     QTest::newRow("JPEG: beavis") << QString("beavis.jpg") << true << QByteArray("jpeg");
@@ -256,7 +257,7 @@ void tst_QImageWriter::writeImage2_data()
     QTest::addColumn<QImage>("image");
 
     const QStringList formats = QStringList() << "bmp" << "xpm" << "png"
-                                              << "ppm"; //<< "jpeg";
+                                              << "ppm" << "pam"; //<< "jpeg";
     QImage image0(70, 70, QImage::Format_ARGB32);
     image0.fill(QColor(Qt::red).rgb());
 
@@ -507,6 +508,7 @@ void tst_QImageWriter::saveWithNoFormat_data()
     QTest::newRow("png") << prefix + QString("gen-out.png") << QByteArray("png") << QImageWriter::ImageWriterError(0);
     QTest::newRow("ppm") << prefix + QString("gen-out.ppm") << QByteArray("ppm") << QImageWriter::ImageWriterError(0);
     QTest::newRow("pbm") << prefix + QString("gen-out.pbm") << QByteArray("pbm") << QImageWriter::ImageWriterError(0);
+    QTest::newRow("pam") << prefix + QString("gen-out.pam") << QByteArray("pam") << QImageWriter::ImageWriterError(0);
 #if defined QTEST_HAVE_TIFF
     QTest::newRow("tiff") << prefix + QString("gen-out.tiff") << QByteArray("tiff") << QImageWriter::ImageWriterError(0);
 #endif

@@ -248,6 +248,10 @@ void tst_QImageReader::readImage_data()
     QTest::newRow("PPM: teapot") << QString("teapot.ppm") << true << QByteArray("ppm");
     QTest::newRow("PPM: runners") << QString("runners.ppm") << true << QByteArray("ppm");
     QTest::newRow("PPM: test") << QString("test.ppm") << true << QByteArray("ppm");
+    QTest::newRow("PAM: rgba") << QString("test_pam_rgba.pam") << true << QByteArray("pam");
+    QTest::newRow("PAM: rgb") << QString("test_pam_rgb.pam") << true << QByteArray("pam");
+    QTest::newRow("PAM: gray") << QString("test_pam_gray.pam") << true << QByteArray("pam");
+    QTest::newRow("PAM: bnw") << QString("test_pam_bnw.pam") << true << QByteArray("pam");
     QTest::newRow("XBM: gnus") << QString("gnus.xbm") << true << QByteArray("xbm");
 
 #if defined QTEST_HAVE_JPEG
@@ -363,6 +367,7 @@ void tst_QImageReader::setScaledSize_data()
     QTest::newRow("PPM: teapot") << "teapot" << QSize(200, 200) << QByteArray("ppm");
     QTest::newRow("PPM: runners") << "runners.ppm" << QSize(400, 400) << QByteArray("ppm");
     QTest::newRow("PPM: test") << "test.ppm" << QSize(10, 10) << QByteArray("ppm");
+    QTest::newRow("PAM: rgb") << "test_pam_rgb.pam" << QSize(42, 38) << QByteArray("pam");
     QTest::newRow("XBM: gnus") << "gnus" << QSize(200, 200) << QByteArray("xbm");
 #ifdef QTEST_HAVE_JPEG
     QTest::newRow("JPEG: beavis A") << "beavis" << QSize(200, 200) << QByteArray("jpeg");
@@ -442,6 +447,7 @@ void tst_QImageReader::setClipRect_data()
     QTest::newRow("PPM: teapot") << "teapot" << QRect(0, 0, 50, 50) << QByteArray("ppm");
     QTest::newRow("PPM: runners") << "runners.ppm" << QRect(0, 0, 50, 50) << QByteArray("ppm");
     QTest::newRow("PPM: test") << "test.ppm" << QRect(0, 0, 50, 50) << QByteArray("ppm");
+    QTest::newRow("PAM: rgb") << "test_pam_rgb.pam" << QRect(0, 0, 12, 12) << QByteArray("pam");
     QTest::newRow("XBM: gnus") << "gnus" << QRect(0, 0, 50, 50) << QByteArray("xbm");
 #ifdef QTEST_HAVE_JPEG
     QTest::newRow("JPEG: beavis") << "beavis" << QRect(0, 0, 50, 50) << QByteArray("jpeg");
@@ -493,6 +499,7 @@ void tst_QImageReader::setScaledClipRect_data()
     QTest::newRow("PPM: teapot") << "teapot" << QRect(0, 0, 50, 50) << QByteArray("ppm");
     QTest::newRow("PPM: runners") << "runners.ppm" << QRect(0, 0, 50, 50) << QByteArray("ppm");
     QTest::newRow("PPM: test") << "test.ppm" << QRect(0, 0, 50, 50) << QByteArray("ppm");
+    QTest::newRow("PAM: rgb") << "test_pam_rgb.pam" << QRect(0, 0, 50, 50) << QByteArray("pam");
     QTest::newRow("XBM: gnus") << "gnus" << QRect(0, 0, 50, 50) << QByteArray("xbm");
 #ifdef QTEST_HAVE_JPEG
     QTest::newRow("JPEG: beavis") << "beavis" << QRect(0, 0, 50, 50) << QByteArray("jpeg");
@@ -545,6 +552,10 @@ void tst_QImageReader::imageFormat_data()
     QTest::newRow("ppm-2") << QString("teapot.ppm") << QByteArray("ppm") << QImage::Format_RGB32;
     QTest::newRow("ppm-3") << QString("runners.ppm") << QByteArray("ppm") << QImage::Format_RGB32;
     QTest::newRow("ppm-4") << QString("test.ppm") << QByteArray("ppm") << QImage::Format_RGB32;
+    QTest::newRow("pam-rgba") << QString("test_pam_rgba.pam") << QByteArray("pam") << QImage::Format_ARGB32;
+    QTest::newRow("pam-rgb")  << QString("test_pam_rgb.pam")  << QByteArray("pam") << QImage::Format_RGB32;
+    QTest::newRow("pam-gray") << QString("test_pam_gray.pam") << QByteArray("pam") << QImage::Format_Indexed8;
+    QTest::newRow("pam-bnw")  << QString("test_pam_bnw.pam")  << QByteArray("pam") << QImage::Format_Mono;
 #ifdef QTEST_HAVE_JPEG
     QTest::newRow("jpeg-1") << QString("beavis.jpg") << QByteArray("jpeg") << QImage::Format_Indexed8;
     QTest::newRow("jpeg-2") << QString("YCbCr_cmyk.jpg") << QByteArray("jpeg") << QImage::Format_RGB32;
@@ -651,6 +662,7 @@ void tst_QImageReader::setBackgroundColor_data()
     QTest::newRow("PPM: teapot") << QString("teapot.ppm") << QColor(Qt::darkGreen);
     QTest::newRow("PPM: runners") << QString("runners.ppm") << QColor(Qt::red);
     QTest::newRow("PPM: test") << QString("test.ppm") << QColor(Qt::white);
+    QTest::newRow("PAM: rgb") << QString("test_pam_rgb.pam") << QColor(Qt::white);
     QTest::newRow("XBM: gnus") << QString("gnus.xbm") << QColor(Qt::blue);
 #if defined QTEST_HAVE_JPEG
     QTest::newRow("JPEG: beavis") << QString("beavis.jpg") << QColor(Qt::darkBlue);
@@ -692,6 +704,7 @@ void tst_QImageReader::supportsAnimation_data()
     QTest::newRow("PPM: teapot") << QString("teapot.ppm") << false;
     QTest::newRow("PPM: teapot") << QString("teapot.ppm") << false;
     QTest::newRow("PPM: runners") << QString("runners.ppm") << false;
+    QTest::newRow("PAM: rgb") << QString("test_pam_rgb.pam") << false;
     QTest::newRow("XBM: gnus") << QString("gnus.xbm") << false;
 #if defined QTEST_HAVE_JPEG
     QTest::newRow("JPEG: beavis") << QString("beavis.jpg") << false;
@@ -801,6 +814,7 @@ void tst_QImageReader::ppmHandlerFormatAndSubtype_data()
     QTest::newRow("pgmascii") << QString("image.gpm") << QByteArray("pgmascii") << false;
     QTest::newRow("ppm") << QString("test.ppm") << QByteArray("ppm") << true;
     QTest::newRow("ppmraw") << QString("test.ppm") << QByteArray("ppmraw") << false;
+    QTest::newRow("pam") << QString("test_pam_rgba.pam") << QByteArray("pam") << true;
 }
 
 void tst_QImageReader::ppmHandlerFormatAndSubtype()
@@ -1089,6 +1103,7 @@ void tst_QImageReader::readFromDevice_data()
     QTest::newRow("ppm-2") << QString("teapot.ppm") << QByteArray("ppm");
     QTest::newRow("ppm-3") << QString("teapot.ppm") << QByteArray("ppm");
     QTest::newRow("ppm-4") << QString("runners.ppm") << QByteArray("ppm");
+    QTest::newRow("pam") << QString("test_pam_rgb.pam") << QByteArray("pam");
 #ifdef QTEST_HAVE_JPEG
     QTest::newRow("jpeg-1") << QString("beavis.jpg") << QByteArray("jpeg");
     QTest::newRow("jpeg-2") << QString("YCbCr_cmyk.jpg") << QByteArray("jpeg");
@@ -1181,6 +1196,7 @@ void tst_QImageReader::readFromFileAfterJunk_data()
     QTest::newRow("ppm-2") << QString("teapot.ppm") << QByteArray("ppm");
     QTest::newRow("ppm-3") << QString("teapot.ppm") << QByteArray("ppm");
     QTest::newRow("ppm-4") << QString("runners.ppm") << QByteArray("ppm");
+    QTest::newRow("pam") << QString("test_pam_rgb.pam") << QByteArray("pam");
 #ifdef QTEST_HAVE_JPEG
     QTest::newRow("jpeg-1") << QString("beavis.jpg") << QByteArray("jpeg");
     QTest::newRow("jpeg-2") << QString("YCbCr_cmyk.jpg") << QByteArray("jpeg");
@@ -1223,7 +1239,7 @@ void tst_QImageReader::readFromFileAfterJunk()
     QVERIFY(!imageData.isNull());
 
     int iterations = 3;
-    if (format == "ppm" || format == "pbm" || format == "pgm" || format == "svg" || format == "svgz")
+    if (format == "pam" || format == "ppm" || format == "pbm" || format == "pgm" || format == "svg" || format == "svgz")
         iterations = 1;
 
     if (format == "mng" || !QImageWriter::supportedImageFormats().contains(format)) {
@@ -1260,6 +1276,7 @@ void tst_QImageReader::devicePosition_data()
     QTest::newRow("pbm") << QString("image.pbm") << QByteArray("pbm");
     QTest::newRow("pgm") << QString("image.pgm") << QByteArray("pgm");
     QTest::newRow("ppm-1") << QString("image.ppm") << QByteArray("ppm");
+    QTest::newRow("pam") << QString("test_pam_rgb.pam") << QByteArray("pam");
 #ifdef QTEST_HAVE_JPEG
     QTest::newRow("jpeg-1") << QString("beavis.jpg") << QByteArray("jpeg");
     QTest::newRow("jpeg-2") << QString("YCbCr_cmyk.jpg") << QByteArray("jpeg");
@@ -1442,6 +1459,9 @@ void tst_QImageReader::readFromResources_data()
     QTest::newRow("test.ppm") << QString("test.ppm")
                                      << QByteArray("ppm") << QSize(10, 10)
                                      << QString("");
+    QTest::newRow("test_pam_rgb.pam") << QString("test_pam_rgb.pam")
+                                     << QByteArray("pam") << QSize(42, 38)
+                                     << QString("");
 //    QTest::newRow("corrupt.xbm") << QString("corrupt.xbm") << QByteArray("xbm") << QSize(0, 0);
     QTest::newRow("gnus.xbm") << QString("gnus.xbm")
                                      << QByteArray("xbm") << QSize(271, 273)
@@ -1572,6 +1592,7 @@ void tst_QImageReader::readCorruptImage_data()
     QTest::newRow("corrupt xpm (pixels)") << QString("corrupt-pixels.xpm") << true
                                           << QString("QImage: XPM pixels missing on image line 3");
     QTest::newRow("corrupt xbm") << QString("corrupt.xbm") << false << QString("");
+    QTest::newRow("corrupt pam") << QString("test_pam_rgb_noendhdr.pam") << true << QString("");
 #if defined QTEST_HAVE_TIFF
     QTest::newRow("corrupt tiff") << QString("corrupt-data.tif") << true << QString("");
 #endif
@@ -1911,6 +1932,7 @@ void tst_QImageReader::testIgnoresFormatAndExtension_data()
     QTest::newRow("image.ppm") << "image" << "ppm" << "ppm";
     QTest::newRow("image.pbm") << "image" << "pbm" << "pbm";
     QTest::newRow("image.pgm") << "image" << "pgm" << "pgm";
+    QTest::newRow("test_pam_rgb.pam") << "test_pam_rgb" << "pam" << "pam";
 
 #if defined QTEST_HAVE_GIF
     QTest::newRow("bat1.gif") << "bat1" << "gif" << "gif";
