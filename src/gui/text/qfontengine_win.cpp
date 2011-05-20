@@ -1207,6 +1207,12 @@ QImage QFontEngineWin::alphaMapForGlyph(glyph_t glyph, const QTransform &xform)
     if (mask == 0)
         return QImage();
 
+    // Gracefully handle the odd case when the display is 16-bit
+    // mask_format was unreferenced in drawGDIGlyph
+    const QImage source = mask->image.depth() == 32
+                          ? mask->image
+                          : mask->image.convertToFormat(QImage::Format_RGB32);
+
     QImage indexed(mask->width(), mask->height(), QImage::Format_Indexed8);
 
     // ### This part is kinda pointless, but we'll crash later if we don't because some
@@ -1220,22 +1226,16 @@ QImage QFontEngineWin::alphaMapForGlyph(glyph_t glyph, const QTransform &xform)
     // Alpha channel of the ni.image pixels...
     for (int y=0; y<mask->height(); ++y) {
         uchar *dest = indexed.scanLine(y);
-        if (mask->image.format() == QImage::Format_RGB16) {
-            const qint16 *src = (qint16 *) ((const QImage &) mask->image).scanLine(y);
-            for (int x=0; x<mask->width(); ++x)
-                dest[x] = 255 - qGray(src[x]);
-        } else {
-            const uint *src = (uint *) ((const QImage &) mask->image).scanLine(y);
-            for (int x=0; x<mask->width(); ++x) {
+        const uint *src = (uint *) source.scanLine(y);
+        for (int x=0; x<mask->width(); ++x) {
 #ifdef Q_OS_WINCE
-                dest[x] = 255 - qGray(src[x]);
+            dest[x] = 255 - qGray(src[x]);
 #else
-                if (QNativeImage::systemFormat() == QImage::Format_RGB16)
-                    dest[x] = 255 - qGray(src[x]);
-                else
-                    dest[x] = 255 - (qt_pow_gamma[qGray(src[x])] * 255. / 2047.);
+            if (QNativeImage::systemFormat() == QImage::Format_RGB16)
+                dest[x] = 255 - qGray(src[x]);
+            else
+                dest[x] = 255 - (qt_pow_gamma[qGray(src[x])] * 255. / 2047.);
 #endif
-            }
         }
     }
 
@@ -1254,6 +1254,13 @@ QImage QFontEngineWin::alphaMapForGlyph(glyph_t glyph, const QTransform &xform)
 QImage QFontEngineWin::alphaRGBMapForGlyph(glyph_t glyph, QFixed, int margin, const QTransform &t)
 {
     HFONT font = hfont;
+#ifdef Q_OS_WINCE
+    if (qt_cleartype_enabled) {
+        LOGFONT lf = logfont;
+        lf.lfQuality = ANTIALIASED_QUALITY;
+        font = CreateFontIndirect(&lf);
+    }
+#endif
 
     int contrast;
     SystemParametersInfo(SPI_GETFONTSMOOTHINGCONTRAST, 0, &contrast, 0);
@@ -1280,6 +1287,11 @@ QImage QFontEngineWin::alphaRGBMapForGlyph(glyph_t glyph, QFixed, int margin, co
     }
 
     delete mask;
+#ifdef Q_OS_WINCE
+    if (qt_cleartype_enabled) {
+        DeleteObject(font);
+    }
+#endif
 
     return rgbMask;
 }
