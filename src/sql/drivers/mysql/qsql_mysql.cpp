@@ -298,6 +298,7 @@ static QSqlField qToField(MYSQL_FIELD *field, QTextCodec *tc)
     f.setPrecision(field->decimals);
     f.setSqlType(field->type);
     f.setAutoValue(field->flags & AUTO_INCREMENT_FLAG);
+    f.setDefaultValue(toUnicode(tc, field->def));
     return f;
 }
 
