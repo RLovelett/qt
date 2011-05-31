@@ -356,7 +356,6 @@ public:
 #ifndef QT_NO_QOBJECT
     QDeviceClosedNotifier deviceClosedNotifier;
 #endif
-    bool deleteDevice;
 
     // string
     QString *string;
@@ -369,7 +368,6 @@ public:
     QTextCodec::ConverterState readConverterState;
     QTextCodec::ConverterState writeConverterState;
     QTextCodec::ConverterState *readConverterSavedState;
-    bool autoDetectUnicode;
 #endif
 
     // i/o
@@ -387,7 +385,6 @@ public:
     inline void consume(int nchars);
     void saveConverterState(qint64 newPos);
     void restoreToSavedConverterState();
-    int lastTokenSize;
 
     // Return value type for getNumber()
     enum NumberParsingStatus {
@@ -411,15 +408,18 @@ public:
     bool flushWriteBuffer();
     QString writeBuffer;
     QString readBuffer;
+    qint64 readBufferStartDevicePos;
+    QLocale locale;
+    QTextStream *q_ptr;
+
+    int lastTokenSize;
     int readBufferOffset;
     int readConverterSavedStateOffset; //the offset between readBufferStartDevicePos and that start of the buffer
-    qint64 readBufferStartDevicePos;
 
     // streaming parameters
     int realNumberPrecision;
     int integerBase;
     int fieldWidth;
-    QChar padChar;
     QTextStream::FieldAlignment fieldAlignment;
     QTextStream::RealNumberNotation realNumberNotation;
     QTextStream::NumberFlags numberFlags;
@@ -427,9 +427,12 @@ public:
     // status
     QTextStream::Status status;
 
-    QLocale locale;
+    QChar padChar;
 
-    QTextStream *q_ptr;
+    bool deleteDevice;
+#ifndef QT_NO_TEXTCODEC
+    bool autoDetectUnicode;
+#endif
 };
 
 /*! \internal
@@ -439,8 +442,8 @@ QTextStreamPrivate::QTextStreamPrivate(QTextStream *q_ptr)
 #ifndef QT_NO_TEXTCODEC
     readConverterSavedState(0),
 #endif
-    readConverterSavedStateOffset(0),
-    locale(QLocale::c())
+    locale(QLocale::c()),
+    readConverterSavedStateOffset(0)
 {
     this->q_ptr = q_ptr;
     reset();

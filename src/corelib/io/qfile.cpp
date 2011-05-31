@@ -89,9 +89,8 @@ QFile::EncoderFn QFilePrivate::encoder = locale_encode;
 QFile::DecoderFn QFilePrivate::decoder = locale_decode;
 
 QFilePrivate::QFilePrivate()
-    : fileEngine(0), lastWasWrite(false),
-      writeBuffer(QFILE_WRITEBUFFER_SIZE), error(QFile::NoError),
-      cachedSize(0)
+    : fileEngine(0), writeBuffer(QFILE_WRITEBUFFER_SIZE),
+      cachedSize(0), error(QFile::NoError), lastWasWrite(false)
 {
 }
 
