@@ -64,6 +64,10 @@
 #include <cstdlib>
 #include <cctype>
 
+#ifdef Q_OS_TKSE
+#include <ctype.h>
+#endif
+
 QT_BEGIN_NAMESPACE
 
 class LU {

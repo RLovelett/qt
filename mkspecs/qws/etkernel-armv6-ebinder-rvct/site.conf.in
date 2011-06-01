@@ -1,0 +1,29 @@
+############################################################################
+#	$Id$ 
+#
+#	A Qt site specific parameters template for eSOL eT-Kernel eBinder/RVCT
+#		Software Research Associates, Inc.
+#
+############################################################################
+
+############################################################################
+# Parameters mainly referencing environmenrtal variables set by the
+# eBinder/RVCT.
+
+# %EBINDER_INSTALL_FOLDER%
+CYGPATH_EBINDERDIR	=	%CYGPATH_EBINDERDIR%
+
+# %RVCT<rvctVer>INC% (like `cygpath -w -a ${RVCT40INC}`)
+CYGPATH_RVCTINCDIR	=	%CYGPATH_RVCTINCDIR%
+
+# %RVCT<rvctVer>LIB% (like `cygpath -w -a ${RVCT40LIB}`)
+CYGPATH_RVCTLIBDIR	=	%CYGPATH_RVCTLIBDIR%
+
+# A name of the project (a directory name) building the Qt in eBinder
+# IDE
+EBINDER_PRJ		=	%EBINDER_PRJ%
+
+# Use ARM/Thumb interwork or not ("use_interwork" or null)
+CONFIG_USE_INTERWORK	=	%USE_INTERWORK%
+
+CONFIG_LINKTYPE		=	%LINKTYPE%

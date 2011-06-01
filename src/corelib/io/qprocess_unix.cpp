@@ -106,6 +106,15 @@ QT_END_NAMESPACE
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef Q_OS_TKSE
+// FIONREAD is unsupport for pipe. 
+// The following code is just for passing the compilation.
+#include <sys/sockcmd.h>
+#ifndef FIONREAD
+#define FIONREAD SIOCINQ
+#endif
+#endif
+
 QT_BEGIN_NAMESPACE
 
 // POSIX requires PIPE_BUF to be 512 or larger
@@ -584,10 +593,80 @@ void QProcessPrivate::startProcess()
     }
 
     // Duplicate the environment.
+#ifdef Q_OS_TKSE
+    int envc = 0;
+    const int environment_count = 12;
+    const int buf_size = 48;
+    // If envp is allocated on the heap, execve does not work.
+    char *envp[environment_count] = {0};
+    char s[environment_count][buf_size];
+    // Use the parent's environment on tkse.
+    const char *qws_map_memory = ::getenv("QWS_MAP_MEMORY");
+    const char *mouse = ::getenv("QWS_MOUSE_PROTO");
+    const char *keybord = ::getenv("QWS_KEYBOARD");
+    const char *fontdir = ::getenv("QT_QWS_FONTDIR");
+    const char *tmpdir = ::getenv("TMPDIR");
+    const char *devsize = ::getenv("QWS_DEVSIZE");
+    const char *bpp = ::getenv("QWS_BPP");
+    const char *resconf = ::getenv("ENV_NET_RESCONF");
+    const char *qtconf_path = ::getenv("QT_QTCONFIG");
+    const char *display = ::getenv("QWS_DISPLAY");
+    if (qws_map_memory) {
+        if (snprintf(s[envc], buf_size, "QWS_MAP_MEMORY=%s", qws_map_memory) >= buf_size)
+            qDebug("Cannot set \"QWS_MAP_MEMORY=%s\"", qws_map_memory);
+        envp[envc] = s[envc]; envc++;
+    }
+    if (mouse) {
+        if (snprintf(s[envc], buf_size, "QWS_MOUSE_PROTO=%s", mouse) >= buf_size)
+            qDebug("Cannot set \"QWS_MOUSE_PROTO=%s\"", mouse);
+        envp[envc] = s[envc]; envc++;
+    }
+    if (keybord)  {
+        if (snprintf(s[envc], buf_size, "QWS_KEYBOARD=%s", keybord) >= buf_size)
+            qDebug("Cannot set \"QWS_KEYBOARD=%s\"", keybord);
+        envp[envc] = s[envc]; envc++;
+    }
+    if (fontdir) {
+        if (snprintf(s[envc], buf_size, "QT_QWS_FONTDIR=%s", fontdir) >= buf_size)
+            qDebug("Cannot set \"QT_QWS_FONTDIR=%s\"", fontdir);
+        envp[envc] = s[envc]; envc++;
+    }
+    if (tmpdir) {
+        if (snprintf(s[envc], buf_size, "TMPDIR=%s", tmpdir) >= buf_size)
+            qDebug("Cannot set \"TMPDIR=%s\"", tmpdir);
+        envp[envc] = s[envc]; envc++;
+    }
+    if (devsize) {
+        if (snprintf(s[envc], buf_size, "QWS_DEVSIZE=%s", devsize) >= buf_size)
+            qDebug("Cannot set \"QWS_DEVSIZE=%s\"", devsize);
+        envp[envc] = s[envc]; envc++;
+    }
+    if (bpp) {
+        if (snprintf(s[envc], buf_size, "QWS_BPP=%s", bpp) >= buf_size)
+            qDebug("Cannot set \"QWS_BPP=%s\"", bpp);
+        envp[envc] = s[envc]; envc++;
+    }
+    if (resconf) {
+        if (snprintf(s[envc], buf_size, "ENV_NET_RESCONF=%s", resconf) >= buf_size)
+            qDebug("Cannot set \"ENV_NET_RESCONF=%s\"", resconf);
+        envp[envc] = s[envc]; envc++;
+    }
+    if (qtconf_path) {
+        if (snprintf(s[envc], buf_size, "QT_QTCONFIG=%s", qtconf_path) >= buf_size)
+            qDebug("Cannot set \"QT_QTCONFIG=%s\"", qtconf_path);
+        envp[envc] = s[envc]; envc++;
+    }
+    if (display) {
+        if (snprintf(s[envc], buf_size, "QWS_DISPLAY=%s", display) >= buf_size)
+            qDebug("Cannot set \"QWS_DISPLAY=%s\"", display);
+        envp[envc] = s[envc]; envc++;
+    }
+#else
     int envc = 0;
     char **envp = 0;
     if (environment.d.constData())
         envp = _q_dupEnvironment(environment.d.constData()->hash, &envc);
+#endif
 
     // Encode the working directory if it's non-empty, otherwise just pass 0.
     const char *workingDirPtr = 0;
@@ -629,12 +708,16 @@ void QProcessPrivate::startProcess()
         free(dupProgramName);
         for (int i = 1; i <= arguments.count(); ++i)
             free(argv[i]);
+#ifndef Q_OS_TKSE
         for (int i = 0; i < envc; ++i)
             free(envp[i]);
+#endif
         for (int i = 0; i < pathc; ++i)
             free(path[i]);
         delete [] argv;
+#ifndef Q_OS_TKSE
         delete [] envp;
+#endif
         delete [] path;
     }
     if (childPid < 0) {
@@ -1191,7 +1274,9 @@ bool QProcessPrivate::startDetached(const QString &program, const QStringList &a
         noaction.sa_handler = SIG_IGN;
         ::sigaction(SIGPIPE, &noaction, 0);
 
+#ifndef Q_OS_TKSE // TKSE does not support setsid.
         ::setsid();
+#endif
 
         qt_safe_close(startedPipe[0]);
         qt_safe_close(pidPipe[0]);

@@ -627,7 +627,7 @@ void EditorClientQt::setInputMethodState(bool active)
                 active = true;
         }
 
-#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN)
+#if defined(Q_WS_MAEMO_5) || defined(Q_OS_SYMBIAN) || defined(Q_OS_TKSE)
         // disables auto-uppercase and predictive text for mobile devices
         webPageClient->setInputMethodHint(Qt::ImhNoAutoUppercase, true);
         webPageClient->setInputMethodHint(Qt::ImhNoPredictiveText, true);

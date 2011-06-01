@@ -211,6 +211,12 @@
 
 #endif
 
+/* TKSE - Little endian */
+#if defined(__TKSE__)
+#   undef WTF_CPU_BIG_ENDIAN
+#   undef WTF_CPU_MIDDLE_ENDIAN
+#endif
+
 #define WTF_ARM_ARCH_AT_LEAST(N) (CPU(ARM) && WTF_ARM_ARCH_VERSION >= N)
 
 /* Set WTF_ARM_ARCH_VERSION */
@@ -409,6 +415,11 @@
 #define WTF_OS_SYMBIAN 1
 #endif
 
+/* OS(TKSE) - Tkse */
+#if defined(__TKSE__)
+#define WTF_OS_TKSE 1
+#endif
+
 /* OS(UNIX) - Any Unix-like system */
 #if   OS(AIX)              \
     || OS(ANDROID)          \
@@ -423,7 +434,8 @@
     || OS(SYMBIAN)          \
     || defined(unix)        \
     || defined(__unix)      \
-    || defined(__unix__)
+    || defined(__unix__)    \
+    || defined(__TKSE__)
 #define WTF_OS_UNIX 1
 #endif
 
@@ -578,6 +590,11 @@
 /* The GTK+ Unicode backend is configurable */
 #else
 #define WTF_USE_ICU_UNICODE 1
+#endif
+
+#if OS(TKSE)
+#define USE_SYSTEM_MALLOC 1
+#   include <time.h>
 #endif
 
 #if PLATFORM(MAC) && !PLATFORM(IPHONE)

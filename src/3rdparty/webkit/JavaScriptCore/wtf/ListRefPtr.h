@@ -48,7 +48,7 @@ namespace WTF {
     // T::ref() in RefPtr<T>'s copy constructor.  The bug is reported at:
     // https://xdabug001.ext.nokia.com/bugzilla/show_bug.cgi?id=9812.
     template <typename T> 
-#if !COMPILER(WINSCW)
+#if !COMPILER(WINSCW) && !OS(TKSE)
     inline
 #endif
     ListRefPtr<T>::~ListRefPtr()

@@ -61,6 +61,9 @@ public:
                     Center = 4, LastLocation = Center };
     QPoint devPoints[5];
     QPoint screenPoints[5];
+#if defined(__CC_ARM) && defined(Q_OS_TKSE)
+    QWSPointerCalibrationData() {}
+#endif
 };
 
 class Q_GUI_EXPORT QWSMouseHandler

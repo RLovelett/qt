@@ -117,12 +117,20 @@ void tst_QEasingCurve::type()
     {
     // check bounaries
     QEasingCurve curve(QEasingCurve::InCubic);
+#ifdef Q_OS_TKSE
+    // Exclude 9999 and -9999 since the enum is implemented as the smallest
+    // integral type that contains its range for armcc compiler.
+    QTest::ignoreMessage(QtWarningMsg, "QEasingCurve: Invalid curve type 255");
+    curve.setType((QEasingCurve::Type)255);
+    QCOMPARE(curve.type(), QEasingCurve::InCubic);
+#else
     QTest::ignoreMessage(QtWarningMsg, "QEasingCurve: Invalid curve type 9999");
     curve.setType((QEasingCurve::Type)9999);
     QCOMPARE(curve.type(), QEasingCurve::InCubic);
     QTest::ignoreMessage(QtWarningMsg, "QEasingCurve: Invalid curve type -9999");
     curve.setType((QEasingCurve::Type)-9999);
     QCOMPARE(curve.type(), QEasingCurve::InCubic);
+#endif
     QTest::ignoreMessage(QtWarningMsg, QString::fromAscii("QEasingCurve: Invalid curve type %1")
                         .arg(QEasingCurve::NCurveTypes).toLatin1().constData());
     curve.setType(QEasingCurve::NCurveTypes);
@@ -131,10 +139,14 @@ void tst_QEasingCurve::type()
                         .arg(QEasingCurve::Custom).toLatin1().constData());
     curve.setType(QEasingCurve::Custom);
     QCOMPARE(curve.type(), QEasingCurve::InCubic);
+#ifndef Q_OS_TKSE
+    // Exclude -1 for since the enum is implemented as the smallest integral
+    // type that contains its range for armcc compiler.
     QTest::ignoreMessage(QtWarningMsg, QString::fromAscii("QEasingCurve: Invalid curve type %1")
                         .arg(-1).toLatin1().constData());
     curve.setType((QEasingCurve::Type)-1);
     QCOMPARE(curve.type(), QEasingCurve::InCubic);
+#endif
     curve.setType(QEasingCurve::Linear);
     QCOMPARE(curve.type(), QEasingCurve::Linear);
     curve.setType(QEasingCurve::CosineCurve);

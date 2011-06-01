@@ -583,7 +583,7 @@ void tst_QDirModel::unreadable()
 
 void tst_QDirModel::filePath()
 {
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_TKSE)
     QSKIP("OS doesn't support symbolic links", SkipAll);
 #else
     QFile::remove(SRCDIR "test.lnk");

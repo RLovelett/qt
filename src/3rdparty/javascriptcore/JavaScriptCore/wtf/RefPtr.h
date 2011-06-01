@@ -24,7 +24,7 @@
 #include <algorithm>
 #include "AlwaysInline.h"
 #include "FastAllocBase.h"
-#if COMPILER(WINSCW)
+#if COMPILER(WINSCW) || OS(TKSE)
 #include "PassRefPtr.h"
 #endif
 
@@ -40,7 +40,11 @@ namespace WTF {
     template <typename T> class RefPtr : public FastAllocBase {
     public:
         RefPtr() : m_ptr(0) { }
+#if OS(TKSE)
+        RefPtr(T* ptr) : m_ptr(ptr) { refIfNotNull(ptr); }
+#else
         RefPtr(T* ptr) : m_ptr(ptr) { if (ptr) ptr->ref(); }
+#endif
         RefPtr(const RefPtr& o) : m_ptr(o.m_ptr) { if (T* ptr = m_ptr) ptr->ref(); }
         // see comment in PassRefPtr.h for why this takes const reference
         template <typename U> RefPtr(const PassRefPtr<U>&);
@@ -53,7 +57,9 @@ namespace WTF {
         RefPtr(HashTableDeletedValueType) : m_ptr(hashTableDeletedValue()) { }
         bool isHashTableDeletedValue() const { return m_ptr == hashTableDeletedValue(); }
 
-#if COMPILER(WINSCW)
+#if OS(TKSE)
+        ~RefPtr() { T* ptr = m_ptr; derefIfNotNull(ptr); }
+#elif COMPILER(WINSCW)
         ~RefPtr() { if (T* ptr = m_ptr) derefIfNotNull<T>(ptr); }
 #else
         ~RefPtr() { if (T* ptr = m_ptr) ptr->deref(); }
@@ -63,7 +69,9 @@ namespace WTF {
         
         T* get() const { return m_ptr; }
         
-#if COMPILER(WINSCW)
+#if OS(TKSE)
+        void clear() { T* ptr = m_ptr; derefIfNotNull(ptr); m_ptr = 0; }
+#elif COMPILER(WINSCW)
         void clear() { if (T* ptr = m_ptr) derefIfNotNull<T>(ptr); m_ptr = 0; }
 #else
         void clear() { if (T* ptr = m_ptr) ptr->deref(); m_ptr = 0; }

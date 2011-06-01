@@ -55,6 +55,10 @@
 
 #include <qglobal.h>
 
+#ifdef Q_OS_TKSE
+#  include "psemaphore.h"
+#endif
+
 QT_BEGIN_NAMESPACE
 
 #ifndef QT_NO_QWS_MULTIPROCESS
@@ -65,17 +69,30 @@ public:
     enum LockType { BackingStore, Communication, RegionEvent };
 
     QWSLock();
+#ifdef Q_OS_TKSE
+    QWSLock(semId_type *pid);
+#else
     QWSLock(int lockId);
+#endif
     ~QWSLock();
 
     bool lock(LockType type, int timeout = -1);
     void unlock(LockType type);
     bool wait(LockType type, int timeout = -1);
     bool hasLock(LockType type);
+#ifdef Q_OS_TKSE
+    semId_type *id() const { return psemId; }
+#else
     int id() const { return semId; }
+#endif
 
 private:
+#ifdef Q_OS_TKSE
+    semId_type *psemId;
+    pid_t pId;
+#else
     int semId;
+#endif
     int lockCount[2];
 };
 

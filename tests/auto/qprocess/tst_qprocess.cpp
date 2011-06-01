@@ -323,6 +323,9 @@ void tst_QProcess::crashTest()
 #ifdef Q_OS_WIN
     QSKIP("This test opens a crash dialog on Windows", SkipSingle);
 #endif
+#ifdef Q_OS_TKSE
+    QSKIP("no crash test on TKSE", SkipSingle);
+#endif
     process = new QProcess;
     QSignalSpy stateSpy(process, SIGNAL(stateChanged(QProcess::ProcessState)));
     process->start("testProcessCrash/testProcessCrash");
@@ -358,6 +361,9 @@ void tst_QProcess::crashTest2()
 {
 #ifdef Q_OS_WIN
     QSKIP("This test opens a crash dialog on Windows", SkipSingle);
+#endif
+#ifdef Q_OS_TKSE
+    QSKIP("no crash test on TKSE", SkipSingle);
 #endif
     process = new QProcess;
     process->start("testProcessCrash/testProcessCrash");
@@ -666,6 +672,10 @@ void tst_QProcess::exitStatus()
 #ifdef Q_OS_WIN
     if (exitStatus.contains(QProcess::CrashExit))
         QSKIP("This test opens a crash dialog on Windows", SkipSingle);
+#endif
+#ifdef Q_OS_TKSE
+    if (exitStatus.contains(QProcess::CrashExit))
+        QSKIP("no crash test on TKSE", SkipSingle);
 #endif
 
     Q_ASSERT(processList.count() == exitStatus.count());
@@ -1866,7 +1876,7 @@ void tst_QProcess::setEnvironment_data()
 
 void tst_QProcess::setEnvironment()
 {
-#if defined (Q_OS_WINCE) || defined(Q_OS_SYMBIAN)
+#if defined (Q_OS_WINCE) || defined(Q_OS_SYMBIAN) || defined(Q_OS_TKSE)
     QSKIP("OS doesn't support environment variables", SkipAll);
 #endif
 
@@ -1934,7 +1944,7 @@ void tst_QProcess::setProcessEnvironment_data()
 
 void tst_QProcess::setProcessEnvironment()
 {
-#if defined (Q_OS_WINCE) || defined(Q_OS_SYMBIAN)
+#if defined (Q_OS_WINCE) || defined(Q_OS_SYMBIAN) || defined(Q_OS_TKSE)
     QSKIP("OS doesn't support environment variables", SkipAll);
 #endif
 

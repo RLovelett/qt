@@ -52,7 +52,7 @@
 #define Q_NO_SYMLINKS
 #endif
 
-#if defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_TKSE)
 #define Q_NO_SYMLINKS
 #define Q_NO_SYMLINKS_TO_DIRS
 #endif

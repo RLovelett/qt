@@ -75,7 +75,9 @@ namespace QSharedMemoryPrivate
 #include <e32std.h>
 #include <sys/types.h>
 #else
+#ifndef Q_OS_TKSE
 #include <sys/sem.h>
+#endif
 #endif
 
 QT_BEGIN_NAMESPACE
@@ -120,6 +122,9 @@ public:
     QSharedMemoryPrivate();
 
     void *memory;
+#ifdef Q_OS_TKSE
+    int fd;
+#endif
     int size;
     QString key;
     QString nativeKey;
@@ -136,7 +141,11 @@ public:
 #ifdef Q_OS_WIN
     HANDLE handle();
 #else
+#ifdef Q_OS_TKSE
+    QString handle();
+#else
     key_t handle();
+#endif
 #endif
     bool initKey();
     bool cleanHandle();
@@ -167,7 +176,12 @@ private:
 #elif defined(Q_OS_SYMBIAN)
     RChunk chunk;
 #else
+#ifdef Q_OS_TKSE
+    QString posix_key;
+# define unix_key posix_key
+#else
     key_t unix_key;
+#endif
 #endif
 };
 

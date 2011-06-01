@@ -36,7 +36,7 @@ namespace WebCore {
 // and 2 ready to re-fill the pipeline.
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_OS_TKSE)
     return 3 * (1 + 3 + 2);
 #else
     return 6 * (1 + 3 + 2);

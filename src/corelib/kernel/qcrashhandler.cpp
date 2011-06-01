@@ -109,6 +109,37 @@ QT_BEGIN_INCLUDE_NAMESPACE
 #endif
 QT_END_INCLUDE_NAMESPACE
 
+#ifdef Q_OS_TKSE
+FILE *popen(const char *command, const char *type)
+{
+    int des[2];
+    int pid;
+    FILE *fp;
+    if (*type != 'r') {
+        fprintf(stderr, "type error\n");
+        return 0;
+    }
+    if (pipe(des) != 0) {
+        fprintf(stderr, "failed to create pipe\n");
+        return 0;
+    }
+    if ((pid = fork()) < 0) {
+        close(des[0]);
+        close(des[1]);
+        return 0;
+    }
+    if (pid == 0){
+        close(des[0]);
+        dup2(des[1], 2);
+        close(des[1]);
+        execlp(command, 0);
+        _exit(-1);
+    }
+    close(des[1]);
+    fp = fdopen(des[0], type);
+    return(fp);
+}
+#endif
 
 static char *globalProgName = NULL;
 static bool backtrace_command(FILE *outb, const char *format, ...)
@@ -342,6 +373,9 @@ static void print_backtrace(FILE *outb)
 #elif defined(Q_OS_INTEGRITY)
     /* abort */
     CheckSuccess(Failure);
+#elif defined(Q_OS_TKSE)
+    /* Not implemented yet. */
+    return;
 #else /* All other platforms */
     /*
      * TODO: SCO/UnixWare 7 must be something like (not tested)

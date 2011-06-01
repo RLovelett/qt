@@ -75,6 +75,14 @@
 #include <qresource.h>
 #endif
 
+
+// debug disable now
+#if 0
+#define	QFONTDATABASE_DEBUG
+#define QFONTDATABASE_DEBUG2
+#endif
+
+
 QT_BEGIN_NAMESPACE
 
 #ifndef QT_NO_LIBRARY
@@ -102,7 +110,9 @@ void QFontDatabasePrivate::addQPF2File(const QByteArray &file)
     QResource res(QLatin1String(file.constData()));
     const uchar *data = res.data();
     const int dataSize = res.size();
-    //qDebug() << "addQPF2File" << file << data;
+# ifdef QFONTDATABASE_DEBUG2
+    qDebug() << "addQPF2File" << file << data;
+# endif
 #endif
     if (data && data != (const uchar *)MAP_FAILED) {
         if (QFontEngineQPF::verifyHeader(data, dataSize)) {
@@ -206,7 +216,9 @@ bool QFontDatabasePrivate::loadFromCache(const QString &fontPath)
 
     QString familyname;
     stream >> familyname;
-    //qDebug() << "populating database from" << binaryDb.fileName();
+#ifdef QFONTDATABASE_DEBUG2
+    qDebug() << "populating database from" << binaryDb.fileName();
+#endif
     while (!familyname.isEmpty() && !stream.atEnd()) {
         QString foundryname;
         int weight;
@@ -235,7 +247,9 @@ bool QFontDatabasePrivate::loadFromCache(const QString &fontPath)
     }
 
     stream >> fallbackFamilies;
-    //qDebug() << "fallback families from cache:" << fallbackFamilies;
+#ifdef QFONTDATABASE_DEBUG2
+    qDebug() << "fallback families from cache:" << fallbackFamilies;
+#endif
     return true;
 }
 #endif // QT_FONTS_ARE_RESOURCES
@@ -309,7 +323,9 @@ static void initializeDb()
     binaryDb.open(QIODevice::WriteOnly | QIODevice::Truncate);
     db->stream = new QDataStream(&binaryDb);
     *db->stream << DatabaseVersion << quint8(db->stream->version()) << fontpath;
-//    qDebug() << "creating binary database at" << binaryDb.fileName();
+#ifdef QFONTDATABASE_DEBUG2
+    qDebug() << "creating binary database at" << binaryDb.fileName();
+#endif
 
     // Load in font definition file
     FILE* fontdef=fopen(fontDirFile.toLocal8Bit().constData(),"r");
@@ -364,7 +380,9 @@ static void initializeDb()
     dir.refresh();
     for (int i = 0; i < int(dir.count()); ++i) {
         const QByteArray file = QFile::encodeName(dir.absoluteFilePath(dir[i]));
-//        qDebug() << "looking at" << file;
+#ifdef QFONTDATABASE_DEBUG2
+        qDebug() << "looking at" << file;
+#endif
         db->addTTFile(file);
     }
 #endif
@@ -374,7 +392,9 @@ static void initializeDb()
     dir.refresh();
     for (int i = 0; i < int(dir.count()); ++i) {
         const QByteArray file = QFile::encodeName(dir.absoluteFilePath(dir[i]));
-//        qDebug() << "looking at" << file;
+#ifdef QFONTDATABASE_DEBUG2
+        qDebug() << "looking at" << file;
+#endif
         db->addQPF2File(file);
     }
 #endif
@@ -384,7 +404,9 @@ static void initializeDb()
     {
         QResource fontdir(fontpath);
         FriendlyResource *fr = static_cast<FriendlyResource*>(&fontdir);
+#ifdef QFONTDATABASE_DEBUG2
         qDebug() << "fontdir" << fr->isValid() << fr->isDir() << fr->children();
+#endif
 
     }
 #endif
@@ -393,6 +415,9 @@ static void initializeDb()
     for (int i = 0; i < int(dir.count()); ++i) {
         const QByteArray file = QFile::encodeName(dir.absoluteFilePath(dir[i]));
         //qDebug() << "looking at" << file;
+# ifdef QFONTDATABASE_DEBUG2
+        qDebug() << "looking at" << file;
+# endif
         db->addQPF2File(file);
     }
 #endif
@@ -441,13 +466,17 @@ static void initializeDb()
 
 #ifndef QT_NO_LIBRARY
     QStringList pluginFoundries = loader()->keys();
-//    qDebug() << "plugin foundries:" << pluginFoundries;
+#  ifdef QFONTDATABASE_DEBUG2
+    qDebug() << "plugin foundries:" << pluginFoundries;
+#  endif
     for (int i = 0; i < pluginFoundries.count(); ++i) {
         const QString foundry(pluginFoundries.at(i));
 
         QFontEngineFactoryInterface *factory = qobject_cast<QFontEngineFactoryInterface *>(loader()->instance(foundry));
         if (!factory) {
+#  ifdef QFONTDATABASE_DEBUG2
             qDebug() << "Could not load plugin for foundry" << foundry;
+#  endif
             continue;
         }
 
@@ -495,7 +524,9 @@ static void initializeDb()
             if (add)
                 db->fallbackFamilies << family->name;
         }
-        //qDebug() << "fallbacks on the server:" << db->fallbackFamilies;
+#ifdef QFONTDATABASE_DEBUG2
+        qDebug() << "fallbacks on the server:" << db->fallbackFamilies;
+#endif
 #ifndef QT_FONTS_ARE_RESOURCES
         *db->stream << db->fallbackFamilies;
 #endif

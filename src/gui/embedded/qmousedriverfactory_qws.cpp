@@ -47,7 +47,9 @@
 #include "qmouselinuxinput_qws.h"
 #include "qmousevfb_qws.h"
 #include "qmousetslib_qws.h"
+#if defined(Q_OS_QNX) && !defined(QT_NO_QWS_MOUSE_QNX)
 #include "qmouseqnx_qws.h"
+#endif
 #include "qmouseintegrity_qws.h"
 #include <stdlib.h>
 #include "private/qfactoryloader_p.h"

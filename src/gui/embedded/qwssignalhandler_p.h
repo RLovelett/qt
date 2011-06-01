@@ -57,6 +57,11 @@
 
 #ifndef QT_NO_QWS_SIGNALHANDLER
 
+
+#ifdef Q_OS_TKSE
+#  include "psemaphore.h"
+#endif
+
 #include <QtCore/qmap.h>
 #include <QtCore/qvector.h>
 #include <QtCore/qobjectcleanuphandler.h>
@@ -75,8 +80,15 @@ public:
     ~QWSSignalHandler();
 
 #ifndef QT_NO_QWS_MULTIPROCESS
+# ifdef Q_OS_TKSE
+    inline void addSemaphore(semId_type *psemno) 
+    { if (psemaphores.indexOf(psemno) == -1)
+          psemaphores.append(psemno); }
+    void removeSemaphore(semId_type *psemno);
+# else
     inline void addSemaphore(int semno) { semaphores.append(semno); }
     void removeSemaphore(int semno);
+# endif
 #endif
     inline void addObject(QObject *object) { (void)objects.add(object); }
 
@@ -85,7 +97,11 @@ private:
     static void handleSignal(int signal);
     QMap<int, qt_sighandler_t> oldHandlers;
 #ifndef QT_NO_QWS_MULTIPROCESS
+# ifdef Q_OS_TKSE
+    QVector<semId_type *> psemaphores;
+# else
     QVector<int> semaphores;
+# endif
 #endif
     QObjectCleanupHandler objects;
 

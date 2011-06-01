@@ -90,12 +90,19 @@ QT_END_NAMESPACE
 
 #include <unistd.h>
 #include <sys/types.h>
+#ifndef Q_OS_TKSE
 #include <sys/ipc.h>
+#endif
 #if defined(Q_NO_SEMAPHORE)
 #  include <sys/stat.h>
 #  include <sys/file.h>
 #else
+# ifdef Q_OS_TKSE
+#   include "psemaphore.h"
+#   include "util.h"
+# else
 #  include <sys/sem.h>
+# endif
 #endif
 #include <string.h>
 #include <errno.h>
@@ -113,7 +120,11 @@ public:
 #ifdef Q_NO_SEMAPHORE
     QByteArray file;
 #endif // Q_NO_SEMAPHORE
+#ifdef Q_OS_TKSE
+    semId_type *id;
+#else
     int id;
+#endif
     int count;
     bool owned;
 };
@@ -162,6 +173,27 @@ QLock::QLock(const QString &filename, char id, bool create)
         }
     }
 #else
+#  ifdef Q_OS_TKSE // TKSE only supports POSIX semaphore.
+    semId_type *semId;
+    semId = (semId_type *)malloc(sizeof(semId_type));
+    if ( semId == 0 ) {
+        perror("QLock::QLock");
+        qFatal("NG : Smalloc failure");
+    }
+    semId->nid = 1; // it has fname
+    semId->fname = "/nsem/etk";
+    sem_t*  sem;
+    sem = sem_open(semId->fname, O_CREAT, 0, 0);
+    if (sem == SEM_FAILED) {
+        perror("QLock::QLock");
+        qFatal("NG : sem_open failure");
+    }
+    semId->sem_id_e[0] = sem;
+    data->id = semId;
+    data->owned = create;
+    if (create)
+        QWSSignalHandler::instance()->addSemaphore(data->id);
+#  else
     key_t semkey = ftok(filename.toLocal8Bit().constData(), id);
     data->id = semget(semkey,0,0);
     data->owned = create;
@@ -175,13 +207,16 @@ QLock::QLock(const QString &filename, char id, bool create)
 
         QWSSignalHandler::instance()->addSemaphore(data->id);
     }
+# endif
 #endif
+#ifndef Q_OS_TKSE
     if (data->id == -1) {
         int eno = errno;
         qWarning("Cannot %s semaphore %s '%c'", (create ? "create" : "get"),
                  qPrintable(filename), id);
         qDebug() << "Error" << eno << strerror(eno);
     }
+#endif
 }
 
 /*!
@@ -203,6 +238,10 @@ QLock::~QLock()
 #else
     if(data->owned)
         QWSSignalHandler::instance()->removeSemaphore(data->id);
+#  ifdef Q_OS_TKSE
+    if (data->id)
+        free(data->id);
+#  endif
 #endif
     delete data;
 }
@@ -216,7 +255,11 @@ QLock::~QLock()
 
 bool QLock::isValid() const
 {
+#ifdef Q_OS_TKSE
+    return (data->id != NULL);
+#else
     return (data->id != -1);
+#endif
 }
 
 /*!
@@ -244,6 +287,13 @@ void QLock::lock(Type t)
                 qDebug("Semop lock failure %s",strerror(errno));
         }
 #else
+#  ifdef Q_OS_TKSE
+        if (t == Write)
+            type = Write;
+        else
+            type = Read;
+        sem_post(data->id->sem_id_e[0]);
+#  else
         sembuf sops;
         sops.sem_num = 0;
         sops.sem_flg = SEM_UNDO;
@@ -262,6 +312,7 @@ void QLock::lock(Type t)
             if (rv == -1 && errno != EINTR)
                 qDebug("Semop lock failure %s",strerror(errno));
         } while (rv == -1 && errno == EINTR);
+#  endif
 #endif
     }
     data->count++;
@@ -287,6 +338,12 @@ void QLock::unlock()
                     qDebug("Semop lock failure %s",strerror(errno));
             }
 #else
+#  ifdef Q_OS_TKSE
+            int ret;
+            do {
+                ret = sem_wait(data->id->sem_id_e[0]);
+            } while (ret == -1 && errno == EINTR);
+# else
             sembuf sops;
             sops.sem_num = 0;
             sops.sem_op = 1;
@@ -300,6 +357,7 @@ void QLock::unlock()
                 if (rv == -1 && errno != EINTR)
                     qDebug("Semop unlock failure %s",strerror(errno));
             } while (rv == -1 && errno == EINTR);
+#endif
 #endif
         }
     } else {

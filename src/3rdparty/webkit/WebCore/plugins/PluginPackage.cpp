@@ -113,7 +113,7 @@ PluginPackage::PluginPackage(const String& path, const time_t& lastModified)
     m_parentDirectory = m_path.left(m_path.length() - m_fileName.length() - 1);
 }
 
-#if !OS(SYMBIAN)
+#if !OS(SYMBIAN) || !OS(TKSE)
 void PluginPackage::unload()
 {
     if (!m_isLoaded)

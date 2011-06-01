@@ -192,7 +192,7 @@ void tst_QGraphicsWebView::focusInputTypes()
 
     // 'text' type
     webView->fireMouseClick(QPointF(20.0, 10.0));
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN)
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6) || defined(Q_OS_SYMBIAN) || defined(Q_OS_TKSE)
     QVERIFY(webView->inputMethodHints() & Qt::ImhNoAutoUppercase);
     QVERIFY(webView->inputMethodHints() & Qt::ImhNoPredictiveText);
 #else

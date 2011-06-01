@@ -370,7 +370,7 @@ void tst_QSettings::init()
     removePath(settingsPath());
 #endif
 
-#if !defined(Q_OS_WIN) && !defined(Q_OS_SYMBIAN)
+#if !defined(Q_OS_WIN) && !defined(Q_OS_SYMBIAN) && !defined(Q_OS_TKSE)
     system(QString("chmod -R u+rw %1 2> /dev/null").arg(settingsPath()).toLatin1());
     system(QString("rm -fr %1 2> /dev/null").arg(settingsPath()).toLatin1());
 #endif
@@ -552,13 +552,13 @@ void tst_QSettings::ctor()
         */
         QSettings settings5(format, QSettings::UserScope, "SoftWare.ORG", "killerApp");
         if (format == QSettings::NativeFormat) {
-#if defined(Q_OS_WIN) || defined(Q_OS_DARWIN) || defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_WIN) || defined(Q_OS_DARWIN) || defined(Q_OS_SYMBIAN) || defined(Q_OS_TKSE)
             QCOMPARE(settings5.value("key 1").toString(), QString("gurgle"));
 #else
             QVERIFY(!settings5.contains("key 1"));
 #endif
         } else {
-#if defined(Q_OS_WIN) || defined(Q_OS_DARWIN) || defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_WIN) || defined(Q_OS_DARWIN) || defined(Q_OS_SYMBIAN) || defined(Q_OS_TKSE)
             QCOMPARE(settings5.value("key 1").toString(), QString("gurgle"));
 #else
             QVERIFY(!settings5.contains("key 1"));
@@ -1513,7 +1513,7 @@ void tst_QSettings::sync()
 
     // Now "some other app" will change other.software.org.ini
     QString userConfDir = settingsPath("__user__") + QDir::separator();
-#if !defined(Q_OS_WINCE) && !defined(Q_OS_SYMBIAN)
+#if !defined(Q_OS_WINCE) && !defined(Q_OS_SYMBIAN) && !defined(Q_OS_TKSE)
     unlink((userConfDir + "other.software.org.ini").toLatin1());
     rename((userConfDir + "software.org.ini").toLatin1(),
            (userConfDir + "other.software.org.ini").toLatin1());

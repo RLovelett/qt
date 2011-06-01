@@ -257,7 +257,7 @@ void QGraphicsWebViewPrivate::_q_doLoadFinished(bool success)
 
 void QGraphicsWebViewPrivate::_q_updateMicroFocus()
 {
-#if !defined(QT_NO_IM) && (defined(Q_WS_X11) || defined(Q_WS_QWS) || defined(Q_OS_SYMBIAN))
+#if !defined(QT_NO_IM) && (defined(Q_WS_X11) || defined(Q_WS_QWS) || defined(Q_OS_SYMBIAN) || defined(Q_OS_TKSE))
     // Ideally, this should be handled by a common call to an updateMicroFocus function
     // in QGraphicsItem. See http://bugreports.qt.nokia.com/browse/QTBUG-7578.
     QList<QGraphicsView*> views = q->scene()->views();

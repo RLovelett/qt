@@ -490,6 +490,10 @@ protected:
 #elif defined(Q_OS_WIN)
         ok = ::ioctlsocket(socketDescriptor, FIONBIO, &arg) == 0;
         ::closesocket(socketDescriptor);
+#elif defined(Q_OS_TKSE)
+        arg = fcntl(socketDescriptor, F_GETFL, NULL);
+        arg &= (~O_NONBLOCK);
+        ok = ::fcntl(socketDescriptor, F_SETFL, arg) != -1;
 #else
         ok = ::ioctl(socketDescriptor, FIONBIO, &arg) == 0;
         ::close(socketDescriptor);

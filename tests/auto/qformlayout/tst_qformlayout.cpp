@@ -720,6 +720,7 @@ void tst_QFormLayout::setWidget()
         QCOMPARE(int(role), int(QFormLayout::LabelRole));
     }
 
+#ifndef Q_OS_TKSE
     {
         int row = -1;
         QFormLayout::ItemRole role = QFormLayout::ItemRole(-123);
@@ -751,6 +752,7 @@ void tst_QFormLayout::setWidget()
         QCOMPARE(row, -1);
         QCOMPARE(int(role), -123);
     }
+#endif
 }
 
 void tst_QFormLayout::setLayout()
@@ -804,6 +806,7 @@ void tst_QFormLayout::setLayout()
         QCOMPARE(int(role), int(QFormLayout::LabelRole));
     }
 
+#ifndef Q_OS_TKSE
     {
         int row = -1;
         QFormLayout::ItemRole role = QFormLayout::ItemRole(-123);
@@ -819,6 +822,7 @@ void tst_QFormLayout::setLayout()
         QCOMPARE(row, -1);
         QCOMPARE(int(role), -123);
     }
+#endif
 }
 
 void tst_QFormLayout::itemAt()

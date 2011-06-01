@@ -1157,7 +1157,10 @@ void UnixMakefileGenerator::init2()
             project->values("QMAKE_LN_SHLIB").append("ln -s");
         if (!project->values("QMAKE_LFLAGS_SONAME").isEmpty()) {
             QString soname;
-            if(project->isActiveConfig("plugin")) {
+            if (project->isActiveConfig("rvct4_linker") &&
+                project->isActiveConfig("etkernel")) {
+                soname += project->first("TARGET_");
+            } else if(project->isActiveConfig("plugin")) {
                 if(!project->values("TARGET").isEmpty())
                     soname += project->first("TARGET");
             } else if(!project->isEmpty("QMAKE_BUNDLE")) {

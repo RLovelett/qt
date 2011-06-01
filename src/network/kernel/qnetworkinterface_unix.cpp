@@ -55,7 +55,10 @@
 #ifdef Q_OS_SOLARIS
 # include <sys/sockio.h>
 #endif
-#include <net/if.h>
+#if defined(Q_OS_TKSE) && defined(Q_CC_RVCT)
+#else
+# include <net/if.h>
+#endif
 
 #ifndef QT_NO_GETIFADDRS
 # include <ifaddrs.h>
@@ -91,6 +94,9 @@ static QHostAddress addressFromSockaddr(sockaddr *sa)
 static QNetworkInterface::InterfaceFlags convertFlags(uint rawFlags)
 {
     QNetworkInterface::InterfaceFlags flags = 0;
+
+#if !defined(Q_OS_TKSE)
+
     flags |= (rawFlags & IFF_UP) ? QNetworkInterface::IsUp : QNetworkInterface::InterfaceFlag(0);
     flags |= (rawFlags & IFF_RUNNING) ? QNetworkInterface::IsRunning : QNetworkInterface::InterfaceFlag(0);
     flags |= (rawFlags & IFF_BROADCAST) ? QNetworkInterface::CanBroadcast : QNetworkInterface::InterfaceFlag(0);
@@ -102,6 +108,9 @@ static QNetworkInterface::InterfaceFlags convertFlags(uint rawFlags)
 #ifdef IFF_MULTICAST
     flags |= (rawFlags & IFF_MULTICAST) ? QNetworkInterface::CanMulticast : QNetworkInterface::InterfaceFlag(0);
 #endif
+
+#endif // ! Q_OS_TKSE
+
     return flags;
 }
 
@@ -113,6 +122,9 @@ static const int STORAGEBUFFER_GROWTH = 256;
 static QSet<QByteArray> interfaceNames(int socket)
 {
     QSet<QByteArray> result;
+
+#if !defined(Q_OS_TKSE)
+
 #ifdef QT_NO_IPV6IFNAME
     QByteArray storageBuffer;
     struct ifconf interfaceList;
@@ -159,12 +171,19 @@ static QSet<QByteArray> interfaceNames(int socket)
     if_freenameindex(interfaceList);
     return result;
 #endif
+
+#else
+    return result;
+#endif // ! Q_OS_TKSE
 }
 
 static QNetworkInterfacePrivate *findInterface(int socket, QList<QNetworkInterfacePrivate *> &interfaces,
                                                struct ifreq &req)
 {
     QNetworkInterfacePrivate *iface = 0;
+
+#if !defined(Q_OS_TKSE)
+
     int ifindex = 0;
 
 #ifndef QT_NO_IPV6IFNAME
@@ -225,12 +244,16 @@ static QNetworkInterfacePrivate *findInterface(int socket, QList<QNetworkInterfa
 #endif
     }
 
+#endif // ! Q_OS_TKSE
+
     return iface;
 }
 
 static QList<QNetworkInterfacePrivate *> interfaceListing()
 {
     QList<QNetworkInterfacePrivate *> interfaces;
+
+#if !defined(Q_OS_TKSE)
 
     int socket;
     if ((socket = qt_safe_socket(AF_INET, SOCK_STREAM, IPPROTO_IP)) == -1)
@@ -271,6 +294,9 @@ static QList<QNetworkInterfacePrivate *> interfaceListing()
     }
 
     ::close(socket);
+
+#endif // ! Q_OS_TKSE
+
     return interfaces;
 }
 

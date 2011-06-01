@@ -215,13 +215,22 @@ NEVER_INLINE CollectorBlock* Heap::allocateBlock()
 #if ENABLE(JSC_MULTIPLE_THREADS)
 #error Need to initialize pagesize safely.
 #endif
+#if OS(TKSE)
+    // TKSE does not support getpagesize.
+    static size_t pagesize = 4096;
+#else
     static size_t pagesize = getpagesize();
+#endif
 
     size_t extra = 0;
     if (BLOCK_SIZE > pagesize)
         extra = BLOCK_SIZE - pagesize;
 
     void* mmapResult = mmap(NULL, BLOCK_SIZE + extra, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+#if OS(TKSE)
+    if (mmapResult == MAP_FAILED)
+        qFatal("mmap failed Heap::allocateBlock errno : %d", errno);
+#endif
     uintptr_t address = reinterpret_cast<uintptr_t>(mmapResult);
 
     size_t adjust = 0;

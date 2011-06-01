@@ -48,12 +48,16 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
+#if defined(Q_OS_TKSE)
+#   define QHELP_EXPORT
+#else
 #if !defined(QT_SHARED) && !defined(QT_DLL)
 #   define QHELP_EXPORT
 #elif defined(QHELP_LIB)
 #   define QHELP_EXPORT Q_DECL_EXPORT
 #else
 #   define QHELP_EXPORT Q_DECL_IMPORT
+#endif
 #endif
 
 //

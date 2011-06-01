@@ -56,6 +56,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+#ifdef Q_OS_TKSE
+#  ifndef NSIG
+#define NSIG SIGRTMIN
+#  endif
+#endif
+
+
 // VxWorks doesn't correctly set the _POSIX_... options
 #if defined(Q_OS_VXWORKS)
 #  if defined(_POSIX_MONOTONIC_CLOCK) && (_POSIX_MONOTONIC_CLOCK <= 0)

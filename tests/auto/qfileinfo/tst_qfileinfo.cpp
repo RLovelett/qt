@@ -78,6 +78,10 @@
 # define NO_SYMLINKS
 #endif
 
+#if defined(Q_OS_TKSE)
+# define NO_SYMLINKS
+#endif
+
 QT_BEGIN_NAMESPACE
 extern Q_AUTOTEST_EXPORT bool qIsLikelyToBeNfs(int /* handle */);
 QT_END_NAMESPACE
@@ -1013,6 +1017,9 @@ void tst_QFileInfo::fileTimes()
 #elif defined(Q_OS_SYMBIAN)
         QEXPECT_FAIL("longfile", "Maximum total filepath cannot exceed 256 characters in Symbian", Abort);
         QEXPECT_FAIL("longfile absolutepath", "Maximum total filepath cannot exceed 256 characters in Symbian", Abort);
+#elif defined(Q_OS_TKSE)
+        QEXPECT_FAIL("longfile", "Maximum total filepath cannot exceed 64 characters in TKSE", Continue);
+        QEXPECT_FAIL("longfile absolutepath", "Maximum total filepath cannot exceed 64 characters in TKSE", Continue);
 #endif
         QVERIFY(file.open(QFile::WriteOnly | QFile::Text));
 #ifdef Q_OS_UNIX
@@ -1507,7 +1514,7 @@ void tst_QFileInfo::isWritable()
     QVERIFY(fi.exists());
     QVERIFY(!fi.isWritable());
 #endif
-#if defined (Q_OS_UNIX) && !defined (Q_OS_SYMBIAN)
+#if defined (Q_OS_UNIX) && !defined (Q_OS_SYMBIAN) && !defined (Q_OS_TKSE)
     if (::getuid() == 0)
         QVERIFY(QFileInfo("/etc/passwd").isWritable());
     else

@@ -2678,7 +2678,18 @@ int qrand()
             seedStorage->setLocalData(pseed = new SeedStorageType);
             *pseed = 1;
         }
+# ifdef Q_OS_TKSE
+        {
+            static int initialized = 0;
+            if (initialized == 0) {
+                srand(*pseed);
+                initialized = 1;
+            }
+        }
+        return rand ();
+# else
         return rand_r(pseed);
+# endif
     } else {
         //global static seed storage should always exist,
         //except after being deleted by QGlobalStaticDeleter.

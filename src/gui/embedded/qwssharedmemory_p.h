@@ -70,12 +70,21 @@ public:
     int size() const;
     void *address() { return shmBase; }
 
+#ifdef Q_OS_TKSE
+    void *id() const { return shmBase; }
+#else
     int id() const { return shmId; }
+#endif
 
     void detach();
 
     bool create(int size);
+
+#ifdef Q_OS_TKSE
+    bool attach(void *id);
+#else
     bool attach(int id);
+#endif
 
     //bool create(int size, const QString &filename, char c = 'Q');
     //bool attach(const QString &filename, char c = 'Q');
@@ -94,8 +103,15 @@ private:
     int shmSize;
     QString shmFile;
     char character;
+#ifdef Q_OS_TKSE
+    int shmFd;
+    pid_t shmPid;
+    void *shmPtr;
+    char *key;
+#else
     int shmId;
     key_t key;
+#endif
 };
 
 #endif // QT_NO_QWS_MULTIPROCESS

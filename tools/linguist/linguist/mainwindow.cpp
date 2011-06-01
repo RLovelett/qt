@@ -887,13 +887,18 @@ void MainWindow::releaseAll()
 
 QPrinter *MainWindow::printer()
 {
+#ifdef Q_OS_TKSE
+    return NULL;
+#else
     if (!m_printer)
         m_printer = new QPrinter;
     return m_printer;
+#endif
 }
 
 void MainWindow::print()
 {
+#ifndef Q_OS_TKSE
     int pageNum = 0;
     QPrintDialog dlg(printer(), this);
     if (dlg.exec()) {
@@ -971,6 +976,7 @@ void MainWindow::print()
     } else {
         statusBar()->showMessage(tr("Printing aborted"), MessageMS);
     }
+#endif
 }
 
 bool MainWindow::searchItem(const QString &searchWhat)
@@ -1249,6 +1255,7 @@ void MainWindow::editPhraseBook(QAction *action)
 
 void MainWindow::printPhraseBook(QAction *action)
 {
+#ifndef Q_OS_TKSE
     PhraseBook *phraseBook = m_phraseBookMenu[PhrasePrintMenu].value(action);
 
     int pageNum = 0;
@@ -1280,6 +1287,7 @@ void MainWindow::printPhraseBook(QAction *action)
     } else {
         statusBar()->showMessage(tr("Printing aborted"), MessageMS);
     }
+#endif
 }
 
 void MainWindow::addToPhraseBook()

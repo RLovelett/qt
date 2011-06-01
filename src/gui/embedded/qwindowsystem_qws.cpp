@@ -91,7 +91,9 @@
 
 #ifndef QT_NO_QWS_MULTIPROCESS
 #include <sys/param.h>
+#  ifndef Q_OS_TKSE
 #include <sys/mount.h>
+#  endif
 #endif
 
 #if !defined(QT_NO_SOUND) && !defined(Q_OS_DARWIN)
@@ -655,7 +657,11 @@ public:
     QWSClientPrivate();
     ~QWSClientPrivate();
 
+#ifdef Q_OS_TKSE
+    void setLockId(semId_type *psemno);
+#else
     void setLockId(int id);
+#endif
     void unlockCommunication();
 
 private:
@@ -684,12 +690,24 @@ QWSClientPrivate::~QWSClientPrivate()
 #endif
 }
 
+#ifdef Q_OS_TKSE
+void QWSClientPrivate::setLockId(semId_type *psemno)
+#else
 void QWSClientPrivate::setLockId(int id)
+#endif
 {
 #ifdef QT_NO_QWS_MULTIPROCESS
+#ifdef Q_OS_TKSE
+    Q_UNUSED(*psemno);
+#else
     Q_UNUSED(id);
+#endif
+#else
+#ifdef Q_OS_TKSE
+    clientLock = new QWSLock(psemno);
 #else
     clientLock = new QWSLock(id);
+#endif
 #endif
 }
 
@@ -864,7 +882,11 @@ void QWSClient::sendRegionEvent(int winid, QRegion rgn, int type
     sendEvent(&event);
 }
 
+#ifdef Q_OS_TKSE
+extern void *qt_servershmid;
+#else
 extern int qt_servershmid;
+#endif
 
 /*!
    \internal

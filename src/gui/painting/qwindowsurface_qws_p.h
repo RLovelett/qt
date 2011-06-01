@@ -60,6 +60,10 @@
 #include <qmutex.h>
 #include <private/qwssharedmemory_p.h>
 
+#ifdef Q_OS_TKSE
+#  include "../embedded/psemaphore.h"
+#endif
+
 QT_BEGIN_NAMESPACE
 
 class QScreen;
@@ -185,7 +189,11 @@ protected:
     QImage::Format preferredImageFormat(const QWidget *widget) const;
 
 #ifndef QT_NO_QWS_MULTIPROCESS
+#ifdef Q_OS_TKSE
+    void setLock(semId_type *lockId);
+#else
     void setLock(int lockId);
+#endif
     QWSLock *memlock;
 #endif
 #ifndef QT_NO_THREAD
@@ -236,7 +244,11 @@ public:
     virtual void releaseSurface();
 
 private:
+#ifdef Q_OS_TKSE
+    bool setMemory(void *memId);
+#else
     bool setMemory(int memId);
+#endif
 
     QWSSharedMemory mem;
 };

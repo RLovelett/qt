@@ -156,7 +156,11 @@ public:
 	public:
 		int32_t compareTo(_cl* o){
 			if ( this == o )
+#ifdef Q_OS_TKSE
+				return (int32_t)o;
+#else
 				return o;
+#endif
 			else
 				return this > o ? 1 : -1;
 		}

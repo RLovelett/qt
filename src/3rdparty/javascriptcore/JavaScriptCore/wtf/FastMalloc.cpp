@@ -228,6 +228,11 @@ TryMallocReturnValue tryFastMalloc(size_t n)
 
     return result;
 #else
+#if OS(TKSE)
+    if (n==0)
+        return 0;
+#endif
+
     return malloc(n);
 #endif
 }
@@ -241,6 +246,11 @@ void* fastMalloc(size_t n)
     void* result;
     returnValue.getValue(result);
 #else
+#if OS(TKSE)
+    if (n==0)
+        return 0;
+#endif
+
     void* result = malloc(n);
 #endif
 
@@ -268,6 +278,11 @@ TryMallocReturnValue tryFastCalloc(size_t n_elements, size_t element_size)
     result = static_cast<AllocAlignmentInteger*>(result) + 1;
     return result;
 #else
+#if OS(TKSE)
+    if (element_size==0)
+        return 0;
+#endif
+
     return calloc(n_elements, element_size);
 #endif
 }
@@ -281,6 +296,11 @@ void* fastCalloc(size_t n_elements, size_t element_size)
     void* result;
     returnValue.getValue(result);
 #else
+#if OS(TKSE)
+    if (element_size==0)
+        return 0;
+#endif
+
     void* result = calloc(n_elements, element_size);
 #endif
 
@@ -329,6 +349,11 @@ TryMallocReturnValue tryFastRealloc(void* p, size_t n)
         return fastMalloc(n);
     }
 #else
+#if OS(TKSE)
+    if (n==0)
+        return 0;
+#endif
+
     return realloc(p, n);
 #endif
 }
@@ -342,6 +367,11 @@ void* fastRealloc(void* p, size_t n)
     void* result;
     returnValue.getValue(result);
 #else
+#if OS(TKSE)
+    if (n==0)
+        return 0;
+#endif
+
     void* result = realloc(p, n);
 #endif
 

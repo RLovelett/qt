@@ -45,8 +45,13 @@
 
 #include <sys/types.h>
 #ifndef QT_NO_QWS_MULTIPROCESS
+# ifdef Q_OS_TKSE
+#  include <semaphore.h>
+#  include "util.h"
+# else
 #  include <sys/ipc.h>
 #  include <sys/sem.h>
+# endif
 
 #  include <private/qcore_unix_p.h>
 #endif
@@ -88,20 +93,52 @@ QWSSignalHandler::QWSSignalHandler()
 QWSSignalHandler::~QWSSignalHandler()
 {
 #ifndef QT_NO_QWS_MULTIPROCESS
+# ifdef Q_OS_TKSE
+     /*
+       This code causes data abort when shutdown QWSServer.
+       Because QWSClient already calls removeSemaphore and Sfree "semId_type *psemno"
+       in QWSLock::~QWSLock.
+    */ 
+    /*
+    while (!psemaphores.isEmpty())
+        removeSemaphore(psemaphores.last());
+    */
+# else
     while (!semaphores.isEmpty())
         removeSemaphore(semaphores.last());
+# endif
 #endif
 }
 
 #ifndef QT_NO_QWS_MULTIPROCESS
+#ifdef Q_OS_TKSE
+void QWSSignalHandler::removeSemaphore(semId_type *psemno)
+#else
 void QWSSignalHandler::removeSemaphore(int semno)
+#endif
 {
+#ifdef Q_OS_TKSE
+    const int index = psemaphores.lastIndexOf(psemno);
+#else
     const int index = semaphores.lastIndexOf(semno);
+#endif
     if (index != -1) {
+#ifdef Q_OS_TKSE
+        if (psemno->nid != 1) {
+            sem_destroy(psemno->sem_id_e[0]); // BackingStore
+            sem_destroy(psemno->sem_id_e[1]); // Communication
+            sem_destroy(psemno->sem_id_e[2]); // RegionEvent
+        } else {
+            sem_unlink(psemno->fname);
+        }
+        psemaphores.remove(index);
+#else
         qt_semun semval;
         semval.val = 0;
         semctl(semaphores.at(index), 0, IPC_RMID, semval);
         semaphores.remove(index);
+#endif
+
     }
 }
 #endif // QT_NO_QWS_MULTIPROCESS
@@ -113,10 +150,33 @@ void QWSSignalHandler::handleSignal(int signum)
     signal(signum, h->oldHandlers[signum]);
 
 #ifndef QT_NO_QWS_MULTIPROCESS
+# ifdef Q_OS_TKSE
+    // assume nid = 1, it has named semaphore.
+    for (int i = 0; i < h->psemaphores.size(); ++i) {
+      if (h->psemaphores.at(i)->nid != 1) {
+          sem_destroy(h->psemaphores.at(i)->sem_id_e[0]); // BackingStore
+          sem_destroy(h->psemaphores.at(i)->sem_id_e[1]); // Communication
+          sem_destroy(h->psemaphores.at(i)->sem_id_e[2]); // RegionEvent
+          if (h->psemaphores.at(i)->sem_id_e[0])
+              Sfree(h->psemaphores.at(i)->sem_id_e[0]);
+          if (h->psemaphores.at(i)->sem_id_e[1])
+              Sfree(h->psemaphores.at(i)->sem_id_e[1]);
+          if (h->psemaphores.at(i)->sem_id_e[2])
+              Sfree(h->psemaphores.at(i)->sem_id_e[2]);
+          if (h->psemaphores.at(i))
+              Sfree(h->psemaphores.at(i));
+      } else {
+          sem_unlink (h->psemaphores.at(i)->fname);
+          if (h->psemaphores.at(i)->sem_id_e[0])
+              free(h->psemaphores.at(i)->sem_id_e[0]);
+      }
+    }
+# else
     qt_semun semval;
     semval.val = 0;
     for (int i = 0; i < h->semaphores.size(); ++i)
         semctl(h->semaphores.at(i), 0, IPC_RMID, semval);
+# endif
 #endif
 
     h->objects.clear();

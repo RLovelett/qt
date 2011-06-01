@@ -295,8 +295,13 @@ public:
         randomLocation += (1 << 24);
         randomLocation <<= 21;
         m_base = mmap(reinterpret_cast<void*>(randomLocation), m_totalHeapSize, INITIAL_PROTECTION_FLAGS, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0);
+#if OS(TKSE)
+        if (m_base == MAP_FAILED)
+            qFatal("mmap failed FixedVMPoolAllocator errno : %d", errno);
+#else
         if (!m_base)
             CRASH();
+#endif
 
         // For simplicity, we keep all memory in m_freeList in a 'released' state.
         // This means that we can simply reuse all memory when allocating, without

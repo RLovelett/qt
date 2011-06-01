@@ -1,0 +1,40 @@
+############################################################################
+#	$Id$ 
+#
+#	A qmake post include file for eSOL eT-Kernel eBinder/RVCT
+#		Software Research Associates, Inc.
+#
+############################################################################
+
+include(../../../features/default_post.prf)
+
+############################################################################
+
+contains(TEMPLATE, ".*lib") {
+CONFIG	+=	target_lib
+}
+contains(TEMPLATE, ".*app") {
+CONFIG	+=	target_app
+}
+
+contains(CONFIG, "debug") {
+BUILDTYPE	=	debug
+}
+contains(CONFIG, "release") {
+BUILDTYPE	=	release
+}
+CONFIG	+=	$$BUILDTYPE
+
+contains(CONFIG, "shared")|contains(CONFIG_LINKTYPE, "shared") {
+LINKTYPE	=	shared
+}
+contains(CONFIG, "static")|contains(CONFIG_LINKTYPE, "static") {
+LINKTYPE	=	static
+}
+CONFIG	+=	$$LINKTYPE
+
+CONFIG	=	$$unique(CONFIG)
+
+############################################################################
+
+include(./main.conf)

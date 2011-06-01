@@ -71,7 +71,13 @@
 #include <QtGui/qwsevent_qws.h>
 #include "qwsprotocolitem_qws.h"
 
+#ifdef Q_OS_TKSE
+#  include "psemaphore.h"
+static semId_type *pminusId;
+#endif
+
 QT_BEGIN_NAMESPACE
+
 
 QT_MODULE(Gui)
 
@@ -148,7 +154,11 @@ struct QWSIdentifyCommand : public QWSCommand
                    sizeof(simpleData), reinterpret_cast<char *>(&simpleData))
     {
         simpleData.idLen = 0;
+#ifdef Q_OS_TKSE
+        simpleData.idLock = pminusId;
+#else
         simpleData.idLock = -1;
+#endif
     }
 
     void setData(const char *d, int len, bool allocateMem) {
@@ -168,17 +178,27 @@ struct QWSIdentifyCommand : public QWSCommand
         }
     }
 
+#ifdef Q_OS_TKSE
+    void setId(const QString& i, semId_type *plock)
+#else
     void setId(const QString& i, int lock)
+#endif
     {
         id = i;
         simpleData.idLen = id.length();
-        simpleData.idLock = lock;
+	if (plock == ((semId_type*) -1))
+	    plock = pminusId;
+        simpleData.idLock = plock;
         setData(reinterpret_cast<const char*>(id.unicode()), simpleData.idLen*2, true);
     }
 
     struct SimpleData {
         int idLen;
+#ifdef Q_OS_TKSE
+        semId_type *idLock;
+#else
         int idLock;
+#endif
     } simpleData;
     QString id;
 };

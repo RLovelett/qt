@@ -111,7 +111,11 @@ struct QWSConnectedEvent : QWSEvent {
         int window;
         int len;
         int clientId;
+#ifdef Q_OS_TKSE
+        void *servershmid;
+#else
         int servershmid;
+#endif
     } simpleData;
 
     char *display;

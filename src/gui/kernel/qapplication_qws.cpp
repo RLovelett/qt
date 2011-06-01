@@ -162,7 +162,11 @@ static int mouse_y_root = -1;
 static int mouse_state = 0;
 static int mouse_double_click_distance = 5;
 
+#ifdef Q_OS_TKSE
+void *qt_servershmid = (void *)-1;
+#else
 int qt_servershmid = -1;
+#endif
 
 bool qws_overrideCursor = false;
 #ifndef QT_NO_QWS_MANAGER
@@ -222,7 +226,7 @@ QString qws_dataDir()
     if (!S_ISDIR(buf.st_mode))
         qFatal("%s is not a directory", dataDir.constData());
 
-#if !defined(Q_OS_INTEGRITY) && !defined(Q_OS_VXWORKS)
+#if !defined(Q_OS_INTEGRITY) && !defined(Q_OS_VXWORKS) && !defined(Q_OS_TKSE)
     if (buf.st_uid != getuid())
         qFatal("Qt for Embedded Linux data directory is not owned by user %d", getuid());
 
@@ -237,8 +241,12 @@ QString qws_dataDir()
 // Get the filename of the pipe Qt for Embedded Linux uses for server/client comms
 Q_GUI_EXPORT QString qws_qtePipeFilename()
 {
+#ifdef Q_OS_TKSE
+    return QString("/socket/qtembedded-%1").arg(qws_display_id);
+#else
     qws_dataDir();
     return QTE_PIPE(qws_display_id);
+#endif
 }
 
 static void setMaxWindowRect(const QRect &rect)
@@ -913,7 +921,7 @@ void QWSDisplay::Data::init()
         memset(sharedRam,0,sharedRamSize);
 
         QWSIdentifyCommand cmd;
-        cmd.setId(appName, -1);
+        cmd.setId(appName, (semId_type *) -1);
         qt_server_enqueue(&cmd);
     }
 
@@ -1099,7 +1107,11 @@ void QWSDisplay::Data::fillQueue()
 
 #ifndef QT_NO_QWS_MULTIPROCESS
 
+#ifdef Q_OS_TKSE
+static int qws_connection_timeout = 60;
+#else
 static int qws_connection_timeout = 5;
+#endif
 
 void QWSDisplay::Data::connectToPipe()
 {
@@ -1496,9 +1508,17 @@ void QWSDisplay::setIdentity(const QString &appName)
 {
     QWSIdentifyCommand cmd;
 #ifdef QT_NO_QWS_MULTIPROCESS
+# ifdef Q_OS_TKSE
+    semId_type *id = (semId_type *) -1;
+# else
     const int id = -1;
+# endif
 #else
+# ifdef Q_OS_TKSE
+    semId_type *id = QWSDisplay::Data::clientLock ? QWSDisplay::Data::clientLock->id() : (semId_type *) -1;
+# else
     const int id = QWSDisplay::Data::clientLock ? QWSDisplay::Data::clientLock->id() : -1;
+# endif
 #endif
     cmd.setId(appName, id);
     if (d->directServerConnection())

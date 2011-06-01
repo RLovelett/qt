@@ -58,7 +58,7 @@
 #include <arpa/inet.h>
 #if defined(Q_OS_VXWORKS)
 #  include <hostLib.h>
-#else
+#elif !defined(Q_OS_TKSE)
 #  include <resolv.h>
 #endif
 
@@ -147,7 +147,7 @@ QHostInfo QHostInfoAgent::fromName(const QString &hostName)
     if (address.setAddress(hostName)) {
         // Reverse lookup
 // Reverse lookups using getnameinfo are broken on darwin, use gethostbyaddr instead.
-#if !defined (QT_NO_GETADDRINFO) && !defined (Q_OS_DARWIN)
+#if !defined (QT_NO_GETADDRINFO) && !defined (Q_OS_DARWIN) && !defined (Q_OS_TKSE)
         sockaddr_in sa4;
 #ifndef QT_NO_IPV6
         sockaddr_in6 sa6;
@@ -322,16 +322,21 @@ QHostInfo QHostInfoAgent::fromName(const QString &hostName)
 
 QString QHostInfo::localHostName()
 {
+#ifdef Q_OS_TKSE
+    // Tkse does not support gethostname.
+    return QString("localhost");
+#else
     char hostName[512];
     if (gethostname(hostName, sizeof(hostName)) == -1)
         return QString();
     hostName[sizeof(hostName) - 1] = '\0';
     return QString::fromLocal8Bit(hostName);
+#endif
 }
 
 QString QHostInfo::localDomainName()
 {
-#if !defined(Q_OS_VXWORKS)
+#if !defined(Q_OS_VXWORKS) && !defined(Q_OS_TKSE)
     resolveLibrary();
     if (local_res_ninit) {
         // using thread-safe version
@@ -365,11 +370,19 @@ QString QHostInfo::localDomainName()
 #endif
     // nothing worked, try doing it by ourselves:
     QFile resolvconf;
-#if defined(_PATH_RESCONF)
-    resolvconf.setFileName(QFile::decodeName(_PATH_RESCONF));
+#ifdef Q_OS_TKSE
+    QString pathResconf = qgetenv("ENV_NET_RESCONF");
+    if ( !pathResconf.isEmpty() )
+        resolvconf.setFileName(QFile::decodeName(pathResconf.toLatin1().constData()));
+    else
+        resolvconf.setFileName(QLatin1String("/etc/resolv.conf"));
 #else
+#  if defined(_PATH_RESCONF)
+    resolvconf.setFileName(QFile::decodeName(_PATH_RESCONF));
+#  else
     resolvconf.setFileName(QLatin1String("/etc/resolv.conf"));
-#endif
+#  endif
+#endif // Q_OS_TKSE
     if (!resolvconf.open(QIODevice::ReadOnly))
         return QString();       // failure
 

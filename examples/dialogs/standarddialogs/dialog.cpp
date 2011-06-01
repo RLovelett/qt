@@ -228,9 +228,17 @@ void Dialog::setText()
 {
 //! [3]
     bool ok;
+#ifdef Q_OS_TKSE
+    // Change the code not to use QDidr:home() since tkse does not suuport
+    // the home directory.
+    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                         tr("User name:"), QLineEdit::Normal,
+                                         "Noname", &ok);
+#else
     QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                          tr("User name:"), QLineEdit::Normal,
                                          QDir::home().dirName(), &ok);
+#endif
     if (ok && !text.isEmpty())
         textLabel->setText(text);
 //! [3]

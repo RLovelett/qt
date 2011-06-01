@@ -38,7 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
 #include "qplatformdefs.h"
 
 #include "qsharedmemory.h"
@@ -51,8 +50,12 @@
 
 #ifndef QT_NO_SHAREDMEMORY
 #include <sys/types.h>
+#  ifdef Q_OS_TKSE // TKSE only supports POSIX shared memory.
+#include <sys/mman.h>
+#  else
 #include <sys/ipc.h>
 #include <sys/shm.h>
+#  endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -66,11 +69,20 @@ QT_BEGIN_NAMESPACE
 
 QSharedMemoryPrivate::QSharedMemoryPrivate()
     : QObjectPrivate(), memory(0), size(0), error(QSharedMemory::NoError),
-#ifndef QT_NO_SYSTEMSEMAPHORE
+#ifndef Q_OS_TKSE
+#  ifndef QT_NO_SYSTEMSEMAPHORE
       systemSemaphore(QString()), lockedByMe(false),
-#endif
+#  endif
       unix_key(0)
+#else
+#  ifndef QT_NO_SYSTEMSEMAPHORE
+      systemSemaphore(QString()), lockedByMe(false)
+#  endif
+#endif
 {
+#ifdef Q_OS_TKSE
+    unix_key = QString();
+#endif
 }
 
 void QSharedMemoryPrivate::setErrorString(const QString &function)
@@ -109,10 +121,19 @@ void QSharedMemoryPrivate::setErrorString(const QString &function)
 
     If not already made create the handle used for accessing the shared memory.
 */
+#ifdef Q_OS_TKSE
+QString QSharedMemoryPrivate::handle()
+#else
 key_t QSharedMemoryPrivate::handle()
+#endif
 {
     // already made
+
+#ifdef Q_OS_TKSE
+    unix_key = "/shmem/shmem";
+#else
     if (unix_key)
+#endif
         return unix_key;
 
     // don't allow making handles on empty keys
@@ -129,12 +150,16 @@ key_t QSharedMemoryPrivate::handle()
         return 0;
     }
 
+#ifdef Q_OS_TKSE
+    unix_key = nativeKey;
+#else
     unix_key = ftok(QFile::encodeName(nativeKey).constData(), 'Q');
     if (-1 == unix_key) {
         errorString = QSharedMemory::tr("%1: ftok failed").arg(QLatin1String("QSharedMemory::handle:"));
         error = QSharedMemory::KeyError;
         unix_key = 0;
     }
+#endif
     return unix_key;
 }
 
@@ -172,7 +197,11 @@ int QSharedMemoryPrivate::createUnixKeyFile(const QString &fileName)
 
 bool QSharedMemoryPrivate::cleanHandle()
 {
+#ifdef Q_OS_TKSE
+    unix_key = QString();
+#else
     unix_key = 0;
+#endif
     return true;
 }
 
@@ -180,6 +209,7 @@ bool QSharedMemoryPrivate::create(int size)
 {
     // build file if needed
     bool createdFile = false;
+#ifndef Q_OS_TKSE
     int built = createUnixKeyFile(nativeKey);
     if (built == -1) {
         errorString = QSharedMemory::tr("%1: unable to make key").arg(QLatin1String("QSharedMemory::handle:"));
@@ -189,16 +219,33 @@ bool QSharedMemoryPrivate::create(int size)
     if (built == 1) {
         createdFile = true;
     }
+#endif
 
     // get handle
+#ifdef Q_OS_TKSE
+    if (handle() == NULL) {
+#else
     if (!handle()) {
+#endif
         if (createdFile)
             QFile::remove(nativeKey);
         return false;
     }
 
     // create
+#ifdef Q_OS_TKSE // TKSE only supports POSIX shared memory.
+    int des = shm_open(QFile::encodeName(handle()).constData(),
+                        O_RDWR | O_CREAT, 0666);
+    if (des >= 0) {
+        ftruncate(des, size);
+        memory = mmap(0, size, PROT_READ|PROT_WRITE, MAP_SHARED, des, 0);
+    }
+    if (des < 0 || memory == MAP_FAILED) {
+        memory = 0;
+#else
     if (-1 == shmget(unix_key, size, 0666 | IPC_CREAT | IPC_EXCL)) {
+#endif
+
         QString function = QLatin1String("QSharedMemory::create");
         switch (errno) {
         case EINVAL:
@@ -219,12 +266,20 @@ bool QSharedMemoryPrivate::create(int size)
 bool QSharedMemoryPrivate::attach(QSharedMemory::AccessMode mode)
 {
     // grab the shared memory segment id
+#ifdef Q_OS_TKSE // TKSE only supports POSIX shared memory.
+    int id = shm_open(QFile::encodeName(handle()).constData(),
+                (mode == QSharedMemory::ReadOnly ? O_RDONLY : O_RDWR),
+                (mode == QSharedMemory::ReadOnly ? 0444 : 0660));
+    if ( id < 0 ) {
+#else
     int id = shmget(unix_key, 0, (mode == QSharedMemory::ReadOnly ? 0444 : 0660));
     if (-1 == id) {
+#endif
         setErrorString(QLatin1String("QSharedMemory::attach (shmget)"));
         return false;
     }
 
+#ifndef Q_OS_TKSE
     // grab the memory
     memory = shmat(id, 0, (mode == QSharedMemory::ReadOnly ? SHM_RDONLY : 0));
     if ((void*) - 1 == memory) {
@@ -232,8 +287,18 @@ bool QSharedMemoryPrivate::attach(QSharedMemory::AccessMode mode)
         setErrorString(QLatin1String("QSharedMemory::attach (shmat)"));
         return false;
     }
+#endif
 
     // grab the size
+#ifdef Q_OS_TKSE
+    struct stat shm_stat;
+    if (fstat (id, &shm_stat) == 0) {
+        size = (int) shm_stat.st_size;
+    } else {
+        setErrorString(QLatin1String("QSharedMemory:: fstat/for get size"));
+        return false;
+    }
+#else
     shmid_ds shmid_ds;
     if (!shmctl(id, IPC_STAT, &shmid_ds)) {
         size = (int)shmid_ds.shm_segsz;
@@ -241,6 +306,7 @@ bool QSharedMemoryPrivate::attach(QSharedMemory::AccessMode mode)
         setErrorString(QLatin1String("QSharedMemory::attach (shmctl)"));
         return false;
     }
+#endif
 
     return true;
 }
@@ -248,6 +314,20 @@ bool QSharedMemoryPrivate::attach(QSharedMemory::AccessMode mode)
 bool QSharedMemoryPrivate::detach()
 {
     // detach from the memory segment
+#ifdef Q_OS_TKSE
+    if (-1 == close (fd)) {
+        QString function = QLatin1String("QSharedMemory::close");
+        switch (errno) {
+        case EBADF:
+            errorString = QSharedMemory::tr("%1: bad fd").arg(function);
+            error = QSharedMemory::NotFound;
+            break;
+        default:
+            setErrorString(function);
+        }
+        return false;
+    }
+#else
     if (-1 == shmdt(memory)) {
         QString function = QLatin1String("QSharedMemory::detach");
         switch (errno) {
@@ -260,10 +340,23 @@ bool QSharedMemoryPrivate::detach()
         }
         return false;
     }
+#endif
     memory = 0;
     size = 0;
 
     // Get the number of current attachments
+#ifdef Q_OS_TKSE
+    // simple remove only.
+    if (0 != shm_unlink(QFile::encodeName(handle()).constData())) {
+        switch (errno) {
+        case ENOENT:
+            return true;
+        default:
+            return false;
+        }
+    }
+    munmap(memory, size);
+#else
     int id = shmget(unix_key, 0, 0444);
     cleanHandle();
 
@@ -293,6 +386,7 @@ bool QSharedMemoryPrivate::detach()
         if (!QFile::remove(nativeKey))
             return false;
     }
+#endif
     return true;
 }
 

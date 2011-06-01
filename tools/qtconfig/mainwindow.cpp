@@ -75,7 +75,9 @@
 #include <phonon/phononnamespace.h>
 #endif
 
+#ifndef Q_OS_TKSE
 #include <QtGui/private/qt_x11_p.h>
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -263,9 +265,11 @@ MainWindow::MainWindow()
     connect(ui->buttonMainColor, SIGNAL(colorChanged(QColor)), SLOT(buildPalette()));
     connect(ui->buttonWindowColor, SIGNAL(colorChanged(QColor)), SLOT(buildPalette()));
 
+#ifndef Q_OS_TKSE
     if (X11->desktopEnvironment == DE_KDE)
         ui->colorConfig->hide();
     else
+#endif
         ui->kdeNoteLabel->hide();
 
     QFontDatabase db;

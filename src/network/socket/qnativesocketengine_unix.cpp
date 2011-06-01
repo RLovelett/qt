@@ -65,7 +65,20 @@
 #include <ctype.h>
 #endif
 
-#include <netinet/tcp.h>
+#if defined(Q_OS_TKSE) && defined(Q_CC_RVCT)
+# include <sys/sockcmd.h>
+# ifndef FIONREAD
+#  define FIONREAD SIOCINQ
+# endif
+# if !defined(TCP_NODELAY)
+/*
+ * from prconnect_pro/h/socket.h
+ */
+#  define TCP_NODELAY	0x2004
+# endif
+#else
+# include <netinet/tcp.h>
+#endif
 
 QT_BEGIN_NAMESPACE
 
@@ -237,6 +250,7 @@ int QNativeSocketEnginePrivate::option(QNativeSocketEngine::SocketOption opt) co
     case QNativeSocketEngine::KeepAliveOption:
         n = SO_KEEPALIVE;
         break;
+#ifndef Q_OS_TKSE
     case QNativeSocketEngine::MulticastTtlOption:
 #ifndef QT_NO_IPV6
         if (socketProtocol == QAbstractSocket::IPv6Protocol) {
@@ -261,6 +275,7 @@ int QNativeSocketEnginePrivate::option(QNativeSocketEngine::SocketOption opt) co
             n = IP_MULTICAST_LOOP;
         }
         break;
+#endif // Q_OS_TKSE
     }
 
     int v = -1;
@@ -342,6 +357,7 @@ bool QNativeSocketEnginePrivate::setOption(QNativeSocketEngine::SocketOption opt
     case QNativeSocketEngine::KeepAliveOption:
         n = SO_KEEPALIVE;
         break;
+#ifndef Q_OS_TKSE
     case QNativeSocketEngine::MulticastTtlOption:
 #ifndef QT_NO_IPV6
         if (socketProtocol == QAbstractSocket::IPv6Protocol) {
@@ -366,6 +382,7 @@ bool QNativeSocketEnginePrivate::setOption(QNativeSocketEngine::SocketOption opt
             n = IP_MULTICAST_LOOP;
         }
         break;
+#endif
     }
 
     return ::setsockopt(socketDescriptor, level, n, (char *) &v, sizeof(v)) == 0;
@@ -599,6 +616,9 @@ static bool multicastMembershipHelper(QNativeSocketEnginePrivate *d,
                                       const QHostAddress &groupAddress,
                                       const QNetworkInterface &interface)
 {
+#ifdef Q_OS_TKSE
+    return false;
+#else
     int level = 0;
     int sockOpt = 0;
     void *sockArg;
@@ -666,11 +686,15 @@ static bool multicastMembershipHelper(QNativeSocketEnginePrivate *d,
         return false;
     }
     return true;
+#endif // Q_OS_TKSE
 }
 
 bool QNativeSocketEnginePrivate::nativeJoinMulticastGroup(const QHostAddress &groupAddress,
                                                           const QNetworkInterface &interface)
 {
+#ifdef Q_OS_TKSE
+    return false;
+#else
     return multicastMembershipHelper(this,
 #ifndef QT_NO_IPV6
                                      IPV6_JOIN_GROUP,
@@ -680,11 +704,15 @@ bool QNativeSocketEnginePrivate::nativeJoinMulticastGroup(const QHostAddress &gr
                                      IP_ADD_MEMBERSHIP,
                                      groupAddress,
                                      interface);
+#endif // Q_OS_TKSE
 }
 
 bool QNativeSocketEnginePrivate::nativeLeaveMulticastGroup(const QHostAddress &groupAddress,
                                                            const QNetworkInterface &interface)
 {
+#ifdef Q_OS_TKSE
+    return false;
+#else
     return multicastMembershipHelper(this,
 #ifndef QT_NO_IPV6
                                      IPV6_LEAVE_GROUP,
@@ -694,10 +722,14 @@ bool QNativeSocketEnginePrivate::nativeLeaveMulticastGroup(const QHostAddress &g
                                      IP_DROP_MEMBERSHIP,
                                      groupAddress,
                                      interface);
+#endif
 }
 
 QNetworkInterface QNativeSocketEnginePrivate::nativeMulticastInterface() const
 {
+#ifdef Q_OS_TKSE
+    return QNetworkInterface();
+#else
 #ifndef QT_NO_IPV6
     if (socketProtocol == QAbstractSocket::IPv6Protocol) {
         uint v;
@@ -726,10 +758,14 @@ QNetworkInterface QNativeSocketEnginePrivate::nativeMulticastInterface() const
         }
     }
     return QNetworkInterface();
+#endif //Q_OS_TKSE
 }
 
 bool QNativeSocketEnginePrivate::nativeSetMulticastInterface(const QNetworkInterface &iface)
 {
+#ifdef Q_OS_TKSE
+    return false;
+#else
 #ifndef QT_NO_IPV6
     if (socketProtocol == QAbstractSocket::IPv6Protocol) {
         uint v = iface.index();
@@ -755,6 +791,7 @@ bool QNativeSocketEnginePrivate::nativeSetMulticastInterface(const QNetworkInter
 
     v.s_addr = INADDR_ANY;
     return (::setsockopt(socketDescriptor, IPPROTO_IP, IP_MULTICAST_IF, &v, sizeof(v)) != -1);
+#endif //Q_OS_TKSE
 }
 
 #endif // QT_NO_NETWORKINTERFACE
@@ -783,14 +820,31 @@ bool QNativeSocketEnginePrivate::nativeHasPendingDatagrams() const
     // Peek 0 bytes into the next message. The size of the message may
     // well be 0, so we can't check recvfrom's return value.
     ssize_t readBytes;
+#ifdef Q_OS_TKSE
+    // Since recvfrom has trouble on TKSE.
+    int readError;
+    do {
+        readError = ::ioctl(socketDescriptor, SIOCINQ, &readBytes);
+        if (readBytes >= sizeof(struct sockaddr)) {
+            readBytes -= sizeof(struct sockaddr);
+        } else if (readBytes >= 0) {
+            readBytes = 0;
+        }
+    } while (readError == -1 && errno == EINTR);
+#else
     do {
         char c;
         readBytes = ::recvfrom(socketDescriptor, &c, 1, MSG_PEEK, &storage.a, &storageSize);
     } while (readBytes == -1 && errno == EINTR);
+#endif
 
     // If there's no error, or if our buffer was too small, there must be a
     // pending datagram.
+#ifdef Q_OS_TKSE
+    bool result = (readError != -1) && (readBytes > 0);
+#else
     bool result = (readBytes != -1) || errno == EMSGSIZE;
+#endif
 
 #if defined (QNATIVESOCKETENGINE_DEBUG)
     qDebug("QNativeSocketEnginePrivate::nativeHasPendingDatagrams() == %s",
@@ -802,16 +856,33 @@ bool QNativeSocketEnginePrivate::nativeHasPendingDatagrams() const
 qint64 QNativeSocketEnginePrivate::nativePendingDatagramSize() const
 {
     QVarLengthArray<char, 8192> udpMessagePeekBuffer(8192);
+#ifdef Q_OS_TKSE
+    ssize_t recvResult = 0;
+    int readError;
+#else
     ssize_t recvResult = -1;
+#endif
 
     for (;;) {
         // the data written to udpMessagePeekBuffer is discarded, so
         // this function is still reentrant although it might not look
         // so.
+#ifdef Q_OS_TKSE
+        // Since recv has trouble on TKSE.
+        readError = ::ioctl(socketDescriptor, SIOCINQ, &recvResult);
+        if (recvResult >= sizeof(struct sockaddr)) {
+            recvResult -= sizeof(struct sockaddr);
+        } else if (recvResult >= 0) {
+            recvResult = 0;
+        }
+        if (readError == -1 && errno == EINTR)
+            continue;
+#else
         recvResult = ::recv(socketDescriptor, udpMessagePeekBuffer.data(),
             udpMessagePeekBuffer.size(), MSG_PEEK);
         if (recvResult == -1 && errno == EINTR)
             continue;
+#endif
 
         if (recvResult != (ssize_t) udpMessagePeekBuffer.size())
             break;

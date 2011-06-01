@@ -52,6 +52,9 @@ QT_BEGIN_NAMESPACE
 
 QT_MODULE(Help)
 
+#if defined(Q_OS_TKSE)
+#   define QHELP_EXPORT
+#else
 #if !defined(QT_SHARED) && !defined(QT_DLL)
 #   define QHELP_EXPORT
 #elif defined(QHELP_LIB)
@@ -59,6 +62,7 @@ QT_MODULE(Help)
 #else
 #   define QHELP_EXPORT Q_DECL_IMPORT
 #endif
+#endif // Q_OS_TKSE
 
 class QHelpGlobal {
 public:

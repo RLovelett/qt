@@ -61,6 +61,9 @@
 #ifndef Q_OS_WINCE
 #   include <sys/types.h>
 #endif
+#ifdef Q_OS_TKSE
+#   include <semaphore.h>
+#endif
 
 #ifdef Q_OS_SYMBIAN
 class RSemaphore;
@@ -85,8 +88,13 @@ public:
 #elif defined(Q_OS_SYMBIAN)
     int handle(QSystemSemaphore::AccessMode mode = QSystemSemaphore::Open);
     void setErrorString(const QString &function,int err = 0);
+
 #else
+#  ifdef Q_OS_TKSE
+    QString handle(QSystemSemaphore::AccessMode mode = QSystemSemaphore::Open);
+#  else
     key_t handle(QSystemSemaphore::AccessMode mode = QSystemSemaphore::Open);
+#  endif
     void setErrorString(const QString &function);
 #endif
     void cleanHandle();
@@ -101,10 +109,19 @@ public:
 #elif defined(Q_OS_SYMBIAN)
     RSemaphore semaphore;
 #else
+#  ifdef Q_OS_TKSE
+   sem_t *semaphore;
+#  else
     int semaphore;
+#  endif
     bool createdFile;
     bool createdSemaphore;
+#  ifdef Q_OS_TKSE
+    QString posix_key;
+#   define unix_key posix_key
+#  else /* not Q_OS_TKSE */
     key_t unix_key;
+#  endif /* not Q_OS_TKSE */
 #endif
     QString errorString;
     QSystemSemaphore::SystemSemaphoreError error;

@@ -68,10 +68,15 @@ QFileSystemIterator::QFileSystemIterator(const QFileSystemEntry &entry, QDir::Fi
             nativePath.append('/');
 
 #if defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(Q_OS_CYGWIN)
+#ifdef Q_OS_TKSE
+        // use the constant FILENAME_MAX since tkse does not have pathconfig.
+        long maxPathName = FILENAME_MAX;
+#else
         // ### Race condition; we should use fpathconf and dirfd().
         size_t maxPathName = ::pathconf(nativePath.constData(), _PC_NAME_MAX);
         if (maxPathName == size_t(-1))
             maxPathName = FILENAME_MAX;
+#endif
         maxPathName += sizeof(QT_DIRENT) + 1;
 
         QT_DIRENT *p = reinterpret_cast<QT_DIRENT*>(::malloc(maxPathName));

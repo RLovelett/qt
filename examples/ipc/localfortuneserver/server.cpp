@@ -55,7 +55,11 @@ Server::Server(QWidget *parent)
     quitButton->setAutoDefault(false);
 
     server = new QLocalServer(this);
+#ifdef Q_OS_TKSE
+    if (!server->listen("/socket/fortune")) {
+#else
     if (!server->listen("fortune")) {
+#endif
         QMessageBox::critical(this, tr("Fortune Server"),
                               tr("Unable to start the server: %1.")
                               .arg(server->errorString()));

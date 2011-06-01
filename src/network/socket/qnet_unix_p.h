@@ -57,6 +57,17 @@
 
 #include <sys/types.h>
 #include <sys/socket.h>
+#if defined(Q_OS_TKSE) && defined(Q_CC_RVCT)
+# if !defined(PF_UNSPEC)
+#  define PF_UNSPEC AF_UNSPEC
+# endif
+# if !defined(PF_UNIX)
+#  define PF_UNIX AF_UNIX
+# endif
+# if !defined(PF_INET)
+#  define PF_INET AF_INET
+# endif
+#endif
 #include <netinet/in.h>
 
 #if defined(Q_OS_VXWORKS)
@@ -69,7 +80,11 @@
 #if defined(Q_OS_VXWORKS)
 #  include <hostLib.h>
 #else
-#  include <resolv.h>
+#  if defined(Q_OS_TKSE) && defined(Q_CC_RVCT)
+   // eT-Kernel resolver is used, so "resolv.h" is not used.
+#  else
+#    include <resolv.h>
+#  endif
 #endif
 
 QT_BEGIN_NAMESPACE

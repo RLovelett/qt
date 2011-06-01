@@ -203,8 +203,13 @@ namespace JSC {
             , m_fiberCount(0)
         {
             // nasty hack because we can't union non-POD types
+#if OS(TKSE) // to avoid compile error about JSStringFinalizerStruct structure.
+            m_other.m_struct.m_finalizerCallback = finalizer;
+            m_other.m_struct.m_finalizerContext = context;
+#else
             m_other.m_finalizerCallback = finalizer;
             m_other.m_finalizerContext = context;
+#endif
             Heap::heap(this)->reportExtraMemoryCost(value.cost());
         }
 
@@ -214,8 +219,13 @@ namespace JSC {
             for (unsigned i = 0; i < m_fiberCount; ++i)
                 m_other.m_fibers[i]->deref();
 
+#if OS(TKSE) // to avoid compile error about JSStringFinalizerStruct structure.
+            if (!m_fiberCount && m_other.m_struct.m_finalizerCallback)
+                m_other.m_struct.m_finalizerCallback(this, m_other.m_struct.m_finalizerContext);
+#else
             if (!m_fiberCount && m_other.m_finalizerCallback)
                 m_other.m_finalizerCallback(this, m_other.m_finalizerContext);
+#endif
         }
 
         const UString& value(ExecState* exec) const
@@ -312,6 +322,17 @@ namespace JSC {
         mutable UString m_value;
         mutable unsigned m_fiberCount;
         // This structure exists to support a temporary workaround for a GC issue.
+#if OS(TKSE) // to avoid compile error about JSStringFinalizerStruct structure.
+        struct JSStringFinalizerStruct {
+            JSStringFinalizerStruct() { m_struct.m_finalizerCallback = 0; }
+            union {
+                mutable Rope::Fiber m_fibers[s_maxInternalRopeLength];
+                struct {
+                    JSStringFinalizerCallback m_finalizerCallback;
+                    void* m_finalizerContext;
+                } m_struct;
+            };
+#else
         struct JSStringFinalizerStruct {
             JSStringFinalizerStruct() : m_finalizerCallback(0) {}
             union {
@@ -321,6 +342,7 @@ namespace JSC {
                     void* m_finalizerContext;
                 };
             };
+#endif
         } m_other;
 
         bool isRope() const { return m_fiberCount; }

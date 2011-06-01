@@ -62,7 +62,7 @@
 
 QT_BEGIN_NAMESPACE
 
-#if !defined(QT_HPUX_LD) && !defined(QT_NO_DYNAMIC_LIBRARY)
+#if !defined(QT_HPUX_LD) && !defined(QT_NO_DYNAMIC_LIBRARY) && !defined(Q_OS_TKSE)
 QT_BEGIN_INCLUDE_NAMESPACE
 #include <dlfcn.h>
 QT_END_INCLUDE_NAMESPACE
@@ -72,7 +72,7 @@ static QString qdlerror()
 {
 #if defined(QT_NO_DYNAMIC_LIBRARY)
     const char *err = "This platform does not support dynamic libraries.";
-#elif !defined(QT_HPUX_LD)
+#elif !defined(QT_HPUX_LD) && !defined(Q_OS_TKSE)
     const char *err = dlerror();
 #else
     const char *err = strerror(errno);
@@ -173,7 +173,7 @@ bool QLibraryPrivate::load_sys()
     if (loadHints & QLibrary::ExportExternalSymbolsHint) {
         dlFlags |= RTLD_GLOBAL;
     }
-#if !defined(Q_OS_CYGWIN)
+#if !defined(Q_OS_CYGWIN) && !defined(Q_OS_TKSE)
     else {
 #if defined(Q_OS_MAC)
         if (QSysInfo::MacintoshVersion >= QSysInfo::MV_10_4)

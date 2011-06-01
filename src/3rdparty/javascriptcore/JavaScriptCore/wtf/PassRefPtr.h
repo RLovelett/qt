@@ -32,8 +32,18 @@ namespace WTF {
     // Remove inline for winscw compiler to prevent the compiler agressively resolving 
     // T::deref(), which will fail compiling when PassRefPtr<T> is used as class member 
     // or function arguments before T is defined.
+#if OS(TKSE)
+    template<typename T>
+    void refIfNotNull(T* ptr)
+    {
+        if (UNLIKELY(ptr != 0))
+            ptr->ref();
+    }
+#endif
+
     template<typename T> 
-#if !COMPILER(WINSCW)
+      // local fixed?
+#if !COMPILER(WINSCW) && !OS(TKSE)
     inline 
 #endif
     void derefIfNotNull(T* ptr)
@@ -76,11 +86,18 @@ namespace WTF {
         PassRefPtr& operator=(const PassRefPtr&);
         template <typename U> PassRefPtr& operator=(const PassRefPtr<U>&);
         template <typename U> PassRefPtr& operator=(const RefPtr<U>&);
+#if OS(TKSE)
+        template <typename T> PassRefPtr<T> adoptRef(T*);
+        // adopting constructor
+        PassRefPtr(T* ptr, bool) : m_ptr(ptr) {}
+#endif
 
         friend PassRefPtr adoptRef<T>(T*);
     private:
+#if !OS(TKSE)
         // adopting constructor
         PassRefPtr(T* ptr, bool) : m_ptr(ptr) {}
+#endif
         mutable T* m_ptr;
     };
     

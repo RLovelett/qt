@@ -31,16 +31,33 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
+#if OS(TKSE)
+#include <QtGlobal>
+#include <errno.h>
+#endif
+
 namespace JSC {
 
 void MarkStack::initializePagesize()
 {
+#if OS(TKSE)
+    // TKSE does not supportgetpagesize.
+    MarkStack::s_pageSize = 4096;
+#else
     MarkStack::s_pageSize = getpagesize();
+#endif
 }
 
 void* MarkStack::allocateStack(size_t size)
 {
+#if OS(TKSE)
+    void* mmapResult = mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+    if (mmapResult == MAP_FAILED)
+        qFatal("mmap failed MarkStack::allocateStack errno : %d", errno);
+    return mmapResult;
+#else
     return mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+#endif
 }
 void MarkStack::releaseStack(void* addr, size_t size)
 {

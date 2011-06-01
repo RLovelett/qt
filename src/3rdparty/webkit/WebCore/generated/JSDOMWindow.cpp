@@ -661,7 +661,9 @@ static const HashTableValue JSDOMWindowTableValues[409] =
     { "MessageChannel", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMessageChannelConstructor), (intptr_t)setJSDOMWindowMessageChannelConstructor },
     { "Worker", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowWorkerConstructor), (intptr_t)setJSDOMWindowWorkerConstructor },
     { "SharedWorker", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowSharedWorkerConstructor), (intptr_t)setJSDOMWindowSharedWorkerConstructor },
+#if OS(TKSE) && ENABLE(WEB_SOCKETS)
     { "WebSocket", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowWebSocketConstructor), (intptr_t)setJSDOMWindowWebSocketConstructor },
+#endif
     { "Plugin", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowPluginConstructor), (intptr_t)setJSDOMWindowPluginConstructor },
     { "PluginArray", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowPluginArrayConstructor), (intptr_t)setJSDOMWindowPluginArrayConstructor },
     { "MimeType", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsDOMWindowMimeTypeConstructor), (intptr_t)setJSDOMWindowMimeTypeConstructor },
@@ -3781,6 +3783,7 @@ JSValue jsDOMWindowSharedWorkerConstructor(ExecState* exec, JSValue slotBase, co
     return castedThis->sharedWorker(exec);
 }
 
+#if OS(TKSE) && ENABLE(WEB_SOCKETS)
 JSValue jsDOMWindowWebSocketConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {
     JSDOMWindow* castedThis = static_cast<JSDOMWindow*>(asObject(slotBase));
@@ -3788,6 +3791,7 @@ JSValue jsDOMWindowWebSocketConstructor(ExecState* exec, JSValue slotBase, const
         return jsUndefined();
     return castedThis->webSocket(exec);
 }
+#endif
 
 JSValue jsDOMWindowPluginConstructor(ExecState* exec, JSValue slotBase, const Identifier&)
 {

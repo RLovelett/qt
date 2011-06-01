@@ -478,7 +478,7 @@ JSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec, JSObject*, JSV
         dpos = 0;
     else if (!(dpos <= len)) // true for NaN
         dpos = len;
-#if OS(SYMBIAN)
+#if OS(SYMBIAN) || OS(TKSE)
     // Work around for broken NaN compare operator
     else if (isnan(dpos))
         dpos = len;

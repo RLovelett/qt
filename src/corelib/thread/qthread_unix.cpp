@@ -406,6 +406,12 @@ int QThread::idealThreadCount()
     // as of aug 2008 VxWorks < 6.6 only supports one single core CPU
     cores = 1;
 #  endif
+#elif defined(Q_OS_TKSE)
+    // Get the number of cores from environment on tkse.
+	char* core_count = getenv("CORE_COUNT");
+	if (core_count != NULL) {
+		cores = atoi(core_count);
+	}
 #else
     // the rest: Linux, Solaris, AIX, Tru64
     cores = (int)sysconf(_SC_NPROCESSORS_ONLN);

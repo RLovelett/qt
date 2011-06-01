@@ -310,6 +310,7 @@ static inline pid_t qt_safe_waitpid(pid_t pid, int *status, int options)
 
 #endif // Q_OS_VXWORKS
 
+// This value is set to _ POSIX_VERSION(200112L) by "include_rvct/sys/unistd.h".
 #if !defined(_POSIX_MONOTONIC_CLOCK)
 #  define _POSIX_MONOTONIC_CLOCK -1
 #endif

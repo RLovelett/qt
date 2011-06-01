@@ -27,6 +27,9 @@
 #define CachedResourceHandle_h
 
 #include "CachedResource.h"
+#ifdef Q_OS_TKSE
+#include "CachedImage.h"
+#endif
 
 namespace WebCore {
 
@@ -45,6 +48,9 @@ namespace WebCore {
     protected:
         CachedResourceHandleBase() : m_resource(0) {}
         CachedResourceHandleBase(CachedResource* res) { m_resource = res; if (m_resource) m_resource->registerHandle(this); }
+#ifdef Q_OS_TKSE
+        CachedResourceHandleBase(CachedImage* res) { m_resource = res; if (m_resource) m_resource->registerHandle(this); }
+#endif
         CachedResourceHandleBase(const CachedResourceHandleBase& o) : m_resource(o.m_resource) { if (m_resource) m_resource->registerHandle(this); }
 
         void setResource(CachedResource*);

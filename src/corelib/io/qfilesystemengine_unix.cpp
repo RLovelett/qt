@@ -116,7 +116,12 @@ QFileSystemEntry QFileSystemEngine::getLinkTarget(const QFileSystemEntry &link, 
     }
 #else
     char s[PATH_MAX+1];
+#  ifdef Q_OS_TKSE
+    // Returns error code -1 since tkse does not supoort readlink().
+    int len = -1;
+#  else
     int len = readlink(link.nativeFilePath().constData(), s, PATH_MAX);
+#  endif
 #endif
     if (len > 0) {
         QString ret;
@@ -251,6 +256,11 @@ QFileSystemEntry QFileSystemEngine::absoluteName(const QFileSystemEntry &entry)
 //static
 QString QFileSystemEngine::resolveUserName(uint userId)
 {
+#ifdef Q_OS_TKSE
+    QString name;
+    Q_UNUSED(userId);
+    return name;
+#else /* not Q_OS_TKSE */
 #if !defined(QT_NO_THREAD) && defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(Q_OS_OPENBSD)
     int size_max = sysconf(_SC_GETPW_R_SIZE_MAX);
     if (size_max == -1)
@@ -268,11 +278,17 @@ QString QFileSystemEngine::resolveUserName(uint userId)
     if (pw)
         return QFile::decodeName(QByteArray(pw->pw_name));
     return QString();
+#endif /* not Q_OS_TKSE */
 }
 
 //static
 QString QFileSystemEngine::resolveGroupName(uint groupId)
 {
+#ifdef Q_OS_TKSE
+    QString name;
+    Q_UNUSED(groupId);
+    return name;
+#else /* not Q_OS_TKSE */
 #if !defined(QT_NO_THREAD) && defined(_POSIX_THREAD_SAFE_FUNCTIONS) && !defined(Q_OS_OPENBSD)
     int size_max = sysconf(_SC_GETPW_R_SIZE_MAX);
     if (size_max == -1)
@@ -303,6 +319,7 @@ QString QFileSystemEngine::resolveGroupName(uint groupId)
     if (gr)
         return QFile::decodeName(QByteArray(gr->gr_name));
     return QString();
+#endif /* not Q_OS_TKSE */
 }
 
 #if !defined(QWS) && !defined(Q_WS_QPA) && defined(Q_OS_MAC)

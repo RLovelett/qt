@@ -37,6 +37,8 @@
 #if defined(QT_VISIBILITY_AVAILABLE)
 # undef ZEXTERN
 # define ZEXTERN __attribute__((visibility("default")))
+#elif defined(ZLIB_EXPORT_DEFINED)
+# define Q_ZEXPORT ZEXPORT
 #elif defined(QT_MAKEDLL)
 # undef ZEXTERN
 # define ZEXTERN __declspec(dllexport)

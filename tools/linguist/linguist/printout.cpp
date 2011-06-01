@@ -49,6 +49,7 @@ QT_BEGIN_NAMESPACE
 PrintOut::PrintOut(QPrinter *printer)
     : pr(printer), nextRule(NoRule), page(0)
 {
+#ifndef Q_OS_TKSE
     p.begin(pr);
     QFont f(QLatin1String("Arial"));
     f8 = f;
@@ -64,6 +65,7 @@ PrintOut::PrintOut(QPrinter *printer)
     dateTime = QDateTime::currentDateTime();
     breakPage(true); // init vsize and draw first header
     cp = Paragraph(QPoint(hmargin, voffset));
+#endif
 }
 
 PrintOut::~PrintOut()
@@ -133,6 +135,7 @@ void PrintOut::addBox(int percent, const QString &text, Style style, Qt::Alignme
 // use init if initial vsize should be calculated (first breakPage call)
 void PrintOut::breakPage(bool init)
 {
+#ifndef Q_OS_TKSE
     static const int LeftAlign = Qt::AlignLeft | Qt::AlignTop;
     static const int RightAlign = Qt::AlignRight | Qt::AlignTop;
     QRect r1, r2;
@@ -178,6 +181,7 @@ void PrintOut::breakPage(bool init)
         breakPage(); // now draw it when the vsize is ok
     }
 
+#endif
 }
 
 void PrintOut::drawRule(Rule rule)

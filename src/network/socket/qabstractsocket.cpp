@@ -1669,6 +1669,7 @@ void QAbstractSocket::setSocketOption(QAbstractSocket::SocketOption option, cons
             d_func()->socketEngine->setOption(QAbstractSocketEngine::KeepAliveOption, value.toInt());
             break;
 
+#ifndef Q_OS_TKSE
         case MulticastTtlOption:
                 d_func()->socketEngine->setOption(QAbstractSocketEngine::MulticastTtlOption, value.toInt());
                 break;
@@ -1676,6 +1677,7 @@ void QAbstractSocket::setSocketOption(QAbstractSocket::SocketOption option, cons
         case MulticastLoopbackOption:
                 d_func()->socketEngine->setOption(QAbstractSocketEngine::MulticastLoopbackOption, value.toInt());
                 break;
+#endif
     }
 }
 
@@ -1706,12 +1708,14 @@ QVariant QAbstractSocket::socketOption(QAbstractSocket::SocketOption option)
             ret = d_func()->socketEngine->option(QAbstractSocketEngine::KeepAliveOption);
             break;
 
+#ifndef Q_OS_TKSE
         case MulticastTtlOption:
                 ret = d_func()->socketEngine->option(QAbstractSocketEngine::MulticastTtlOption);
                 break;
         case MulticastLoopbackOption:
                 ret = d_func()->socketEngine->option(QAbstractSocketEngine::MulticastLoopbackOption);
                 break;
+#endif
     }
     if (ret == -1)
         return QVariant();

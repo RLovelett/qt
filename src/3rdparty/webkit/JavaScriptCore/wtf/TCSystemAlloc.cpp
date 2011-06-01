@@ -162,7 +162,12 @@ static void* TrySbrk(size_t size, size_t *actual_size, size_t alignment) {
 
 static void* TryMmap(size_t size, size_t *actual_size, size_t alignment) {
   // Enforce page alignment
+#if OS(TKSE)
+  // TKSE does not supportgetpagesize.
+  if (pagesize == 0) pagesize = 4096;
+#else
   if (pagesize == 0) pagesize = getpagesize();
+#endif
   if (alignment < pagesize) alignment = pagesize;
   size = ((size + alignment - 1) / alignment) * alignment;
   

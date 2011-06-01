@@ -34,7 +34,7 @@ namespace WTF {
     // T::ref() and T::deref(), which will fail compiling when PassRefPtr<T> is used as
     // a class member or function arguments before T is defined.
     template<typename T>
-#if !COMPILER(WINSCW)
+#if !COMPILER(WINSCW) && !OS(TKSE)
     inline
 #endif
     void refIfNotNull(T* ptr)
@@ -44,7 +44,7 @@ namespace WTF {
     }
 
     template<typename T> 
-#if !COMPILER(WINSCW)
+#if !COMPILER(WINSCW) && !OS(TKSE)
     inline 
 #endif
     void derefIfNotNull(T* ptr)
@@ -87,11 +87,20 @@ namespace WTF {
         PassRefPtr& operator=(const PassRefPtr&);
         template <typename U> PassRefPtr& operator=(const PassRefPtr<U>&);
         template <typename U> PassRefPtr& operator=(const RefPtr<U>&);
+#if OS(TKSE)
+        // this code was added for avoid the following compile error.
+        // the global scope has no "adoptRef" from "runtime\DateInstanceCache.h".
+        template <typename T> PassRefPtr<T> adoptRef(T*);
+        // adopting constructor
+        PassRefPtr(T* ptr, bool) : m_ptr(ptr) {}
+#endif
 
         friend PassRefPtr adoptRef<T>(T*);
     private:
+#if !OS(TKSE)
         // adopting constructor
         PassRefPtr(T* ptr, bool) : m_ptr(ptr) {}
+#endif
         mutable T* m_ptr;
     };
     

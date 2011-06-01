@@ -59,7 +59,9 @@
 
 #ifdef Q_OS_UNIX
 #include <unistd.h>
+#ifndef Q_OS_TKSE
 #include <sys/utsname.h>
+#endif
 #else
 #include <Windows.h>
 #endif
@@ -1583,6 +1585,7 @@ QStringList ProFileEvaluator::Private::evaluateExpandFunction(const QString &fun
                 if (args.count() < 1 || args.count() > 2) {
                     q->logMessage(format("system(execute) requires one or two arguments."));
                 } else {
+#ifndef Q_OS_TKSE
                     char buff[256];
                     FILE *proc = QT_POPEN(args[0].toLatin1(), "r");
                     bool singleLine = true;
@@ -1603,6 +1606,7 @@ QStringList ProFileEvaluator::Private::evaluateExpandFunction(const QString &fun
                     ret += split_value_list(output);
                     if (proc)
                         QT_PCLOSE(proc);
+#endif
                 }
             }
             break;
@@ -2333,7 +2337,7 @@ QStringList ProFileEvaluator::Private::values(const QString &variableName,
                 break;
             }
         }
-#elif defined(Q_OS_UNIX)
+#elif defined(Q_OS_UNIX) && !defined(Q_OS_TKSE)
         struct utsname name;
         if (!uname(&name)) {
             if (type == QLatin1String("os"))

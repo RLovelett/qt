@@ -109,6 +109,15 @@ QLibrarySettings::QLibrarySettings()
 QSettings *QLibraryInfoPrivate::findConfiguration()
 {
     QString qtconfig = QLatin1String(":/qt/etc/qt.conf");
+#ifdef Q_OS_TKSE
+    /*
+       It allows you to specify qt.conf to be used Qt in whole with this
+       environment variable.
+     */
+    QByteArray envqtconfig = qgetenv("QT_QTCONFIG");
+    if (!envqtconfig.isEmpty())
+        qtconfig = envqtconfig;
+#endif
 #ifdef BOOTSTRAPPING
     if(!QFile::exists(qtconfig))
         qtconfig = qmake_libraryInfoFile();

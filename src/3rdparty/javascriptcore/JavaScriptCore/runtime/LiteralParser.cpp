@@ -125,12 +125,16 @@ LiteralParser::TokenType LiteralParser::Lexer::lex(LiteralParserToken& token)
     return TokError;
 }
 
+#if !OS(TKSE)
 template <LiteralParser::ParserMode mode> static inline bool isSafeStringCharacter(UChar c)
 {
     return (c >= ' ' && (mode == LiteralParser::StrictJSON || c <= 0xff) && c != '\\' && c != '"') || c == '\t';
 }
+#endif
 
-// "inline" is required here to help WINSCW compiler resolve specialized argument in templated functions.
+// "inline" is required here to help WINSCW compiler resolve
+// specialized argument in templated functions.
+
 template <LiteralParser::ParserMode mode> inline LiteralParser::TokenType LiteralParser::Lexer::lexString(LiteralParserToken& token)
 {
     ++m_ptr;
@@ -138,7 +142,18 @@ template <LiteralParser::ParserMode mode> inline LiteralParser::TokenType Litera
     StringBuilder builder;
     do {
         runStart = m_ptr;
+#if OS(TKSE)
+        while (m_ptr < m_end
+	       && 
+	       (*m_ptr >= ' '
+		&& (mode == LiteralParser::StrictJSON
+		    || *m_ptr <= 0xff)
+		&& *m_ptr != '\\'
+		&& *m_ptr != '"')
+	       || *m_ptr == '\t')
+#else
         while (m_ptr < m_end && isSafeStringCharacter<mode>(*m_ptr))
+#endif
             ++m_ptr;
         if (runStart < m_ptr)
             builder.append(runStart, m_ptr - runStart);

@@ -20,8 +20,10 @@
 # endif
 #endif
 
+#ifndef Q_OS_TKSE
 #ifdef _CL_HAVE_SYS_TIMEB_H
 # include <sys/timeb.h>
+#endif
 #endif
 
 #ifdef UNDER_CE

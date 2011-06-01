@@ -146,7 +146,8 @@ UnixMakefileGenerator::init()
         for(int i = 0; i < libdirs.size(); ++i) {
             if(!project->isEmpty("QMAKE_LFLAGS_RPATH") && project->isActiveConfig("rpath_libdirs"))
                 project->values("QMAKE_LFLAGS") += var("QMAKE_LFLAGS_RPATH") + libdirs[i];
-            if (project->isActiveConfig("rvct_linker")) {
+            if (project->isActiveConfig("rvct_linker") ||
+                project->isActiveConfig("rvct4_linker")) {
                 project->values("QMAKE_LIBDIR_FLAGS") += "--userlibpath " + escapeFilePath(libdirs[i]);
             } else if (project->isActiveConfig("armcc_linker")) {
                 project->values("QMAKE_LIBDIR_FLAGS") += "-L--userlibpath=" + escapeFilePath(libdirs[i]);
@@ -489,7 +490,15 @@ UnixMakefileGenerator::findLibraries()
                     if (!project->isEmpty("QMAKE_RVCT_LINKSTYLE")) {
                         (*it) = opt.mid(2);
                     } else if (project->isActiveConfig("rvct_linker") || project->isActiveConfig("armcc_linker")) {
-                        (*it) = "lib" + opt.mid(2) + ".so";
+			if (project->isActiveConfig("staticlib")
+			    || project->isActiveConfig("static"))
+			    (*it) = "lib" + opt.mid(2) + ".a";
+ 			else
+ 			    (*it) = "lib" + opt.mid(2) + ".so";
+                    } else if (project->isActiveConfig("rvct4_linker")) {
+                        // RVCT 4.0 has --library=xxx, which links 
+                        // libxxx.{a|so} like -lxxx.
+                        (*it) = "--library=" + opt.mid(2);
                     } else {
                         stub = opt.mid(2);
                     }

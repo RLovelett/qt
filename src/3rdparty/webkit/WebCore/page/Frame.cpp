@@ -1382,7 +1382,15 @@ bool Frame::findString(const String& target, bool forward, bool caseFlag, bool w
     // If we started in the selection and the found range exactly matches the existing selection, find again.
     // Build a selection with the found range to remove collapsed whitespace.
     // Compare ranges instead of selection objects to ignore the way that the current selection was made.
+#if OS(TKSE)
+   // selection.toNormalizedRange() might be null.
+   if (startInSelection &&
+       VisibleSelection(resultRange.get()).toNormalizedRange() &&
+       selection.toNormalizedRange() &&
+       *VisibleSelection(resultRange.get()).toNormalizedRange() == *selection.toNormalizedRange()) {
+#else
     if (startInSelection && *VisibleSelection(resultRange.get()).toNormalizedRange() == *selection.toNormalizedRange()) {
+#endif
         searchRange = rangeOfContents(document());
         if (forward)
             setStart(searchRange.get(), selection.visibleEnd());

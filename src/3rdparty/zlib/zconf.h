@@ -315,6 +315,17 @@
 #  endif
 #endif
 
+#if defined(__TKSE__) && defined(__CC_ARM)
+# undef ZEXPORT
+# undef ZEXPORTVA
+# undef QT_VISIBILITY_AVAILABLE
+# undef QT_MAKEDLL
+#endif
+
+#if defined(ZEXPORT) && defined(ZEXPORTVA)
+# define ZLIB_EXPORT_DEFINED
+#endif /* ZEXPORT && ZEXPORTVA */
+
 #ifndef ZEXTERN
 #  define ZEXTERN extern
 #endif

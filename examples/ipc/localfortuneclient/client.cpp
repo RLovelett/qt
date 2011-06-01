@@ -47,7 +47,11 @@ Client::Client(QWidget *parent)
     : QDialog(parent)
 {
     hostLabel = new QLabel(tr("&Server name:"));
+#ifdef Q_OS_TKSE
+    hostLineEdit = new QLineEdit("/socket/fortune");
+#else
     hostLineEdit = new QLineEdit("fortune");
+#endif
 
     hostLabel->setBuddy(hostLineEdit);
 

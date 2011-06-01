@@ -46,7 +46,8 @@
 #include <QtGui/qdialog.h>
 #include <QtGui/qapplication.h>
 #include <QtGui/private/qwidget_p.h>
-#include <QtGui/qaction.h>
+// local fix, bug general
+//#include <QtGui/qaction.h>
 
 #include "qdialogbuttonbox.h"
 
@@ -262,10 +263,16 @@ static const int layouts[2][5][14] =
 class QDialogButtonEnabledProxy : public QObject
 {
 public:
-    QDialogButtonEnabledProxy(QObject *parent, QWidget *src, QAction *trg) : QObject(parent), source(src), target(trg)
+
+    QDialogButtonEnabledProxy(QObject *parent, QWidget *src, QAction *trg) : QObject(parent), source(src)
+#ifdef QT_SOFTKEYS_ENABLED // local fix, bug general
+                           , target(trg)
+#endif
     {
         source->installEventFilter(this);
+#ifdef QT_SOFTKEYS_ENABLED // local fix, bug general
         target->setEnabled(source->isEnabled());
+#endif
     }
     ~QDialogButtonEnabledProxy()
     {
@@ -273,14 +280,18 @@ public:
     }
     bool eventFilter(QObject *object, QEvent *event)
     {
+#ifdef QT_SOFTKEYS_ENABLED  // local fix, bug general
         if (object == source && event->type() == QEvent::EnabledChange) {
             target->setEnabled(source->isEnabled());
         }
+#endif
         return false;
     };
 private:
     QWidget *source;
+#ifdef QT_SOFTKEYS_ENABLED  // local fix, bug general
     QAction *target;
+#endif
 };
 #endif
 

@@ -48,7 +48,11 @@
 #include <netdb.h>
 #include <errno.h>
 #include <stdio.h>
+#ifdef Q_OS_TKSE
+#define PF_LOCAL AF_UNIX
+#else
 #include <sys/file.h>
+#endif
 #include <sys/time.h>
 #include <sys/un.h>
 
@@ -61,7 +65,7 @@
 # endif
 #endif
 
-#if defined(Q_OS_SOLARIS) || defined (QT_LINUXBASE)
+#if defined(Q_OS_SOLARIS) || defined (QT_LINUXBASE) || defined (Q_OS_TKSE)
 // uff-da apparently Solaris doesn't have the SUN_LEN macro, here is
 // an implementation of it...
 #  ifndef SUN_LEN
@@ -231,12 +235,14 @@ void QWSServerSocket::init(const QString &file)
         return;
     }
 
+#ifndef Q_OS_TKSE // TKSE does not support chmod.
     if (chmod(fn.constData(), 0600) < 0) {
         perror("QWSServerSocket::init");
         qWarning("Could not set permissions of %s", fn.constData());
         ::close(s);
         return;
     }
+#endif
 
     // listen
     if (::listen(s, backlog) == 0) {

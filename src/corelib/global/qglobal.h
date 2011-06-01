@@ -263,6 +263,8 @@ namespace QT_NAMESPACE {}
 #elif defined(VXWORKS) /* there is no "real" VxWorks define - this has to be set in the mkspec! */
 #  define Q_OS_VXWORKS
 #elif defined(__MAKEDEPEND__)
+#elif defined(__TKSE__)
+#  define Q_OS_TKSE
 #else
 #  error "Qt has not been ported to this OS - talk to qt-bugs@trolltech.com"
 #endif
@@ -981,7 +983,8 @@ QT_END_INCLUDE_NAMESPACE
    Constant bool values
 */
 
-#ifndef QT_LINUXBASE /* the LSB defines TRUE and FALSE for us */
+ /* the LSB defines TRUE and FALSE for us */
+#if !defined(QT_LINUXBASE)
 /* Symbian OS defines TRUE = 1 and FALSE = 0,
 redefine to built-in booleans to make autotests work properly */
 #ifdef Q_OS_SYMBIAN
@@ -1243,6 +1246,11 @@ class QDataStream;
 #  define QT_NO_QWS_MULTIPROCESS // no processes
 #endif
 
+#if defined(Q_OS_TKSE)
+/*  tkse does not have lpr.  */
+#  define QT_NO_LPR
+#endif
+
 # include <QtCore/qfeatures.h>
 
 #define QT_SUPPORTS(FEATURE) (!defined(QT_NO_##FEATURE))
@@ -1279,8 +1287,12 @@ class QDataStream;
 /*
    Create Qt DLL if QT_DLL is defined (Windows and Symbian only)
 */
-
 #if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)
+#  if defined(Q_OS_TKSE)
+#    if !defined(QT_NODLL) && !defined(QT_MAKEDLL) && !defined(QT_DLL)
+#       error "Neither static nor shared (dll importer or exporter) is specified."
+#    endif
+#  endif
 #  if defined(QT_NODLL)
 #    undef QT_MAKEDLL
 #    undef QT_DLL
@@ -1399,7 +1411,7 @@ class QDataStream;
 #endif
 
 #if !defined(Q_CORE_EXPORT)
-#  if defined(QT_SHARED)
+#  if defined(QT_SHARED) && !defined(Q_OS_TKSE)
 #    define Q_CORE_EXPORT Q_DECL_EXPORT
 #    define Q_GUI_EXPORT Q_DECL_EXPORT
 #    define Q_SQL_EXPORT Q_DECL_EXPORT
@@ -1469,6 +1481,9 @@ class QDataStream;
    for Qt's internal unit tests. If you want slower loading times and more
    symbols that can vanish from version to version, feel free to define QT_BUILD_INTERNAL.
 */
+#ifdef Q_OS_TKSE
+#    define Q_AUTOTEST_EXPORT
+#else
 #if defined(QT_BUILD_INTERNAL) && (defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)) && defined(QT_MAKEDLL)
 #    define Q_AUTOTEST_EXPORT Q_DECL_EXPORT
 #elif defined(QT_BUILD_INTERNAL) && (defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)) && defined(QT_DLL)
@@ -1478,6 +1493,7 @@ class QDataStream;
 #else
 #    define Q_AUTOTEST_EXPORT
 #endif
+#endif // Q_OS_TKSE
 
 inline void qt_noop(void) {}
 
@@ -1814,7 +1830,7 @@ inline T *q_check_ptr(T *p) { Q_CHECK_PTR(p); return p; }
 #elif defined(_MSC_VER)
 #  define Q_FUNC_INFO __FUNCSIG__
 #else
-#   if defined(Q_OS_SOLARIS) || defined(Q_CC_XLC) || defined(Q_OS_SYMBIAN)
+#   if defined(Q_OS_SOLARIS) || defined(Q_CC_XLC) || defined(Q_OS_SYMBIAN) || defined(Q_OS_TKSE)
 #      define Q_FUNC_INFO __FILE__ "(line number unavailable)"
 #   else
         /* These two macros makes it possible to turn the builtin line expander into a

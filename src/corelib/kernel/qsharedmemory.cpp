@@ -418,8 +418,13 @@ bool QSharedMemory::attach(AccessMode mode)
         return false;
 #endif
 
+#ifdef Q_OS_TKSE
+    if (isAttached() || (d->handle() != NULL))
+        return false;
+#else
     if (isAttached() || !d->handle())
         return false;
+#endif
 
     return d->attach(mode);
 }

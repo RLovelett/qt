@@ -848,6 +848,17 @@ QWSMemorySurface::preferredImageFormat(const QWidget *widget) const
 }
 
 #ifndef QT_NO_QWS_MULTIPROCESS
+#  ifdef Q_OS_TKSE
+void QWSMemorySurface::setLock(semId_type *lockId)
+{
+    if (memlock && memlock->id() == lockId)
+        return;
+    delete memlock;
+    memlock = NULL;
+    memlock = (lockId == NULL ? 0 : new QWSLock(lockId));
+    return;
+}
+#  else
 void QWSMemorySurface::setLock(int lockId)
 {
     if (memlock && memlock->id() == lockId)
@@ -856,6 +867,7 @@ void QWSMemorySurface::setLock(int lockId)
     memlock = (lockId == -1 ? 0 : new QWSLock(lockId));
     return;
 }
+#  endif // Q_OS_TKSE
 #endif // QT_NO_QWS_MULTIPROCESS
 
 bool QWSMemorySurface::isValid() const
@@ -1044,7 +1056,11 @@ QWSSharedMemSurface::~QWSSharedMemSurface()
     // mem.detach() is done automatically by ~QSharedMemory
 }
 
+#ifdef Q_OS_TKSE
+bool QWSSharedMemSurface::setMemory(void *memId)
+#else
 bool QWSSharedMemSurface::setMemory(int memId)
+#endif
 {
     if (mem.id() == memId)
         return true;
@@ -1080,19 +1096,34 @@ const QRegion QWSSharedMemSurface::directRegion() const
 
 void QWSSharedMemSurface::setPermanentState(const QByteArray &data)
 {
+#ifdef Q_OS_TKSE
+    void *memId;
+#else
     int memId;
+#endif
     int width;
     int height;
+#ifdef Q_OS_TKSE
+    semId_type *lockId;
+#else
     int lockId;
+#endif
     QImage::Format format;
     SurfaceFlags flags;
 
     const int *ptr = reinterpret_cast<const int*>(data.constData());
-
+#ifdef Q_OS_TKSE
+    memId = (void *)ptr[0];
+#else
     memId = ptr[0];
+#endif
     width = ptr[1];
     height = ptr[2];
+#ifdef Q_OS_TKSE
+    lockId = (semId_type *)ptr[3];
+#else
     lockId = ptr[3];
+#endif
     format = QImage::Format(ptr[4]);
     flags = SurfaceFlags(ptr[5]);
 
@@ -1152,10 +1183,18 @@ QByteArray QWSSharedMemSurface::permanentState() const
 
     int *ptr = reinterpret_cast<int*>(array.data());
 
+#ifdef Q_OS_TKSE
+    ptr[0] = (int)(mem.id());
+#else
     ptr[0] = mem.id();
+#endif
     ptr[1] = img.width();
     ptr[2] = img.height();
+#ifdef Q_OS_TKSE
+    ptr[3] = (int)(memlock ? memlock->id() : NULL);
+#else
     ptr[3] = (memlock ? memlock->id() : -1);
+#endif
     ptr[4] = int(img.format());
     ptr[5] = int(surfaceFlags());
 
@@ -1302,9 +1341,17 @@ void QWSYellowSurface::flush(QWidget *widget, const QRegion &region,
     display->setAltitude(id, 1, true);
     display->repaintRegion(id, 0, false, rgn);
 
+#ifdef Q_OS_TKSE // TKSE does not support usleep.
+    ::tkse_slp_tsk(delay/2); // in m sec
+#else
     ::usleep(500 * delay);
+#endif
     display->requestRegion(id, key(), permanentState(), QRegion());
+#ifdef Q_OS_TKSE
+    ::tkse_slp_tsk(delay/2); // in m sec
+#else
     ::usleep(500 * delay);
+#endif
 }
 
 #endif // QT_NO_PAINT_DEBUG

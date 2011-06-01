@@ -669,12 +669,18 @@ bool QFSFileEngine::rename(const QString &newName)
 bool QFSFileEngine::link(const QString &newName)
 {
     Q_D(QFSFileEngine);
+#ifdef Q_OS_TKSE
+    // Always returns false since tkse does not support symbolic link.
+    Q_UNUSED(newName);
+    return false;
+#else
     QSystemError error;
     bool ret = QFileSystemEngine::createLink(d->fileEntry, QFileSystemEntry(newName), error);
     if (!ret) {
         setError(QFile::RenameError, error.toString());
     }
     return ret;
+#endif
 }
 
 qint64 QFSFileEnginePrivate::nativeSize() const
@@ -787,10 +793,15 @@ bool QFSFileEnginePrivate::doStat(QFileSystemMetaData::MetaDataFlags flags) cons
 
 bool QFSFileEnginePrivate::isSymlink() const
 {
+#ifdef Q_OS_TKSE
+    // disable since tkse does not have link.
+    return false;
+#else
     if (!metaData.hasFlags(QFileSystemMetaData::LinkType))
         QFileSystemEngine::fillMetaData(fileEntry, metaData, QFileSystemMetaData::LinkType);
 
     return metaData.isLink();
+#endif
 }
 
 /*!
@@ -911,15 +922,21 @@ uint QFSFileEngine::ownerId(FileOwner own) const
 {
     Q_D(const QFSFileEngine);
     static const uint nobodyID = (uint) -2;
-
+#ifndef Q_OS_TKSE // tkse does not have stat.
     if (d->doStat(QFileSystemMetaData::OwnerIds))
         return d->metaData.ownerId(own);
+#endif
 
     return nobodyID;
 }
 
 QString QFSFileEngine::owner(FileOwner own) const
 {
+#ifdef Q_OS_TKSE
+    QString name;
+    Q_UNUSED(own);
+    return name;
+#else // not Q_OS_TKSE
 #ifndef Q_OS_SYMBIAN
     if (own == OwnerUser)
         return QFileSystemEngine::resolveUserName(ownerId(own));
@@ -927,6 +944,7 @@ QString QFSFileEngine::owner(FileOwner own) const
 #else
     return QString();
 #endif
+#endif // not Q_OS_TKSE */
 }
 
 bool QFSFileEngine::setPermissions(uint perms)
@@ -1029,11 +1047,16 @@ uchar *QFSFileEnginePrivate::map(qint64 offset, qint64 size, QFile::MemoryMapFla
     if (openMode & QIODevice::ReadOnly) access |= PROT_READ;
     if (openMode & QIODevice::WriteOnly) access |= PROT_WRITE;
 
+#ifdef Q_OS_TKSE
+    // Tkse does not support getpagesize.
+    int pageSize = 4096;
+#else // not Q_OS_TKSE
 #if defined(Q_OS_INTEGRITY)
     int pageSize = sysconf(_SC_PAGESIZE);
 #else
     int pageSize = getpagesize();
 #endif
+#endif // not Q_OS_TKSE
     int extra = offset % pageSize;
 
     if (quint64(size + extra) > quint64((size_t)-1)) {

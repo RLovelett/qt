@@ -49,6 +49,9 @@
 #elif defined (__HP_aCC)
 #include "CLucene/config/CompilerAcc.h"
 
+#elif defined (__ARMCC__) && defined (__TKSE__)
+#include "CLucene/config/CompilerRvct.h"
+
 #else
     //Unable to identify the compiler, issue error diagnostic. 
     //Edit <CLucene/config/LuceneMycomp.h> to set STLport up for your compiler.
@@ -65,7 +68,8 @@
 ////////////////////////////////////////////////////////////////////
 
 /* Operating system recognition (basic) */
-#if defined (__unix) || defined (__linux__) || defined (__QNX__) || defined (_AIX) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__Lynx__) || defined(hpux) || defined(__hpux)
+#if defined (__unix) || defined (__linux__) || defined (__QNX__) || defined (_AIX) || defined (__NetBSD__) || defined (__OpenBSD__) || defined (__Lynx__) || defined(hpux) || defined(__hpux) || defined(__TKSE__)
+/* When the target is TKSE, platform unix is used. */
 #undef  _UNIX
 #define _UNIX 1
 #include "CLucene/config/PlatformUnix.h"
@@ -195,6 +199,9 @@
 #elif defined (__HP_aCC)
 #include "CLucene/config/CompilerAcc.h"
         
+#elif defined (__ARMCC__) && defined (__TKSE__)
+#include "CLucene/config/CompilerRvct.h"
+
 #else
 //Unable to identify the compiler, issue error diagnostic. 
 //Edit <CLucene/config/LuceneMycomp.h> to set STLport up for your compiler.
@@ -247,6 +254,9 @@
         
 #elif defined (__HP_aCC)
 #include "CLucene/config/CompilerAcc.h"
+
+#elif defined (__ARMCC__) && defined (__TKSE__)
+#include "CLucene/config/CompilerRvct.h"
 
 #else
 //Unable to identify the compiler, issue error diagnostic. 

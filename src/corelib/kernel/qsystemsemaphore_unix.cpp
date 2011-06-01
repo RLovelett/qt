@@ -49,8 +49,12 @@
 #ifndef QT_NO_SYSTEMSEMAPHORE
 
 #include <sys/types.h>
+#ifdef Q_OS_TKSE // TKSE only supports POSIX semaphore.
+#include <semaphore.h>
+#else
 #include <sys/ipc.h>
 #include <sys/sem.h>
+#endif
 #include <fcntl.h>
 #include <errno.h>
 
@@ -65,9 +69,16 @@
 QT_BEGIN_NAMESPACE
 
 QSystemSemaphorePrivate::QSystemSemaphorePrivate() :
-        semaphore(-1), createdFile(false),
-        createdSemaphore(false), unix_key(-1), error(QSystemSemaphore::NoError)
+#ifdef Q_OS_TKSE
+        semaphore((sem_t *) -1), createdFile(false),
+#else
+        semaphore(-1), createdFile(false), unix_key(-1),
+#endif
+        createdSemaphore(false), error(QSystemSemaphore::NoError)
 {
+#ifdef Q_OS_TKSE
+    unix_key = QString();
+#endif
 }
 
 void QSystemSemaphorePrivate::setErrorString(const QString &function)
@@ -106,18 +117,32 @@ void QSystemSemaphorePrivate::setErrorString(const QString &function)
 
     Setup unix_key
  */
+#ifdef Q_OS_TKSE
+QString QSystemSemaphorePrivate::handle(QSystemSemaphore::AccessMode mode)
+#else
 key_t QSystemSemaphorePrivate::handle(QSystemSemaphore::AccessMode mode)
+#endif
 {
     if (key.isEmpty()){
         errorString = QCoreApplication::tr("%1: key is empty", "QSystemSemaphore").arg(QLatin1String("QSystemSemaphore::handle:"));
         error = QSystemSemaphore::KeyError;
+#ifdef Q_OS_TKSE
+        return QString();
+#else
         return -1;
+#endif
     }
 
     // ftok requires that an actual file exists somewhere
+#ifdef Q_OS_TKSE
+    if (!unix_key.isNull())
+        return unix_key;
+#else
     if (-1 != unix_key)
         return unix_key;
+#endif
 
+#ifndef Q_OS_TKSE
     // Create the file needed for ftok
     int built = QSharedMemoryPrivate::createUnixKeyFile(fileName);
     if (-1 == built) {
@@ -126,16 +151,36 @@ key_t QSystemSemaphorePrivate::handle(QSystemSemaphore::AccessMode mode)
         return -1;
     }
     createdFile = (1 == built);
+#endif
 
     // Get the unix key for the created file
+#ifdef Q_OS_TKSE
+    unix_key = "/nsem/sys"; // Tentative : FIXME !!
+#else
     unix_key = ftok(QFile::encodeName(fileName).constData(), 'Q');
     if (-1 == unix_key) {
         errorString = QCoreApplication::tr("%1: ftok failed", "QSystemSemaphore").arg(QLatin1String("QSystemSemaphore::handle:"));
         error = QSystemSemaphore::KeyError;
         return -1;
     }
+#endif
 
     // Get semaphore
+#ifdef Q_OS_TKSE // TKSE only supports POSIX semaphore.
+    // with initialize its value.
+     semaphore = sem_open(QFile::encodeName(unix_key).constData(),
+                           //1, O_CREAT | O_EXCL, 0666, initialValue);
+                                O_CREAT | O_EXCL, 0, initialValue);
+    if (SEM_FAILED == semaphore) {
+        if (errno == EEXIST)
+            semaphore = sem_open(QFile::encodeName(unix_key).constData(), 1, O_CREAT, 0666, 0);
+        if (SEM_FAILED == semaphore) {
+            setErrorString(QLatin1String("QSystemSemaphore::handle"));
+            cleanHandle();
+            return QString();
+        }
+    }
+#else
     semaphore = semget(unix_key, 1, 0666 | IPC_CREAT | IPC_EXCL);
     if (-1 == semaphore) {
         if (errno == EEXIST)
@@ -145,7 +190,9 @@ key_t QSystemSemaphorePrivate::handle(QSystemSemaphore::AccessMode mode)
             cleanHandle();
             return -1;
         }
-    } else {
+    }
+#endif
+    else {
         createdSemaphore = true;
         // Force cleanup of file, it is possible that it can be left over from a crash
         createdFile = true;
@@ -156,6 +203,7 @@ key_t QSystemSemaphorePrivate::handle(QSystemSemaphore::AccessMode mode)
         createdFile = true;
     }
 
+#ifndef Q_OS_TKSE
     // Created semaphore so initialize its value.
     if (createdSemaphore && initialValue >= 0) {
         qt_semun init_op;
@@ -166,6 +214,7 @@ key_t QSystemSemaphorePrivate::handle(QSystemSemaphore::AccessMode mode)
             return -1;
         }
     }
+#endif
 
     return unix_key;
 }
@@ -177,7 +226,11 @@ key_t QSystemSemaphorePrivate::handle(QSystemSemaphore::AccessMode mode)
  */
 void QSystemSemaphorePrivate::cleanHandle()
 {
+#ifdef Q_OS_TKSE
+    unix_key = QString();
+#else
     unix_key = -1;
+#endif
 
     // remove the file if we made it
     if (createdFile) {
@@ -186,14 +239,27 @@ void QSystemSemaphorePrivate::cleanHandle()
     }
 
     if (createdSemaphore) {
+#ifdef Q_OS_TKSE
+        if ((sem_t *) -1 != semaphore) {
+#else
         if (-1 != semaphore) {
+#endif
+#ifdef Q_OS_TKSE
+            QString semname = "/nsem/sys";
+            if (-1 == sem_unlink(QFile::encodeName(semname).constData())) {
+#else
             if (-1 == semctl(semaphore, 0, IPC_RMID, 0)) {
+#endif
                 setErrorString(QLatin1String("QSystemSemaphore::cleanHandle"));
 #if defined QSYSTEMSEMAPHORE_DEBUG
                 qDebug() << QLatin1String("QSystemSemaphore::cleanHandle semctl failed.");
 #endif
             }
+#ifdef Q_OS_TKSE
+            semaphore = (sem_t *) -1;
+#else
             semaphore = -1;
+#endif
         }
         createdSemaphore = false;
     }
@@ -204,9 +270,29 @@ void QSystemSemaphorePrivate::cleanHandle()
  */
 bool QSystemSemaphorePrivate::modifySemaphore(int count)
 {
+#ifdef Q_OS_TKSE
+    if (QString() == handle())
+#else
     if (-1 == handle())
+#endif
         return false;
 
+#ifdef Q_OS_TKSE
+    if (-1 == sem_post(semaphore)) {
+        // If the semaphore was removed be nice and create it and then modifySemaphore again
+        if (errno == EINVAL) {
+	    semaphore = (sem_t *) -1;
+            cleanHandle();
+            handle();
+            return modifySemaphore(count);
+        }
+        setErrorString(QLatin1String("QSystemSemaphore::modifySemaphore"));
+#if defined QSYSTEMSEMAPHORE_DEBUG
+        qDebug() << QLatin1String("QSystemSemaphore::modifySemaphore failed") << count << semctl(semaphore, 0, GETVAL) << errno << EIDRM << EINVAL;
+#endif
+        return false;
+    }
+#else // not Q_OS_TKSE
     struct sembuf operation;
     operation.sem_num = 0;
     operation.sem_op = count;
@@ -228,6 +314,7 @@ bool QSystemSemaphorePrivate::modifySemaphore(int count)
 #endif
         return false;
     }
+#endif  // not Q_OS_TKSE
 
     return true;
 }
