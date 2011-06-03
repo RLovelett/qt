@@ -188,6 +188,8 @@ private slots:
 
     void preserveTexts_data();
     void preserveTexts();
+
+    void readXml();
 };
 
 static const QLatin1String prefix(SRCDIR "/images/");
@@ -560,6 +562,7 @@ void tst_QImageReader::imageFormat_data()
     QTest::newRow("mng-1") << QString("ball.mng") << QByteArray("mng") << QImage::Format_Invalid;
     QTest::newRow("mng-2") << QString("fire.mng") << QByteArray("mng") << QImage::Format_Invalid;
     QTest::newRow("svg") << QString("rect.svg") << QByteArray("svg") << QImage::Format_ARGB32_Premultiplied;
+    QTest::newRow("svginxml") << QString("rectinxml.svg") << QByteArray("svg") << QImage::Format_ARGB32_Premultiplied;
     QTest::newRow("svgz") << QString("rect.svgz") << QByteArray("svgz") << QImage::Format_ARGB32_Premultiplied;
 }
 
@@ -2054,6 +2057,15 @@ void tst_QImageReader::preserveTexts()
     QCOMPARE(r.text(key3), text3.simplified());
 }
 
+void tst_QImageReader::readXml()
+{
+    QImageReader ir(prefix + "nonsvg.xml");
+    // A xml file should be seen as a svg file since it may be embedded in it
+    QCOMPARE(ir.format(), QByteArray("svg"));
+    ir.size();
+    // After reading it should be considered invalid
+    QCOMPARE(ir.format(), QByteArray());
+}
 
 QTEST_MAIN(tst_QImageReader)
 #include "tst_qimagereader.moc"
