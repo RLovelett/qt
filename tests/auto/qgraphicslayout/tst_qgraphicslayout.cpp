@@ -63,6 +63,8 @@ private slots:
     void automaticReparenting();
     void verifyActivate();
     void invalidate();
+    void changingMinimumSize_data();
+    void changingMinimumSize();
     void invalidateAndMove_data();
     void invalidateAndMove();
     void constructors();
@@ -557,7 +559,23 @@ void tst_QGraphicsLayout::invalidate()
 
     QGraphicsLayout::setInstantInvalidatePropagation(false);
 }
-
+void tst_QGraphicsLayout::changingMinimumSize_data()
+{   
+    QTest::addColumn<bool>("instantInvalidatePropagation");
+    QTest::newRow("Without instantInvalidatePropagation") << false;
+    QTest::newRow("With instantInvalidatePropagation") << true;
+}
+void tst_QGraphicsLayout::changingMinimumSize()
+{
+    QFETCH(bool, instantInvalidatePropagation);
+    QGraphicsLayout::setInstantInvalidatePropagation(instantInvalidatePropagation);
+    QGraphicsWidget *widget = new QGraphicsWidget;
+    qApp->processEvents();
+    widget->setMinimumSize(300,300);
+    qApp->processEvents();
+    QCOMPARE(widget->size(), QSizeF(300,300));
+    QGraphicsLayout::setInstantInvalidatePropagation(false);
+}
 void tst_QGraphicsLayout::invalidateAndMove_data()
 {
     QTest::addColumn<bool>("instantInvalidatePropagation");

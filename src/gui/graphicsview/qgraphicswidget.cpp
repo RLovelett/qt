@@ -1417,6 +1417,15 @@ bool QGraphicsWidget::event(QEvent *event)
     case QEvent::LayoutDirectionChange:
         changeEvent(event);
         break;
+    case QEvent::LayoutRequest:
+        /* If we have instantInvalidatePropagation, then when our size hint changes we post an
+         * LayoutRequest event.  If we don't have a layout, then we must manually resize() */
+        if (QGraphicsLayout::instantInvalidatePropagation() && !layout()) {
+            bool wasResized = testAttribute(Qt::WA_Resized);
+            resize(size()); // this will restrict the size
+            setAttribute(Qt::WA_Resized, wasResized);
+        }
+        break;
     case QEvent::Close:
         closeEvent((QCloseEvent *)event);
         break;
