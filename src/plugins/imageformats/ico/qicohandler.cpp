@@ -75,7 +75,7 @@ typedef struct
 typedef struct
 {
     quint16 idReserved;   // Reserved
-    quint16 idType;       // resource type (1 for icons)
+    quint16 idType;       // resource type (1 for icons, 2 for cursors)
     quint16 idCount;      // how many images?
     ICONDIRENTRY    idEntries[1]; // the entries for each image
 } ICONDIR, *LPICONDIR;
@@ -339,7 +339,7 @@ bool ICOReader::readHeader()
     if (iod && !headerRead) {
         startpos = iod->pos();
         if (readIconDir(iod, &iconDir)) {
-            if (iconDir.idReserved == 0 || iconDir.idType == 1)
+            if (iconDir.idReserved == 0 && (iconDir.idType == 1 || iconDir.idType == 2))
             headerRead = true;
         }
     }
