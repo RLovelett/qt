@@ -801,6 +801,10 @@ QString QAccessibleLineEdit::text(int startOffset, int endOffset)
 {
     if (startOffset > endOffset)
         return QString();
+
+    if (lineEdit()->echoMode() != QLineEdit::Normal)
+        return QString();
+
     return lineEdit()->text().mid(startOffset, endOffset - startOffset);
 }
 
