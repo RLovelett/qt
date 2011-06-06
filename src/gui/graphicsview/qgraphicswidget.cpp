@@ -394,6 +394,7 @@ void QGraphicsWidget::setGeometry(const QRectF &rect)
         }
         QSizeF oldSize = size();
         QGraphicsLayoutItem::setGeometry(newGeom);
+        newGeom = geometry();
         // Send resize event
         bool resized = newGeom.size() != oldSize;
         if (resized) {
@@ -1090,8 +1091,11 @@ void QGraphicsWidget::updateGeometry()
              * When the event is received, it will start flowing all the way down to the leaf
              * widgets in one go. This will make a relayout flicker-free.
              */
-            if (QGraphicsLayout::instantInvalidatePropagation())
+            if (QGraphicsLayout::instantInvalidatePropagation()) {
                 QApplication::postEvent(static_cast<QGraphicsWidget *>(this), new QEvent(QEvent::LayoutRequest));
+                if (layout() && layout()->isActivated())
+                    layout()->invalidate();
+            }
         }
         if (!QGraphicsLayout::instantInvalidatePropagation()) {
             bool wasResized = testAttribute(Qt::WA_Resized);

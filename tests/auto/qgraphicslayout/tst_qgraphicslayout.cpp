@@ -63,6 +63,8 @@ private slots:
     void automaticReparenting();
     void verifyActivate();
     void invalidate();
+    void moveAndResize_data();
+    void moveAndResize();
     void changingMinimumSize_data();
     void changingMinimumSize();
     void invalidateAndMove_data();
@@ -574,6 +576,68 @@ void tst_QGraphicsLayout::changingMinimumSize()
     widget->setMinimumSize(300,300);
     qApp->processEvents();
     QCOMPARE(widget->size(), QSizeF(300,300));
+    QGraphicsLayout::setInstantInvalidatePropagation(false);
+}
+
+struct WidgetToTestResizeEvents : public QGraphicsWidget
+{
+    virtual void resizeEvent ( QGraphicsSceneResizeEvent * event )
+    {
+        QGraphicsWidget::resizeEvent(event);
+        resizeEventCalled = true;
+    }
+
+    bool resizeEventCalled;
+};
+
+void tst_QGraphicsLayout::moveAndResize_data()
+{
+    QTest::addColumn<bool>("instantInvalidatePropagation");
+    QTest::newRow("Without instantInvalidatePropagation") << false;
+    QTest::newRow("With instantInvalidatePropagation") << true;
+
+}
+void tst_QGraphicsLayout::moveAndResize()
+{
+    QFETCH(bool, instantInvalidatePropagation);
+    QGraphicsLayout::setInstantInvalidatePropagation(instantInvalidatePropagation);
+    QGraphicsScene scene;
+
+    WidgetToTestResizeEvents *widget = new WidgetToTestResizeEvents;
+    new QGraphicsLinearLayout(widget);
+    widget->setGeometry(0,0,100,100);
+    qApp->processEvents();
+    widget->resizeEventCalled = false;
+
+    /* Force it grow by changing the minimum size */
+    widget->setMinimumSize(200,200);
+    qApp->processEvents();
+    qApp->processEvents();
+    qApp->processEvents();
+    QCOMPARE(widget->size(), QSizeF(200,200));
+    QVERIFY(widget->resizeEventCalled);
+    widget->resizeEventCalled = false;
+
+    /* Call setPos followed by a resize.  We should get a resize event */
+    widget->setPos(10,10);
+    widget->resize(300,300);
+    qApp->processEvents();
+    QVERIFY(widget->resizeEventCalled);
+    widget->resizeEventCalled = false;
+
+    /* Now call setPos followed by increasing the size using setGeometry,*/
+    widget->setPos(30,30);
+    widget->setGeometry(10,10, 400, 400);
+    qApp->processEvents();
+    QVERIFY(widget->resizeEventCalled);
+    widget->resizeEventCalled = false;
+
+    /* Now call setPos followed by increasing the minimum size, to force it to grow */
+    widget->setMinimumSize(500,500);
+    widget->setPos(30,30);
+    qApp->processEvents();
+    QCOMPARE(widget->size(), QSizeF(500,500));
+    QVERIFY(widget->resizeEventCalled);
     QGraphicsLayout::setInstantInvalidatePropagation(false);
 }
 void tst_QGraphicsLayout::invalidateAndMove_data()
