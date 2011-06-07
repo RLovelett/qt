@@ -65,6 +65,8 @@ private slots:
     void invalidate();
     void moveAndResize_data();
     void moveAndResize();
+    void moveAndResizeWidgetInWidget_data();
+    void moveAndResizeWidgetInWidget();
     void changingMinimumSize_data();
     void changingMinimumSize();
     void invalidateAndMove_data();
@@ -590,20 +592,92 @@ struct WidgetToTestResizeEvents : public QGraphicsWidget
     bool resizeEventCalled;
 };
 
+void tst_QGraphicsLayout::moveAndResizeWidgetInWidget_data()
+{
+    QTest::addColumn<bool>("instantInvalidatePropagation");
+
+    QTest::newRow("Without instantInvalidatePropagation") << false;
+    QTest::newRow("With instantInvalidatePropagation") << true;
+}
+void tst_QGraphicsLayout::moveAndResizeWidgetInWidget()
+{
+    QFETCH(bool, instantInvalidatePropagation);
+
+    QGraphicsLayout::setInstantInvalidatePropagation(instantInvalidatePropagation);
+    QGraphicsScene scene;
+
+    QGraphicsWidget *widget = new QGraphicsWidget;
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(widget);
+    layout->setContentsMargins(0,0,0,0);
+    WidgetToTestResizeEvents *innerWidget = new WidgetToTestResizeEvents;
+    QGraphicsLinearLayout *innerLayout = new QGraphicsLinearLayout(innerWidget);
+    innerLayout->setContentsMargins(0,0,0,0);
+    QCOMPARE(widget->maximumSize(), QSizeF(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
+    layout->addItem(innerWidget);
+    widget->setMinimumSize(1,1);
+    widget->setPreferredSize(1000,1000);
+    widget->setMaximumSize(2000,2000);
+    widget->resize(widget->preferredSize());
+    innerWidget->setMinimumSize(1,1);
+    qApp->processEvents();
+    innerWidget->resizeEventCalled = false;
+
+    QCOMPARE(widget->size(), QSizeF(1000, 1000));
+    QCOMPARE(layout->geometry().size(), QSizeF(1000, 1000));
+    QCOMPARE(innerWidget->size(), QSizeF(1000, 1000));
+
+    innerLayout->invalidate();
+    widget->setMaximumHeight(500);
+    widget->setX(1);
+    qApp->processEvents();
+    QCOMPARE(widget->size(), QSizeF(1000, 500));
+    QCOMPARE(innerWidget->size(), QSizeF(1000, 500));
+    QVERIFY(innerWidget->resizeEventCalled);
+}
 void tst_QGraphicsLayout::moveAndResize_data()
 {
     QTest::addColumn<bool>("instantInvalidatePropagation");
-    QTest::newRow("Without instantInvalidatePropagation") << false;
-    QTest::newRow("With instantInvalidatePropagation") << true;
+    QTest::addColumn<bool>("insideLayout");
+    QTest::addColumn<bool>("insideLayoutInLayout");
+    QTest::addColumn<bool>("insideWidget");
+    QTest::newRow("Without instantInvalidatePropagation") << false << false << false << false;
+    QTest::newRow("With instantInvalidatePropagation") << true << false << false << false;
+    QTest::newRow("Without instantInvalidatePropagation, inside widget with no layout") << false << false << false << true;
+    QTest::newRow("With instantInvalidatePropagation, inside widget with no layout") << true << false << false << true;
+    QTest::newRow("Without instantInvalidatePropagation, inside widget with layout") << false << true << false << true;
+    QTest::newRow("With instantInvalidatePropagation, inside widget with layout") << true << true << false << true;
+    QTest::newRow("Without instantInvalidatePropagation, inside widget with layout in layout") << false << true << true << true;
+    QTest::newRow("With instantInvalidatePropagation, inside widget with layout in layout") << true << true << true << true;
 
 }
 void tst_QGraphicsLayout::moveAndResize()
 {
     QFETCH(bool, instantInvalidatePropagation);
+    QFETCH(bool, insideLayout);
+    QFETCH(bool, insideLayoutInLayout);
+    QFETCH(bool, insideWidget);
     QGraphicsLayout::setInstantInvalidatePropagation(instantInvalidatePropagation);
     QGraphicsScene scene;
 
     WidgetToTestResizeEvents *widget = new WidgetToTestResizeEvents;
+
+    /* Setup its parent if we want them */
+    QGraphicsWidget *parent = NULL;
+    if (insideWidget)
+        parent = new QGraphicsWidget;
+    if (insideLayout) {
+        QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(parent);
+        QGraphicsLinearLayout *innerLayout = NULL;
+        if (insideLayoutInLayout) {
+            innerLayout = new QGraphicsLinearLayout;
+            layout->addItem(innerLayout);
+            innerLayout->addItem(widget);
+        } else
+            layout->addItem(widget);
+    } else if (insideWidget) {
+        widget->setParentItem(parent);
+    }
+
     new QGraphicsLinearLayout(widget);
     widget->setGeometry(0,0,100,100);
     qApp->processEvents();
@@ -625,19 +699,27 @@ void tst_QGraphicsLayout::moveAndResize()
     QVERIFY(widget->resizeEventCalled);
     widget->resizeEventCalled = false;
 
-    /* Now call setPos followed by increasing the size using setGeometry,*/
-    widget->setPos(30,30);
+    /* Check that just calling setGeometry gives us a resize event */
     widget->setGeometry(10,10, 400, 400);
     qApp->processEvents();
     QVERIFY(widget->resizeEventCalled);
     widget->resizeEventCalled = false;
 
+    /* Now call setPos followed by increasing the size using setGeometry,*/
+    widget->setPos(30,30);
+    widget->setGeometry(10,10, 500, 500);
+    qApp->processEvents();
+    QVERIFY(widget->resizeEventCalled);
+    widget->resizeEventCalled = false;
+
     /* Now call setPos followed by increasing the minimum size, to force it to grow */
-    widget->setMinimumSize(500,500);
+    widget->setMinimumSize(600,600);
     widget->setPos(30,30);
     qApp->processEvents();
-    QCOMPARE(widget->size(), QSizeF(500,500));
+    QCOMPARE(widget->size(), QSizeF(600,600));
     QVERIFY(widget->resizeEventCalled);
+    widget->resizeEventCalled = false;
+
     QGraphicsLayout::setInstantInvalidatePropagation(false);
 }
 void tst_QGraphicsLayout::invalidateAndMove_data()
