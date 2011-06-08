@@ -68,6 +68,10 @@
 #include <e32std.h>
 #endif
 
+#if defined(Q_WS_WIN)
+#undef max
+#endif
+
 #include <limits>
 #include <math.h>
 
@@ -2275,7 +2279,7 @@ QTimeSpan QTimeSpan::fromString(const QString &string, const QRegExp &pattern, c
     if (pattern.indexIn(string) < 0)
         return QTimeSpan();
 
-    QTimeSpanPrivate::TimePartHash partsHash(Qt::TimeSpanFormat(Qt::NoUnit));
+    QTimeSpanPrivate::TimePartHash partsHash(Qt::NoUnit);
 
     QList<Qt::TimeSpanUnit> unitList;
     unitList << unit1 << unit2 << unit3 << unit4 << unit5 << unit6 << unit7 << unit8;
