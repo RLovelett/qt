@@ -285,42 +285,77 @@ const QRect QDesktopWidget::availableGeometry(int screen) const
     if (d->workareas[screen].isValid())
         return d->workareas[screen];
 
-    if (X11->isSupportedByWM(ATOM(_NET_WORKAREA))) {
+    QRect available = screenGeometry(screen);
+
+    if (X11->isSupportedByWM(ATOM(_NET_CLIENT_LIST)) &&
+        X11->isSupportedByWM(ATOM(_NET_WM_STRUT_PARTIAL))) {
+        // Iterate over all the client windows and subtract from the available
+        // area the space they reserved on the edges (struts).
+        // Note: _NET_WORKAREA is not reliable as it exposes only one
+        // rectangular area spanning all screens.
+
         int x11Screen = isVirtualDesktop() ? DefaultScreen(X11->display) : screen;
 
         Atom ret;
-        int format, e;
-        unsigned char *data = 0;
-        unsigned long nitems, after;
+        int format, status;
+        uchar* data = 0;
+        ulong nitems, after;
 
-        e = XGetWindowProperty(X11->display,
-                               QX11Info::appRootWindow(x11Screen),
-                               ATOM(_NET_WORKAREA), 0, 4, False, XA_CARDINAL,
-                               &ret, &format, &nitems, &after, &data);
+        status = XGetWindowProperty(X11->display, QX11Info::appRootWindow(x11Screen),
+                                    ATOM(_NET_CLIENT_LIST), 0L, ~0L, False, XA_WINDOW,
+                                    &ret, &format, &nitems, &after, &data);
 
-        QRect workArea;
-        if (e == Success && ret == XA_CARDINAL &&
-            format == 32 && nitems == 4) {
-            long *workarea = (long *) data;
-            workArea = QRect(workarea[0], workarea[1], workarea[2], workarea[3]);
-        } else {
-            workArea = screenGeometry(screen);
+        if (status == Success && ret == XA_WINDOW && format == 32 && nitems) {
+            const QRect desktopGeometry = rect();
+
+            Window* xids = (Window*) data;
+            for (quint32 i = 0; i < nitems; ++i) {
+                ulong nitems2;
+                uchar* data2 = 0;
+                status = XGetWindowProperty(X11->display, xids[i],
+                                            ATOM(_NET_WM_STRUT_PARTIAL), 0, 12, False, XA_CARDINAL,
+                                            &ret, &format, &nitems2, &after, &data2);
+
+                if (status == Success && ret == XA_CARDINAL && format == 32 && nitems2 == 12) {
+                    ulong* struts = (ulong*) data2;
+
+                    QRect left(desktopGeometry.x(),
+                               desktopGeometry.y() + struts[4],
+                               struts[0],
+                               struts[5] - struts[4]);
+                    if (available.intersects(left))
+                        available.setX(left.width());
+
+                    QRect right(desktopGeometry.x() + desktopGeometry.width() - struts[1],
+                                desktopGeometry.y() + struts[6],
+                                struts[1],
+                                struts[7] - struts[6]);
+                    if (available.intersects(right))
+                        available.setWidth(right.x() - available.x());
+
+                    QRect top(desktopGeometry.x() + struts[8],
+                              desktopGeometry.y(),
+                              struts[9] - struts[8],
+                              struts[2]);
+                    if (available.intersects(top))
+                        available.setY(top.height());
+
+                    QRect bottom(desktopGeometry.x() + struts[10],
+                                 desktopGeometry.y() + desktopGeometry.height() - struts[3],
+                                 struts[11] - struts[10],
+                                 struts[3]);
+                    if (available.intersects(bottom))
+                        available.setHeight(bottom.y() - available.y());
+                }
+                if (data2)
+                    XFree(data2);
+            }
         }
-
-        if (isVirtualDesktop()) {
-            // intersect the workarea (which spawns all Xinerama screens) with the rect for the
-            // requested screen
-            workArea &= screenGeometry(screen);
-        }
-
-        d->workareas[screen] = workArea;
-
         if (data)
             XFree(data);
-    } else {
-        d->workareas[screen] = screenGeometry(screen);
     }
 
+    d->workareas[screen] = available;
     return d->workareas[screen];
 }
 

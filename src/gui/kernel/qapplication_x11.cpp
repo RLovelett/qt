@@ -218,6 +218,7 @@ static const char * x11_atomnames = {
 
     // EWMH (aka NETWM)
     "_NET_SUPPORTED\0"
+    "_NET_CLIENT_LIST\0"
     "_NET_VIRTUAL_ROOTS\0"
     "_NET_WORKAREA\0"
 
@@ -241,6 +242,8 @@ static const char * x11_atomnames = {
     "_NET_WM_STATE_MODAL\0"
     "_NET_WM_STATE_STAYS_ON_TOP\0"
     "_NET_WM_STATE_DEMANDS_ATTENTION\0"
+
+    "_NET_WM_STRUT_PARTIAL\0"
 
     "_NET_WM_USER_TIME\0"
     "_NET_WM_USER_TIME_WINDOW\0"

@@ -577,6 +577,7 @@ struct QX11Data
 
         // EWMH (aka NETWM)
         _NET_SUPPORTED,
+        _NET_CLIENT_LIST,
         _NET_VIRTUAL_ROOTS,
         _NET_WORKAREA,
 
@@ -600,6 +601,8 @@ struct QX11Data
         _NET_WM_STATE_MODAL,
         _NET_WM_STATE_STAYS_ON_TOP,
         _NET_WM_STATE_DEMANDS_ATTENTION,
+
+        _NET_WM_STRUT_PARTIAL,
 
         _NET_WM_USER_TIME,
         _NET_WM_USER_TIME_WINDOW,
