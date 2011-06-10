@@ -59,26 +59,14 @@ DesktopWidget::DesktopWidget(QWidget *parent) : QWidget(parent)
 
     // Images
     ContentTab* imageTab = new ContentTab(tabWidget);
-    imageTab->init(
-#ifdef Q_OS_TKSE
-// Tkse does not have a picture location.
-		   QDesktopServices::DataLocation,
-#else
-		   QDesktopServices::PicturesLocation,
-#endif
+    imageTab->init(QDesktopServices::PicturesLocation,
                    "*.png;*.jpg;*.jpeg;*.bmp;*.gif",
                    ":/resources/photo.png");
     tabWidget->addTab(imageTab, tr("Images"));
 
     // Music
     ContentTab* musicTab = new ContentTab(tabWidget);
-    musicTab->init(
-#ifdef Q_OS_TKSE
-// Tkse does not have a picture location.
-		   QDesktopServices::DataLocation,
-#else
-		   QDesktopServices::MusicLocation,
-#endif
+    musicTab->init(QDesktopServices::MusicLocation,
                    "*.wav;*.mp3;*.mp4",
                    ":/resources/music.png");
     tabWidget->addTab(musicTab, tr("Music"));

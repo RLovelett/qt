@@ -224,7 +224,6 @@ void MainWindow::on_printAction_triggered()
     if (pageMap.count() == 0)
         return;
 
-#ifndef Q_OS_TKSE
     QPrinter printer(QPrinter::HighResolution);
     QPrintDialog dialog(&printer, this);
     if (dialog.exec() != QDialog::Accepted)
@@ -236,12 +235,10 @@ void MainWindow::on_printAction_triggered()
         printer.setFromTo(1, pageMap.keys().count());
 
     printDocument(&printer);
-#endif
 }
 
 void MainWindow::printDocument(QPrinter *printer)
 {
-#ifndef Q_OS_TKSE
     printer->setFromTo(1, pageMap.count());
 
     QProgressDialog progress(tr("Preparing font samples..."), tr("&Cancel"),
@@ -270,7 +267,6 @@ void MainWindow::printDocument(QPrinter *printer)
     }
 
     painter.end();
-#endif
 }
 
 void MainWindow::on_printPreviewAction_triggered()
@@ -280,13 +276,11 @@ void MainWindow::on_printPreviewAction_triggered()
     if (pageMap.count() == 0)
         return;
 
-#ifndef Q_OS_TKSE
     QPrinter printer(QPrinter::HighResolution);
     QPrintPreviewDialog preview(&printer, this);
     connect(&preview, SIGNAL(paintRequested(QPrinter*)),
             this, SLOT(printDocument(QPrinter*)));
     preview.exec();
-#endif
 }
 
 QMap<QString, StyleItems> MainWindow::currentPageMap()
@@ -337,7 +331,6 @@ void MainWindow::printPage(int index, QPainter *painter, QPrinter *printer)
         }
     }
 
-#ifndef Q_OS_TKSE
     qreal xScale = printer->pageRect().width() / width;
     qreal yScale = printer->pageRect().height() / height;
     qreal scale = qMin(xScale, yScale);
@@ -376,5 +369,4 @@ void MainWindow::printPage(int index, QPainter *painter, QPrinter *printer)
     }
 
     painter->restore();
-#endif
 }

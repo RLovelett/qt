@@ -2,7 +2,7 @@ TEMPLATE      = subdirs
 CONFIG       += ordered
 SUBDIRS       = screenshot
 
-!symbian:!rvct:contains(QT_CONFIG, svg): SUBDIRS += systray
+!symbian:contains(QT_CONFIG, svg): SUBDIRS += systray
 
 # install
 target.path = $$[QT_INSTALL_EXAMPLES]/desktop

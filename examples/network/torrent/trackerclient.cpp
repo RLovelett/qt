@@ -118,13 +118,8 @@ void TrackerClient::fetchPeerList()
     bool seeding = (torrentDownloader->state() == TorrentClient::Seeding);
     QByteArray query;
     query += url.path().toLatin1();
-#ifdef Q_OS_TKSE
-    query += passkey.toLatin1();
-    query += "info_hash=" + encodedSum.toLatin1();
-#else
     query += passkey;
     query += "info_hash=" + encodedSum;
-#endif
     query += "&peer_id=" + ConnectionManager::instance()->clientId();
     query += "&port=" + QByteArray::number(TorrentServer::instance()->serverPort());
     query += "&compact=1";
