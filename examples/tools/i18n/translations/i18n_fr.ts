@@ -1,4 +1,17 @@
-<!DOCTYPE TS><TS>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.0" language="fr_FR" sourcelanguage="en_US">
+<context>
+    <name>LanguageChooser</name>
+    <message>
+        <source>Show All</source>
+        <translation>Tous les</translation>
+    </message>
+    <message>
+        <source>Hide All</source>
+        <translation>Masquer toutes les</translation>
+    </message>
+</context>
 <context>
     <name>MainWindow</name>
     <message>

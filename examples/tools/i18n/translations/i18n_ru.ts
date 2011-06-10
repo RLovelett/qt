@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="1.1" language="ru">
-<defaultcodec></defaultcodec>
+<!DOCTYPE TS>
+<TS version="2.0" language="ru" sourcelanguage="en_US">
+<context>
+    <name>LanguageChooser</name>
+    <message>
+        <source>Show All</source>
+        <translation>Показать все</translation>
+    </message>
+    <message>
+        <source>Hide All</source>
+        <translation>Скрыть все</translation>
+    </message>
+</context>
 <context>
     <name>MainWindow</name>
     <message>

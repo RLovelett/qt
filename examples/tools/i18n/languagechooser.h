@@ -44,6 +44,7 @@
 #include <QDialog>
 #include <QMap>
 #include <QStringList>
+#include <QTranslator>
 
 QT_BEGIN_NAMESPACE
 class QAbstractButton;
@@ -63,6 +64,7 @@ public:
 protected:
     bool eventFilter(QObject *object, QEvent *event);
     void closeEvent(QCloseEvent *event);
+    void changeEvent(QEvent *event);
 
 private slots:
     void checkBoxToggled();
@@ -80,6 +82,7 @@ private:
     QAbstractButton *hideAllButton;
     QMap<QCheckBox *, QString> qmFileForCheckBoxMap;
     QMap<QCheckBox *, MainWindow *> mainWindowForCheckBoxMap;
+    QTranslator translator;
 };
 
 #endif

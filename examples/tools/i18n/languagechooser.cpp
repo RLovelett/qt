@@ -67,9 +67,9 @@ LanguageChooser::LanguageChooser(QWidget *parent)
 
     buttonBox = new QDialogButtonBox;
 
-    showAllButton = buttonBox->addButton("Show All",
+    showAllButton = buttonBox->addButton(tr("Show All"),
                                          QDialogButtonBox::ActionRole);
-    hideAllButton = buttonBox->addButton("Hide All",
+    hideAllButton = buttonBox->addButton(tr("Hide All"),
                                          QDialogButtonBox::ActionRole);
 
     connect(showAllButton, SIGNAL(clicked()), this, SLOT(showAll()));
@@ -105,15 +105,27 @@ void LanguageChooser::closeEvent(QCloseEvent * /* event */)
     qApp->quit();
 }
 
+void LanguageChooser::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+        showAllButton->setText(tr("Show All"));
+        hideAllButton->setText(tr("Hide All"));
+    } else { 
+        QDialog::changeEvent(event);
+    }
+}
+
 void LanguageChooser::checkBoxToggled()
 {
     QCheckBox *checkBox = qobject_cast<QCheckBox *>(sender());
-    MainWindow *window = mainWindowForCheckBoxMap[checkBox];
-    if (!window) {
-        QTranslator translator;
+    if (checkBox->isChecked()) { 
         translator.load(qmFileForCheckBoxMap[checkBox]);
         qApp->installTranslator(&translator);
-
+    } else {
+        qApp->removeTranslator(&translator);
+    }
+    MainWindow *window = mainWindowForCheckBoxMap[checkBox];
+    if (!window) {
         window = new MainWindow;
         window->setPalette(colorForLanguage(checkBox->text()));
 

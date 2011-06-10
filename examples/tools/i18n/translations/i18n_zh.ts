@@ -1,4 +1,17 @@
-<!DOCTYPE TS><TS>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.0" language="zh_CN" sourcelanguage="en_US">
+<context>
+    <name>LanguageChooser</name>
+    <message>
+        <source>Show All</source>
+        <translation>显示全部</translation>
+    </message>
+    <message>
+        <source>Hide All</source>
+        <translation>隐藏全部</translation>
+    </message>
+</context>
 <context>
     <name>MainWindow</name>
     <message>
