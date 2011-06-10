@@ -6179,7 +6179,7 @@ bool QUrl::isLocalFile() const
     if (!d) return false;
     if (!QURL_HASFLAG(d->stateFlags, QUrlPrivate::Parsed)) d->parse();
 
-    if (d->scheme.compare(QLatin1String("file"), Qt::CaseInsensitive) != 0)
+    if (!d->scheme.isEmpty() && d->scheme.compare(QLatin1String("file"), Qt::CaseInsensitive) != 0)
         return false;   // not file
     return true;
 }
