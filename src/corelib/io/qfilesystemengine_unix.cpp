@@ -510,7 +510,7 @@ bool QFileSystemEngine::removeDirectory(const QFileSystemEntry &entry, bool remo
             if (QT_STAT(chunk, &st) != -1) {
                 if ((st.st_mode & S_IFMT) != S_IFDIR)
                     return false;
-                if (::rmdir(chunk) != 0)
+                if (QT_RMDIR(chunk) != 0)
                     return oldslash != 0;
             } else {
                 return false;
@@ -519,7 +519,7 @@ bool QFileSystemEngine::removeDirectory(const QFileSystemEntry &entry, bool remo
         }
         return true;
     }
-    return rmdir(QFile::encodeName(entry.filePath())) == 0;
+    return QT_RMDIR(QFile::encodeName(entry.filePath())) == 0;
 }
 
 //static
@@ -644,7 +644,7 @@ QFileSystemEntry QFileSystemEngine::currentPath()
         }
 #else
         char currentName[PATH_MAX+1];
-        if (::getcwd(currentName, PATH_MAX))
+        if (QT_GETCWD(currentName, PATH_MAX))
             result = QFileSystemEntry(QByteArray(currentName), QFileSystemEntry::FromNativePath());
 # if defined(QT_DEBUG)
         if (result.isEmpty())

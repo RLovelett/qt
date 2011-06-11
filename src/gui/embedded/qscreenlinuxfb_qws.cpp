@@ -315,7 +315,7 @@ bool QLinuxFbScreen::connect(const QString &displaySpec)
 	}
     }
 
-    if (access(dev.toLatin1().constData(), R_OK|W_OK) == 0)
+    if (QT_ACCESS(dev.toLatin1().constData(), R_OK|W_OK) == 0)
         d_ptr->fd = QT_OPEN(dev.toLatin1().constData(), O_RDWR);
     if (d_ptr->fd == -1) {
         if (QApplication::type() == QApplication::GuiServer) {
@@ -323,7 +323,7 @@ bool QLinuxFbScreen::connect(const QString &displaySpec)
             qCritical("Error opening framebuffer device %s", qPrintable(dev));
             return false;
         }
-        if (access(dev.toLatin1().constData(), R_OK) == 0)
+        if (QT_ACCESS(dev.toLatin1().constData(), R_OK) == 0)
             d_ptr->fd = QT_OPEN(dev.toLatin1().constData(), O_RDONLY);
     }
 

@@ -1813,7 +1813,7 @@ void QPdfBaseEnginePrivate::closePrintDevice()
 #if defined(Q_OS_WIN) && defined(_MSC_VER) && _MSC_VER >= 1400
         ::_close(fd);
 #else
-        ::close(fd);
+        QT_CLOSE(fd);
 #endif
     fd = -1;
     delete outDevice;

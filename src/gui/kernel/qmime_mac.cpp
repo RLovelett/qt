@@ -1014,7 +1014,7 @@ static bool qt_mac_openMimeRegistry(bool global, QIODevice::OpenMode mode, QFile
             if (success)
                 success = ::fchmod(fd, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) == 0;
             if (fd != -1)
-                ::close(fd);
+                QT_CLOSE(fd);
             if(!success)
                 return false;
         }

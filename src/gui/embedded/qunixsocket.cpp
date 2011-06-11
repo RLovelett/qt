@@ -1133,7 +1133,7 @@ void QUnixSocket::abort()
 #ifdef QUNIXSOCKET_DEBUG
     int closerv =
 #endif
-        ::close(d->fd);
+        QT_CLOSE(d->fd);
 #ifdef QUNIXSOCKET_DEBUG
     if(0 != closerv) {
         qDebug() << "QUnixSocket: Unable to close socket during abort ("

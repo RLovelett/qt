@@ -90,11 +90,11 @@ const quint8 DatabaseVersion = 4;
 void QFontDatabasePrivate::addQPF2File(const QByteArray &file)
 {
 #ifndef QT_FONTS_ARE_RESOURCES
-    struct stat st;
-    if (stat(file.constData(), &st))
-        return;
     int f = QT_OPEN(file, O_RDONLY, 0);
     if (f < 0)
+        return;
+    QT_STATBUF st;
+    if (QT_FSTAT(f, &st) != 0)
         return;
     const uchar *data = (const uchar *)mmap(0, st.st_size, PROT_READ, MAP_SHARED, f, 0);
     const int dataSize = st.st_size;

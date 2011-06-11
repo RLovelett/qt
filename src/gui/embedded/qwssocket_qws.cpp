@@ -158,7 +158,7 @@ bool QWSSocket::connectToLocalFile(const QString &file)
         setSocketDescriptor(s);
     } else {
         perror("QWSSocket::connectToLocalFile could not connect:");
-        ::close(s);
+        QT_CLOSE(s);
         emit error(ConnectionRefusedError);
         return false;
     }
@@ -227,14 +227,14 @@ void QWSServerSocket::init(const QString &file)
     if (r < 0) {
         perror("QWSServerSocket::init");
         qWarning("QWSServerSocket: could not bind to file %s", fn.constData());
-        ::close(s);
+        QT_CLOSE(s);
         return;
     }
 
     if (chmod(fn.constData(), 0600) < 0) {
         perror("QWSServerSocket::init");
         qWarning("Could not set permissions of %s", fn.constData());
-        ::close(s);
+        QT_CLOSE(s);
         return;
     }
 
@@ -245,7 +245,7 @@ void QWSServerSocket::init(const QString &file)
     } else {
         perror("QWSServerSocket::init");
         qWarning("QWSServerSocket: could not listen to file %s", fn.constData());
-        ::close(s);
+        QT_CLOSE(s);
     }
 #endif
 }

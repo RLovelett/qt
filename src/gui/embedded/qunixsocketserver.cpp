@@ -168,7 +168,7 @@ void QUnixSocketServer::close()
 #ifdef QUNIXSOCKET_DEBUG
         int closerv =
 #endif
-            ::close(d->fd);
+            QT_CLOSE(d->fd);
 #ifdef QUNIXSOCKET_DEBUG
         if(0 != closerv) {
             qDebug() << "QUnixSocketServer: Unable to close socket ("

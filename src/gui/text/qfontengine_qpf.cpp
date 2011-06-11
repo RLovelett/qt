@@ -330,15 +330,15 @@ QFontEngineQPF::QFontEngineQPF(const QFontDef &def, int fileDescriptor, QFontEng
         fileName.prepend(qws_fontCacheDir());
 
         encodedFileName = QFile::encodeName(fileName);
-        if (::access(encodedFileName, F_OK) == 0) {
+        if (QT_ACCESS(encodedFileName, F_OK) == 0) {
 #if defined(DEBUG_FONTENGINE)
             qDebug() << "found existing qpf:" << fileName;
 #endif
-            if (::access(encodedFileName, W_OK | R_OK) == 0) {
+            if (QT_ACCESS(encodedFileName, W_OK | R_OK) == 0) {
                 fd = QT_OPEN(encodedFileName, O_RDWR);
             }
             // read-write access failed - try read-only access
-            if (fd == -1 && ::access(encodedFileName, R_OK) == 0) {
+            if (fd == -1 && QT_ACCESS(encodedFileName, R_OK) == 0) {
                 fd = QT_OPEN(encodedFileName, O_RDONLY);
                 if (fd == -1) {
 #if defined(DEBUG_FONTENGINE)
@@ -357,7 +357,7 @@ QFontEngineQPF::QFontEngineQPF(const QFontDef &def, int fileDescriptor, QFontEng
 #if defined(DEBUG_FONTENGINE)
             qDebug() << "creating qpf on the fly:" << fileName;
 #endif
-            if (::access(QFile::encodeName(qws_fontCacheDir()), W_OK) == 0) {
+            if (QT_ACCESS(QFile::encodeName(qws_fontCacheDir()), W_OK) == 0) {
                 fd = QT_OPEN(encodedFileName, O_RDWR | O_EXCL | O_CREAT, 0644);
                 if (fd == -1) {
 #if defined(DEBUG_FONTENGINE)
@@ -534,7 +534,7 @@ QFontEngineQPF::~QFontEngineQPF()
         }
     }
     if (fd != -1)
-        ::close(fd);
+        QT_CLOSE(fd);
 #if !defined(QT_NO_FREETYPE)
     if (freetype)
         freetype->release(face_id);
@@ -935,7 +935,7 @@ void QFontEngineQPF::loadGlyph(glyph_t glyph)
     glyph_metrics_t metrics = renderingFontEngine->boundingBox(glyph);
     renderingFontEngine->removeGlyphFromCache(glyph);
 
-    off_t oldSize = ::lseek(fd, 0, SEEK_END);
+    off_t oldSize = QT_LSEEK(fd, 0, SEEK_END);
     if (oldSize == (off_t)-1)
         return;
 
@@ -1014,7 +1014,7 @@ void QFontEngineQPF::unlockFile()
 
 void QFontEngineQPF::remapFontData()
 {
-    off_t newFileSize = ::lseek(fd, 0, SEEK_END);
+    off_t newFileSize = QT_LSEEK(fd, 0, SEEK_END);
     if (newFileSize == (off_t)-1) {
 #ifdef DEBUG_FONTENGINE
         perror("QFontEngineQPF::remapFontData: lseek failed");

@@ -107,12 +107,12 @@ QKqueueFileSystemWatcherEngine::~QKqueueFileSystemWatcherEngine()
     stop();
     wait();
 
-    close(kqfd);
-    close(kqpipe[0]);
-    close(kqpipe[1]);
+    QT_CLOSE(kqfd);
+    QT_CLOSE(kqpipe[0]);
+    QT_CLOSE(kqpipe[1]);
 
     foreach (int id, pathToID)
-        ::close(id < 0 ? -id : id);
+        QT_CLOSE(id < 0 ? -id : id);
 }
 
 QStringList QKqueueFileSystemWatcherEngine::addPaths(const QStringList &paths,
@@ -139,7 +139,7 @@ QStringList QKqueueFileSystemWatcherEngine::addPaths(const QStringList &paths,
             if (fd >= (int)FD_SETSIZE / 2 && fd < (int)FD_SETSIZE) {
                 int fddup = fcntl(fd, F_DUPFD, FD_SETSIZE);
                 if (fddup != -1) {
-                    ::close(fd);
+                    QT_CLOSE(fd);
                     fd = fddup;
                 }
             }
@@ -148,18 +148,18 @@ QStringList QKqueueFileSystemWatcherEngine::addPaths(const QStringList &paths,
             QT_STATBUF st;
             if (QT_FSTAT(fd, &st) == -1) {
                 perror("QKqueueFileSystemWatcherEngine::addPaths: fstat");
-                ::close(fd);
+                QT_CLOSE(fd);
                 continue;
             }
             int id = (S_ISDIR(st.st_mode)) ? -fd : fd;
             if (id < 0) {
                 if (directories->contains(path)) {
-                    ::close(fd);
+                    QT_CLOSE(fd);
                     continue;
                 }
             } else {
                 if (files->contains(path)) {
-                    ::close(fd);
+                    QT_CLOSE(fd);
                     continue;
                 }
             }
@@ -174,7 +174,7 @@ QStringList QKqueueFileSystemWatcherEngine::addPaths(const QStringList &paths,
                    0);
             if (kevent(kqfd, &kev, 1, 0, 0, 0) == -1) {
                 perror("QKqueueFileSystemWatcherEngine::addPaths: kevent");
-                ::close(fd);
+                QT_CLOSE(fd);
                 continue;
             }
 
@@ -219,7 +219,7 @@ QStringList QKqueueFileSystemWatcherEngine::removePaths(const QStringList &paths
             if (x.isEmpty() || x != path)
                 continue;
 
-            ::close(id < 0 ? -id : id);
+            QT_CLOSE(id < 0 ? -id : id);
 
             it.remove();
             if (id < 0)
@@ -310,7 +310,7 @@ void QKqueueFileSystemWatcherEngine::run()
 
                     pathToID.remove(path);
                     idToPath.remove(id);
-                    ::close(fd);
+                    QT_CLOSE(fd);
 
                     if (id < 0)
                         emit directoryChanged(path, true);

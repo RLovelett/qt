@@ -528,7 +528,7 @@ public:
     ~QWSSoundServerBucket()
     {
 	//dev->close();
-	::close(dev);
+	QT_CLOSE(dev);
     }
     bool finished() const
     {
@@ -570,7 +570,7 @@ public:
 			return 0;
 		    } else if ( qstrncmp(d,"WAVE",4) != 0 ) {
 			// skip
-			if ( chunk.size > 1000000000 || lseek(dev,chunk.size-4, SEEK_CUR) == -1 ) {
+			if ( chunk.size > 1000000000 || QT_LSEEK(dev,chunk.size-4, SEEK_CUR) == -1 ) {
 			    //qDebug("oversized wav chunk");
 			    mFinishedRead = true;
 			}
@@ -601,7 +601,7 @@ public:
 		    }
 		} else {
 		    // ignored chunk
-		    if ( chunk.size > 1000000000 || lseek(dev, chunk.size, SEEK_CUR) == -1) {
+		    if ( chunk.size > 1000000000 || QT_LSEEK(dev, chunk.size, SEEK_CUR) == -1) {
 			//qDebug("chunk size too big");
 			mFinishedRead = true;
 		    }
@@ -659,7 +659,7 @@ public:
     ~QWSSoundServerStream()
     {
 	if (dev != -1) {
-	    ::close(dev);
+	    QT_CLOSE(dev);
 	    dev = -1;
 	}
     }
@@ -685,13 +685,13 @@ public:
 			break;
 		    default:
 			// unexpected error, fail.
-			::close(dev);
+			QT_CLOSE(dev);
 			dev = -1;
 		}
 	    } else if (read == 0) {
 		// 0 means writer has closed dev and/or
 		// file is at end.
-		::close(dev);
+		QT_CLOSE(dev);
 		dev = -1;
 	    } else {
 		updateBuffer(read);
@@ -856,7 +856,7 @@ private:
     void closeDevice()
     {
         if (fd >= 0) {
-            ::close(fd);
+            QT_CLOSE(fd);
             fd = -1;
         }
     }
@@ -1232,7 +1232,7 @@ bool QWSSoundServerPrivate::openDevice()
 	    if ( mixerHandle >= 0 ) {
 		int volume;
 		ioctl( mixerHandle, MIXER_READ(0), &volume );
-		close( mixerHandle );
+		QT_CLOSE( mixerHandle );
 		if ( volume < 1<<(sound_stereo+sound_16bit) )
 		    qDebug("Want sound at %d got %d",
 			    1<<(sound_stereo+sound_16bit), volume);

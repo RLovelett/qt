@@ -1004,7 +1004,7 @@ public:
                     fromMM = true;
                 }
             }
-            ::close(fd);
+            QT_CLOSE(fd);
         }
 #endif // QT_USE_MMAP
         if(!data) {

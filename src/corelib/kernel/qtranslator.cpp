@@ -485,7 +485,7 @@ bool QTranslatorPrivate::do_load(const QString &realname)
                 ok = true;
             }
         }
-        ::close(fd);
+        QT_CLOSE(fd);
     }
 #endif // QT_USE_MMAP
 
