@@ -141,9 +141,9 @@ QStringList QKqueueFileSystemWatcherEngine::addPaths(const QStringList &paths,
                 if (fddup != -1) {
                     QT_CLOSE(fd);
                     fd = fddup;
+                    ::fcntl(fd, F_SETFD, FD_CLOEXEC);
                 }
             }
-            fcntl(fd, F_SETFD, FD_CLOEXEC);
 
             QT_STATBUF st;
             if (QT_FSTAT(fd, &st) == -1) {
