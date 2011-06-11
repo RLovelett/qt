@@ -1092,7 +1092,7 @@ bool QFSFileEnginePrivate::unmap(uchar *ptr)
 
     uchar *start = ptr - maps[ptr].first;
     size_t len = maps[ptr].second;
-    if (-1 == munmap(start, len)) {
+    if (-1 == QT_MUNMAP(start, len)) {
         q->setError(QFile::UnspecifiedError, qt_error_string(errno));
         return false;
     }

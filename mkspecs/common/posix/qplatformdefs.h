@@ -107,6 +107,8 @@
 
 #endif // !defined (QT_USE_XOPEN_LFS_EXTENSIONS) || !defined(QT_LARGEFILE_SUPPORT)
 
+#define QT_MUNMAP               ::munmap
+
 #define QT_STAT_MASK            S_IFMT
 #define QT_STAT_REG             S_IFREG
 #define QT_STAT_DIR             S_IFDIR
