@@ -365,7 +365,7 @@ bool QFileSystemEngine::fillMetaData(const QFileSystemEntry &entry, QFileSystemM
     bool statBufferValid = false;
     if (what & QFileSystemMetaData::LinkType) {
         if (QT_LSTAT(nativeFilePath, &statBuffer) == 0) {
-            if (S_ISLNK(statBuffer.st_mode)) {
+            if ((statBuffer.st_mode & QT_STAT_MASK) == QT_STAT_LNK) {
                 data.entryFlags |= QFileSystemMetaData::LinkType;
             } else {
                 statBufferValid = true;
@@ -483,7 +483,7 @@ bool QFileSystemEngine::createDirectory(const QFileSystemEntry &entry, bool crea
                 QByteArray chunk = QFile::encodeName(dirName.left(slash));
                 QT_STATBUF st;
                 if (QT_STAT(chunk, &st) != -1) {
-                    if ((st.st_mode & S_IFMT) != S_IFDIR)
+                    if ((st.st_mode & QT_STAT_MASK) != QT_STAT_DIR)
                         return false;
                 } else if (QT_MKDIR(chunk, 0777) != 0) {
                     return false;
@@ -508,7 +508,7 @@ bool QFileSystemEngine::removeDirectory(const QFileSystemEntry &entry, bool remo
             QByteArray chunk = QFile::encodeName(dirName.left(slash));
             QT_STATBUF st;
             if (QT_STAT(chunk, &st) != -1) {
-                if ((st.st_mode & S_IFMT) != S_IFDIR)
+                if ((st.st_mode & QT_STAT_MASK) != QT_STAT_DIR)
                     return false;
                 if (QT_RMDIR(chunk) != 0)
                     return oldslash != 0;

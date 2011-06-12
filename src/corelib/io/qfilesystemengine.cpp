@@ -257,9 +257,9 @@ void QFileSystemMetaData::fillFromStatBuf(const QT_STATBUF &statBuffer)
         entryFlags |= QFileSystemMetaData::OtherExecutePermission;
 
     // Type
-    if ((statBuffer.st_mode & S_IFMT) == S_IFREG)
+    if ((statBuffer.st_mode & QT_STAT_MASK) == QT_STAT_REG)
         entryFlags |= QFileSystemMetaData::FileType;
-    else if ((statBuffer.st_mode & S_IFMT) == S_IFDIR)
+    else if ((statBuffer.st_mode & QT_STAT_MASK) == QT_STAT_DIR)
         entryFlags |= QFileSystemMetaData::DirectoryType;
     else
         entryFlags |= QFileSystemMetaData::SequentialType;

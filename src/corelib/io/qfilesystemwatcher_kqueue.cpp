@@ -151,7 +151,7 @@ QStringList QKqueueFileSystemWatcherEngine::addPaths(const QStringList &paths,
                 QT_CLOSE(fd);
                 continue;
             }
-            int id = (S_ISDIR(st.st_mode)) ? -fd : fd;
+            int id = (st.st_mode & QT_STAT_MASK) == QT_STAT_DIR ? -fd : fd;
             if (id < 0) {
                 if (directories->contains(path)) {
                     QT_CLOSE(fd);

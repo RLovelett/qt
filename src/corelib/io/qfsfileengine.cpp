@@ -64,18 +64,6 @@
 QT_BEGIN_NAMESPACE
 
 #ifdef Q_OS_WIN
-#  ifndef S_ISREG
-#    define S_ISREG(x)   (((x) & S_IFMT) == S_IFREG)
-#  endif
-#  ifndef S_ISCHR
-#    define S_ISCHR(x)   (((x) & S_IFMT) == S_IFCHR)
-#  endif
-#  ifndef S_ISFIFO
-#    define S_ISFIFO(x) false
-#  endif
-#  ifndef S_ISSOCK
-#    define S_ISSOCK(x) false
-#  endif
 #  ifndef INVALID_FILE_ATTRIBUTES
 #    define INVALID_FILE_ATTRIBUTES (DWORD (-1))
 #  endif

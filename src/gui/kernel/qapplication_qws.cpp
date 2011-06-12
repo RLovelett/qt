@@ -206,7 +206,7 @@ QString qws_dataDir()
     if (QT_LSTAT(dataDir, &buf))
         qFatal("stat failed for Qt for Embedded Linux data directory: %s", dataDir.constData());
 
-    if (!S_ISDIR(buf.st_mode))
+    if ((buf.st_mode & QT_STAT_MASK) != QT_STAT_DIR)
         qFatal("%s is not a directory", dataDir.constData());
 
 #if !defined(Q_OS_INTEGRITY) && !defined(Q_OS_VXWORKS)
