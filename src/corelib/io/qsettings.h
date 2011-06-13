@@ -84,7 +84,7 @@ class Q_CORE_EXPORT QSettings
 
 public:
     enum Status {
-        NoError = 0,
+        NoError,
         AccessError,
         FormatError
     };
