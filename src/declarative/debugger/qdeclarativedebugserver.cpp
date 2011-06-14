@@ -188,7 +188,9 @@ QDeclarativeDebugServer *QDeclarativeDebugServer::instance()
             QString pluginName;
             if (appD->qmljsDebugArgumentsString().indexOf(QLatin1String("port:")) == 0) {
                 int separatorIndex = appD->qmljsDebugArgumentsString().indexOf(QLatin1Char(','));
-                port = appD->qmljsDebugArgumentsString().mid(5, separatorIndex - 5).toInt(&ok);
+                // Don`t hardcode argument indices
+                const int startIndex = qstrlen("port:");
+                port = appD->qmljsDebugArgumentsString().mid(startIndex, -1 != separatorIndex ? separatorIndex - startIndex : -1).toInt(&ok);
                 pluginName = QLatin1String("qmldbg_tcp");
             } else if (appD->qmljsDebugArgumentsString().contains(QLatin1String("ost"))) {
                 pluginName = QLatin1String("qmldbg_ost");
