@@ -465,7 +465,9 @@ QScriptValue QDeclarativeQtScriptExpression::scriptValue(QObject *secondaryScope
     bool lastCaptureProperties = ep->captureProperties;
     QPODVector<QDeclarativeEnginePrivate::CapturedProperty> lastCapturedProperties;
     ep->captureProperties = trackChange;
-    ep->capturedProperties.copyAndClear(lastCapturedProperties);
+
+    if (ep->capturedProperties.count())
+        ep->capturedProperties.copyAndClear(lastCapturedProperties);
 
     QScriptValue value = eval(secondaryScope, isUndefined);
 
@@ -481,7 +483,11 @@ QScriptValue QDeclarativeQtScriptExpression::scriptValue(QObject *secondaryScope
         }
     }
 
-    lastCapturedProperties.copyAndClear(ep->capturedProperties);
+    if (lastCapturedProperties.count())
+        lastCapturedProperties.copyAndClear(ep->capturedProperties);
+    else
+        ep->capturedProperties.clear();
+
     ep->captureProperties = lastCaptureProperties;
 
     return value;
