@@ -441,7 +441,7 @@ static inline QByteArray authenticationKey(const QUrl &url, const QString &realm
 {
     QUrl copy = url;
     copy.setFragment(realm);
-    return "auth:" + copy.toEncoded(QUrl::RemovePassword | QUrl::RemovePath | QUrl::RemoveQuery);
+    return "auth:" + copy.toEncoded(QUrl::RemovePassword | QUrl::RemovePath | QUrl::RemoveQuery | QUrl::RemoveFragment);
 }
 
 /*!
