@@ -92,7 +92,7 @@ public:
         size = QSize();
         viewBox = QRectF();
         outputDevice = 0;
-        resolution = 72;
+        resolution = 90;
 
         attributes.document_title = QLatin1String("Qt Svg Document");
         attributes.document_description = QLatin1String("Generated with Qt");
@@ -465,7 +465,7 @@ public:
         d->font = sfont;
 
         if (d->font.pixelSize() == -1)
-            d->attributes.font_size = QString::number(d->font.pointSizeF() * d->resolution / 72);
+            d->attributes.font_size = QString::number(d->font.pointSizeF() * d->resolution / 90);
         else
             d->attributes.font_size = QString::number(d->font.pixelSize());
 
