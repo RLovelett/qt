@@ -114,8 +114,9 @@ public:
     inline qreal toHours() const {return toTimeUnit(Qt::Hours);}
     inline qreal toDays() const {return toTimeUnit(Qt::Days);}
     inline qreal toWeeks() const {return toTimeUnit(Qt::Weeks);}
-    inline qreal toMonths() const {return toTimeUnit(Qt::Seconds);}
-    inline qreal toYears() const {return toTimeUnit(Qt::Seconds);}
+    inline qreal toMonths() const {return toTimeUnit(Qt::Months);}
+    inline qreal toYears() const {return toTimeUnit(Qt::Years);}
+
     qreal toTimeUnit(Qt::TimeSpanUnit unit) const;
 
     void setFromMSecs(qint64 msecs);
