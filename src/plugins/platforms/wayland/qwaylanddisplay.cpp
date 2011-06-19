@@ -73,21 +73,6 @@ struct wl_buffer *QWaylandDisplay::createShmBuffer(int fd,
     return wl_shm_create_buffer(mShm, fd, width, height, stride, visual);
 }
 
-struct wl_visual *QWaylandDisplay::rgbVisual()
-{
-    return wl_display_get_rgb_visual(mDisplay);
-}
-
-struct wl_visual *QWaylandDisplay::argbVisual()
-{
-    return wl_display_get_argb_visual(mDisplay);
-}
-
-struct wl_visual *QWaylandDisplay::argbPremultipliedVisual()
-{
-    return wl_display_get_premultiplied_argb_visual(mDisplay);
-}
-
 #ifdef QT_WAYLAND_GL_SUPPORT
 QWaylandGLIntegration * QWaylandDisplay::eglIntegration()
 {
