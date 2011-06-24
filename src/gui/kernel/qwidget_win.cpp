@@ -1378,13 +1378,10 @@ void QWidgetPrivate::setGeometry_sys(int x, int y, int w, int h, bool isMove)
     // windows has a bug that it does not update the title bar correctly. The
     // WS_MAXIMIZE stays in the window long for ::GetWindowLong(winId(), GWL_STYLE)
     // this is incorrect, as a maximized window is always positioned at 0,0
-    if (data.window_state & Qt::WindowMaximized)
-    {
+    if (data.window_state & Qt::WindowMaximized) {
         LONG style = GetWindowLong(q->internalWinId(), GWL_STYLE);
-        if (!style)
-            qErrnoWarning("QWidget::setGeometry_sys: GetWindowLong failed");
-        style &= ~WS_MAXIMIZE;
-        SetWindowLong(q->internalWinId(), GWL_STYLE, style);
+        if (style)
+            SetWindowLong(q->internalWinId(), GWL_STYLE, style & ~WS_MAXIMIZE);
         data.window_state &= ~Qt::WindowMaximized;
     }
 #endif
