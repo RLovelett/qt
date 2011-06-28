@@ -4606,6 +4606,8 @@ void QGraphicsScenePrivate::drawItemHelper(QGraphicsItem *item, QPainter *painte
             int dy = deviceRect.top() < viewRect.top() ? viewRect.top() - deviceRect.top() : 0;
             QPoint newCacheIndent(dx, dy);
             deviceRect &= viewRect;
+            if (deviceRect.isEmpty())
+                return;
 
             if (pix.isNull()) {
                 deviceData->cacheIndent = QPoint();
