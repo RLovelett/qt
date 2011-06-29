@@ -297,6 +297,9 @@ QPalette QGtkStyle::standardPalette() const
             gdkText = style->fg[GTK_STATE_NORMAL];
             text = QColor(gdkText.red>>8, gdkText.green>>8, gdkText.blue>>8);
             palette.setColor(QPalette::ToolTipText, text);
+            gdkBg = style->bg[GTK_STATE_NORMAL];
+            bg = QColor(gdkBg.red>>8, gdkBg.green>>8, gdkBg.blue>>8);
+            palette.setColor(QPalette::ToolTipBase, bg);
         }
     }
     return palette;
@@ -386,6 +389,16 @@ void QGtkStyle::polish(QWidget *widget)
         widget->setAttribute(Qt::WA_Hover);
     else if (QTreeView *tree = qobject_cast<QTreeView *> (widget))
         tree->viewport()->setAttribute(Qt::WA_Hover);
+    else if (widget->inherits("QTipLabel")) {
+        GtkStyle *style;
+        style = d->gtk_rc_get_style_by_paths(d->gtk_settings_get_default(), "gtk-tooltips", "GtkWindow",
+                d->gtk_window_get_type());
+        GdkColor gdkColor = style->fg[GTK_STATE_NORMAL];
+        QColor color = QColor(gdkColor.red>>8,gdkColor.green>>8,gdkColor.blue>>8);
+        QPalette pal;
+        pal.setColor(QPalette::All, QPalette::ToolTipText, color);
+        widget->setPalette(pal);
+    }
 }
 
 /*!
