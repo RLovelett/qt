@@ -146,6 +146,7 @@ public:
     QtConcurrent::internal::ExceptionStore m_exceptionStore;
     QString m_progressText;
     QRunnable *runnable;
+    QThreadPool *pool;
 
     // Internal functions that does not change the mutex state.
     // The mutex must be locked when calling these.
