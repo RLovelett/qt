@@ -137,9 +137,20 @@
 /*!
     \fn QFuture<T> QtConcurrent::run(Function function, ...);
     \relates <QtConcurrentRun>
+
+    Equivalent to
+    \code
+    run(QThreadPool::globalInstance(), function, ...);
+    \endcode
+*/
+
+/*!
+    \fn QFuture<T> QtConcurrent::run(QThreadPool *pool, Function function, ...);
+    \relates <QtConcurrentRun>
+    \since 4.8
     
-    Runs \a function in a separate thread. The thread is taken from the global
-    QThreadPool. Note that the function may not run immediately; the function
+    Runs \a function in a separate thread. The thread is taken from \a pool.
+    Note that the function may not run immediately; the function
     will only be run when a thread is available.
     
     T is the same type as the return value of \a function. Non-void return
