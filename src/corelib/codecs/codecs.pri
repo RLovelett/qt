@@ -40,13 +40,13 @@ unix {
 symbian:LIBS += -lcharconv
 else {
 HEADERS += \
-	codecs/qgb18030codec.h \
-	codecs/qeucjpcodec.h \
-	codecs/qjiscodec.h \
-	codecs/qsjiscodec.h \
-	codecs/qeuckrcodec.h \
-	codecs/qbig5codec.h \
-	codecs/qfontjpcodec.h
+	codecs/qgb18030codec_p.h \
+	codecs/qeucjpcodec_p.h \
+	codecs/qjiscodec_p.h \
+	codecs/qsjiscodec_p.h \
+	codecs/qeuckrcodec_p.h \
+	codecs/qbig5codec_p.h \
+	codecs/qfontjpcodec_p.h
 
 SOURCES += \
 	codecs/qgb18030codec.cpp \
