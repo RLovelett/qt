@@ -65,15 +65,14 @@
 #  include "qtsciicodec_p.h"
 #  include "qisciicodec_p.h"
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_OS_INTEGRITY)
-#  if defined(QT_NO_ICONV) && !defined(QT_BOOTSTRAPPED)
-// no iconv(3) support, must build all codecs into the library
+#  if !defined(QT_BOOTSTRAPPED)
 #    include "../../plugins/codecs/cn/qgb18030codec.h"
 #    include "../../plugins/codecs/jp/qeucjpcodec.h"
 #    include "../../plugins/codecs/jp/qjiscodec.h"
 #    include "../../plugins/codecs/jp/qsjiscodec.h"
 #    include "../../plugins/codecs/kr/qeuckrcodec.h"
 #    include "../../plugins/codecs/tw/qbig5codec.h"
-#  endif // QT_NO_ICONV
+#  endif // !QT_BOOTSTRAPPED
 #  if defined(Q_WS_X11) && !defined(QT_BOOTSTRAPPED)
 #    include "qfontlaocodec_p.h"
 #    include "../../plugins/codecs/jp/qfontjpcodec.h"
@@ -758,8 +757,6 @@ static void setup()
 #  if defined(Q_WS_X11) && !defined(QT_BOOTSTRAPPED)
     // no font codecs when bootstrapping
     (void)new QFontLaoCodec;
-#    if defined(QT_NO_ICONV)
-    // no iconv(3) support, must build all codecs into the library
     (void)new QFontGb2312Codec;
     (void)new QFontGbkCodec;
     (void)new QFontGb18030_0Codec;
@@ -768,12 +765,11 @@ static void setup()
     (void)new QFontKsc5601Codec;
     (void)new QFontBig5hkscsCodec;
     (void)new QFontBig5Codec;
-#    endif // QT_NO_ICONV && !QT_BOOTSTRAPPED
-#  endif // Q_WS_X11
+#  endif // Q_WS_X11 && !QT_BOOTSTRAPPED
 
 
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_OS_INTEGRITY)
-#  if defined(QT_NO_ICONV) && !defined(QT_BOOTSTRAPPED)
+#  if !defined(QT_BOOTSTRAPPED)
     // no asian codecs when bootstrapping, sorry
     (void)new QGb18030Codec;
     (void)new QGbkCodec;
@@ -785,7 +781,7 @@ static void setup()
     (void)new QCP949Codec;
     (void)new QBig5Codec;
     (void)new QBig5hkscsCodec;
-#  endif // QT_NO_ICONV && !QT_BOOTSTRAPPED
+#  endif // !QT_BOOTSTRAPPED
 #endif //Q_OS_SYMBIAN
 #endif // QT_NO_CODECS
 
