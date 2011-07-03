@@ -7,8 +7,7 @@ HEADERS += \
 	codecs/qtextcodec_p.h \
 	codecs/qtextcodec.h \
 	codecs/qtsciicodec_p.h \
-	codecs/qutfcodec_p.h \
-	codecs/qtextcodecplugin.h
+	codecs/qutfcodec_p.h
 
 SOURCES += \
 	codecs/qisciicodec.cpp \
@@ -16,8 +15,7 @@ SOURCES += \
 	codecs/qsimplecodec.cpp \
 	codecs/qtextcodec.cpp \
 	codecs/qtsciicodec.cpp \
-	codecs/qutfcodec.cpp \
-	codecs/qtextcodecplugin.cpp
+	codecs/qutfcodec.cpp
 
 unix {
 	SOURCES += codecs/qfontlaocodec.cpp
