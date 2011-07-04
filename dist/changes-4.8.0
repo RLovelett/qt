@@ -54,6 +54,9 @@ QtGui
  - Including <QtOpenGL> will not work in combination with GLEW, as
    QGLFunctions will undefine GLEW's defines.
 
+QtNetwork
+---------
+ - Added libproxy support to find the system proxy
 
 ****************************************************************************
 *                          Database Drivers                                *
