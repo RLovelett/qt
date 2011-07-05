@@ -382,27 +382,30 @@ QVariant QSqlTableModel::data(const QModelIndex &index, int role) const
     // and indexInQuery is not virtual (grrr) so any values we pass to QSQM need
     // to handle the insertedRows
     QModelIndex item = indexInQuery(index);
-    const QSqlTableModelPrivate::ModifiedRow row = d->cache.value(index.row());
 
-    switch (d->strategy) {
-    case OnFieldChange:
-    case OnRowChange:
-        if (row.op == QSqlTableModelPrivate::Insert) {
-            if (item.column() < 0 || item.column() >= row.rec.count())
-                return QVariant();
-            return row.rec.value(item.column());
-        }
-        if (row.op == QSqlTableModelPrivate::Update) {
-            if (row.rec.isGenerated(item.column()))
+    if (!d->cache.isEmpty() && d->cache.contains(index.row())) {
+        const QSqlTableModelPrivate::ModifiedRow row = d->cache.value(index.row());
+
+        switch (d->strategy) {
+        case OnFieldChange:
+        case OnRowChange:
+            if (row.op == QSqlTableModelPrivate::Insert) {
+                if (item.column() < 0 || item.column() >= row.rec.count())
+                    return QVariant();
                 return row.rec.value(item.column());
+            }
+            if (row.op == QSqlTableModelPrivate::Update) {
+                if (row.rec.isGenerated(item.column()))
+                    return row.rec.value(item.column());
+            }
+            break;
+        case OnManualSubmit:
+            if (row.op == QSqlTableModelPrivate::Insert
+                || (row.op != QSqlTableModelPrivate::None
+                    && row.rec.isGenerated(item.column())))
+                return row.rec.value(item.column());
+            break;
         }
-        break;
-    case OnManualSubmit:
-        if (row.op == QSqlTableModelPrivate::Insert
-            || (row.op != QSqlTableModelPrivate::None
-                && row.rec.isGenerated(item.column())))
-            return row.rec.value(item.column());
-        break;
     }
 
     // We need to handle row mapping here, but not column mapping
@@ -416,11 +419,13 @@ QVariant QSqlTableModel::headerData(int section, Qt::Orientation orientation, in
 {
     Q_D(const QSqlTableModel);
     if (orientation == Qt::Vertical && role == Qt::DisplayRole) {
-        QSqlTableModelPrivate::Op op = d->cache.value(section).op;
-        if (op == QSqlTableModelPrivate::Insert)
-            return QLatin1String("*");
-        if (op == QSqlTableModelPrivate::Delete)
-            return QLatin1String("!");
+        if (!d->cache.isEmpty() && d->cache.contains(section)) {
+            QSqlTableModelPrivate::Op op = d->cache.value(section).op;
+            if (op == QSqlTableModelPrivate::Insert)
+                return QLatin1String("*");
+            if (op == QSqlTableModelPrivate::Delete)
+                return QLatin1String("!");
+        }
     }
     return QSqlQueryModel::headerData(section, orientation, role);
 }
