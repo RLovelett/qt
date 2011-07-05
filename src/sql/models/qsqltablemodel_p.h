@@ -93,24 +93,28 @@ public:
 
     enum Op { None, Insert, Update, Delete };
 
-    struct ModifiedRow
+    class ModifiedRow
     {
+    public:
         inline ModifiedRow(Op o = None, const QSqlRecord &r = QSqlRecord(), const QSqlRecord &pVals = QSqlRecord())
-            : op(o), rec(r), primaryValues(pVals)
+            : m_op(o), m_rec(r), m_primaryValues(pVals)
         {
-            for (int i = rec.count() - 1; i >= 0; --i)
-                rec.setGenerated(i, false);
+            for (int i = m_rec.count() - 1; i >= 0; --i)
+                m_rec.setGenerated(i, false);
         }
+        inline Op op() const { return m_op; }
+        inline const QSqlRecord rec() const { return m_rec; }
+        inline QSqlRecord& recRef() { return m_rec; }
+        inline QSqlRecord primaryValues() const { return m_primaryValues; }
         inline void setValue(int c, const QVariant &v)
         {
-            rec.setValue(c, v);
-            rec.setGenerated(c, true);
+            m_rec.setValue(c, v);
+            m_rec.setGenerated(c, true);
         }
-    // These data members should not be set directly.
-    // Exception: rec is exposed via primeInsert() signal.
-        Op op;
-        QSqlRecord rec;
-        QSqlRecord primaryValues;
+    private:
+        Op m_op;
+        QSqlRecord m_rec;
+        QSqlRecord m_primaryValues;
     };
 
     typedef QMap<int, ModifiedRow> CacheMap;
