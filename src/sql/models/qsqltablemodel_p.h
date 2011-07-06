@@ -64,13 +64,12 @@ class QSqlTableModelPrivate: public QSqlQueryModelPrivate
 
 public:
     QSqlTableModelPrivate()
-        : editIndex(-1), insertIndex(-1), sortColumn(-1),
+        : sortColumn(-1),
           sortOrder(Qt::AscendingOrder),
           strategy(QSqlTableModel::OnRowChange)
     {}
     void clear();
     QSqlRecord primaryValues(int index);
-    virtual void clearEditBuffer();
     virtual void clearCache();
     static void clearGenerated(QSqlRecord &rec);
     static void setGeneratedValue(QSqlRecord &rec, int c, QVariant v);
@@ -79,14 +78,11 @@ public:
     bool exec(const QString &stmt, bool prepStatement,
               const QSqlRecord &rec, const QSqlRecord &whereValues);
     virtual void revertCachedRow(int row);
-    void revertInsertedRow();
     bool setRecord(int row, const QSqlRecord &record);
     virtual int nameToIndex(const QString &name) const;
     void initRecordAndPrimaryIndex();
 
     QSqlDatabase db;
-    int editIndex;
-    int insertIndex;
 
     int sortColumn;
     Qt::SortOrder sortOrder;
@@ -115,8 +111,6 @@ public:
         QSqlRecord rec;
         QSqlRecord primaryValues;
     };
-
-    QSqlRecord editBuffer;
 
     typedef QMap<int, ModifiedRow> CacheMap;
     CacheMap cache;
