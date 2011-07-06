@@ -127,18 +127,6 @@ void QSqlTableModelPrivate::clearCache()
     cache.clear();
 }
 
-void QSqlTableModelPrivate::clearGenerated(QSqlRecord &rec)
-{
-    for (int i = rec.count() - 1; i >= 0; i--)
-        rec.setGenerated(i, false);
-}
-
-void QSqlTableModelPrivate::setGeneratedValue(QSqlRecord &rec, int c, QVariant v)
-{
-    rec.setValue(c, v);
-    rec.setGenerated(c, true);
-}
-
 void QSqlTableModelPrivate::revertCachedRow(int row)
 {
     Q_Q(QSqlTableModel);
