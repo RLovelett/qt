@@ -971,23 +971,23 @@ VGPath QVGPaintEnginePrivate::roundedRectPath(const QRectF &rect, qreal xRadius,
     yRadius = qMin(yRadius, rect.height() / 2);
 
     VGfloat pts[] = {
-        x1 + xRadius, y1,                   // MoveTo
-        x2 - xRadius, y1,                   // LineTo
-        x2 - (1 - KAPPA) * xRadius, y1,     // CurveTo
-        x2, y1 + (1 - KAPPA) * yRadius,
-        x2, y1 + yRadius,
-        x2, y2 - yRadius,                   // LineTo
-        x2, y2 - (1 - KAPPA) * yRadius,     // CurveTo
-        x2 - (1 - KAPPA) * xRadius, y2,
-        x2 - xRadius, y2,
-        x1 + xRadius, y2,                   // LineTo
-        x1 + (1 - KAPPA) * xRadius, y2,     // CurveTo
-        x1, y2 - (1 - KAPPA) * yRadius,
-        x1, y2 - yRadius,
-        x1, y1 + yRadius,                   // LineTo
-        x1, y1 + (1 - KAPPA) * yRadius,     // CurveTo
-        x1 + (1 - KAPPA) * xRadius, y1,
-        x1 + xRadius, y1
+        VGfloat(x1 + xRadius), VGfloat(y1),                   // MoveTo
+        VGfloat(x2 - xRadius), VGfloat(y1),                   // LineTo
+        VGfloat(x2 - (1 - KAPPA) * xRadius), VGfloat(y1),     // CurveTo
+        VGfloat(x2), VGfloat(y1 + (1 - KAPPA) * yRadius),
+        VGfloat(x2), VGfloat(y1 + yRadius),
+        VGfloat(x2), VGfloat(y2 - yRadius),                   // LineTo
+        VGfloat(x2), VGfloat(y2 - (1 - KAPPA) * yRadius),     // CurveTo
+        VGfloat(x2 - (1 - KAPPA) * xRadius), VGfloat(y2),
+        VGfloat(x2 - xRadius), VGfloat(y2),
+        VGfloat(x1 + xRadius), VGfloat(y2),                   // LineTo
+        VGfloat(x1 + (1 - KAPPA) * xRadius), VGfloat(y2),     // CurveTo
+        VGfloat(x1), VGfloat(y2 - (1 - KAPPA) * yRadius),
+        VGfloat(x1), VGfloat(y2 - yRadius),
+        VGfloat(x1), VGfloat(y1 + yRadius),                   // LineTo
+        VGfloat(x1), VGfloat(y1 + (1 - KAPPA) * yRadius),     // CurveTo
+        VGfloat(x1 + (1 - KAPPA) * xRadius), VGfloat(y1),
+        VGfloat(x1 + xRadius), VGfloat(y1)
     };
 
 #if !defined(QVG_NO_MODIFY_PATH)
@@ -3207,7 +3207,7 @@ static void drawImageTiled(QVGPaintEnginePrivate *d,
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, d->opacity,
+        0.0f, 0.0f, 0.0f, static_cast<VGfloat>(d->opacity),
         0.0f, 0.0f, 0.0f, 0.0f
     };
     VGImage tileWithOpacity = VG_INVALID_HANDLE;

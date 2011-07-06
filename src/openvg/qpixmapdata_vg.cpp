@@ -423,7 +423,7 @@ VGImage QVGPixmapData::toVGImage(qreal opacity)
             1.0f, 0.0f, 0.0f, 0.0f,
             0.0f, 1.0f, 0.0f, 0.0f,
             0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, opacity,
+            0.0f, 0.0f, 0.0f, static_cast<VGfloat>(opacity),
             0.0f, 0.0f, 0.0f, 0.0f
         };
         vgColorMatrix(vgImageOpacity, vgImage, matrix);
