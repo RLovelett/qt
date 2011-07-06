@@ -1222,7 +1222,6 @@ bool QSqlTableModel::setRecord(int row, const QSqlRecord &record)
     if (row >= rowCount())
         return false;
 
-    bool isOk = true;
     switch (d->strategy) {
     case OnFieldChange:
     case OnRowChange: {
@@ -1231,6 +1230,7 @@ bool QSqlTableModel::setRecord(int row, const QSqlRecord &record)
         // FieldChange strategy makes no sense when setting an entire row
         if (d->strategy == OnFieldChange)
             d->strategy = OnRowChange;
+        bool isOk = true;
         for (int i = 0; i < record.count(); ++i) {
             int idx = d->nameToIndex(record.fieldName(i));
             if (idx == -1)
@@ -1253,6 +1253,7 @@ bool QSqlTableModel::setRecord(int row, const QSqlRecord &record)
             mrow = QSqlTableModelPrivate::ModifiedRow(QSqlTableModelPrivate::Update,
                                                       d->rec,
                                                       d->primaryValues(indexInQuery(createIndex(row, 0)).row()));
+        bool isOk = true;
         for (int i = 0; i < record.count(); ++i) {
             int idx = d->nameToIndex(record.fieldName(i));
             if (idx == -1) {
