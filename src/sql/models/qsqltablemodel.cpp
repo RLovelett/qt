@@ -1225,24 +1225,36 @@ bool QSqlTableModel::setRecord(int row, const QSqlRecord &record)
     switch (d->strategy) {
     case OnFieldChange:
     case OnRowChange: {
+        if (d->strategy == OnFieldChange && d->cache.value(row).op != QSqlTableModelPrivate::Insert)
+            d->cache.clear();
+
+        if (d->strategy == OnRowChange && !d->cache.isEmpty() && !d->cache.contains(row))
+            submit();
+
+        QSqlTableModelPrivate::ModifiedRow &mrow = d->cache[row];
+        if (mrow.op == QSqlTableModelPrivate::None)
+            mrow = QSqlTableModelPrivate::ModifiedRow(QSqlTableModelPrivate::Update,
+                                                      d->rec,
+                                                      d->primaryValues(indexInQuery(createIndex(row, 0)).row()));
         EditStrategy oldStrategy = d->strategy;
 
         // FieldChange strategy makes no sense when setting an entire row
         if (d->strategy == OnFieldChange)
             d->strategy = OnRowChange;
-        bool isOk = true;
         for (int i = 0; i < record.count(); ++i) {
             int idx = d->nameToIndex(record.fieldName(i));
             if (idx == -1)
                 continue;
-            QModelIndex cIndex = createIndex(row, idx);
-            QVariant value = record.value(i);
-            QVariant oldValue = data(cIndex);
-            if (oldValue.isNull() || oldValue != value)
-                isOk &= setData(cIndex, value, Qt::EditRole);
+            mrow.setValue(idx, record.value(i));
         }
-        if (isOk && oldStrategy == OnFieldChange)
-            submitAll();
+
+        if (mrow.op != QSqlTableModelPrivate::Insert)
+            emit dataChanged(createIndex(row, 0), createIndex(row, columnCount() - 1));
+
+        bool isOk = true;
+        if (oldStrategy == OnFieldChange)
+            isOk = submitAll();
+
         d->strategy = oldStrategy;
 
         return isOk;
