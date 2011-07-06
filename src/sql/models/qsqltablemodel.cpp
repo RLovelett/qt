@@ -1236,11 +1236,7 @@ bool QSqlTableModel::setRecord(int row, const QSqlRecord &record)
             mrow = QSqlTableModelPrivate::ModifiedRow(QSqlTableModelPrivate::Update,
                                                       d->rec,
                                                       d->primaryValues(indexInQuery(createIndex(row, 0)).row()));
-        EditStrategy oldStrategy = d->strategy;
 
-        // FieldChange strategy makes no sense when setting an entire row
-        if (d->strategy == OnFieldChange)
-            d->strategy = OnRowChange;
         for (int i = 0; i < record.count(); ++i) {
             int idx = d->nameToIndex(record.fieldName(i));
             if (idx == -1)
@@ -1251,13 +1247,10 @@ bool QSqlTableModel::setRecord(int row, const QSqlRecord &record)
         if (mrow.op != QSqlTableModelPrivate::Insert)
             emit dataChanged(createIndex(row, 0), createIndex(row, columnCount() - 1));
 
-        bool isOk = true;
-        if (oldStrategy == OnFieldChange)
-            isOk = submitAll();
+        if (d->strategy == OnFieldChange)
+            return submitAll();
 
-        d->strategy = oldStrategy;
-
-        return isOk;
+        return true;
     }
     case OnManualSubmit: {
         QSqlTableModelPrivate::ModifiedRow &mrow = d->cache[row];
