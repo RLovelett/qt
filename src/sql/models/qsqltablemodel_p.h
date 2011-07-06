@@ -102,7 +102,15 @@ public:
 
     struct ModifiedRow
     {
-        inline ModifiedRow(Op o = None, const QSqlRecord &r = QSqlRecord()): op(o), rec(r) { clearGenerated(rec);}
+        inline ModifiedRow(Op o = None, const QSqlRecord &r = QSqlRecord(), const QSqlRecord &pVals = QSqlRecord())
+            : op(o), rec(r), primaryValues(pVals) { clearGenerated(rec); }
+        inline void setValue(int c, const QVariant &v)
+        {
+            rec.setValue(c, v);
+            rec.setGenerated(c, true);
+        }
+    // These data members should not be set directly.
+    // Exception: rec is exposed via primeInsert() signal.
         Op op;
         QSqlRecord rec;
         QSqlRecord primaryValues;
