@@ -694,7 +694,6 @@ bool QSqlTableModel::submitAll()
         d->clearCache();
         return select();
     }
-    return false;
 }
 
 /*!
@@ -1059,10 +1058,9 @@ bool QSqlTableModel::insertRows(int row, int count, const QModelIndex &parent)
     switch (d->strategy) {
     case OnFieldChange:
     case OnRowChange:
-        if (count != 1)
-            return false;
-        // fallthrough
     case OnManualSubmit:
+        if (d->strategy != OnManualSubmit && count != 1)
+            return false;
         beginInsertRows(parent, row, row + count - 1);
         if (d->strategy != OnManualSubmit)
             d->cache.empty();
