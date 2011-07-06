@@ -102,7 +102,7 @@ public:
 
     struct ModifiedRow
     {
-        ModifiedRow(Op o = None, const QSqlRecord &r = QSqlRecord()): op(o), rec(r) { clearGenerated(rec);}
+        inline ModifiedRow(Op o = None, const QSqlRecord &r = QSqlRecord()): op(o), rec(r) { clearGenerated(rec);}
         Op op;
         QSqlRecord rec;
         QSqlRecord primaryValues;
