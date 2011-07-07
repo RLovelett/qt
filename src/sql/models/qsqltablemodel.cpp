@@ -487,11 +487,6 @@ bool QSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
 
     QSqlTableModelPrivate::ModifiedRow &row = d->cache[index.row()];
 
-    if (d->strategy != OnManualSubmit && row.op == QSqlTableModelPrivate::Insert) {
-        row.setValue(index.column(), value);
-        return true;
-    }
-
     if (row.op == QSqlTableModelPrivate::None) {
         row = QSqlTableModelPrivate::ModifiedRow(QSqlTableModelPrivate::Update,
                                                  d->rec,
@@ -499,6 +494,10 @@ bool QSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
     }
 
     row.setValue(index.column(), value);
+
+    if (d->strategy != OnManualSubmit && row.op == QSqlTableModelPrivate::Insert) {
+        return true;
+    }
 
     bool isOk = true;
     if (d->strategy == OnFieldChange) {
