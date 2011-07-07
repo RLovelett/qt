@@ -503,15 +503,6 @@ bool QSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
             select();
     }
 
-    switch (d->strategy) {
-    case OnFieldChange: {
-        break; }
-    case OnRowChange: {
-        break; }
-    case OnManualSubmit: {
-        break; }
-    }
-
     emit dataChanged(index, index);
 
     return isOk;
