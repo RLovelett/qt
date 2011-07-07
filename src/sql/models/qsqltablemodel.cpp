@@ -497,11 +497,14 @@ bool QSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
     row.setValue(index.column(), value);
 
     bool isOk = true;
-    switch (d->strategy) {
-    case OnFieldChange: {
+    if (d->strategy == OnFieldChange) {
         isOk = updateRowInTable(index.row(), row.rec);
         if (isOk)
             select();
+    }
+
+    switch (d->strategy) {
+    case OnFieldChange: {
         break; }
     case OnRowChange: {
         break; }
