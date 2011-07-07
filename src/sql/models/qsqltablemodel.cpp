@@ -1224,7 +1224,8 @@ bool QSqlTableModel::setRecord(int row, const QSqlRecord &record)
 
     switch (d->strategy) {
     case OnFieldChange:
-    case OnRowChange: {
+    case OnRowChange:
+    case OnManualSubmit: {
         if (d->strategy == OnFieldChange && d->cache.value(row).op != QSqlTableModelPrivate::Insert)
             d->cache.clear();
 
@@ -1249,29 +1250,14 @@ bool QSqlTableModel::setRecord(int row, const QSqlRecord &record)
         if (d->strategy != OnManualSubmit && mrow.op != QSqlTableModelPrivate::Insert)
             emit dataChanged(createIndex(row, 0), createIndex(row, columnCount() - 1));
 
+        if (d->strategy == OnManualSubmit && isOk)
+            emit dataChanged(createIndex(row, 0), createIndex(row, columnCount() - 1));
+
         if (d->strategy == OnFieldChange)
             return submitAll();
 
         if (d->strategy != OnManualSubmit)
             return true;
-    }
-    case OnManualSubmit: {
-        QSqlTableModelPrivate::ModifiedRow &mrow = d->cache[row];
-        if (mrow.op == QSqlTableModelPrivate::None)
-            mrow = QSqlTableModelPrivate::ModifiedRow(QSqlTableModelPrivate::Update,
-                                                      d->rec,
-                                                      d->primaryValues(indexInQuery(createIndex(row, 0)).row()));
-        bool isOk = true;
-        for (int i = 0; i < record.count(); ++i) {
-            int idx = d->nameToIndex(record.fieldName(i));
-            if (idx == -1)
-                isOk = false;
-            else
-                mrow.setValue(idx, record.value(i));
-        }
-
-        if (d->strategy == OnManualSubmit && isOk)
-            emit dataChanged(createIndex(row, 0), createIndex(row, columnCount() - 1));
 
         if (d->strategy == OnManualSubmit)
             return isOk;
