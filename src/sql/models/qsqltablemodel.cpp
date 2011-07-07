@@ -494,24 +494,23 @@ bool QSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
                                                  d->primaryValues(indexInQuery(index).row()));
     }
 
+    row.setValue(index.column(), value);
+
     bool isOk = true;
     switch (d->strategy) {
     case OnFieldChange: {
-        row.setValue(index.column(), value);
         isOk = updateRowInTable(index.row(), row.rec);
         if (isOk)
             select();
-        emit dataChanged(index, index);
         break; }
     case OnRowChange: {
-        row.setValue(index.column(), value);
-        emit dataChanged(index, index);
         break; }
     case OnManualSubmit: {
-        row.setValue(index.column(), value);
-        emit dataChanged(index, index);
         break; }
     }
+
+    emit dataChanged(index, index);
+
     return isOk;
 }
 
