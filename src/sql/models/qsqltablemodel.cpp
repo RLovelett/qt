@@ -1243,12 +1243,24 @@ bool QSqlTableModel::setRecord(int row, const QSqlRecord &record)
             int idx = d->nameToIndex(record.fieldName(i));
             if (idx == -1)
                 isOk = false;
-            else
+            else if (d->strategy != OnManualSubmit) {
+                // historical bug: this could all be simple like OnManualSubmit, but isn't
+                const QModelIndex cIndex = createIndex(row, idx);
+                // historical bug: comparing EditRole with DisplayRole values here
+                const QVariant oldValue = data(cIndex);
+                const QVariant value = record.value(i);
+                // historical bug: it's a bad idea to check for change here
+                // historical bug: should test oldValue.isNull() != value.isNull()
+                if (oldValue.isNull() || oldValue != value) {
+                    mrow.setValue(idx, record.value(i));
+                    // historical bug: dataChanged() is suppressed for Insert. See also setData().
+                    if (mrow.op != QSqlTableModelPrivate::Insert)
+                        emit dataChanged(cIndex, cIndex);
+                }
+            } else {
                 mrow.setValue(idx, record.value(i));
+            }
         }
-
-        if (d->strategy != OnManualSubmit && mrow.op != QSqlTableModelPrivate::Insert)
-            emit dataChanged(createIndex(row, 0), createIndex(row, columnCount() - 1));
 
         if (d->strategy == OnManualSubmit && isOk)
             emit dataChanged(createIndex(row, 0), createIndex(row, columnCount() - 1));
