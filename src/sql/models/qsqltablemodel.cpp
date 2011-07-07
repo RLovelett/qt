@@ -476,6 +476,11 @@ bool QSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
     if (!index.isValid() || index.column() >= d->rec.count() || index.row() >= rowCount())
         return false;
 
+    if (d->strategy == OnRowChange && !d->cache.isEmpty() && !d->cache.contains(index.row())) {
+        submit();
+        d->cache.clear();
+    }
+
     bool isOk = true;
     switch (d->strategy) {
     case OnFieldChange: {
@@ -494,10 +499,6 @@ bool QSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
         emit dataChanged(index, index);
         break; }
     case OnRowChange: {
-        if (!d->cache.isEmpty() && !d->cache.contains(index.row())) {
-            submit();
-            d->cache.clear();
-        }
         QSqlTableModelPrivate::ModifiedRow &row = d->cache[index.row()];
         if (row.op == QSqlTableModelPrivate::Insert) {
             row.setValue(index.column(), value);
