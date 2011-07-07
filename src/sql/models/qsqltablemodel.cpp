@@ -488,12 +488,15 @@ bool QSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
         return true;
     }
 
-    bool isOk = true;
-    switch (d->strategy) {
-    case OnFieldChange: {
+    if (d->strategy == OnFieldChange || row.op == QSqlTableModelPrivate::None) {
         row = QSqlTableModelPrivate::ModifiedRow(QSqlTableModelPrivate::Update,
                                                  d->rec,
                                                  d->primaryValues(indexInQuery(index).row()));
+    }
+
+    bool isOk = true;
+    switch (d->strategy) {
+    case OnFieldChange: {
         row.setValue(index.column(), value);
         isOk = updateRowInTable(index.row(), row.rec);
         if (isOk)
@@ -501,20 +504,10 @@ bool QSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
         emit dataChanged(index, index);
         break; }
     case OnRowChange: {
-        if (row.op == QSqlTableModelPrivate::None) {
-            row = QSqlTableModelPrivate::ModifiedRow(QSqlTableModelPrivate::Update,
-                                                     d->rec,
-                                                     d->primaryValues(indexInQuery(index).row()));
-        }
         row.setValue(index.column(), value);
         emit dataChanged(index, index);
         break; }
     case OnManualSubmit: {
-        if (row.op == QSqlTableModelPrivate::None) {
-            row = QSqlTableModelPrivate::ModifiedRow(QSqlTableModelPrivate::Update,
-                                                     d->rec,
-                                                     d->primaryValues(indexInQuery(index).row()));
-        }
         row.setValue(index.column(), value);
         emit dataChanged(index, index);
         break; }
