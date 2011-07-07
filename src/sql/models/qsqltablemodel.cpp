@@ -495,18 +495,15 @@ bool QSqlTableModel::setData(const QModelIndex &index, const QVariant &value, in
 
     row.setValue(index.column(), value);
 
-    if (d->strategy != OnManualSubmit && row.op == QSqlTableModelPrivate::Insert) {
-        return true;
-    }
-
     bool isOk = true;
-    if (d->strategy == OnFieldChange) {
+    if (d->strategy == OnFieldChange && row.op != QSqlTableModelPrivate::Insert) {
         isOk = updateRowInTable(index.row(), row.rec);
         if (isOk)
             select();
     }
 
-    emit dataChanged(index, index);
+    if (d->strategy == OnManualSubmit || row.op != QSqlTableModelPrivate::Insert)
+        emit dataChanged(index, index);
 
     return isOk;
 }
