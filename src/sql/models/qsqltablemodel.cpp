@@ -1256,14 +1256,12 @@ bool QSqlTableModel::setRecord(int row, const QSqlRecord &record)
         if (d->strategy == OnFieldChange)
             return submitAll();
 
-        if (d->strategy != OnManualSubmit)
-            return true;
-
         if (d->strategy == OnManualSubmit)
             return isOk;
+
+        return true;
     }
     }
-    return false;
 }
 
 QT_END_NAMESPACE
