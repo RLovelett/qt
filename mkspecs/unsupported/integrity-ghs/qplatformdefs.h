@@ -169,6 +169,16 @@
 #define QT_VSNPRINTF		::vsnprintf
 #endif
 
+static inline char *strdup(const char *src)
+{
+    if (!src)
+        return 0;
+    char *dst = (char *)::malloc(strlen(src) + 1);
+    if (dst)
+        strcpy(dst, src);
+    return dst;
+}
+
 #ifndef MAXNAMLEN
 #  define MAXNAMLEN NAME_MAX
 #endif
