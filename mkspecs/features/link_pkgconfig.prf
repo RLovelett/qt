@@ -5,8 +5,13 @@ for(PKGCONFIG_LIB, $$list($$unique(PKGCONFIG))) {
     # don't proceed if the .pro asks for a package we don't have!
     !packagesExist($$PKGCONFIG_LIB):error("Package $$PKGCONFIG_LIB not found")
 
-    QMAKE_CXXFLAGS += $$system($$PKG_CONFIG --cflags $$PKGCONFIG_LIB)
-    QMAKE_CFLAGS += $$system($$PKG_CONFIG --cflags $$PKGCONFIG_LIB)
+    INCLUDEPATH += $$system($$PKG_CONFIG --cflags $$PKGCONFIG_LIB | tr \' \' \'\\n\' | grep ^-I | cut -d I -f 2-)
+    DEFINES += $$system($$PKG_CONFIG --cflags $$PKGCONFIG_LIB | tr \' \' \'\\n\' | grep ^-D | cut -d D -f 2-)
+
+    PKGCONFIG_CFLAGS = $$system($$PKG_CONFIG --cflags $$PKGCONFIG_LIB | tr \' \' \'\\n\' | grep \'^-[^ID]\\|^[^-]\')
+
+    QMAKE_CXXFLAGS += $$PKGCONFIG_CFLAGS
+    QMAKE_CFLAGS += $$PKGCONFIG_CFLAGS
     LIBS += $$system($$PKG_CONFIG --libs $$PKGCONFIG_LIB)
 }
 
