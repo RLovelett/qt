@@ -598,15 +598,8 @@ void QProcessPrivate::startProcess()
     argv[0] = dupProgramName;
 
     // Add every argument to the list
-    for (int i = 0; i < arguments.count(); ++i) {
-        QString arg = arguments.at(i);
-#ifdef Q_OS_MAC
-        // Mac OS X uses UTF8 for exec, regardless of the system locale.
-        argv[i + 1] = ::strdup(arg.toUtf8().constData());
-#else
-        argv[i + 1] = ::strdup(arg.toLocal8Bit().constData());
-#endif
-    }
+    for (int i = 0; i < arguments.count(); ++i)
+        argv[i + 1] = ::strdup(QFile::encodeName(arguments.at(i)).constData());
 
     // Duplicate the environment.
     int envc = 0;
@@ -1372,13 +1365,8 @@ bool QProcessPrivate::startDetached(const QString &program, const QStringList &a
                 QT_CHDIR(encodedWorkingDirectory.constData());
 
             char **argv = new char *[arguments.size() + 2];
-            for (int i = 0; i < arguments.size(); ++i) {
-#ifdef Q_OS_MAC
-                argv[i + 1] = ::strdup(arguments.at(i).toUtf8().constData());
-#else
-                argv[i + 1] = ::strdup(arguments.at(i).toLocal8Bit().constData());
-#endif
-            }
+            for (int i = 0; i < arguments.size(); ++i)
+                argv[i + 1] = ::strdup(QFile::encodeName(arguments.at(i)).constData());
             argv[arguments.size() + 1] = 0;
 
             if (!program.contains(QLatin1Char('/'))) {
