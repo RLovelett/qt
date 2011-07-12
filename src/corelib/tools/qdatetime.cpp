@@ -5108,18 +5108,50 @@ QDateTimeParser::StateNode QDateTimeParser::parse(QString &input, int &cursorPos
                 const QDate date(year, month, day);
                 const int diff = dayofweek - date.dayOfWeek();
                 if (diff != 0 && state == Acceptable && isSet & DayOfWeekSection) {
-                    conflicts = isSet & DaySection;
                     const SectionNode &sn = sectionNode(currentSectionIndex);
                     if (sn.type == DayOfWeekSection || currentSectionIndex == -1) {
-                        // dayofweek should be preferred
-                        day += diff;
-                        if (day <= 0) {
-                            day += 7;
-                        } else if (day > date.daysInMonth()) {
-                            day -= 7;
+                        if (!(isSet & DaySection)) {
+                            // if DaySection not set, simply reset the day to match the day of week
+                            day += diff;
+                            if (day <= 0) {
+                                day += 7;
+                            } else if (day > date.daysInMonth()) {
+                                day -= 7;
+                            }
+                            QDTPDEBUG << year << month << day << dayofweek
+                                      << diff << QDate(year, month, day).dayOfWeek();
+                        } else if (!(isSet & YearSection)) {
+                            // next, if year is free, cycle to find a year such that day of week works
+                            int currentYear = year + 1;
+                            QDate testDate(currentYear, month, day);
+                            int currentDiff = dayofweek - testDate.dayOfWeek();
+                            while (currentDiff != 0) {
+                                // mathematically, this must succeed...each year, the day of the week a date
+                                // falls on changes eventually cycling
+                                ++currentYear;
+                                testDate.setDate(currentYear, month, day);
+                                currentDiff = dayofweek - testDate.dayOfWeek();
+                            }
+                            year = currentYear;
+                        } else if (!(isSet & MonthSection)) {
+                            // try cycling all the months...not guaranteed to work
+                            bool conflict = true;
+                            for (int i = month + 1; i != month; ++i) {
+                                if (i == 13) 
+                                    i = 1;
+                                QDate testDate(year, i, day);
+                                if (dayofweek == testDate.dayOfWeek()) {
+                                    month = i;
+                                    conflict = false;
+                                    break;
+                                }
+                            }   
+                            if (conflict) 
+                                conflicts = isSet & DaySection;
+                        } else {
+                             // there is an inherent conflict
+                            conflicts = isSet & DaySection;
                         }
-                        QDTPDEBUG << year << month << day << dayofweek
-                                  << diff << QDate(year, month, day).dayOfWeek();
                     }
                 }
                 bool needfixday = false;

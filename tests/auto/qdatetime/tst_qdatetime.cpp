@@ -1369,6 +1369,12 @@ void tst_QDateTime::dateFromStringFormat_data()
     QTest::newRow("data35") << sunday + " 2006" << QString("dddd yyyy") << QDate(2006, 1, 1);
 
     QTest::newRow("data36 ") << tuesday + " 2007 " + march << QString("dddd yyyy MMMM") << QDate(2007, 3, 6);
+    
+    QTest::newRow("data37") << monday + " 07 11" << QString("dddd MM dd") << QDate(1904, 7, 11);
+    QTest::newRow("data38") << thursday + " 13 " + february << QString("dddd dd MMMM") << QDate(1902, 2, 13);
+    QTest::newRow("data39") << thursday + " 13 1903" << QString("dddd dd yyyy") << QDate(1903, 8, 13);
+    QTest::newRow("data40") << monday + " 01 01" << QString("dddd MM dd") << QDate(1900, 1, 1);
+    QTest::newRow("data41") << monday + " 01 1900" << QString("dddd MM yyyy") << QDate(1900, 1, 1);
 
 }
 
