@@ -74,7 +74,8 @@ public:
     inline QStringList(std::initializer_list<QString> args) : QList<QString>(args) { }
 #endif
 
-    inline void sort();
+    inline void sort(Qt::CaseSensitivity cs);
+    inline void sort(); // Qt5: merge with the above
     inline int removeDuplicates();
 
     inline QString join(const QString &sep) const;
@@ -129,7 +130,8 @@ public:
 };
 
 namespace QtPrivate {
-    void Q_CORE_EXPORT QStringList_sort(QStringList *that);
+    void Q_CORE_EXPORT QStringList_sort(QStringList *that, Qt::CaseSensitivity cs);
+    void Q_CORE_EXPORT QStringList_sort(QStringList *that); // Qt5: merge with the above
     int Q_CORE_EXPORT QStringList_removeDuplicates(QStringList *that);
     QString Q_CORE_EXPORT QStringList_join(const QStringList *that, const QString &sep);
     QStringList Q_CORE_EXPORT QStringList_filter(const QStringList *that, const QString &str,
@@ -147,6 +149,11 @@ namespace QtPrivate {
     int Q_CORE_EXPORT QStringList_indexOf(const QStringList *that, QRegExp &rx, int from);
     int Q_CORE_EXPORT QStringList_lastIndexOf(const QStringList *that, QRegExp &rx, int from);
 #endif
+}
+
+inline void QStringList::sort(Qt::CaseSensitivity cs)
+{
+    QtPrivate::QStringList_sort(this, cs);
 }
 
 inline void QStringList::sort()

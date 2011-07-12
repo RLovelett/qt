@@ -63,6 +63,7 @@ public slots:
     void init();
     void cleanup();
 private slots:
+    void sort();
     void filter();
     void replaceInStrings();
     void removeDuplicates();
@@ -180,6 +181,21 @@ void tst_QStringList::filter()
     list3 << "Bill Gates" << "Joe Blow" << "Bill Clinton";
     list3 = list3.filter( QRegExp("[i]ll") );
     list4 << "Bill Gates" << "Bill Clinton";
+    QCOMPARE( list3, list4 );
+}
+
+void tst_QStringList::sort()
+{
+    QStringList list1, list2;
+    list1 << "alpha" << "beta" << "BETA" << "gamma" << "Gamma" << "gAmma" << "epsilon";
+    list1.sort();
+    list2 << "BETA" << "Gamma" << "alpha" << "beta" << "epsilon" << "gAmma" << "gamma";
+    QCOMPARE( list1, list2 );
+
+    QStringList list3, list4;
+    list3 << "alpha" << "beta" << "BETA" << "gamma" << "Gamma" << "gAmma" << "epsilon";
+    list3.sort(Qt::CaseInsensitive);
+    list4 << "alpha" << "beta" << "BETA" << "epsilon" << "Gamma" << "gAmma" << "gamma";
     QCOMPARE( list3, list4 );
 }
 
