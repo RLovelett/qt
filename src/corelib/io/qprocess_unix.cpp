@@ -574,7 +574,7 @@ void QProcessPrivate::startProcess()
     QByteArray encodedProgramName = QFile::encodeName(program);
 #ifdef Q_OS_MAC
     // allow invoking of .app bundles on the Mac.
-    QFileInfo fileInfo(QString::fromUtf8(encodedProgramName.constData()));
+    QFileInfo fileInfo(program);
     if (encodedProgramName.endsWith(".app") && fileInfo.isDir()) {
         QCFType<CFURLRef> url = CFURLCreateWithFileSystemPath(0,
                                                           QCFString(fileInfo.absoluteFilePath()),
@@ -588,7 +588,7 @@ void QProcessPrivate::startProcess()
         }
         if (url) {
             QCFString str = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
-            encodedProgramName += "/Contents/MacOS/" + static_cast<QString>(str).toUtf8();
+            encodedProgramName += "/Contents/MacOS/" + QCFString::toQString(str).toUtf8();
         }
     }
 #endif
