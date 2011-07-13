@@ -1532,33 +1532,40 @@ void QTextEngine::itemize() const
     const ushort *e = uc + length;
     int lastScript = QUnicodeTables::Common;
     while (uc < e) {
-        int script = QUnicodeTables::script(*uc);
-        if (script == QUnicodeTables::Inherited)
-            script = lastScript;
-        analysis->flags = QScriptAnalysis::None;
-        if (*uc == QChar::ObjectReplacementCharacter) {
+        switch (*uc) {
+        case QChar::ObjectReplacementCharacter:
             if (analysis->bidiLevel % 2)
                 --analysis->bidiLevel;
             analysis->script = QUnicodeTables::Common;
             analysis->flags = QScriptAnalysis::Object;
-        } else if (*uc == QChar::LineSeparator) {
+            break;
+        case QChar::LineSeparator:
             if (analysis->bidiLevel % 2)
                 --analysis->bidiLevel;
             analysis->script = QUnicodeTables::Common;
             analysis->flags = QScriptAnalysis::LineOrParagraphSeparator;
             if (option.flags() & QTextOption::ShowLineAndParagraphSeparators)
                 *const_cast<ushort*>(uc) = 0x21B5; // visual line separator
-        } else if (*uc == 9) {
+            break;
+        case 9: // Tab
             analysis->script = QUnicodeTables::Common;
             analysis->flags = QScriptAnalysis::Tab;
             analysis->bidiLevel = control.baseLevel();
-        } else if ((*uc == 32 || *uc == QChar::Nbsp)
-                   && (option.flags() & QTextOption::ShowTabsAndSpaces)) {
-            analysis->script = QUnicodeTables::Common;
-            analysis->flags = QScriptAnalysis::Space;
-            analysis->bidiLevel = control.baseLevel();
-        } else {
-            analysis->script = script;
+            break;
+        case 32: // Space
+        case QChar::Nbsp:
+            if (option.flags() & QTextOption::ShowTabsAndSpaces) {
+                analysis->script = QUnicodeTables::Common;
+                analysis->flags = QScriptAnalysis::Space;
+                analysis->bidiLevel = control.baseLevel();
+                break;
+            }
+        // fall through
+        default:
+            int script = QUnicodeTables::script(*uc);
+            analysis->script = script == QUnicodeTables::Inherited ? lastScript : script;
+            analysis->flags = QScriptAnalysis::None;
+            break;
         }
         lastScript = analysis->script;
         ++uc;
