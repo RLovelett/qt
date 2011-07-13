@@ -67,9 +67,9 @@ LanguageChooser::LanguageChooser(QWidget *parent)
 
     buttonBox = new QDialogButtonBox;
 
-    showAllButton = buttonBox->addButton(tr("Show All"),
+    showAllButton = buttonBox->addButton("Show All",
                                          QDialogButtonBox::ActionRole);
-    hideAllButton = buttonBox->addButton(tr("Hide All"),
+    hideAllButton = buttonBox->addButton("Hide All",
                                          QDialogButtonBox::ActionRole);
 
     connect(showAllButton, SIGNAL(clicked()), this, SLOT(showAll()));
@@ -110,9 +110,9 @@ void LanguageChooser::changeEvent(QEvent *event)
     if (event->type() == QEvent::LanguageChange) {
         showAllButton->setText(tr("Show All"));
         hideAllButton->setText(tr("Hide All"));
-    } else { 
-        QDialog::changeEvent(event);
     }
+
+    QDialog::changeEvent(event);
 }
 
 void LanguageChooser::checkBoxToggled()
