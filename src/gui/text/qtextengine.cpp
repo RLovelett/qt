@@ -2439,7 +2439,7 @@ void QTextEngine::indexAdditionalFormats()
    between the text that gets truncated and the ellipsis. This is important to get
    correctly shaped results for arabic text.
 */
-static bool nextCharJoins(const QString &string, int pos)
+static inline bool nextCharJoins(const QString &string, int pos)
 {
     while (pos < string.length() && string.at(pos).category() == QChar::Mark_NonSpacing)
         ++pos;
@@ -2448,13 +2448,14 @@ static bool nextCharJoins(const QString &string, int pos)
     return string.at(pos).joining() != QChar::OtherJoining;
 }
 
-static bool prevCharJoins(const QString &string, int pos)
+static inline bool prevCharJoins(const QString &string, int pos)
 {
     while (pos > 0 && string.at(pos - 1).category() == QChar::Mark_NonSpacing)
         --pos;
     if (pos == 0)
         return false;
-    return (string.at(pos - 1).joining() == QChar::Dual || string.at(pos - 1).joining() == QChar::Center);
+    QChar::Joining joining = string.at(pos - 1).joining();
+    return (joining == QChar::Dual || joining == QChar::Center);
 }
 
 QString QTextEngine::elidedText(Qt::TextElideMode mode, const QFixed &width, int flags) const
