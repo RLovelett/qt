@@ -309,7 +309,7 @@ QT_END_NAMESPACE
 
     QWidget *target = [self dragTargetHitTest:sender];
     if (!target)
-        return [super draggingEntered:sender];
+        return NSDragOperationNone;
     if (target->testAttribute(Qt::WA_DropSiteRegistered) == false)
         return NSDragOperationNone;
 
@@ -321,7 +321,7 @@ QT_END_NAMESPACE
 {
     QWidget *target = [self dragTargetHitTest:sender];
     if (!target)
-        return [super draggingUpdated:sender];
+        return NSDragOperationNone;
 
     if (target == *currentDragTarget()) {
         // The drag continues to move over the widget that we have sendt
@@ -345,7 +345,7 @@ QT_END_NAMESPACE
 {
     QWidget *target = [self dragTargetHitTest:sender];
     if (!target)
-        return [super draggingExited:sender];
+        return;
 
     if (*currentDragTarget()) {
         [reinterpret_cast<NSView *>((*currentDragTarget())->winId()) draggingExited:sender];
@@ -357,7 +357,7 @@ QT_END_NAMESPACE
 {
     QWidget *target = [self dragTargetHitTest:sender];
     if (!target)
-        return [super performDragOperation:sender];
+        return NO;
 
     BOOL dropResult = NO;
     if (*currentDragTarget()) {
