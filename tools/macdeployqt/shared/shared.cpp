@@ -473,6 +473,10 @@ void deployPlugins(const ApplicationBundleInfo &appBundleInfo, const QString &pl
             // Deploy the tcpserver plugin (from qmltooling folder) if QtDeclarative.framework is in use
             if (deployedFrameworks.indexOf("QtDeclarative.framework") == -1 && pluginName.contains("tcpserver"))
                 continue;
+
+            // Deploy  qsvg plugins if QtXml.framework is in use
+            if (deployedFrameworks.indexOf("QtXml.framework") == -1 && pluginName.contains("qsvg"))
+                continue;
         }
 
         QDir dir;
