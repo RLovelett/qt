@@ -78,6 +78,7 @@ private slots:
     void fractionalFontSize();
     void titleAndDescription();
     void gradientInterpolation();
+    void rendererGeneratorRoundTrip();
 };
 
 tst_QSvgGenerator::tst_QSvgGenerator()
@@ -437,6 +438,80 @@ void tst_QSvgGenerator::gradientInterpolation()
     }
 
     QVERIFY(sqrImageDiff(image, refImage) < 2); // pixel error < 1.41 (L2-norm)
+}
+
+#define DIFF_RGB_SIGNIFICANT(rgb1,rgb2) \
+  ((abs((rgb2)-(rgb1)) & 0xff) > 0x10 || \
+   (abs((rgb2)-(rgb1)) & 0xff00) > 0x1000 || \
+   (abs((rgb2)-(rgb1)) & 0xff0000) > 0x100000)
+void tst_QSvgGenerator::rendererGeneratorRoundTrip()
+{
+    QImage refImage(100, 100, QImage::Format_ARGB32_Premultiplied);
+    QImage roundtripedImage(100, 100, QImage::Format_ARGB32_Premultiplied);
+    QByteArray byteArray;
+    QBuffer buffer(&byteArray);
+
+    // filling images to avoid uninitialized memory blocks
+    refImage.fill(0);
+    roundtripedImage.fill(0);
+
+    // loading and rendering reference image
+    {
+        QPainter painter;
+        QSvgRenderer renderer;
+
+        QVERIFY(renderer.load(QString(SRCDIR "referenceSvgs/poweroff.svg")));
+        QVERIFY(painter.begin(&refImage));
+        renderer.render(&painter);
+        QVERIFY(painter.end());
+    }
+
+    // rendering it in XML byte array
+    {
+        QPainter painter;
+        QSvgRenderer renderer;
+         QSvgGenerator generator;
+
+        QVERIFY(renderer.load(QString(SRCDIR "referenceSvgs/poweroff.svg")));
+        buffer.open(QIODevice::WriteOnly);
+        generator.setSize(renderer.viewBox().size());
+        generator.setViewBox(renderer.viewBoxF());
+        generator.setOutputDevice(&buffer);
+        QVERIFY(painter.begin(&generator));
+        renderer.render(&painter);
+        QVERIFY(painter.end());
+        buffer.close();
+    }
+
+    // loading again the generated XML and rendering it in roundtriped image
+    {
+        QPainter painter;
+        QSvgRenderer renderer;
+
+        QVERIFY(renderer.load(byteArray));
+        QVERIFY(painter.begin(&roundtripedImage));
+        renderer.render(&painter);
+        QVERIFY(painter.end());
+    }
+
+    // comparing images: 5% of differences between images are too much
+    int differences = 0;
+    for (int x = 0; x < refImage.width(); ++x)
+        for (int y = 0; y < refImage.height(); ++y)
+          if (DIFF_RGB_SIGNIFICANT(refImage.pixel(x, y),
+                                   roundtripedImage.pixel(x,y)))
+                ++differences;
+    //QWARN(QString("%1 differences").arg(differences).toAscii());
+    if (differences > .05 * refImage.width() * refImage.height()) {
+        QWARN(QString("%1 differences").arg(differences).toAscii());
+        refImage.save(SRCDIR "roundtrip_original.png");
+        roundtripedImage.save(SRCDIR "roundtrip_roundtriped.png");
+        QFile file(SRCDIR "roundtrip.svg");
+        file.open(QIODevice::WriteOnly);
+        file.write(byteArray);
+        QFAIL("bitmap images of original SVG and QSvgGenerator roundtriped "
+              "SVG differ");
+    }
 }
 
 QTEST_MAIN(tst_QSvgGenerator)
