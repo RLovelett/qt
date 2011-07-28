@@ -64,7 +64,8 @@ QT_BEGIN_NAMESPACE
     p->setOpacity(oldOpacity * states.fillOpacity);         \
     command;                                                \
     p->setPen(oldPen);                                      \
-    if (oldPen.widthF() != 0) {                             \
+    if (oldPen.widthF() != 0 &&                             \
+         oldPen.brush().style() != Qt::NoBrush) {           \
         p->setOpacity(oldOpacity * states.strokeOpacity);   \
         p->setBrush(Qt::NoBrush);                           \
         command;                                            \
