@@ -327,8 +327,20 @@ public:
         QString width;
 
         d_func()->pen = spen;
+        Qt::PenStyle penStyle = spen.style();
 
-        switch (spen.style()) {
+        switch (spen.brush().style()) {
+        case Qt::SolidPattern:
+            break;
+        case Qt::NoBrush:
+            penStyle = Qt::NoPen; // emulate no pen brush with no pen
+            break;
+        default:
+            qWarning() << "Pen brushes other than Qt::SolidPattern and "
+                "Qt::NoBrush are not supported, using Qt::SolidPattern";
+        }
+
+        switch (penStyle) {
         case Qt::NoPen:
             stream() << QLatin1String("stroke=\"none\" ");
 
