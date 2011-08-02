@@ -1633,7 +1633,7 @@ void Q3DataTable::loadNextPage()
 	return;
     }
 
-    while ( endIdx > 0 && !sqlCursor()->seek( endIdx ) )
+    while ( endIdx >= 0 && !sqlCursor()->seek( endIdx ) )
 	endIdx--;
     if ( endIdx != ( startIdx + pageSize + lookAhead ) )
 	d->haveAllRows = true;
@@ -1642,7 +1642,7 @@ void Q3DataTable::loadNextPage()
     SelectionMode m = selectionMode();
     clearSelection();
     setSelectionMode( NoSelection );
-    setNumRows( endIdx ? endIdx + 1 : 0 );
+    setNumRows( endIdx >= 0 ? endIdx + 1 : 0 );
     sqlCursor()->seek( currentRow() );
     setSelectionMode( m );
 }
