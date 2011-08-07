@@ -264,6 +264,7 @@ Configure::Configure(int& argc, char** argv)
     dictionary[ "SSE" ]             = "auto";
     dictionary[ "SSE2" ]            = "auto";
     dictionary[ "IWMMXT" ]          = "auto";
+    dictionary[ "NEON" ]            = "no";
     dictionary[ "SYNCQT" ]          = "auto";
     dictionary[ "CE_CRT" ]          = "no";
     dictionary[ "CETEST" ]          = "auto";
@@ -935,6 +936,10 @@ void Configure::parseCmdLine()
             dictionary[ "IWMMXT" ] = "no";
         else if (configCmdLine.at(i) == "-iwmmxt")
             dictionary[ "IWMMXT" ] = "yes";
+        else if (configCmdLine.at(i) == "-no-neon")
+            dictionary[ "NEON" ] = "no";
+        else if (configCmdLine.at(i) == "-neon")
+            dictionary[ "NEON" ] = "yes";
 
         else if (configCmdLine.at(i) == "-no-openssl") {
               dictionary[ "OPENSSL"] = "no";
@@ -1534,6 +1539,7 @@ void Configure::applySpecSpecifics()
         dictionary[ "SSE2" ]                = "no";
         dictionary[ "MMX" ]                 = "no";
         dictionary[ "IWMMXT" ]              = "no";
+        dictionary[ "NEON" ]                = "no";
         dictionary[ "CE_CRT" ]              = "yes";
         dictionary[ "WEBKIT" ]              = "no";
         dictionary[ "PHONON" ]              = "yes";
@@ -1573,6 +1579,7 @@ void Configure::applySpecSpecifics()
         dictionary[ "SSE2" ]                = "no";
         dictionary[ "MMX" ]                 = "no";
         dictionary[ "IWMMXT" ]              = "no";
+        dictionary[ "NEON" ]                = "no";
         dictionary[ "CE_CRT" ]              = "no";
         dictionary[ "DIRECT3D" ]            = "no";
         dictionary[ "WEBKIT" ]              = "yes";
@@ -1687,7 +1694,7 @@ bool Configure::displayHelp()
                     "[-system-libtiff] [-no-libjpeg] [-qt-libjpeg] [-system-libjpeg]\n"
                     "[-no-libmng] [-qt-libmng] [-system-libmng] [-no-qt3support] [-mmx]\n"
                     "[-no-mmx] [-3dnow] [-no-3dnow] [-sse] [-no-sse] [-sse2] [-no-sse2]\n"
-                    "[-no-iwmmxt] [-iwmmxt] [-openssl] [-openssl-linked]\n"
+                    "[-no-iwmmxt] [-iwmmxt] [-no-neon] [-neon] [-openssl] [-openssl-linked]\n"
                     "[-no-openssl] [-no-dbus] [-dbus] [-dbus-linked] [-platform <spec>]\n"
                     "[-qtnamespace <namespace>] [-qtlibinfix <infix>] [-no-phonon]\n"
                     "[-phonon] [-no-phonon-backend] [-phonon-backend]\n"
@@ -1867,6 +1874,8 @@ bool Configure::displayHelp()
         desc("SSE", "yes",      "-sse",                 "Compile with use of SSE instructions");
         desc("SSE2", "no",      "-no-sse2",             "Do not compile with use of SSE2 instructions");
         desc("SSE2", "yes",      "-sse2",               "Compile with use of SSE2 instructions");
+        desc("NEON", "no",      "-no-neon",             "Do not compile with use of NEON instructions");
+        desc("NEON", "yes",      "-neon",               "Compile with use of NEON instructions");
         desc("OPENSSL", "no",    "-no-openssl",         "Do not compile in OpenSSL support");
         desc("OPENSSL", "yes",   "-openssl",            "Compile in run-time OpenSSL support");
         desc("OPENSSL", "linked","-openssl-linked",     "Compile in linked OpenSSL support");
@@ -3004,6 +3013,8 @@ void Configure::generateCachefile()
             configStream << " sse2";
         if (dictionary[ "IWMMXT" ] == "yes")
             configStream << " iwmmxt";
+        if (dictionary[ "NEON" ] == "yes")
+            configStream << " neon";
         if (dictionary["INCREDIBUILD_XGE"] == "yes")
             configStream << " incredibuild_xge";
         if (dictionary["PLUGIN_MANIFESTS"] == "no")
@@ -3466,6 +3477,8 @@ void Configure::displayConfig()
     cout << "SSE support................." << dictionary[ "SSE" ] << endl;
     cout << "SSE2 support................" << dictionary[ "SSE2" ] << endl;
     cout << "IWMMXT support.............." << dictionary[ "IWMMXT" ] << endl;
+    if (dictionary[ "ARCHITECTURE" ] == "arm")
+        cout << "NEON support................" << dictionary[ "NEON" ] << endl;
     cout << "OpenGL support.............." << dictionary[ "OPENGL" ] << endl;
     cout << "OpenVG support.............." << dictionary[ "OPENVG" ] << endl;
     cout << "OpenSSL support............." << dictionary[ "OPENSSL" ] << endl;
