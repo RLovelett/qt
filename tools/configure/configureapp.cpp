@@ -1616,6 +1616,10 @@ void Configure::applySpecSpecifics()
         dictionary[ "QT_CUPS" ]             = "no";
         dictionary[ "QT_GLIB" ]             = "no";
         dictionary[ "QT_ICONV" ]            = "no";
+        dictionary[ "3DNOW" ]               = "no";
+        dictionary[ "SSE" ]                 = "no";
+        dictionary[ "SSE2" ]                = "no";
+        dictionary[ "MMX" ]                 = "no";
 
         dictionary["DECORATIONS"]           = "default windows styled";
     }
@@ -2804,6 +2808,9 @@ void Configure::generateOutputVars()
     if (dictionary.contains("XQMAKESPEC") && (dictionary["QMAKESPEC"] != dictionary["XQMAKESPEC"]))
             qmakeConfig += "cross_compile";
 
+    if (dictionary["EMBEDDED"] == "yes")
+            qmakeConfig += "embedded";
+
     // Directories and settings for .qmake.cache --------------------
 
     // if QT_INSTALL_* have not been specified on commandline, define them now from QT_INSTALL_PREFIX
@@ -3232,7 +3239,7 @@ void Configure::generateConfigfiles()
             // Check for keyboard, mouse, gfx.
             QStringList kbdDrivers = dictionary["KBD_DRIVERS"].split(" ");;
             QStringList allKbdDrivers;
-            allKbdDrivers<<"tty"<<"usb"<<"sl5000"<<"yopy"<<"vr41xx"<<"qvfb"<<"um";
+            allKbdDrivers<<"tty"<<"usb"<<"sl5000"<<"yopy"<<"vr41xx"<<"qvfb"<<"um"<<"linuxinput";
             foreach (const QString &kbd, allKbdDrivers) {
                 if (!kbdDrivers.contains(kbd))
                     tmpStream<<"#define QT_NO_QWS_KBD_"<<kbd.toUpper()<<endl;
@@ -3240,7 +3247,7 @@ void Configure::generateConfigfiles()
 
             QStringList mouseDrivers = dictionary["MOUSE_DRIVERS"].split(" ");
             QStringList allMouseDrivers;
-            allMouseDrivers << "pc"<<"bus"<<"linuxtp"<<"yopy"<<"vr41xx"<<"tslib"<<"qvfb";
+            allMouseDrivers << "pc"<<"bus"<<"linuxtp"<<"yopy"<<"vr41xx"<<"tslib"<<"qvfb"<<"linuxinput";
             foreach (const QString &mouse, allMouseDrivers) {
                 if (!mouseDrivers.contains(mouse))
                     tmpStream<<"#define QT_NO_QWS_MOUSE_"<<mouse.toUpper()<<endl;
@@ -3248,7 +3255,7 @@ void Configure::generateConfigfiles()
 
             QStringList gfxDrivers = dictionary["GFX_DRIVERS"].split(" ");
             QStringList allGfxDrivers;
-            allGfxDrivers<<"linuxfb"<<"transformed"<<"qvfb"<<"vnc"<<"multiscreen"<<"ahi";
+            allGfxDrivers<<"linuxfb"<<"transformed"<<"qvfb"<<"vnc"<<"multiscreen"<<"ahi"<<"directfb";
             foreach (const QString &gfx, allGfxDrivers) {
                 if (!gfxDrivers.contains(gfx))
                     tmpStream<<"#define QT_NO_QWS_"<<gfx.toUpper()<<endl;
@@ -3259,6 +3266,8 @@ void Configure::generateConfigfiles()
             QStringList depths = dictionary[ "QT_QWS_DEPTH" ].split(" ");
             foreach (const QString &depth, depths)
               tmpStream<<"#define QT_QWS_DEPTH_"+depth<<endl;
+
+             tmpStream<<"#define QT_NO_SESSIONMANAGER"<<endl;
         }
 
         if (dictionary[ "QT_CUPS" ] == "no")
