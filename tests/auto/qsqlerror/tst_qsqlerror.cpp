@@ -87,6 +87,8 @@ void tst_QSqlError::getSetCheck()
     QCOMPARE(QSqlError::ErrorType(QSqlError::TransactionError), obj1.type());
     obj1.setType(QSqlError::ErrorType(QSqlError::UnknownError));
     QCOMPARE(QSqlError::ErrorType(QSqlError::UnknownError), obj1.type());
+    QVERIFY(QSqlError::ErrorType(QSqlError::UnknownError) == QSqlError::ErrorType(QSqlError::UnknownError));
+    QVERIFY(QSqlError::ErrorType(QSqlError::ConnectionError) != QSqlError::ErrorType(QSqlError::UnknownError));
 
     // int QSqlError::number()
     // void QSqlError::setNumber(int)
