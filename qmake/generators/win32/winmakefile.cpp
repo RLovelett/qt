@@ -365,20 +365,37 @@ void Win32MakefileGenerator::processVars()
 
 void Win32MakefileGenerator::fixTargetExt()
 {
-    if (project->isEmpty("QMAKE_EXTENSION_STATICLIB"))
-        project->values("QMAKE_EXTENSION_STATICLIB").append("lib");
-    if (project->isEmpty("QMAKE_EXTENSION_SHLIB"))
-        project->values("QMAKE_EXTENSION_SHLIB").append("dll");
+    if (project->first("TARGET_PLATFORM") == "unix") {
+        if (project->isEmpty("QMAKE_EXTENSION_STATICLIB"))
+            project->values("QMAKE_EXTENSION_STATICLIB").append("a");
+        if (project->isEmpty("QMAKE_EXTENSION_SHLIB"))
+            project->values("QMAKE_EXTENSION_SHLIB").append("so");
 
-    if (!project->values("QMAKE_APP_FLAG").isEmpty()) {
-        project->values("TARGET_EXT").append(".exe");
-    } else if (project->isActiveConfig("shared")) {
-        project->values("TARGET_EXT").append(project->first("TARGET_VERSION_EXT") + "."
-                + project->first("QMAKE_EXTENSION_SHLIB"));
-        project->values("TARGET").first() = project->first("QMAKE_PREFIX_SHLIB") + project->first("TARGET");
+        if (project->values("QMAKE_APP_FLAG").isEmpty()) {
+            if (project->isActiveConfig("shared")) {
+                project->values("TARGET_EXT").append("." + project->first("QMAKE_EXTENSION_SHLIB"));
+                project->values("TARGET").first() = project->first("QMAKE_PREFIX_SHLIB") + project->first("TARGET");
+            } else {
+                project->values("TARGET_EXT").append("." + project->first("QMAKE_EXTENSION_STATICLIB"));
+                project->values("TARGET").first() = project->first("QMAKE_PREFIX_STATICLIB") + project->first("TARGET");
+            }
+        }
     } else {
-        project->values("TARGET_EXT").append("." + project->first("QMAKE_EXTENSION_STATICLIB"));
-        project->values("TARGET").first() = project->first("QMAKE_PREFIX_STATICLIB") + project->first("TARGET");
+        if (project->isEmpty("QMAKE_EXTENSION_STATICLIB"))
+            project->values("QMAKE_EXTENSION_STATICLIB").append("lib");
+        if (project->isEmpty("QMAKE_EXTENSION_SHLIB"))
+            project->values("QMAKE_EXTENSION_SHLIB").append("dll");
+
+        if (!project->values("QMAKE_APP_FLAG").isEmpty()) {
+            project->values("TARGET_EXT").append(".exe");
+        } else if (project->isActiveConfig("shared")) {
+            project->values("TARGET_EXT").append(project->first("TARGET_VERSION_EXT") + "."
+                    + project->first("QMAKE_EXTENSION_SHLIB"));
+            project->values("TARGET").first() = project->first("QMAKE_PREFIX_SHLIB") + project->first("TARGET");
+        } else {
+            project->values("TARGET_EXT").append("." + project->first("QMAKE_EXTENSION_STATICLIB"));
+            project->values("TARGET").first() = project->first("QMAKE_PREFIX_STATICLIB") + project->first("TARGET");
+        }
     }
 }
 
