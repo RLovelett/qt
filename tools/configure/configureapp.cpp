@@ -3276,9 +3276,9 @@ void Configure::generateConfigfiles()
 
             QStringList depths = dictionary[ "QT_QWS_DEPTH" ].split(" ");
             foreach (const QString &depth, depths)
-              tmpStream<<"#define QT_QWS_DEPTH_"+depth<<endl;
+                tmpStream<<"#define QT_QWS_DEPTH_"+depth<<endl;
 
-             tmpStream<<"#define QT_NO_SESSIONMANAGER"<<endl;
+            tmpStream<<"#define QT_NO_SESSIONMANAGER"<<endl;
         }
 
         if (dictionary[ "QT_CUPS" ] == "no")
