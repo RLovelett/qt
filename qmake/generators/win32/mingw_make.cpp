@@ -106,9 +106,11 @@ bool MingwMakefileGenerator::findLibraries(const QString &where)
                 suffix = project->first("QMAKE_" + steam.toUpper() + "_SUFFIX");
             for (QList<QMakeLocalFileName>::Iterator dir_it = dirs.begin(); dir_it != dirs.end(); ++dir_it) {
                 QString extension;
-                int ver = findHighestVersion((*dir_it).local(), steam, "dll.a|a");
-                if (ver != -1)
-                    extension += QString::number(ver);
+                if (project->first("TARGET_PLATFORM") != "unix") {
+                    int ver = findHighestVersion((*dir_it).local(), steam, "dll.a|a");
+                    if (ver != -1)
+                        extension += QString::number(ver);
+                }
                 extension += suffix;
                 if(QMakeMetaInfo::libExists((*dir_it).local() + Option::dir_sep + steam) ||
                     exists((*dir_it).local() + Option::dir_sep + steam + extension + ".a") ||
@@ -294,7 +296,7 @@ void MingwMakefileGenerator::init()
         if(configs.indexOf("qt") == -1)
             configs.append("qt");
 
-    if(project->isActiveConfig("dll") && project->values("QMAKE_SYMBIAN_SHLIB").isEmpty()) {
+    if(project->isActiveConfig("dll") && !configs.contains("no_import_libs") && project->values("QMAKE_SYMBIAN_SHLIB").isEmpty()) {
         QString destDir = "";
         if(!project->first("DESTDIR").isEmpty())
             destDir = Option::fixPathToTargetOS(project->first("DESTDIR") + Option::dir_sep, false, false);
@@ -333,7 +335,7 @@ void MingwMakefileGenerator::init()
                                                          " $(CXXFLAGS) $(INCPATH) -o $@ $<");
     }
 
-    if(project->isActiveConfig("dll")) {
+    if(project->isActiveConfig("dll") && !configs.contains("no_import_libs") ) {
         project->values("QMAKE_CLEAN").append(project->first("MINGW_IMPORT_LIB"));
     }
 }
