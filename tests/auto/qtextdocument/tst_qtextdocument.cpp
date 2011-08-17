@@ -179,6 +179,7 @@ private slots:
     void receiveCursorPositionChangedAfterContentsChange();
     void escape_data();
     void escape();
+    void checkClippingWhenSelecting();
 
 private:
     void backgroundImage_checkExpectedHtml(const QTextDocument &doc);
@@ -2732,6 +2733,53 @@ void tst_QTextDocument::escape()
     QFETCH(QString, expected);
 
     QCOMPARE(Qt::escape(original), expected);
+}
+
+void tst_QTextDocument::checkClippingWhenSelecting()
+{
+    QString veryTallText = QString::fromUtf8("T̩̦̗̜̭̠͒͊ͬͮ̔ͮ̋͢ͅȞ̸̨͙̗͓̞̯̤͖͖̂ͦ̿ͥ̑̏̌ͤͭͬͧ̄ͭĮ̷̨̫͔̖͍͖̼̱̭̎̿̃̍̌ͧ͆͑ͧ̾̉͜͜S̢̡̨̥̮̩̥̞͙̺̤̦̰̺̮̝ͩ͗ͧͧ̑͗̾ͪ͒ͤ̚͢͝ ̸̔͆ͩ̈͌̓͢҉̢͚͕̯̤͙̼͟Į̵̳͕̭̭͎̩̙̺͇̇̄̃̌̋̎ͧ̍ͮ̕S͕̮͍̺̹̖̝̾̅͛̊ͬ́ͬ͋ͩ͠ ̨ͪͣͨ̈́̓͛̓͒͞͝҉͍̦̦̙̺̙͈̟̤S̢͖̺͔̘̘͉͇͍͚̣̻̺̬̝̰͚̖͎̗ͪͯ̇͂ͬ̐̍͋̈̽͋̿ͩ̌͘O̸͓̞͇̠̔̐͐͊͌ͮͮ̌ͩ͒ͦ͊̋ͥ̉́͟M̵̧̥̣̼̩̻̤̘̰̩͉ͯͫ̾̈͢͢Ẻ̍ͭ̀̾̂ͭ̊ͣ̃̓ͣ̂̓҉͕̘̰͙̥̼͙̲ ̢̰͓̫̹̣̱͈̺̔̅̽̀ͩ̀̏́̌̒̀́͠ͅC̵̢̛͉̬̼͕̺͍̻̞̼̙̻̼̯̺̙̖̲̋̋ͣ̉̅ͫͧ̓͂ͣ̓̐ͤ̃̑͋́͝R̐͑͛ͥ̆̇̓ͨ͋ͯͧ̚͏͙̘̭̲̗̭̹̮̱̥̬̜̗̻̹̬̲̀́́Aͫͥͯͤ̓̀̈ͤ͜҉̟͖̥̖̦̗͎̫̘̫̠̟ͅͅZ̏͗ͬ̇͆͊͆͑̄ͯͧ̈̋̐ͤ̚͞҉̸̜͖̬̞̙͕̼̞͚̖͓̭͓̮͖͔̟͜͞ͅY̅̊ͬͫͪ́ͤͮͯ͆̇ͫͪ̋͆͛ͧ͏̛͎̬̰̫̩̦̰̥̫͉̫̰̭͝ ̉ͬͤ̎͊̽̍̏̈́ͧ̓̊ͥ̊͋̉̚̕͏̘͍̪̬̞͙̥̝̖͓͖Ț̨̛̹͔͔̳̖̣͉͔͍ͯ͊̂͗̔̈̋͂͑̇ͩ͒̓̄̍̃̋̕͢E̵͚͕̞̮͙̖͂̃̍̄̈́͊́ͣ̄͌͒ͭͬ͆͂͘͘͟͞ͅX̵̢̝̲̖̲̤͙̀̿̒̔ͬ̓̇ͤT̍̽̇͑҉҉̙̗̟͈̠̺̖̮̼̦̘̠́ͅ");
+//    QString veryTallText = "Hello there.  How are you?";
+    QPainter p;
+    QFontMetrics fm = QFont();
+    QSize size = fm.boundingRect(veryTallText).size();
+    doc->setHtml(veryTallText);
+    doc->setDocumentMargin(0);
+    QAbstractTextDocumentLayout::PaintContext paintContext;
+
+//    doc->setPageSize(size);
+    QImage img(size, QImage::Format_ARGB32_Premultiplied);
+    img.fill(0);
+    p.begin(&img);
+
+    // Force layout
+    doc->documentLayout()->draw(&p, paintContext);
+    p.end();
+
+    //We now select the first character, and redraw.
+    cursor.movePosition(QTextCursor::Start);
+    cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+    QAbstractTextDocumentLayout::Selection selection;
+    selection.cursor = cursor;
+    paintContext.selections.append(selection);
+
+    QImage img2(size, QImage::Format_ARGB32_Premultiplied);
+    img2.fill(0);
+    p.begin(&img2);
+    doc->documentLayout()->draw(&p, paintContext);
+    p.end();
+
+    img.save("foo1.png");
+    img2.save("foo2.png");
+
+    //Now the difference between img and img2 is that img2 has the first letter selected.  If we
+    //compare the second half of both images, they should be exactly the same, unaffected by the
+    //selection.
+    int width = img.size().width()/2;
+    img = img.copy(img.width() - width, 0, width, img.height());
+    img2 = img2.copy(img2.width() - width, 0, width, img2.height());
+
+
+    QCOMPARE(img, img2);
 }
 
 QTEST_MAIN(tst_QTextDocument)

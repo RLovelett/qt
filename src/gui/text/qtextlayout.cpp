@@ -1178,6 +1178,21 @@ void QTextLayout::draw(QPainter *p, const QPointF &pos, const QVector<FormatRang
         }
     }
 
+    bool drawAllTextFirst = true;
+    for (int i = 0; i < selections.size() && drawAllTextFirst; ++i)
+        drawAllTextFirst = selections.at(i).format.background().isOpaque();
+
+    //If all the selections have an opaque background, then we can draw all the text first,
+    //then draw the selection background, then draw the selected text on top.  If the selection
+    //background is not opaque then we need to draw the non-selected text by carefully setting a
+    //clipping mask
+    if (drawAllTextFirst) {
+        for (int i = firstLine; i < lastLine; ++i) {
+            QTextLine l(i, d);
+            l.draw(p, position);
+        }
+    }
+
     QPainterPath excludedRegion;
     QPainterPath textDoneRegion;
     for (int i = 0; i < selections.size(); ++i) {
@@ -1290,24 +1305,29 @@ void QTextLayout::draw(QPainter *p, const QPointF &pos, const QVector<FormatRang
         p->restore();
     }
 
-    if (!excludedRegion.isEmpty()) {
-        p->save();
-        QPainterPath path;
-        QRectF br = boundingRect().translated(position);
-        br.setRight(QFIXED_MAX);
-        if (!clip.isNull())
-            br = br.intersected(clip);
-        path.addRect(br);
-        path -= excludedRegion;
-        p->setClipPath(path, Qt::IntersectClip);
-    }
+    if (!drawAllTextFirst) {
+        //We have a non-opaque selection background, so we must draw the non-selected
+        //text now, setting up a clipping rectangle to avoid overdrawing the selected
+        //text
+        if (!excludedRegion.isEmpty()) {
+            p->save();
+            QPainterPath path;
+            QRectF br = boundingRect().translated(position);
+            br.setRight(QFIXED_MAX);
+            if (!clip.isNull())
+                br = br.intersected(clip);
+            path.addRect(br);
+            path -= excludedRegion;
+            p->setClipPath(path, Qt::IntersectClip);
+        }
 
-    for (int i = firstLine; i < lastLine; ++i) {
-        QTextLine l(i, d);
-        l.draw(p, position);
+        for (int i = firstLine; i < lastLine; ++i) {
+            QTextLine l(i, d);
+            l.draw(p, position);
+        }
+        if (!excludedRegion.isEmpty())
+            p->restore();
     }
-    if (!excludedRegion.isEmpty())
-        p->restore();
 
 
     if (!d->cacheGlyphs)
