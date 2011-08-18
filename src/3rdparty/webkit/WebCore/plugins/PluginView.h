@@ -50,9 +50,7 @@ typedef struct HWND__* HWND;
 typedef HWND PlatformPluginWidget;
 #else
 typedef PlatformWidget PlatformPluginWidget;
-#if defined(XP_MACOSX) && PLATFORM(QT)
 #include <QPixmap>
-#endif
 #endif
 #if PLATFORM(QT) && defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
 #include <QImage>
@@ -354,10 +352,6 @@ private:
         NPEventModel m_eventModel;
         CGContextRef m_contextRef;
         WindowRef m_fakeWindow;
-#if PLATFORM(QT)
-        QPixmap m_pixmap;
-#endif
-
         Point m_lastMousePos;
         void setNPWindowIfNeeded();
         void nullEventTimerFired(Timer<PluginView>*);
@@ -380,6 +374,8 @@ private:
         bool m_renderToImage;
         void paintUsingImageSurfaceExtension(QPainter* painter, const IntRect& exposedRect);
 #endif
+        QPixmap m_pixmap;
+        void paintUsingPixmap(QPainter* painter, const IntRect& exposedRect);
 
         IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
         IntRect m_windowRect; // Our window rect.

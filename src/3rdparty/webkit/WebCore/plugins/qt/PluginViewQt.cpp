@@ -66,6 +66,7 @@
 #include <QDesktopWidget>
 #include <QKeyEvent>
 #include <QPainter>
+#include <QPaintEngine>
 #include <QWidget>
 #include <QX11Info>
 #include <X11/X.h>
@@ -117,10 +118,13 @@ void PluginView::updatePluginWidget()
         else
 #endif
         {
+            // Create QPixmap (to be used when paintengine is OpenGL)
+            m_pixmap = QPixmap(m_windowRect.width(), m_windowRect.height());
+            // Create X11 pixmap
             if (m_drawable)
                 XFreePixmap(QX11Info::display(), m_drawable);
 
-            m_drawable = XCreatePixmap(QX11Info::display(), QX11Info::appRootWindow(), m_windowRect.width(), m_windowRect.height(), 
+            m_drawable = XCreatePixmap(QX11Info::display(), QX11Info::appRootWindow(), m_windowRect.width(), m_windowRect.height(),
                                        ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth);
             QApplication::syncX(); // make sure that the server knows about the Drawable
         }
@@ -222,10 +226,34 @@ void PluginView::paintUsingImageSurfaceExtension(QPainter* painter, const IntRec
 
     dispatchNPEvent(xevent);
 
+    XSync(m_pluginDisplay, False);
+
     if (!surfaceHasUntransformedContents || !surface || surface->devType() != QInternal::Image)
         painter->drawImage(QPoint(frameRect().x() + exposedRect.x(), frameRect().y() + exposedRect.y()), m_image, exposedRect);
 }
 #endif
+
+void PluginView::paintUsingPixmap(QPainter* painter, const IntRect& exposedRect)
+{
+    XEvent xevent;
+    memset(&xevent, 0, sizeof(XEvent));
+    XGraphicsExposeEvent& exposeEvent = xevent.xgraphicsexpose;
+    exposeEvent.type = GraphicsExpose;
+    exposeEvent.display = QX11Info::display();
+    exposeEvent.drawable = m_pixmap.handle();
+    exposeEvent.x = exposedRect.x();
+    exposeEvent.y = exposedRect.y();
+    exposeEvent.width = exposedRect.x() + exposedRect.width();
+    exposeEvent.height = exposedRect.y() + exposedRect.height();
+
+    dispatchNPEvent(xevent);
+
+    QPaintDevice* surface =  QPainter::redirected(painter->device());
+    QWebPageClient* client = m_parentFrame->view()->hostWindow()->platformPageClient();
+    const bool surfaceHasUntransformedContents = client && qobject_cast<QWidget*>(client->pluginParent());
+    if (!surfaceHasUntransformedContents || !surface || surface->devType() != QInternal::Image)
+        painter->drawPixmap(QPoint(frameRect().x() + exposedRect.x(), frameRect().y() + exposedRect.y()), m_pixmap, exposedRect);
+}
 
 void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 {
@@ -260,6 +288,14 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
         return;
     }
 #endif
+    bool bUseX11Pixmap = true;
+    if ((painter->paintEngine()->type() == QPaintEngine::OpenGL)
+        || (painter->paintEngine()->type() == QPaintEngine::OpenGL)) {
+        // If the paint engine is OpenGL, don't let the plugin draw itself on an X11 pixmap,
+        // just to be converted afterwards to a QImage to be used in the OpenGL painter.
+        // Let the plugin directly paint on a QPixmap and avoid a QPixmap::toImage() call.
+        bUseX11Pixmap = false;
+    }
 
     QPixmap qtDrawable = QPixmap::fromX11Pixmap(m_drawable, QPixmap::ExplicitlyShared);
     const int drawableDepth = ((NPSetWindowCallbackStruct*)m_npWindow.ws_info)->depth;
@@ -269,7 +305,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     // When printing, Qt uses a QPicture to capture the output in preview mode. The
     // QPicture holds a reference to the X Pixmap. As a result, the print preview would
     // update itself when the X Pixmap changes. To prevent this, we create a copy.
-    if (m_element->document()->printing())
+    if (m_element->document()->printing() && bUseX11Pixmap)
         qtDrawable = qtDrawable.copy();
 
     if (m_isTransparent && drawableDepth != 32) {
@@ -289,17 +325,36 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
         if (hasValidBackingStore && backingStorePixmap->depth() == drawableDepth 
             && backingStoreHasUntransformedContents) {
-            GC gc = XDefaultGC(QX11Info::display(), QX11Info::appScreen());
-            XCopyArea(QX11Info::display(), backingStorePixmap->handle(), m_drawable, gc,
-                offset.x() + m_windowRect.x() + exposedRect.x(), offset.y() + m_windowRect.y() + exposedRect.y(),
-                exposedRect.width(), exposedRect.height(), exposedRect.x(), exposedRect.y());
+            if (bUseX11Pixmap) {
+                GC gc = XDefaultGC(QX11Info::display(), QX11Info::appScreen());
+                XCopyArea(QX11Info::display(), backingStorePixmap->handle(), m_drawable, gc,
+                    offset.x() + m_windowRect.x() + exposedRect.x(), offset.y() + m_windowRect.y() + exposedRect.y(),
+                    exposedRect.width(), exposedRect.height(), exposedRect.x(), exposedRect.y());
+            } else {
+                QPainter painter(&m_pixmap);
+                painter.drawPixmap(exposedRect.x(), exposedRect.y(),
+                                   *backingStorePixmap,
+                                   offset.x() + m_windowRect.x() + exposedRect.x(), offset.y() + m_windowRect.y() + exposedRect.y(),
+                                   exposedRect.width(), exposedRect.height());
+            }
         } else { // no backing store, clean the pixmap because the plugin thinks its transparent
-            QPainter painter(&qtDrawable);
-            painter.fillRect(exposedRect, Qt::white);
+            if (bUseX11Pixmap) {
+                QPainter painter(&qtDrawable);
+                painter.fillRect(exposedRect, Qt::white);
+            } else {
+                QPainter painter(&m_pixmap);
+                painter.fillRect(exposedRect, Qt::white);
+            }
         }
 
         if (syncX)
             QApplication::syncX();
+    }
+
+    if (!bUseX11Pixmap)
+    {
+        paintUsingPixmap(painter, exposedRect);
+        return;
     }
 
     XEvent xevent;
