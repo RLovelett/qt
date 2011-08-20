@@ -7078,19 +7078,10 @@ void QGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-/*!
-    obsolete
-*/
-bool _qt_movableAncestorIsSelected(const QGraphicsItem *item)
-{
-    const QGraphicsItem *parent = item->parentItem();
-    return parent && (((parent->flags() & QGraphicsItem::ItemIsMovable) && parent->isSelected()) || _qt_movableAncestorIsSelected(parent));
-}
-
 bool QGraphicsItemPrivate::movableAncestorIsSelected(const QGraphicsItem *item)
 {
     const QGraphicsItem *parent = item->d_ptr->parent;
-    return parent && (((parent->flags() & QGraphicsItem::ItemIsMovable) && parent->isSelected()) || _qt_movableAncestorIsSelected(parent));
+    return parent && (((parent->flags() & QGraphicsItem::ItemIsMovable) && parent->isSelected()) || QGraphicsItemPrivate::movableAncestorIsSelected(parent));
 }
 
 /*!
