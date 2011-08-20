@@ -7118,17 +7118,15 @@ void QGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if ((event->buttons() & Qt::LeftButton) && (flags() & ItemIsMovable)) {
         // Determine the list of items that need to be moved.
-        QList<QGraphicsItem *> selectedItems;
-        QMap<QGraphicsItem *, QPointF> initialPositions;
+        QHash<QGraphicsItem *, QPointF> initialPositions;
         if (d_ptr->scene) {
-            selectedItems = d_ptr->scene->selectedItems();
             initialPositions = d_ptr->scene->d_func()->movingItemsInitialPositions;
             if (initialPositions.isEmpty()) {
-                foreach (QGraphicsItem *item, selectedItems)
+                foreach (QGraphicsItem *item, d_ptr->scene->selectedItems())
                     initialPositions[item] = item->pos();
                 initialPositions[this] = pos();
+                d_ptr->scene->d_func()->movingItemsInitialPositions = initialPositions;
             }
-            d_ptr->scene->d_func()->movingItemsInitialPositions = initialPositions;
         }
 
         // Find the active view.
@@ -7137,23 +7135,9 @@ void QGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             view = qobject_cast<QGraphicsView *>(event->widget()->parentWidget());
 
         // Move all selected items
-        int i = 0;
-        bool movedMe = false;
-        while (i <= selectedItems.size()) {
-            QGraphicsItem *item = 0;
-            if (i < selectedItems.size())
-                item = selectedItems.at(i);
-            else
-                item = this;
-            if (item == this) {
-                // Slightly clumsy-looking way to ensure that "this" is part
-                // of the list of items to move, this is to avoid allocations
-                // (appending this item to the list of selected items causes a
-                // detach).
-                if (movedMe)
-                    break;
-                movedMe = true;
-            }
+        QHash<QGraphicsItem *, QPointF>::const_iterator it = initialPositions.constBegin();
+        for ( ; it != initialPositions.constEnd(); ++it) {
+            QGraphicsItem *item = it.key();
 
             if ((item->flags() & ItemIsMovable) && !QGraphicsItemPrivate::movableAncestorIsSelected(item)) {
                 QPointF currentParentPos;
@@ -7174,8 +7158,7 @@ void QGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                     if (item->d_ptr->transformData)
                         itemTransform = item->d_ptr->transformData->computedFullTransform();
                     itemTransform.translate(item->d_ptr->pos.x(), item->d_ptr->pos.y());
-                    QTransform viewToParentTransform = itemTransform
-                                                       * (item->sceneTransform() * view->viewportTransform()).inverted();
+                    QTransform viewToParentTransform = itemTransform * (item->sceneTransform() * view->viewportTransform()).inverted();
                     currentParentPos = viewToParentTransform.map(QPointF(view->mapFromGlobal(event->screenPos())));
                     buttonDownParentPos = viewToParentTransform.map(QPointF(view->mapFromGlobal(event->buttonDownScreenPos(Qt::LeftButton))));
                 } else {
@@ -7183,15 +7166,12 @@ void QGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                     currentParentPos = item->mapToParent(item->mapFromScene(event->scenePos()));
                     buttonDownParentPos = item->mapToParent(item->mapFromScene(event->buttonDownScenePos(Qt::LeftButton)));
                 }
-
-                item->setPos(initialPositions.value(item) + currentParentPos - buttonDownParentPos);
+                item->setPos(it.value() + currentParentPos - buttonDownParentPos);
 
                 if (item->flags() & ItemIsSelectable)
                     item->setSelected(true);
             }
-            ++i;
         }
-
     } else {
         event->ignore();
     }

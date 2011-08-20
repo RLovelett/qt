@@ -64,6 +64,7 @@
 
 #include <private/qobject_p.h>
 #include <QtCore/qbitarray.h>
+#include <QtCore/qhash.h>
 #include <QtCore/qlist.h>
 #include <QtCore/qmap.h>
 #include <QtCore/qset.h>
@@ -128,7 +129,7 @@ public:
     QVector<QGraphicsItem *> unpolishedItems;
     QList<QGraphicsItem *> topLevelItems;
 
-    QMap<QGraphicsItem *, QPointF> movingItemsInitialPositions;
+    QHash<QGraphicsItem *, QPointF> movingItemsInitialPositions;
     void registerTopLevelItem(QGraphicsItem *item);
     void unregisterTopLevelItem(QGraphicsItem *item);
     void _q_updateLater();
