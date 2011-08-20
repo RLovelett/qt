@@ -7122,9 +7122,10 @@ void QGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         if (d_ptr->scene) {
             initialPositions = d_ptr->scene->d_func()->movingItemsInitialPositions;
             if (initialPositions.isEmpty()) {
+                if (flags() & ItemIsSelectable)
+                    setSelected(true);
                 foreach (QGraphicsItem *item, d_ptr->scene->selectedItems())
                     initialPositions[item] = item->pos();
-                initialPositions[this] = pos();
                 d_ptr->scene->d_func()->movingItemsInitialPositions = initialPositions;
             }
         }
@@ -7139,7 +7140,7 @@ void QGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         for ( ; it != initialPositions.constEnd(); ++it) {
             QGraphicsItem *item = it.key();
 
-            if ((item->flags() & ItemIsMovable) && !QGraphicsItemPrivate::movableAncestorIsSelected(item)) {
+            if ((item->flags() & ItemIsMovable) && isSelected() && !QGraphicsItemPrivate::movableAncestorIsSelected(item)) {
                 QPointF currentParentPos;
                 QPointF buttonDownParentPos;
                 if (item->d_ptr->ancestorFlags & QGraphicsItemPrivate::AncestorIgnoresTransformations) {
@@ -7167,9 +7168,6 @@ void QGraphicsItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                     buttonDownParentPos = item->mapToParent(item->mapFromScene(event->buttonDownScenePos(Qt::LeftButton)));
                 }
                 item->setPos(it.value() + currentParentPos - buttonDownParentPos);
-
-                if (item->flags() & ItemIsSelectable)
-                    item->setSelected(true);
             }
         }
     } else {
