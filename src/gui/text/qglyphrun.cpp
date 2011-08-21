@@ -39,12 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qglobal.h"
-
-#if !defined(QT_NO_RAWFONT)
-
 #include "qglyphrun.h"
 #include "qglyphrun_p.h"
+
+#if !defined(QT_NO_RAWFONT)
 
 QT_BEGIN_NAMESPACE
 
@@ -135,8 +133,8 @@ bool QGlyphRun::operator==(const QGlyphRun &other) const
     if (d == other.d)
         return true;
 
-    if ((d->glyphIndexDataSize != other.d->glyphIndexDataSize)
-     || (d->glyphPositionDataSize != other.d->glyphPositionDataSize)) {
+    if (d->glyphIndexDataSize != other.d->glyphIndexDataSize
+        || d->glyphPositionDataSize != other.d->glyphPositionDataSize) {
         return false;
     }
 
@@ -195,13 +193,12 @@ void QGlyphRun::setRawFont(const QRawFont &rawFont)
 */
 QVector<quint32> QGlyphRun::glyphIndexes() const
 {
-    if (d->glyphIndexes.constData() == d->glyphIndexData) {
+    if (d->glyphIndexes.constData() == d->glyphIndexData)
         return d->glyphIndexes;
-    } else {
-        QVector<quint32> indexes(d->glyphIndexDataSize);
-        qMemCopy(indexes.data(), d->glyphIndexData, d->glyphIndexDataSize * sizeof(quint32));
-        return indexes;
-    }
+
+    QVector<quint32> indexes(d->glyphIndexDataSize);
+    qMemCopy(indexes.data(), d->glyphIndexData, d->glyphIndexDataSize * sizeof(quint32));
+    return indexes;
 }
 
 /*!
@@ -212,8 +209,8 @@ void QGlyphRun::setGlyphIndexes(const QVector<quint32> &glyphIndexes)
 {
     detach();
     d->glyphIndexes = glyphIndexes; // Keep a reference to the QVector to avoid copying
-    d->glyphIndexData = glyphIndexes.constData();
-    d->glyphIndexDataSize = glyphIndexes.size();
+    d->glyphIndexData = d->glyphIndexes.constData();
+    d->glyphIndexDataSize = d->glyphIndexes.size();
 }
 
 /*!
@@ -221,14 +218,12 @@ void QGlyphRun::setGlyphIndexes(const QVector<quint32> &glyphIndexes)
 */
 QVector<QPointF> QGlyphRun::positions() const
 {
-    if (d->glyphPositions.constData() == d->glyphPositionData) {
+    if (d->glyphPositions.constData() == d->glyphPositionData)
         return d->glyphPositions;
-    } else {
-        QVector<QPointF> glyphPositions(d->glyphPositionDataSize);
-        qMemCopy(glyphPositions.data(), d->glyphPositionData,
-                 d->glyphPositionDataSize * sizeof(QPointF));
-        return glyphPositions;
-    }
+
+    QVector<QPointF> glyphPositions(d->glyphPositionDataSize);
+    qMemCopy(glyphPositions.data(), d->glyphPositionData, d->glyphPositionDataSize * sizeof(QPointF));
+    return glyphPositions;
 }
 
 /*!
@@ -239,8 +234,8 @@ void QGlyphRun::setPositions(const QVector<QPointF> &positions)
 {
     detach();
     d->glyphPositions = positions; // Keep a reference to the vector to avoid copying
-    d->glyphPositionData = positions.constData();
-    d->glyphPositionDataSize = positions.size();
+    d->glyphPositionData = d->glyphPositions.constData();
+    d->glyphPositionDataSize = d->glyphPositions.size();
 }
 
 /*!
@@ -250,12 +245,15 @@ void QGlyphRun::clear()
 {
     detach();
     d->rawFont = QRawFont();
-    d->strikeOut = false;
-    d->overline = false;
-    d->underline = false;
+    d->strikeOut = d->overline = d->underline = false;
 
-    setPositions(QVector<QPointF>());
-    setGlyphIndexes(QVector<quint32>());
+    d->glyphIndexes.clear();
+    d->glyphIndexData = d->glyphIndexes.constData();
+    d->glyphIndexDataSize = d->glyphIndexes.size();
+
+    d->glyphPositions.clear();
+    d->glyphPositionData = d->glyphPositions.constData();
+    d->glyphPositionDataSize = d->glyphPositions.size();
 }
 
 /*!
