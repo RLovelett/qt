@@ -194,6 +194,12 @@ if [ -d /System/Library/Frameworks/Carbon.framework ]; then
 else
     PLATFORM_MAC=no
 fi
+BUILD_ON_MSYS=no
+if [ "$OSTYPE" = "msys" ]; then
+    BUILD_ON_MSYS=yes
+else
+    BUILD_ON_MSYS=no
+fi
 
 #-----------------------------------------------------------------------------
 # Qt version detection
@@ -834,6 +840,8 @@ CFG_COREWLAN=auto
 CFG_ICD=auto
 CFG_NOPROCESS=no
 CFG_ICU=auto
+CFG_MS_BITFIELDS=no
+CFG_TOOLS_FULLYSTATIC=no
 
 # initalize variables used for installation
 QT_INSTALL_PREFIX=
@@ -1042,7 +1050,7 @@ while [ "$#" -gt 0 ]; do
         VAL=no
         ;;
     #Qt style yes options
-    -incremental|-qvfb|-profile|-shared|-static|-sm|-xinerama|-xshape|-xsync|-xinput|-egl|-reduce-exports|-pch|-separate-debug-info|-stl|-freetype|-xcursor|-xfixes|-xrandr|-xrender|-mitshm|-fontconfig|-xkb|-nis|-qdbus|-dbus|-dbus-linked|-glib|-gstreamer|-gtkstyle|-cups|-iconv|-largefile|-h|-help|-v|-verbose|-debug|-release|-fast|-accessibility|-confirm-license|-gnumake|-framework|-qt3support|-debug-and-release|-exceptions|-cocoa|-carbon|-universal|-harfbuzz|-prefix-install|-silent|-armfpa|-optimized-qmake|-dwarf2|-reduce-relocations|-sse|-openssl|-openssl-linked|-ptmalloc|-xmlpatterns|-phonon|-phonon-backend|-multimedia|-audio-backend|-svg|-declarative|-declarative-debug|-javascript-jit|-script|-scripttools|-rpath|-force-pkg-config|-s60|-usedeffiles|-icu)
+    -incremental|-qvfb|-profile|-shared|-static|-sm|-xinerama|-xshape|-xsync|-xinput|-egl|-reduce-exports|-pch|-separate-debug-info|-stl|-freetype|-xcursor|-xfixes|-xrandr|-xrender|-mitshm|-fontconfig|-xkb|-nis|-qdbus|-dbus|-dbus-linked|-glib|-gstreamer|-gtkstyle|-cups|-iconv|-largefile|-h|-help|-v|-verbose|-debug|-release|-fast|-accessibility|-confirm-license|-gnumake|-framework|-qt3support|-debug-and-release|-exceptions|-cocoa|-carbon|-universal|-harfbuzz|-prefix-install|-silent|-armfpa|-optimized-qmake|-dwarf2|-reduce-relocations|-sse|-openssl|-openssl-linked|-ptmalloc|-xmlpatterns|-phonon|-phonon-backend|-multimedia|-audio-backend|-svg|-declarative|-declarative-debug|-javascript-jit|-script|-scripttools|-rpath|-force-pkg-config|-s60|-usedeffiles|-icu|-ms-bitfields|-tools-fully-static)
         VAR=`echo $1 | sed "s,^-\(.*\),\1,"`
         VAL=yes
         ;;
@@ -2392,6 +2400,20 @@ while [ "$#" -gt 0 ]; do
             UNKNOWN_OPT=yes
         fi
         ;;
+    ms-bitfields)
+        if [ "$VAL" = "yes" ] || [ "$VAL" = "no" ]; then
+            CFG_MS_BITFIELDS="$VAL"
+        else
+            UNKNOWN_OPT=yes
+        fi
+        ;;
+    tools-fully-static)
+        if [ "$VAL" = "yes" ] || [ "$VAL" = "no" ]; then
+            CFG_TOOLS_FULLYSTATIC="$VAL"
+        else
+            UNKNOWN_OPT=yes
+        fi
+        ;;
     *)
         UNKNOWN_OPT=yes
         ;;
@@ -2514,6 +2536,15 @@ fi
 
 if [ "$CFG_SILENT" = "yes" ]; then
     QMAKE_CONFIG="$QMAKE_CONFIG silent"
+fi
+
+if [ "$PLATFORM" = "win32-g++" -o "$XPLATFORM" = "win32-g++" ] ; then
+    if [ "$CFG_MS_BITFIELDS" = "yes" ] ; then
+        QMAKE_CONFIG="$QMAKE_CONFIG ms_bitfields"
+    fi
+    if [ "$CFG_TOOLS_FULLYSTATIC" = "yes" ] ; then
+        QMAKE_CONFIG="$QMAKE_CONFIG tools_fully_static"
+    fi
 fi
 
 # if the source tree is different from the build tree,
@@ -4826,7 +4857,11 @@ if true; then ###[ '!' -f "$outpath/bin/qmake" ];
 #           if which qmake >/dev/null 2>&1 && [ -f qmake/qmake.pro ]; then
 #               (cd qmake && qmake) >/dev/null 2>&1 && continue
 #           fi
-            in_mkfile="${mkfile}.unix"
+            if [ "$BUILD_ON_MSYS" = "yes" ]; then
+                in_mkfile="${mkfile}.win32-g++"
+            else
+                in_mkfile="${mkfile}.unix"
+            fi
         fi
         in_mkfile="$relpath/qmake/$in_mkfile"
         mkfile="$outpath/qmake/$mkfile"
@@ -4915,11 +4950,26 @@ if true; then ###[ '!' -f "$outpath/bin/qmake" ];
 		EXTRA_LFLAGS="$EXTRA_LFLAGS \$(SDK_LFLAGS)"
             fi
         fi
+        if [ "$BUILD_ON_MSYS" = "yes" ]; then
+            EXTRA_CFLAGS="-DUNICODE"
+            EXTRA_CXXFLAGS="-DUNICODE"
+            if [ "$CFG_TOOLS_STATIC" = "yes" ] ; then
+                EXTRA_CFLAGS="-static-libgcc"
+                EXTRA_CXXFLAGS="-static-libgcc -static-libstdc++"
+            fi
+        fi
         [ "$CFG_EMBEDDED" != "no" ] && EXTRA_CFLAGS="$EXTRA_CFLAGS -DQWS"
         if [ '!' -z "$D_FLAGS" ]; then
             for DEF in $D_FLAGS; do
                 EXTRA_CFLAGS="$EXTRA_CFLAGS \"-D${DEF}\""
             done
+        fi
+        if [ "$BUILD_ON_MSYS" = "yes" ] ; then
+            DEL_FILE="rm"
+            COPY="cp"
+        else
+            DEL_FILE="del"
+            COPY="copy /y"
         fi
         QMAKE_BIN_DIR="$QT_INSTALL_BINS"
         [ -z "$QMAKE_BIN_DIR" ] && QMAKE_BIN_DIR="${QT_INSTALL_PREFIX}/bin"
@@ -4935,7 +4985,9 @@ if true; then ###[ '!' -f "$outpath/bin/qmake" ];
             -e "s,@QT_INSTALL_BINS@,\$(INSTALL_ROOT)$QMAKE_BIN_DIR,g" \
             -e "s,@QT_INSTALL_DATA@,\$(INSTALL_ROOT)$QMAKE_DATA_DIR,g" \
             -e "s,@QMAKE_QTOBJS@,$EXTRA_OBJS,g" -e "s,@QMAKE_QTSRCS@,$EXTRA_SRCS,g" \
-	    -e "s,@QMAKESPEC@,$adjqmakespec,g" "$in_mkfile" >>"$mkfile"
+            -e "s,@QMAKESPEC@,$adjqmakespec,g" \
+            -e "s,@QMAKE_DEL_FILE@,$DEL_FILE,g" \
+            -e "s,@QMAKE_COPY@,$COPY,g" "$in_mkfile" >>"$mkfile"
 
         if "$WHICH" makedepend >/dev/null 2>&1 && grep 'depend:' "$mkfile" >/dev/null 2>&1; then
             (cd "$outpath/qmake" && "$MAKE" -f "$mkfile" depend) >/dev/null 2>&1
@@ -8806,6 +8858,10 @@ if [ "$PLATFORM_MAC" = "yes" ]; then
 fi
 echo "ICD support ............ $CFG_ICD"
 echo "libICU support ......... $CFG_ICU"
+if [ "$PLATFORM" = "win32-g++" ] || [ "$XPLATFORM" = "win32-g++" ]; then
+    echo "ms bitfields ........... $CFG_MS_BITFIELDS"
+    echo "Tools fully static ..... $CFG_TOOLS_FULLYSTATIC"
+fi
 echo
 
 [ "$CFG_PTMALLOC" != "no" ] && echo "Use ptmalloc ........... $CFG_PTMALLOC"
