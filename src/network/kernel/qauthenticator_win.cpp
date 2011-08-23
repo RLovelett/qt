@@ -1,35 +1,31 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2011 Blit Software S.L.
 ** All rights reserved.
-** Contact: Nokia Corporation (qt-info@nokia.com)
+** Contact: Sergi Díaz (sdiaz@blitsoftware.com)
 **
 ** This file is part of the QtNetwork module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
-**
 ** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** This file may be used under the terms of the GNU Lesser General Public
+** License version 2.1 as published by the Free Software Foundation and
+** appearing in the file LICENSE.LGPL included in the packaging of this
+** file. Please review the following information to ensure the GNU Lesser
+** General Public License version 2.1 requirements will be met:
+** http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
+** In addition, as a special exception, Blit Software gives you certain additional
+** rights. These rights are described in the Nokia Qt LGPL Exception
 ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
 **
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
+** GNU General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU General
+** Public License version 3.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of this
+** file. Please review the following information to ensure the GNU General
+** Public License version 3.0 requirements will be met:
+** http://www.gnu.org/copyleft/gpl.html.
 **
 **
 **
@@ -68,8 +64,8 @@ static CredHandle cred;  //Handle to the credentials.
 static TimeStamp useBefore;
 static CtxtHandle cliCtx;
 
-static bool qBuildNtlmv2Response(const QByteArray* sbin, QByteArray* sbout);
-static bool qGetNtlmResponseType1Session(QByteArray* response);
+static bool qBuildNtlmv2Response(const QByteArray *bufferIn, QByteArray *bufferOut);
+static bool qGetNtlmResponseType1Session(QByteArray *response);
 
 
 
@@ -80,7 +76,7 @@ QByteArray QAuthenticatorPrivate::ntlmPhase1()
     return rc;
 }
 
-QByteArray QAuthenticatorPrivate::ntlmPhase3(QAuthenticatorPrivate *ctx, const QByteArray& phase2data)
+QByteArray QAuthenticatorPrivate::ntlmPhase3(QAuthenticatorPrivate *ctx, const QByteArray &phase2data)
 {
 	QByteArray rc;
 	qBuildNtlmv2Response(&phase2data, &rc);
@@ -91,92 +87,83 @@ QByteArray QAuthenticatorPrivate::ntlmPhase3(QAuthenticatorPrivate *ctx, const Q
 static void resolveLibs()
 {
     static bool triedResolve = false;
-    if (!triedResolve) {
-        // need to resolve the security info functions
 
-        // protect initialization
 #ifndef QT_NO_THREAD
-        QMutexLocker locker(QMutexPool::globalInstanceGet(&triedResolve));
-        // check triedResolve again, since another thread may have already
-        // done the initialization
-        if (triedResolve) {
-            // another thread did initialize the security function pointers,
-            // so we shouldn't do it again.
-            return;
-        }
+    // protect initialization
+    QMutexLocker locker(QMutexPool::globalInstanceGet(&triedResolve));
 #endif
+    if (!triedResolve) {
+        // need to resolve the security functions
 
-        triedResolve = true;
         HINSTANCE securHnd = QSystemLibrary::load(L"secur32");
         if(securHnd) {
             ptrAcquireCredentialsHandleA = (PtrAcquireCredentialsHandleA)GetProcAddress(securHnd, "AcquireCredentialsHandleA");
             ptrInitializeSecurityContextA = (PtrInitializeSecurityContextA)GetProcAddress(securHnd, "InitializeSecurityContextA");
             ptrCompleteAuthToken = (PtrCompleteAuthToken)GetProcAddress(securHnd, "CompleteAuthToken");
         }
+        triedResolve = true;
     }
 }
 
-static bool qBuildNtlmv2Response(const QByteArray* sbin, QByteArray* sbout)
+static bool qBuildNtlmv2Response(const QByteArray *bufferIn, QByteArray *bufferOut)
 {
     if(!ptrInitializeSecurityContextA || !ptrCompleteAuthToken)
         return false;
 
-    SecBufferDesc obd, ibd;
-    SecBuffer ob, ib;
+    SecBufferDesc sbdOut, sbdIn;
+    SecBuffer sbOut, sbIn;
     DWORD ctxAttr;
     SECURITY_STATUS isc;
 
-    sbout->clear();
+    bufferOut->clear();
 
-    if (sbin) {
-        ibd.ulVersion = SECBUFFER_VERSION;
-        ibd.cBuffers = 1;
-        ibd.pBuffers = &ib; // just one buffer
-        ib.BufferType = SECBUFFER_TOKEN;
-        ib.cbBuffer = sbin->length();
-        ib.pvBuffer = LocalAlloc(0, sbin->length());
+    if (bufferIn) {
+        sbdIn.ulVersion = SECBUFFER_VERSION;
+        sbdIn.cBuffers = 1;
+        sbdIn.pBuffers = &sbIn; // just one buffer
+        sbIn.BufferType = SECBUFFER_TOKEN;
+        sbIn.cbBuffer = bufferIn->length();
+        sbIn.pvBuffer = LocalAlloc(0, bufferIn->length());
 
-        memcpy((char*)ib.pvBuffer, sbin->constData(), sbin->length());
-    } else
-        ib.pvBuffer = NULL;
+        memcpy((char*)sbIn.pvBuffer, bufferIn->constData(), bufferIn->length());
+    } else {
+        sbIn.pvBuffer = NULL;
+    }
 
-    obd.ulVersion = SECBUFFER_VERSION;
-    obd.cBuffers = 1;
-    obd.pBuffers = &ob; // just one buffer
-    ob.BufferType = SECBUFFER_TOKEN; // preparing a token here
-    ob.cbBuffer = 8000;
-    ob.pvBuffer = LocalAlloc(0, ob.cbBuffer);
+    sbdOut.ulVersion = SECBUFFER_VERSION;
+    sbdOut.cBuffers = 1;
+    sbdOut.pBuffers = &sbOut; // just one buffer
+    sbOut.BufferType = SECBUFFER_TOKEN; // preparing a token here
+    sbOut.cbBuffer = 8000;
+    sbOut.pvBuffer = LocalAlloc(0, sbOut.cbBuffer);
 
-    isc = ptrInitializeSecurityContextA(&cred, sbin?&cliCtx:NULL,
+    isc = ptrInitializeSecurityContextA(&cred, bufferIn ? &cliCtx : NULL,
         NULL, ISC_REQ_CONNECTION, 0, SECURITY_NETWORK_DREP,
-        sbin?&ibd:NULL, 0, &cliCtx, &obd, &ctxAttr, &useBefore);
+        bufferIn ? &sbdIn : NULL, 0, &cliCtx, &sbdOut, &ctxAttr, &useBefore);
 
-    switch(isc)
-    {
+    switch(isc) {
     case SEC_I_COMPLETE_AND_CONTINUE:
+        //fall through
     case SEC_I_COMPLETE_NEEDED:
-        ptrCompleteAuthToken(&cliCtx, &obd);
+        ptrCompleteAuthToken(&cliCtx, &sbdOut);
         break;
     }
 
-    if (ib.pvBuffer) {
-        LocalFree(ib.pvBuffer);
-        //ib.pvBuffer = NULL;
+    if (sbIn.pvBuffer) {
+        LocalFree(sbIn.pvBuffer);
     }
 
-    if (ob.pvBuffer) {
-        sbout->append((const char*)ob.pvBuffer, ob.cbBuffer);
-
-        LocalFree(ob.pvBuffer);
-        //ob.pvBuffer = NULL;
-
+    if (sbOut.pvBuffer) {
+        bufferOut->append((const char*)sbOut.pvBuffer, sbOut.cbBuffer);
+        LocalFree(sbOut.pvBuffer);
         return true;
     }
-    else
+    else {
         return false;
+    }
 }
 
-static bool qGetNtlmResponseType1Session(QByteArray* response)
+static bool qGetNtlmResponseType1Session(QByteArray *response)
 {
     resolveLibs();
     if(ptrAcquireCredentialsHandleA && ptrInitializeSecurityContextA && ptrCompleteAuthToken) {
