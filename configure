@@ -4833,7 +4833,11 @@ if true; then ###[ '!' -f "$outpath/bin/qmake" ];
 #           if which qmake >/dev/null 2>&1 && [ -f qmake/qmake.pro ]; then
 #               (cd qmake && qmake) >/dev/null 2>&1 && continue
 #           fi
-            in_mkfile="${mkfile}.unix"
+            if [ "$BUILD_ON_MSYS" = "yes" ]; then
+                in_mkfile="${mkfile}.win32-g++"
+            else
+                in_mkfile="${mkfile}.unix"
+            fi
         fi
         in_mkfile="$relpath/qmake/$in_mkfile"
         mkfile="$outpath/qmake/$mkfile"
@@ -4932,6 +4936,13 @@ if true; then ###[ '!' -f "$outpath/bin/qmake" ];
                 EXTRA_CFLAGS="$EXTRA_CFLAGS \"-D${DEF}\""
             done
         fi
+        if [ "$BUILD_ON_MSYS" = "yes" ] ; then
+            DEL_FILE="rm"
+            COPY="cp"
+        else
+            DEL_FILE="del"
+            COPY="copy /y"
+        fi
         QMAKE_BIN_DIR="$QT_INSTALL_BINS"
         [ -z "$QMAKE_BIN_DIR" ] && QMAKE_BIN_DIR="${QT_INSTALL_PREFIX}/bin"
         QMAKE_DATA_DIR="$QT_INSTALL_DATA"
@@ -4946,7 +4957,9 @@ if true; then ###[ '!' -f "$outpath/bin/qmake" ];
             -e "s,@QT_INSTALL_BINS@,\$(INSTALL_ROOT)$QMAKE_BIN_DIR,g" \
             -e "s,@QT_INSTALL_DATA@,\$(INSTALL_ROOT)$QMAKE_DATA_DIR,g" \
             -e "s,@QMAKE_QTOBJS@,$EXTRA_OBJS,g" -e "s,@QMAKE_QTSRCS@,$EXTRA_SRCS,g" \
-	    -e "s,@QMAKESPEC@,$adjqmakespec,g" "$in_mkfile" >>"$mkfile"
+            -e "s,@QMAKESPEC@,$adjqmakespec,g" \
+            -e "s,@QMAKE_DEL_FILE@,$DEL_FILE,g" \
+            -e "s,@QMAKE_COPY@,$COPY,g" "$in_mkfile" >>"$mkfile"
 
         if "$WHICH" makedepend >/dev/null 2>&1 && grep 'depend:' "$mkfile" >/dev/null 2>&1; then
             (cd "$outpath/qmake" && "$MAKE" -f "$mkfile" depend) >/dev/null 2>&1

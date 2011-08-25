@@ -1,11 +1,24 @@
+SOURCE_PATH = @SOURCE_PATH@
+BUILD_PATH = @BUILD_PATH@
+QTOBJS = @QMAKE_QTOBJS@
+QTSRCS = @QMAKE_QTSRCS@
+QMAKESPEC = @QMAKESPEC@
+LFLAGS = @QMAKE_LFLAGS@
+DEL_FILE = @QMAKE_DEL_FILE@
+COPY = @QMAKE_COPY@
+
 ifeq "$(SOURCE_PATH)" ""
 SOURCE_PATH = ..
 endif
 
-#cmd version
-
 ifeq "$(BUILD_PATH)" ""
 BUILD_PATH = ..
+endif
+
+# Must transform / to \ because we use "copy" from cmd.exe
+DEST_QMAKE_PATH=$(BUILD_PATH)/bin/qmake.exe
+ifneq ($(SHELL),/bin/sh)
+DEST_QMAKE_PATH := $(subst /,\,$(DEST_QMAKE_PATH))
 endif
 
 #
@@ -101,16 +114,16 @@ QTOBJS= \
 
 qmake.exe: $(OBJS) $(QTOBJS)
 	$(LINKQMAKE)
-	-copy qmake.exe $(BUILD_PATH)\bin\qmake.exe
+	-$(COPY) qmake.exe $(DEST_QMAKE_PATH)
 
 Makefile: Makefile.win32-g++
 	@echo "Out of date, please rerun configure"
 
 clean::
-	-del $(OBJS) $(QTOBJS) $(ADDCLEAN)
+	-$(DEL_FILE) $(OBJS) $(QTOBJS) $(ADDCLEAN)
 
 distclean:: clean
-	-del qmake
+	-$(DEL_FILE) qmake.exe
 
 .c.o:
 	$(CXX) $(CFLAGS) $<
