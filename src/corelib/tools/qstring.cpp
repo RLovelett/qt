@@ -3574,6 +3574,52 @@ static QByteArray toLatin1_helper(const QChar *data, int length)
             length = length % 16;
         }
 #elif defined(QT_ALWAYS_HAVE_NEON)
+#if 1
+        if (length >= 16)
+        {
+            unsigned short arr[16] =
+            {
+                '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',
+                0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+            };
+            asm volatile (
+                ".fpu neon\n"
+                "vld1.16 {d20, d21, d22, d23}, [%[arr]]\n"
+                "1:\n"
+                "cmp %[n], #16\n"
+                "blt 2f\n"
+                "vld1.16 {d0, d1, d2, d3}, [%[src]]!\n"
+                "vcgt.u16 q2, q0, q11\n"
+                "vcgt.u16 q4, q1, q11\n"
+                "vbsl.u16 q2, q10, q0\n"
+                "vbsl.u16 q4, q10, q1\n"
+                "vmovn.i16 d16, q2\n"
+                "vmovn.i16 d17, q4\n"
+                "vst1.8 {d16, d17}, [%[dst]]!\n"
+                "sub %[n], %[n], #16\n"
+                "b 1b\n"
+                "2:\n"
+                "cmp %[n], #8\n"
+                "blt 3f\n"
+                "vld1.16 {d0, d1}, [%[src]]!\n"
+                "vcgt.u16 q2, q0, q11\n"
+                "vbsl.u16 q2, q10, q0\n"
+                "vmovn.i16 d16, q2\n"
+                "vst1.8 {d16}, [%[dst]]!\n"
+                "sub %[n], %[n], #8\n"
+                "b 2b\n"
+                "3:\n"
+                : [dst] "+&r" (dst),
+                  [src] "+&r" (src),
+                  [n] "+&r" (length)
+                : [arr] "r" (arr)
+                : "cc", "memory",
+                  "d0",  "d1",  "d2",  "d3",
+                  "d4",  "d5",  "d6",  "d7",
+                  "d8",  "d9",  "d10", "d11"
+            );
+        }
+#else
         // Refer to the documentation of the SSE2 implementation
         // this use eactly the same method as for SSE except:
         // 1) neon has unsigned comparison
@@ -3596,6 +3642,7 @@ static QByteArray toLatin1_helper(const QChar *data, int length)
             }
             length = length % 8;
         }
+#endif
 #endif
         while (length--) {
             *dst++ = (*src>0xff) ? '?' : (uchar) *src;
@@ -3777,6 +3824,51 @@ QString::Data *QString::fromLatin1_helper(const char *str, int size)
                 dst += 8;
             }
             size = size % 16;
+        }
+#elif defined(QT_ALWAYS_HAVE_NEON)
+        if (size >= 16)
+        {
+            asm volatile (
+                ".fpu neon\n"
+                "1:\n"
+                "cmp %[n], #32\n"
+                "blt 2f\n"
+                "vld1.8 {d0, d1, d2, d3}, [%[src]]!\n"
+                "vmovl.u8 q2, d0\n"
+                "vmovl.u8 q3, d1\n"
+                "vmovl.u8 q4, d2\n"
+                "vmovl.u8 q5, d3\n"
+                "vst1.16 {d4, d5, d6, d7}, [%[dst]]!\n"
+                "vst1.16 {d8, d9, d10, d11}, [%[dst]]!\n"
+                "sub %[n], %[n], #32\n"
+                "b 1b\n"
+                "2:\n"
+                "cmp %[n], #16\n"
+                "blt 3f\n"
+                "vld1.8 {d0, d1}, [%[src]]!\n"
+                "vmovl.u8 q2, d0\n"
+                "vmovl.u8 q3, d1\n"
+                "vst1.16 {d4, d5, d6, d7}, [%[dst]]!\n"
+                "sub %[n], %[n], #16\n"
+                "b 2b\n"
+                "3:\n"
+                "cmp %[n], #8\n"
+                "blt 4f\n"
+                "vld1.8 {d0}, [%[src]]!\n"
+                "vmovl.u8 q2, d0\n"
+                "vst1.16 {d4, d5}, [%[dst]]!\n"
+                "sub %[n], %[n], #8\n"
+                "b 3b\n"
+                "4:\n"
+                : [dst] "+&r" (dst),
+                  [src] "+&r" (str),
+                  [n] "+&r" (size)
+                :
+                : "cc", "memory",
+                  "d0",  "d1",  "d2",  "d3",
+                  "d4",  "d5",  "d6",  "d7",
+                  "d8",  "d9",  "d10", "d11"
+            );
         }
 #endif
         while (size--)
