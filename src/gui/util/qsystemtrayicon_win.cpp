@@ -317,6 +317,16 @@ bool QSystemTrayIconSys::winEvent( MSG *m, long *result )
                 emit q->activated(QSystemTrayIcon::MiddleClick);
                 break;
 
+            case WM_MOUSEMOVE:
+                {
+                    QMouseEvent event(
+                        QEvent::MouseMove,
+                        QPoint( GET_X_LPARAM(m->wParam), GET_Y_LPARAM(m->wParam) ),
+                        Qt::NoButton, Qt::NoButton, Qt::NoModifier );
+                    q->mouseMoveEvent( &event );
+                }
+                break;
+
             default:
                 break;
             }

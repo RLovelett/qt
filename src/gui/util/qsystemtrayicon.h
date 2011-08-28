@@ -114,6 +114,7 @@ Q_SIGNALS:
 
 protected:
     bool event(QEvent *event);
+    virtual void mouseMoveEvent(QMouseEvent *event);
 
 private:
     Q_DISABLE_COPY(QSystemTrayIcon)

@@ -390,6 +390,10 @@ void QSystemTrayIcon::showMessage(const QString& title, const QString& msg,
         d->showMessage_sys(title, msg, icon, msecs);
 }
 
+void QSystemTrayIcon::mouseMoveEvent( QMouseEvent * )
+{
+}
+
 //////////////////////////////////////////////////////////////////////
 static QBalloonTip *theSolitaryBalloonTip = 0;
 
