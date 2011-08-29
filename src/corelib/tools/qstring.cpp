@@ -870,6 +870,15 @@ int QString::grow(int size)
     \overload begin()
 */
 
+/*! \fn QString::const_iterator QString::cbegin() const
+    \since 4.8
+
+    Returns a const \l{STL-style iterator} pointing to the first character
+    in the string.
+
+    \sa begin(), cend()
+*/
+
 /*! \fn QString::const_iterator QString::constBegin() const
 
     Returns a const \l{STL-style iterator} pointing to the first character
@@ -889,6 +898,15 @@ int QString::grow(int size)
 /*! \fn QString::const_iterator QString::end() const
 
     \overload end()
+*/
+
+/*! \fn QString::const_iterator QString::cend() const
+    \since 4.8
+
+    Returns a const \l{STL-style iterator} pointing to the imaginary
+    item after the last item in the list.
+
+    \sa cbegin(), end()
 */
 
 /*! \fn QString::const_iterator QString::constEnd() const

@@ -1060,6 +1060,15 @@ void QHashData::checkSanity()
     \overload
 */
 
+/*! \fn QHash::const_iterator QHash::cbegin() const
+    \since 4.8
+
+    Returns a const \l{STL-style iterator} pointing to the first item
+    in the hash.
+
+    \sa begin(), cend()
+*/
+
 /*! \fn QHash::const_iterator QHash::constBegin() const
 
     Returns a const \l{STL-style iterator} pointing to the first item
@@ -1087,6 +1096,15 @@ void QHashData::checkSanity()
     item after the last item in the hash.
 
     \sa constBegin(), end()
+*/
+
+/*! \fn QHash::const_iterator QHash::cend() const
+    \since 4.8
+
+    Returns a const \l{STL-style iterator} pointing to the imaginary
+    item after the last item in the hash.
+
+    \sa cbegin(), end()
 */
 
 /*! \fn QHash::iterator QHash::erase(iterator pos)
@@ -1129,7 +1147,7 @@ void QHashData::checkSanity()
     \overload
 */
 
-/*! \fn QHash::iterator QHash::constFind(const Key &key) const
+/*! \fn QHash::const_iterator QHash::constFind(const Key &key) const
     \since 4.1
 
     Returns an iterator pointing to the item with the \a key in the

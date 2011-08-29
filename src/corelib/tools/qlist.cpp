@@ -1010,6 +1010,15 @@ void **QListData::erase(void **xi)
     \overload
 */
 
+/*! \fn QList::const_iterator QList::cbegin() const
+    \since 4.8
+
+    Returns a const \l{STL-style iterator} pointing to the first item
+    in the list.
+
+    \sa begin(), cend()
+*/
+
 /*! \fn QList::const_iterator QList::constBegin() const
 
     Returns a const \l{STL-style iterator} pointing to the first item
@@ -1029,6 +1038,15 @@ void **QListData::erase(void **xi)
 /*! \fn const_iterator QList::end() const
 
     \overload
+*/
+
+/*! \fn QList::const_iterator QList::cend() const
+    \since 4.8
+
+    Returns a const \l{STL-style iterator} pointing to the imaginary
+    item after the last item in the list.
+
+    \sa cbegin(), end()
 */
 
 /*! \fn QList::const_iterator QList::constEnd() const

@@ -796,6 +796,12 @@ QByteArray::Data QByteArray::shared_empty = { Q_BASIC_ATOMIC_INITIALIZER(1),
     \internal
 */
 
+/*! \fn QByteArray::const_iterator QByteArray::cbegin() const
+    \since 4.8
+
+    \internal
+*/
+
 /*! \fn QByteArray::const_iterator QByteArray::constBegin() const
 
     \internal
@@ -807,6 +813,12 @@ QByteArray::Data QByteArray::shared_empty = { Q_BASIC_ATOMIC_INITIALIZER(1),
 */
 
 /*! \fn QByteArray::const_iterator QByteArray::end() const
+
+    \internal
+*/
+
+/*! \fn QByteArray::const_iterator QByteArray::cend() const
+    \since 4.8
 
     \internal
 */
