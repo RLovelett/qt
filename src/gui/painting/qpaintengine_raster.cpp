@@ -4218,7 +4218,11 @@ void QRasterPaintEnginePrivate::rasterize(QT_FT_Outline *outline,
         (unsigned char *) _aligned_malloc(rasterPoolSize, sizeof(void*) * 2);
 #else
     unsigned char rasterPoolOnStack[rasterPoolInitialSize];
-    rasterPoolBase = rasterPoolOnStack;
+#ifdef  __mips
+     rasterPoolBase =  (unsigned char *) memalign(sizeof(void*),rasterPoolSize);
+#else
+     rasterPoolBase = rasterPoolOnStack;
+#endif
 #endif
     Q_CHECK_PTR(rasterPoolBase);
 
