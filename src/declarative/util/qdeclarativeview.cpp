@@ -481,10 +481,10 @@ void QDeclarativeViewPrivate::updateSize()
                 q->resize(newSize);
             }
         } else if (resizeMode == QDeclarativeView::SizeRootObjectToView) {
-            if (!qFuzzyCompare(q->width(), declarativeItemRoot->width()))
-                declarativeItemRoot->setWidth(q->width());
-            if (!qFuzzyCompare(q->height(), declarativeItemRoot->height()))
-                declarativeItemRoot->setHeight(q->height());
+            if (!qFuzzyCompare(q->viewport()->width(), declarativeItemRoot->width()))
+                declarativeItemRoot->setWidth(q->viewport()->width());
+            if (!qFuzzyCompare(q->viewport()->height(), declarativeItemRoot->height()))
+                declarativeItemRoot->setHeight(q->viewport()->height());
         }
     } else if (graphicsWidgetRoot) {
         if (resizeMode == QDeclarativeView::SizeViewToRootObject) {
@@ -493,7 +493,7 @@ void QDeclarativeViewPrivate::updateSize()
                 q->resize(newSize);
             }
         } else if (resizeMode == QDeclarativeView::SizeRootObjectToView) {
-            QSizeF newSize = QSize(q->size().width(), q->size().height());
+            QSizeF newSize = q->viewport()->size();
             if (newSize.isValid() && newSize != graphicsWidgetRoot->size()) {
                 graphicsWidgetRoot->resize(newSize);
             }
