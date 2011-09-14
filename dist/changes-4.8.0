@@ -158,6 +158,7 @@ Qt for Embedded Linux
    keyboard and screen drivers.
  - Improved support for INTEGRITY RTOS
  - Allow hard-coding the temp path in mkspecs (QT_UNIX_TEMP_PATH_OVERRIDE define)
+ - Added support for opening LinuxInput devices exclusively (via ioctl EVIOCGRAB)
 
 Qt for Symbian
 --------------
