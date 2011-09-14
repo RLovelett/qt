@@ -3118,8 +3118,10 @@ bool QApplicationPrivate::sendMouseEvent(QWidget *receiver, QMouseEvent *event,
         if (!graphicsWidget) {
             // Register the widget that shall receive a leave event
             // after the last button is released.
-            if ((alienWidget || !receiver->internalWinId()) && !leaveAfterRelease && !QWidget::mouseGrabber())
+            if ((alienWidget || !receiver->internalWinId()) && !leaveAfterRelease
+                && !QWidget::mouseGrabber() && event->type() == QEvent::MouseButtonPress) {
                 leaveAfterRelease = *buttonDown;
+            }
             if (event->type() == QEvent::MouseButtonRelease && !event->buttons())
                 *buttonDown = 0;
         }
