@@ -226,7 +226,7 @@ Qt for Windows CE
 
 
 - configure
-
+    * [QTBUG-5710] Configure now complains on missing perl on windows
 
 - qtconfig
   * removed Qt3support dependency
