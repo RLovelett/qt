@@ -1418,6 +1418,17 @@ QRectF QDeclarativeText::boundingRect() const
         rect.adjust(-1, 0, 1, 2);
 
     // Could include font max left/right bearings to either side of rectangle.
+    int w = width();  
+    switch (d->hAlign) {
+    case AlignLeft:
+        break;
+    case AlignRight:
+        rect.moveLeft(w - rect.width());
+        break;
+    case AlignHCenter:
+        rect.moveLeft((w - rect.width()) / 2);
+        break;
+    }
 
     int h = height();
     switch (d->vAlign) {
