@@ -78,6 +78,8 @@ QtGui
  - Visual text cursor movement behavior is added to QTextEdit and QLineEdit controls,
    which can be used as an optional mode for bi-directional text editing. [QTBUG-13859]
  - Fixed a rare race condition when showing toplevel windows on X11
+ - QWindowsStyle: fix bug in eventFilter on KeyPressed event with alt pressed, that
+   caused unnecessary update events
  - Accessibility: Fix potential crash in QDockWidget.
  - Accessibility: Fix crash when asking for relations of child accessibles.
  - Accessibility: More consistency in reporting names (especially when widget is invisible).
