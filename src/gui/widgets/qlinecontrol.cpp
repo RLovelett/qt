@@ -1885,6 +1885,23 @@ void QLineControl::processKeyEvent(QKeyEvent* event)
         event->accept();
 }
 
+bool QLineControl::isUndoAvailable() const
+{
+    if (!m_readOnly && m_undoState) {
+        if ((m_echoMode == QLineEdit::Password || m_echoMode == QLineEdit::PasswordEchoOnEdit)
+            && (m_history[m_undoState-1].type != QLineControl::Insert)) {
+            return false;
+        }
+        return true;
+    }
+    return false;
+}
+
+bool QLineControl::isRedoAvailable() const
+{
+    return !m_readOnly && m_undoState < (int)m_history.size()
+           && m_echoMode != QLineEdit::Password && m_echoMode!= QLineEdit::PasswordEchoOnEdit;
+}
 
 QT_END_NAMESPACE
 
