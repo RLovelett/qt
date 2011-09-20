@@ -1519,8 +1519,11 @@ void QTextControlPrivate::mousePressEvent(QEvent *e, Qt::MouseButton button, con
             cursor.clearSelection();
         }
     }
-    if (!(button & Qt::LeftButton) ||
-        !((interactionFlags & Qt::TextSelectableByMouse) || (interactionFlags & Qt::TextEditable))) {
+
+    if (anchorOnMousePress.isEmpty()
+        && (!(button & Qt::LeftButton)
+            || !((interactionFlags & Qt::TextSelectableByMouse)
+                 || (interactionFlags & Qt::TextEditable)))) {
             e->ignore();
             return;
     }

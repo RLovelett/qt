@@ -476,6 +476,7 @@ private slots:
     void QTBUG_13473_sceneposchange();
     void QTBUG_16374_crashInDestructor();
     void QTBUG_20699_focusScopeCrash();
+    void QTBUG_11902_notEmitLinkActivatedWhenClicked();
 
 private:
     QList<QGraphicsItem *> paintedItems;
@@ -11295,6 +11296,21 @@ void tst_QGraphicsItem::QTBUG_20699_focusScopeCrash()
     fi->setParentItem(fi2);
     fi->setFocus();
     fs.setFocus();
+}
+
+void tst_QGraphicsItem::QTBUG_11902_notEmitLinkActivatedWhenClicked()
+{
+    QGraphicsScene scene;
+    QGraphicsView view(&scene);
+
+    QGraphicsTextItem *item = new QGraphicsTextItem;
+    QSignalSpy spy(item, SIGNAL(linkActivated(const QString&)));
+    item->setHtml(QString("<a href=\"hello.html\">Click me</a>"));
+    scene.addItem(item);
+    item->setTextInteractionFlags(Qt::LinksAccessibleByMouse);
+
+    sendMouseClick(&scene, QPointF(5, 5), Qt::LeftButton);
+    QCOMPARE(spy.count(), 1);
 }
 
 QTEST_MAIN(tst_QGraphicsItem)
