@@ -4636,6 +4636,29 @@ static Bool qt_tabletMotion_scanner(Display *, XEvent *event, XPointer arg)
     return false;
 }
 
+/* XInput only reports those valuators whose values have changed.
+ * We have to preserve old values. This is a quick hack to test
+ * whether it works or not. It will most likely fail in several
+ * ways if, for example, there is more than one tablet event
+ * source or anything like that.
+ */
+
+enum WacomValuatorIndices {
+    xIndex = 0,
+    yIndex = 1,
+    pressureIndex = 2,
+    xTiltIndex = 3,
+    yTiltIndex = 4,
+    rotationIndex = 5;
+};
+
+static int previousXLoc;
+static int previousYLoc;
+static int previousXTilt;
+static int previousYTilt;
+static qreal previousPressure;
+static qreal previousRotation;
+
 bool QETWidget::translateXinputEvent(const XEvent *ev, QTabletDeviceData *tablet)
 {
 #if defined (Q_OS_IRIX)
@@ -4654,12 +4677,14 @@ bool QETWidget::translateXinputEvent(const XEvent *ev, QTabletDeviceData *tablet
     QPoint global,
         curr;
     QPointF hiRes;
-    qreal pressure = 0;
-    int xTilt = 0,
-        yTilt = 0,
+    qreal pressure = previousPressure;
+    int xLoc = previousXLoc,
+        yLoc = previousYLoc,
+        xTilt = previousXTilt,
+        yTilt = previousYTilt,
         z = 0;
     qreal tangentialPressure = 0;
-    qreal rotation = 0;
+    qreal rotation = previousRotation;
     int deviceType = QTabletEvent::NoDevice;
     int pointerType = QTabletEvent::UnknownPointer;
     const XDeviceMotionEvent *motion = 0;
@@ -4798,21 +4823,57 @@ bool QETWidget::translateXinputEvent(const XEvent *ev, QTabletDeviceData *tablet
 
     QRect screenArea = qApp->desktop()->rect();
     if (motion) {
-        xTilt = (short) motion->axis_data[3];
-        yTilt = (short) motion->axis_data[4];
-        rotation = ((short) motion->axis_data[5]) / 64.0;
-        pressure = (short) motion->axis_data[2];
+        const unsigned char firstAxis = motion->first_axis;
+        const unsigned char axesCount = motion->axes_count;
+        const unsigned char maxIndex = firstAxis + axesCount;
+
+        if (xIndex >= firstAxis && xIndex < maxIndex)
+            xLoc = motion->axis_data[xIndex - firstAxis];
+
+        if (yIndex >= firstAxis && yIndex < maxIndex)
+            yLoc = motion->axis_data[yIndex - firstAxis];
+
+        if (xTiltIndex >= firstAxis && xTiltIndex < maxIndex)
+            xTilt = (short) motion->axis_data[xTiltIndex - firstAxis];
+
+        if (yTiltIndex >= firstAxis && yTiltIndex < maxIndex)
+            yTilt = (short) motion->axis_data[yTiltIndex - firstAxis];
+
+        if (rotationIndex >= firstAxis && rotationIndex < maxIndex)
+            rotation = ((short) motion->axis_data[rotationIndex - firstAxis]) / 64.0;
+
+        if (pressureIndex >= firstAxis && pressureIndex < maxIndex)
+            pressure = (short) motion->axis_data[pressureIndex - firstAxis];
+
         modifiers = X11->translateModifiers(motion->state);
-        hiRes = tablet->scaleCoord(motion->axis_data[0], motion->axis_data[1],
+        hiRes = tablet->scaleCoord(xLoc, yLoc,
                                     screenArea.x(), screenArea.width(),
                                     screenArea.y(), screenArea.height());
     } else if (button) {
-        xTilt = (short) button->axis_data[3];
-        yTilt = (short) button->axis_data[4];
-        rotation = ((short) button->axis_data[5]) / 64.0;
-        pressure = (short) button->axis_data[2];
+        const unsigned char firstAxis = button->first_axis;
+        const unsigned char axesCount = button->axes_count;
+        const unsigned char maxIndex = firstAxis + axesCount;
+
+        if (xIndex >= firstAxis && xIndex < maxIndex)
+            xLoc = button->axis_data[xIndex - firstAxis];
+
+        if (yIndex >= firstAxis && yIndex < maxIndex)
+            yLoc = button->axis_data[yIndex - firstAxis];
+
+        if (xTiltIndex >= firstAxis && xTiltIndex < maxIndex)
+            xTilt = (short) button->axis_data[xTiltIndex - firstAxis];
+
+        if (yTiltIndex >= firstAxis && yTiltIndex < maxIndex)
+            yTilt = (short) button->axis_data[yTiltIndex - firstAxis];
+
+        if (rotationIndex >= firstAxis && rotationIndex < maxIndex)
+            rotation = ((short) button->axis_data[rotationIndex - firstAxis]) / 64.0;
+
+        if (pressureIndex >= firstAxis && pressureIndex < maxIndex)
+            pressure = (short) button->axis_data[pressureIndex - firstAxis];
+
         modifiers = X11->translateModifiers(button->state);
-        hiRes = tablet->scaleCoord(button->axis_data[0], button->axis_data[1],
+        hiRes = tablet->scaleCoord(xLoc, yLoc,
                                     screenArea.x(), screenArea.width(),
                                     screenArea.y(), screenArea.height());
     } else if (proximity) {
@@ -4846,6 +4907,16 @@ bool QETWidget::translateXinputEvent(const XEvent *ev, QTabletDeviceData *tablet
                    deviceType, pointerType,
                    qreal(pressure / qreal(tablet->maxPressure - tablet->minPressure)),
                    xTilt, yTilt, tangentialPressure, rotation, z, modifiers, uid);
+    /* Preserve current values because the X server will *not*
+     * re-send them if they do not change.
+     */
+    previousXLoc = xLoc;
+    previousYLoc = yLoc;
+    previousXTilt = xTilt;
+    previousYTilt = yTilt;
+    previousPressure = pressure;
+    previousRotation = rotation;
+
     if (proximity) {
         QApplication::sendSpontaneousEvent(qApp, &e);
     } else {
