@@ -71,7 +71,7 @@ typedef GLfloat GLdouble;
 # define GL_DOUBLE GL_FLOAT
 #endif
 #ifndef GLdouble
-typedef GLfloat GLdouble;
+//typedef GLfloat GLdouble;
 #endif
 #else
 # include <GL/gl.h>
@@ -127,6 +127,9 @@ class QGLOverlayWidget;
 #endif
 class QGLWidgetPrivate;
 class QGLContextPrivate;
+#ifndef QT_NO_EGL
+class QEglContext;
+#endif
 
 // Namespace class:
 namespace QGL
@@ -320,6 +323,9 @@ public:
 
     virtual void swapBuffers() const;
 
+#ifdef QT_QWS_DIRECTFBGL
+    virtual void setEglContext(QEglContext* eglContext);
+#endif
     enum BindOption {
         NoBindOption                            = 0x0000,
         InvertedYBindOption                     = 0x0001,
