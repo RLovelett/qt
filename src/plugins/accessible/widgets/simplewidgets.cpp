@@ -145,6 +145,8 @@ bool QAccessibleButton::doAction(int action, int child, const QVariantList &para
     case DefaultAction:
     case Press:
         {
+            if (!widget()->isVisible())
+                return false;
 #ifndef QT_NO_MENU
             QPushButton *pb = qobject_cast<QPushButton*>(object());
             if (pb && pb->menu())
@@ -222,7 +224,8 @@ void QAccessibleButton::doAction(int actionIndex)
 {
     switch (actionIndex) {
     case 0:
-        button()->click();
+        if (button()->isEnabled() && button()->isVisible())
+            button()->click();
         break;
     }
 }
