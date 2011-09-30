@@ -5928,6 +5928,7 @@ static QString constructWindowTitleFromFilePath(const QString &filePath)
         windowTitle += QLatin1Char(' ') + QChar(0x2014) + QLatin1Char(' ') + appName;
 #endif
     return windowTitle;
+
 }
 
 /*!
@@ -6357,6 +6358,9 @@ void QWidget::setFocus(Qt::FocusReason reason)
     QWidget *f = this;
     while (f->d_func()->extra && f->d_func()->extra->focus_proxy)
         f = f->d_func()->extra->focus_proxy;
+
+    if (!f->isEnabled())
+        return;
 
     if (QApplication::focusWidget() == f
 #if defined(Q_WS_WIN)
@@ -12099,6 +12103,7 @@ void QWidget::setWindowSurface(QWindowSurface *surface)
     Returns the QWindowSurface this widget will be drawn into.
 */
 QWindowSurface *QWidget::windowSurface() const
+
 {
     Q_D(const QWidget);
     QTLWExtra *extra = d->maybeTopData();
