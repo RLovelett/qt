@@ -1354,7 +1354,7 @@ void tst_QStandardItemModel::useCase3()
     model.appendRow(childItem);
 
     // make sure each item has the correct model and parent
-    QStandardItem *parentItem = 0;
+    QStandardItem *parentItem = childItem->parent();
     while (childItem) {
         QCOMPARE(childItem->model(), &model);
         QCOMPARE(childItem->parent(), parentItem);

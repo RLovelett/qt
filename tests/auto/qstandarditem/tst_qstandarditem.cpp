@@ -440,8 +440,8 @@ void tst_QStandardItem::parent()
         QStandardItemModel model;
         QStandardItem *item = new QStandardItem;
         model.appendRow(item);
-        // parent of a top-level item should be 0
-        QCOMPARE(item->parent(), static_cast<QStandardItem*>(0));
+        // parent of a top-level item should be the invisible root item
+        QCOMPARE(item->parent(), model.invisibleRootItem());
     }
 }
 

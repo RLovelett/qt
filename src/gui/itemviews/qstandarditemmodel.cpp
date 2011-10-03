@@ -787,9 +787,7 @@ QStandardItem::~QStandardItem()
 QStandardItem *QStandardItem::parent() const
 {
     Q_D(const QStandardItem);
-    if (!d->model || (d->model->d_func()->root.data() != d->parent))
-        return d->parent;
-    return 0;
+    return d->parent;
 }
 
 /*!
