@@ -56,6 +56,16 @@
 
 #include <QtCore/qdebug.h>
 #include <QtGui/qgraphicsitem.h>
+#ifdef Q_OS_WINCE
+// qgraphicsitem.h includes qfunctions_wince.h.
+// qfunctions_wince.h defines a missing posix rewind for WinCE,
+// but this conflicts with rewind method defined in this class.
+// As a workaround we undefine WinCE posix replacement for rewind here.
+// Better approach would be to remove qfunctions_wince.h include from
+// qgraphicsitem.h, but unfortunately that wasn't possible due 
+// to other dependencies.
+#   undef rewind
+#endif
 #include <QtCore/qmath.h>
 
 #include <private/qobject_p.h>
