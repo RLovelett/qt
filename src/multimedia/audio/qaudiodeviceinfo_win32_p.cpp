@@ -76,7 +76,7 @@ QT_BEGIN_NAMESPACE
 
 QAudioDeviceInfoInternal::QAudioDeviceInfoInternal(QByteArray dev, QAudio::Mode mode)
 {
-    device = QLatin1String(dev);
+    device = QString::fromLocal8Bit(dev);
     this->mode = mode;
 
     updateLists();
@@ -277,9 +277,10 @@ void QAudioDeviceInfoInternal::updateLists()
 	for(i=0;i<iNumDevs;i++) {
 	    if(waveOutGetDevCaps(i, &woc, sizeof(WAVEOUTCAPS))
 	        == MMSYSERR_NOERROR) {
-		tmp = QString((const QChar *)woc.szPname);
-		if(tmp.compare(device) == 0) {
-		    match = true;
+
+        tmp = QString::fromWCharArray(woc.szPname);
+        if (device.startsWith(tmp)) {
+  	        match = true;
 		    fmt = woc.dwFormats;
 		    break;
 		}
@@ -297,8 +298,8 @@ void QAudioDeviceInfoInternal::updateLists()
 	for(i=0;i<iNumDevs;i++) {
 	    if(waveInGetDevCaps(i, &woc, sizeof(WAVEINCAPS))
 	        == MMSYSERR_NOERROR) {
-		tmp = QString((const QChar *)woc.szPname);
-		if(tmp.compare(device) == 0) {
+        tmp = QString::fromWCharArray(woc.szPname);
+        if (device.startsWith(tmp)) {
 		    match = true;
 		    fmt = woc.dwFormats;
 		    break;
@@ -408,26 +409,20 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
 
     if(mode == QAudio::AudioOutput) {
         WAVEOUTCAPS woc;
-	unsigned long iNumDevs,i;
-	iNumDevs = waveOutGetNumDevs();
-	for(i=0;i<iNumDevs;i++) {
-	    if(waveOutGetDevCaps(i, &woc, sizeof(WAVEOUTCAPS))
-	        == MMSYSERR_NOERROR) {
-	        devices.append(QString((const QChar *)woc.szPname).toLocal8Bit().constData());
-	    }
-	}
+        unsigned long iNumDevs = waveOutGetNumDevs();
+        for (unsigned long i = 0; i < iNumDevs; i++) {
+            if (waveOutGetDevCaps(i, &woc, sizeof(WAVEOUTCAPS)) == MMSYSERR_NOERROR)
+                devices.append(QString::fromWCharArray(woc.szPname).toLocal8Bit());
+        }
     } else {
         WAVEINCAPS woc;
-	unsigned long iNumDevs,i;
-	iNumDevs = waveInGetNumDevs();
-	for(i=0;i<iNumDevs;i++) {
-	    if(waveInGetDevCaps(i, &woc, sizeof(WAVEINCAPS))
-	        == MMSYSERR_NOERROR) {
-	        devices.append(QString((const QChar *)woc.szPname).toLocal8Bit().constData());
-	    }
-	}
-
+        unsigned long iNumDevs = waveInGetNumDevs();
+        for (unsigned long i = 0; i < iNumDevs; i++) {
+            if (waveInGetDevCaps(i, &woc, sizeof(WAVEINCAPS)) == MMSYSERR_NOERROR)
+                devices.append(QString::fromWCharArray(woc.szPname).toLocal8Bit());
+        }
     }
+
     if(devices.count() > 0)
         devices.append("default");
 
