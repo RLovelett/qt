@@ -322,7 +322,11 @@ bool QAudioInputPrivate::open()
     snd_pcm_nonblock( handle, 0 );
 
     // Step 2: Set the desired HW parameters.
+#if __LSB_VERSION__ >= 40
+    snd_pcm_hw_params_malloc(&hwparams);
+#else
     snd_pcm_hw_params_alloca( &hwparams );
+#endif
 
     bool fatal = false;
     QString errMessage;
@@ -401,6 +405,9 @@ bool QAudioInputPrivate::open()
         errorState = QAudio::OpenError;
         deviceState = QAudio::StoppedState;
         emit stateChanged(deviceState);
+#if __LSB_VERSION__ >= 40
+        snd_pcm_hw_params_free(hwparams);
+#endif
         return false;
     }
     snd_pcm_hw_params_get_buffer_size(hwparams,&buffer_frames);
@@ -412,12 +419,21 @@ bool QAudioInputPrivate::open()
 
     // Step 3: Set the desired SW parameters.
     snd_pcm_sw_params_t *swparams;
+#if __LSB_VERSION__ >= 40
+    snd_pcm_sw_params_malloc(&swparams);
+#else
     snd_pcm_sw_params_alloca(&swparams);
+#endif
     snd_pcm_sw_params_current(handle, swparams);
     snd_pcm_sw_params_set_start_threshold(handle,swparams,period_frames);
     snd_pcm_sw_params_set_stop_threshold(handle,swparams,buffer_frames);
     snd_pcm_sw_params_set_avail_min(handle, swparams,period_frames);
     snd_pcm_sw_params(handle, swparams);
+
+#if __LSB_VERSION__ >= 40
+    snd_pcm_hw_params_free(hwparams);
+    snd_pcm_sw_params_free(swparams);
+#endif
 
     // Step 4: Prepare audio
     if(audioBuffer == 0)

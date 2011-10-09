@@ -251,7 +251,11 @@ bool QAudioDeviceInfoInternal::testSettings(const QAudioFormat& format) const
     int  dir = 0;
 
     snd_pcm_nonblock( handle, 0 );
+#if __LSB_VERSION__ >= 40
+    snd_pcm_hw_params_malloc(&params);
+#else
     snd_pcm_hw_params_alloca( &params );
+#endif
     snd_pcm_hw_params_any( handle, params );
 
     // set the values!
@@ -359,17 +363,14 @@ bool QAudioDeviceInfoInternal::testSettings(const QAudioFormat& format) const
     if(err>=0)
         err = snd_pcm_hw_params(handle, params);
 
-    if(err == 0) {
-        // settings work
-        // close()
-        if(handle)
-            snd_pcm_close(handle);
-        return true;
-    }
+#if __LSB_VERSION__ >= 40
+    snd_pcm_hw_params_free(params);
+#endif
+
     if(handle)
         snd_pcm_close(handle);
 
-    return false;
+    return (err == 0);
 }
 
 void QAudioDeviceInfoInternal::updateLists()
