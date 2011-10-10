@@ -2906,7 +2906,7 @@ void QAbstractItemView::keyboardSearch(const QString &search)
     }
 
     // search from start with wraparound
-    const QString searchString = sameKey ? QString(d->keyboardInput.at(0)) : d->keyboardInput;
+    const QString searchString = d->keyboardInput;
     QModelIndex current = start;
     QModelIndexList match;
     QModelIndex firstMatch;

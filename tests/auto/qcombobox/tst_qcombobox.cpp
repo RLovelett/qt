@@ -158,6 +158,7 @@ private slots:
     void task_QTBUG_1071_changingFocusEmitsActivated();
     void maxVisibleItems();
     void task_QTBUG_10491_currentIndexAndModelColumn();
+    void task_QTBUG_3032_keyboardSelection();
 
 protected slots:
     void onEditTextChanged( const QString &newString );
@@ -1725,18 +1726,22 @@ void tst_QComboBox::flaggedItems_data()
             keyMovementList << Qt::Key_End;
             QTest::newRow(testCase.toAscii() + "end-key") << itemList << deselectFlagList << disableFlagList << keyMovementList << bool(editable) << 7;
 
+            keyMovementList.clear();
             disableFlagList.clear();
             disableFlagList << 1 ;
             keyMovementList << Qt::Key_T;
             QTest::newRow(testCase.toAscii() + "keyboard-search") << itemList << deselectFlagList << disableFlagList << keyMovementList << bool(editable) << 2;
 
-            itemList << "nine" << "ten";
             keyMovementList << Qt::Key_T;
-            QTest::newRow(testCase.toAscii() + "search same start letter") << itemList << deselectFlagList << disableFlagList << keyMovementList << bool(editable) << 9;
+            QTest::newRow(testCase.toAscii() + "search same start letter") << itemList << deselectFlagList << disableFlagList << keyMovementList << bool(editable) << 2;
 
             keyMovementList.clear();
             keyMovementList << Qt::Key_T << Qt::Key_H;
             QTest::newRow(testCase.toAscii() + "keyboard search item") << itemList << deselectFlagList << disableFlagList << keyMovementList << bool(editable) << 2;
+
+            itemList << "nine" << "ten";
+            keyMovementList << Qt::Key_T;
+            QTest::newRow(testCase.toAscii() + "jump to next same start letter") << itemList << deselectFlagList << disableFlagList << keyMovementList << bool(editable) << 9;
 
             disableFlagList.clear();
             disableFlagList << 1 << 3 << 5 << 7 << 9;
@@ -2594,6 +2599,26 @@ void tst_QComboBox::task_QTBUG_10491_currentIndexAndModelColumn()
     QComboBoxPrivate *d = static_cast<QComboBoxPrivate *>(QComboBoxPrivate::get(&comboBox));
     d->setCurrentIndex(model.index(2, 2));
     QCOMPARE(QModelIndex(d->currentIndex), model.index(2, comboBox.modelColumn()));
+}
+
+void tst_QComboBox::task_QTBUG_3032_keyboardSelection()
+{
+    QComboBox comboBox;
+    QStringList list;
+    int keyboardInterval = QApplication::keyboardInputInterval();
+    list << "OA" << "OB" << "OC" << "OO" << "OP" << "PP";
+    comboBox.addItems(list);
+
+    QTest::qWait(keyboardInterval); // Clear keyboard input
+    QTest::keyClicks(&comboBox, "oo", Qt::NoModifier, 50);
+    QCOMPARE(comboBox.currentText(), list.at(3));
+
+    QTest::qWait(keyboardInterval); // Clear keyboard input
+    QTest::keyClicks(&comboBox, "op", Qt::NoModifier, 50);
+    QCOMPARE(comboBox.currentText(), list.at(4));
+
+    QTest::keyClick(&comboBox, Qt::Key_P, Qt::NoModifier, keyboardInterval);
+    QCOMPARE(comboBox.currentText(), list.at(5));
 }
 
 QTEST_MAIN(tst_QComboBox)
