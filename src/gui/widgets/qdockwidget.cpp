@@ -690,6 +690,7 @@ void QDockWidgetPrivate::initDrag(const QPoint &pos, bool nca)
     if (state != 0)
         return;
 
+    Q_Q(QDockWidget);
     QMainWindow *win = qobject_cast<QMainWindow*>(parent);
     Q_ASSERT(win != 0);
     QMainWindowLayout *layout = qt_mainwindow_layout(win);
@@ -704,6 +705,17 @@ void QDockWidgetPrivate::initDrag(const QPoint &pos, bool nca)
     state->ownWidgetItem = false;
     state->nca = nca;
     state->ctrlDrag = false;
+
+    if (!q->isFloating()) {
+        // When dragging the widget out of the docking area,
+        // use the middle of title area as pressPos
+        QDockWidgetLayout *dwlayout = qobject_cast<QDockWidgetLayout*>(q->layout());
+        if (dwlayout) {
+            int width = undockedGeometry.isNull() ? q->width() : undockedGeometry.width();
+            state->pressPos.setY(dwlayout->titleArea().height() / 2);
+            state->pressPos.setX(width / 2);
+        }
+    }
 }
 
 void QDockWidgetPrivate::startDrag()
@@ -1040,7 +1052,9 @@ void QDockWidgetPrivate::setWindowState(bool floating, bool unplug, const QRect 
     }
 #endif
 
-    if (!rect.isNull())
+    if (!undockedGeometry.isNull() && floating)
+        q->setGeometry(undockedGeometry);
+    else if (!rect.isNull())
         q->setGeometry(rect);
 
     updateButtons();
