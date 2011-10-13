@@ -118,6 +118,17 @@ public:
     void _q_endAnimatedOperation();
 #endif //QT_NO_ANIMATION
 
+    struct LayoutData
+    {
+        LayoutData() : index(QModelIndex()), parentNum(-1), depth(0) {}
+        LayoutData(QModelIndex i, int n, int l) : index(i), parentNum(n), depth(l) {}
+
+        QModelIndex index;
+        int         parentNum;
+        int         depth;
+    };
+
+
     void expand(int item, bool emitSignal);
     void collapse(int item, bool emitSignal);
 
@@ -128,6 +139,10 @@ public:
     void _q_modelDestroyed();
 
     void layout(int item, bool recusiveExpanding = false, bool afterIsUninitialized = false);
+    void layoutDFS(QVector<QTreeViewItem> &newViewItems,
+                   QStack<LayoutData> &unvisitedChildren,
+                   const int itemNum,
+                   const bool expandBranch);
 
     int pageUp(int item) const;
     int pageDown(int item) const;
@@ -172,6 +187,7 @@ public:
 
     mutable QVector<QTreeViewItem> viewItems;
     mutable int lastViewedItem;
+    QVector<QTreeViewItem> branchItems; // working area for layoutDFS
     int defaultItemHeight; // this is just a number; contentsHeight() / numItems
     bool uniformRowHeights; // used when all rows have the same height
     bool rootDecoration;

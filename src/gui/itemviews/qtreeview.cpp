@@ -3127,76 +3127,119 @@ void QTreeViewPrivate::layout(int i, bool recursiveExpanding, bool afterIsUninit
         count = model->rowCount(parent);
     }
 
-    bool expanding = true;
-    if (i == -1) {
-        if (uniformRowHeights) {
-            QModelIndex index = model->index(0, 0, parent);
-            defaultItemHeight = q->indexRowSizeHint(index);
-        }
-        viewItems.resize(count);
-        afterIsUninitialized = true;
-    } else if (viewItems[i].total != (uint)count) {
-        if (!afterIsUninitialized)
-            insertViewItems(i + 1, count, QTreeViewItem()); // expand
-        else if (count > 0)
-            viewItems.resize(viewItems.count() + count);
+    if (i == -1 && uniformRowHeights) {
+        QModelIndex index = model->index(0, 0, parent);
+        defaultItemHeight = q->indexRowSizeHint(index);
+    }
+
+    // Prepare to traverse the tree of items in depth-first order by placing
+    // all visible children of 'itemNum' in the stack.
+    QStack<LayoutData>  unvisitedChildren;
+    int level = (i >= 0) ? viewItems.at(i).level : -1;
+    for (int row=count-1; row>=0; row--) {
+        QModelIndex childIndex = model->index(row, 0, parent);
+        if (!isRowHidden(childIndex))
+            unvisitedChildren.push(LayoutData (childIndex, i, level+1));
+    }
+        
+    const int firstNewItem = i + 1;
+    if (viewItems.isEmpty()) {
+        // If the entire tree is being laid out then we can optimise by operating
+        // directly on 'viewItems'.
+        layoutDFS(viewItems, unvisitedChildren, i, recursiveExpanding);
     } else {
-        expanding = false;
-    }
+        // But if only a branch or leaf is being laid out then we must use a working
+        // vector and insert into 'viewItems' when finished.
+        branchItems.clear();
+        layoutDFS(branchItems, unvisitedChildren, i, recursiveExpanding);
 
-    int first = i + 1;
-    int level = (i >= 0 ? viewItems.at(i).level + 1 : 0);
-    int hidden = 0;
-    int last = 0;
-    int children = 0;
-    QTreeViewItem *item = 0;
-    for (int j = first; j < first + count; ++j) {
-        current = model->index(j - first, 0, parent);
-        if (isRowHidden(current)) {
-            ++hidden;
-            last = j - hidden + children;
-        } else {
-            last = j - hidden + children;
-            if (item)
-                item->hasMoreSiblings = true;
-            item = &viewItems[last];
-            item->index = current;
-            item->parentItem = i;
-            item->level = level;
-            item->height = 0;
-            item->spanning = q->isFirstColumnSpanned(current.row(), parent);
-            item->expanded = false;
-            item->total = 0;
-            item->hasMoreSiblings = false;
-            if (recursiveExpanding || isIndexExpanded(current)) {
-                if (recursiveExpanding)
-                    expandedIndexes.insert(current);
-                item->expanded = true;
-                layout(last, recursiveExpanding, afterIsUninitialized);
-                item = &viewItems[last];
-                children += item->total;
-                item->hasChildren = item->total > 0;
-                last = j - hidden + children;
-            } else {
-                item->hasChildren = hasVisibleChildren(current);
+        const int numBranchItems = branchItems.size();
+        const int numNewItems = numBranchItems - viewItems[i].total;
+        if (numNewItems <= 0)
+            return;
+
+        insertViewItems(firstNewItem, numNewItems, QTreeViewItem());
+        memcpy(&viewItems[firstNewItem], branchItems.data(), sizeof(QTreeViewItem)*numBranchItems); 
+
+        //  Now adjust all the ancestors of this branch with their new deep
+        // descendant count.
+        int parentNum = i;
+        while (parentNum > -1) {
+            viewItems[parentNum].total += numNewItems;
+            parentNum = viewItems[parentNum].parentItem;
+        }
+    }
+}
+
+void QTreeViewPrivate::layoutDFS (QVector<QTreeViewItem> &newViewItems,
+                                  QStack<LayoutData>     &unvisitedChildren,
+                                  const int               parentOffset,
+                                  const bool              expandBranch)
+{
+    Q_Q(QTreeView);
+
+    //  Traverse the child view items in depth-first order flattening them
+    // into the 'newViewItems' vector.
+    QTreeViewItem item;
+    while (!unvisitedChildren.empty()) {
+        LayoutData child = unvisitedChildren.pop();
+
+        int numChildren = 0;
+        bool expanded = expandBranch || isIndexExpanded(child.index);
+        if (expanded && model->hasChildren(child.index)) {
+            if (model->canFetchMore(child.index))
+                model->fetchMore(child.index);
+            numChildren = model->rowCount(child.index);
+        }
+
+        item.index = child.index;
+        item.level = child.depth;
+        item.total = numChildren;
+        item.expanded = expanded;
+        item.height = 0;
+        item.spanning = q->isFirstColumnSpanned(child.index.row(), child.index.parent());
+        item.parentItem = child.parentNum;
+
+        // If there is another unvisited child and it has the same depth as
+        // this one (meaning they have the same parent) then this item "has
+        // more siblings".
+
+        item.hasMoreSiblings = false;
+        if (!unvisitedChildren.isEmpty())
+            item.hasMoreSiblings = (unvisitedChildren.top().depth == child.depth);
+
+        newViewItems.push_back (item);
+
+        if (expanded) {
+            if (expandBranch)
+                expandedIndexes.insert(child.index);
+
+            //  Note that the parent viewItem of this child is referenced by its
+            // "global" index as offset by 'parentOffset'.  This allows the
+            // branch item data we are computing to be moved as a block into
+            // the 'viewItems' vector.
+            int parentItem = parentOffset + newViewItems.size();
+
+            for (int row = numChildren - 1; row >= 0; row--) {
+                QModelIndex childIndex = model->index(row, 0, child.index);
+                if (isRowHidden(childIndex))
+                    newViewItems.back().total--;
+                else
+                    unvisitedChildren.push(LayoutData (childIndex, parentItem, child.depth+1));
             }
+
+            newViewItems.back().hasChildren = newViewItems.back().total > 0;
+        } else {
+            newViewItems.back().hasChildren = hasVisibleChildren(child.index);
         }
     }
 
-    // remove hidden items
-    if (hidden > 0) {
-        if (!afterIsUninitialized)
-            removeViewItems(last + 1, hidden);
-        else
-            viewItems.resize(viewItems.size() - hidden);
-    }
-
-    if (!expanding)
-        return; // nothing changed
-
-    while (i > -1) {
-        viewItems[i].total += count - hidden;
-        i = viewItems[i].parentItem;
+    //  Accumulate the deep ancestor count for each new item.
+    const int firstNewItem = parentOffset + 1;
+    for (int v = newViewItems.size() - 2; v >= 0; v--) {
+        const QTreeViewItem &item = newViewItems[v];
+        if (item.parentItem > parentOffset && item.total)
+            newViewItems[item.parentItem - firstNewItem].total += item.total;
     }
 }
 
