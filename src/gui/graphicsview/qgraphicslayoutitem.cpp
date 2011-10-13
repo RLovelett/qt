@@ -139,8 +139,18 @@ QSizeF *QGraphicsLayoutItemPrivate::effectiveSizeHints(const QSizeF &constraint)
     Q_Q(const QGraphicsLayoutItem);
     QSizeF *sizeHintCache;
     const bool hasConstraint = constraint.width() >= 0 || constraint.height() >= 0;
+    QSizeF adjustedConstraint = constraint;
     if (hasConstraint) {
         if (!sizeHintWithConstraintCacheDirty && constraint == cachedConstraint)
+            return cachedSizeHintsWithConstraints;
+
+        QSizeF *hintsWithoutConstraint = effectiveSizeHints(QSizeF(-1,-1));
+        if (constraint.width() >= 0)
+            adjustedConstraint.setWidth( qBound( hintsWithoutConstraint[Qt::MinimumSize].width(), constraint.width(), hintsWithoutConstraint[Qt::MaximumSize].width()));
+        if (constraint.height() >= 0)
+            adjustedConstraint.setHeight( qBound( hintsWithoutConstraint[Qt::MinimumSize].height(), constraint.height(), hintsWithoutConstraint[Qt::MaximumSize].height()));
+
+        if (!sizeHintWithConstraintCacheDirty && adjustedConstraint == cachedConstraint)
             return cachedSizeHintsWithConstraints;
         sizeHintCache = cachedSizeHintsWithConstraints;
     } else {
@@ -150,7 +160,7 @@ QSizeF *QGraphicsLayoutItemPrivate::effectiveSizeHints(const QSizeF &constraint)
     }
 
     for (int i = 0; i < Qt::NSizeHints; ++i) {
-        sizeHintCache[i] = constraint;
+        sizeHintCache[i] = adjustedConstraint;
         if (userSizeHints)
             combineSize(sizeHintCache[i], userSizeHints[i]);
     }
@@ -172,6 +182,7 @@ QSizeF *QGraphicsLayoutItemPrivate::effectiveSizeHints(const QSizeF &constraint)
     expandSize(maxS, minS);
     boundSize(maxS, QSizeF(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
 
+
     COMBINE_SIZE(minS, q->sizeHint(Qt::MinimumSize, minS));
     expandSize(minS, QSizeF(0, 0));
     boundSize(minS, prefS);
@@ -185,7 +196,7 @@ QSizeF *QGraphicsLayoutItemPrivate::effectiveSizeHints(const QSizeF &constraint)
     // COMBINE_SIZE(descentS, q->sizeHint(Qt::MinimumDescent, constraint));
 
     if (hasConstraint) {
-        cachedConstraint = constraint;
+        cachedConstraint = adjustedConstraint;
         sizeHintWithConstraintCacheDirty = false;
     } else {
         sizeHintCacheDirty = false;
