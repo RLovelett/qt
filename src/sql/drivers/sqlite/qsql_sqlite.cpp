@@ -176,6 +176,25 @@ void QSQLiteResultPrivate::initColumns(bool emptyResultset)
         // sqlite3_column_type is documented to have undefined behavior if the result set is empty
         int stp = emptyResultset ? -1 : sqlite3_column_type(stmt, i);
         fld.setSqlType(stp);
+        if (typeName.isEmpty()) {
+            // Get the proper type for the field based on stp value
+            QVariant::Type varType;
+            switch (stp) {
+            case SQLITE_INTEGER:
+                varType = QVariant::Int;
+                break;
+            case SQLITE_FLOAT:
+                varType = QVariant::Double;
+                break;
+            case SQLITE_BLOB:
+                varType = QVariant::ByteArray;
+                break;
+            default:
+                varType = QVariant::String;
+                break;
+            }
+            fld.setType(varType);
+        }
         rInf.append(fld);
     }
 }

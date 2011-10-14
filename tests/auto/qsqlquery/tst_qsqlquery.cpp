@@ -222,6 +222,8 @@ private slots:
     void benchmark();
 #endif
 
+    void sumFieldType_data() { generic_data(); }
+    void sumFieldType();
 private:
     // returns all database connections
     void generic_data(const QString &engine=QString());
@@ -3262,6 +3264,25 @@ void tst_QSqlQuery::benchmark()
     tst_Databases::safeDropTable( db, tableName );
 }
 #endif
+
+void tst_QSqlQuery::sumFieldType()
+{
+    QFETCH(QString, dbName);
+    QSqlDatabase db = QSqlDatabase::database(dbName);
+    CHECK_DATABASE(db);
+    const QString tableName(qTableName("sumfieldtype", __FILE__));
+    tst_Databases::safeDropTable( db, tableName );
+
+    QSqlQuery q(db);
+    QVERIFY_SQL(q, exec("CREATE TABLE " + tableName + " (id INTEGER)"));
+    QVERIFY_SQL(q, exec("INSERT INTO " + tableName + " (id) VALUES (1)"));
+    QVERIFY_SQL(q, exec("INSERT INTO " + tableName + " (id) VALUES (2)"));
+    QVERIFY_SQL(q, exec("SELECT SUM(id) FROM " + tableName));
+
+    QVERIFY(q.next());
+    QCOMPARE(q.value(0).toInt(), 3);
+    QCOMPARE(q.record().field(0).type(), QVariant::Int);
+}
 
 QTEST_MAIN( tst_QSqlQuery )
 #include "tst_qsqlquery.moc"
