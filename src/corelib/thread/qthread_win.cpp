@@ -406,14 +406,48 @@ void QThread::sleep(unsigned long secs)
     ::Sleep(secs * 1000);
 }
 
+static double ticksPerUsecond()
+{
+    LARGE_INTEGER freq;
+    if (!::QueryPerformanceFrequency(&freq))
+        return qSNaN();
+    return freq.QuadPart / 1000000.0;
+}
+
+#define MIN_SLEEP_PERIOD 20
+
+static void uSleep(quint64 usecs)
+{
+    LARGE_INTEGER target;
+    const BOOL valid = ::QueryPerformanceCounter(&target);
+    const double coef = ticksPerUsecond(); //frequency may change at runtime
+    qint64 msecs = usecs / 1000;
+
+    if (valid && !qIsNaN(coef)) {
+        //compute counter value for end of sleep
+        target.QuadPart += LONGLONG(coef * usecs + 0.5);
+        //low accuracy wait
+        msecs -= MIN_SLEEP_PERIOD;
+        if (msecs > 0)
+            ::Sleep(msecs);
+        //high accuracy wait
+        LARGE_INTEGER cur;
+        do { //wait while current counter value is less than computed
+            ::QueryPerformanceCounter(&cur);
+        } while (cur.QuadPart < target.QuadPart);
+    } else { //fallback, if there is problems with Perfomance Counter
+        ::Sleep(msecs + 1);
+    }
+}
+
 void QThread::msleep(unsigned long msecs)
 {
-    ::Sleep(msecs);
+    ::uSleep(quint64(msecs) * 1000);
 }
 
 void QThread::usleep(unsigned long usecs)
 {
-    ::Sleep((usecs / 1000) + 1);
+    ::uSleep(usecs);
 }
 
 
