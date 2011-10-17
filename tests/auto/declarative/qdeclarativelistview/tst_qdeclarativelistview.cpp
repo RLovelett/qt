@@ -121,6 +121,7 @@ private slots:
     void test_mirroring();
     void orientationChange();
     void contentPosJump();
+    void resizeAfterSetCurrentIndex();
 
 private:
     template <class T> void items();
@@ -1772,6 +1773,56 @@ void tst_QDeclarativeListView::QTBUG_9791()
 
     // check that view is positioned correctly
     QTRY_COMPARE(listview->contentX(), 590.0);
+
+    delete canvas;
+}
+
+void tst_QDeclarativeListView::resizeAfterSetCurrentIndex()
+{
+    QDeclarativeView *canvas = new QDeclarativeView(0);
+    QTRY_VERIFY(canvas);
+
+    canvas->setSource(QUrl::fromLocalFile(SRCDIR "/data/resizeaftersetcurrentindex.qml"));
+    canvas->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+
+    canvas->resize(250, 100);
+
+    canvas->show();
+    qApp->setActiveWindow(canvas);
+#ifdef Q_WS_X11
+    // to be safe and avoid failing setFocus with window managers
+    qt_x11_wait_for_window_manager(canvas);
+#endif
+    QTRY_VERIFY(canvas->hasFocus());
+    QTRY_VERIFY(canvas->scene()->hasFocus());
+    qApp->processEvents();
+
+    QDeclarativeListView *listView = canvas->rootObject()->findChild<QDeclarativeListView*>("listView");
+    QTRY_VERIFY(listView);
+
+    QDeclarativeItem *contentItem = listView->contentItem();
+    QTRY_VERIFY(contentItem != 0);
+    QTRY_VERIFY(listView->delegate() != 0);
+    QTRY_VERIFY(listView->model() != 0);
+
+    QDeclarativeListModel *listModel = canvas->rootObject()->findChild<QDeclarativeListModel*>("listModel");
+    QTRY_VERIFY(listModel);
+    QCOMPARE(listModel->count(), 4);
+
+    for (int i = 1; i < listView->count(); ++i) {
+        listView->setCurrentIndex(i);
+        qApp->processEvents();
+
+        QTest::qWait(300);
+
+        const QSizeF currentSize = canvas->size();
+        canvas->resize(currentSize.width() == 100 ? 250 : 100, currentSize.height() == 250 ? 100 : 250);
+        qApp->processEvents();
+
+        QTest::qWait(300);
+
+        QCOMPARE(listView->currentIndex(), i);
+    }
 
     delete canvas;
 }

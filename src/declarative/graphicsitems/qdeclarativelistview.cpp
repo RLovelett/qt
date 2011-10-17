@@ -490,6 +490,17 @@ public:
         if (item != contentItem && (!highlight || item != highlight->item)) {
             if ((orient == QDeclarativeListView::Vertical && newGeometry.height() != oldGeometry.height())
                 || (orient == QDeclarativeListView::Horizontal && newGeometry.width() != oldGeometry.width())) {
+                int dx = newGeometry.width() - oldGeometry.width();
+                bool visibleItemValidPos = false;
+                for (int i = 0; (i < visibleItems.count()) && !visibleItemValidPos; ++i) {
+                    if ((dx > 0 && visibleItems.at(i)->position() >= position())
+                            || (dx < 0 && visibleItems.at(i)->endPosition() > position())) {
+                        validVisibleItemPos = true;
+                    } else if (item == visibleItems.at(i)->item) {
+                        visibleItems.first()->setPosition(visibleItems.first()->position() - dx);
+                        validVisibleItemPos = true;
+                    }
+                }
                 scheduleLayout();
             }
         }
