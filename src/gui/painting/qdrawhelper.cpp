@@ -3566,11 +3566,11 @@ static void blend_color_rgb16(int count, const QSpan *spans, void *userData)
             if (spans->coverage == 255) {
                 QT_MEMFILL_USHORT(target, spans->len, c);
             } else {
-                ushort color = BYTE_MUL_RGB16(c, spans->coverage);
-                int ialpha = 255 - spans->coverage;
                 const ushort *end = target + spans->len;
                 while (target < end) {
-                    *target = color + BYTE_MUL_RGB16(*target, ialpha);
+                    *target = qConvertRgb32To16(INTERPOLATE_PIXEL_255(
+                                data->solid.color, spans->coverage,
+                                qConvertRgb16To32(*target), 255-spans->coverage));
                     ++target;
                 }
             }
@@ -3581,36 +3581,15 @@ static void blend_color_rgb16(int count, const QSpan *spans, void *userData)
 
     if (mode == QPainter::CompositionMode_SourceOver) {
         while (count--) {
-            uint color = BYTE_MUL(data->solid.color, spans->coverage);
-            int ialpha = qAlpha(~color);
-            ushort c = qConvertRgb32To16(color);
+            uint source = BYTE_MUL(data->solid.color, spans->coverage);
+            ushort ialpha = qAlpha(~source); // 1-(source.a * coverage)
             ushort *target = ((ushort *)data->rasterBuffer->scanLine(spans->y)) + spans->x;
-            int len = spans->len;
-            bool pre = (((quintptr)target) & 0x3) != 0;
-            bool post = false;
-            if (pre) {
-                // skip to word boundary
-                *target = c + BYTE_MUL_RGB16(*target, ialpha);
+            const ushort *end = target + spans->len;
+            while (target < end) {
+                *target = qConvertRgb32To16(INTERPOLATE_PIXEL_255(
+                            source, 255, //rgb values already multiplied by coverage
+                            qConvertRgb16To32(*target), ialpha));
                 ++target;
-                --len;
-            }
-            if (len & 0x1) {
-                post = true;
-                --len;
-            }
-            uint *target32 = (uint*)target;
-            uint c32 = c | (c<<16);
-            len >>= 1;
-            uint salpha = (ialpha+1) >> 3; // calculate here rather than in loop
-            while (len--) {
-                // blend full words
-                *target32 = c32 + BYTE_MUL_RGB16_32(*target32, salpha);
-                ++target32;
-                target += 2;
-            }
-            if (post) {
-                // one last pixel beyond a full word
-                *target = c + BYTE_MUL_RGB16(*target, ialpha);
             }
             ++spans;
         }
