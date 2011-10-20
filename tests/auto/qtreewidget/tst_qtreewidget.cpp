@@ -172,6 +172,7 @@ private slots:
     void taskQTBUG2844_visualItemRect();
     void setChildIndicatorPolicy();
 
+    void task20345_sortChildren();
 
 public slots:
     void itemSelectionChanged();
@@ -3366,7 +3367,41 @@ void tst_QTreeWidget::setChildIndicatorPolicy()
     QTRY_COMPARE(delegate.numPaints, 1);
 }
 
+void tst_QTreeWidget::task20345_sortChildren()
+{
+    // This test case is considered successful if it is executed (no crash in sorting)
+    QTreeWidget tw;
+    tw.setColumnCount(1);
+    tw.setColumnCount(3);
+    tw.headerItem()->setText(0, "Col 0");
+    tw.headerItem()->setText(1, "Col 1");
+    tw.headerItem()->setText(2, "Col 2");
+    tw.header()->setSortIndicator(0, Qt::AscendingOrder);
+    tw.setSortingEnabled(true);
+    tw.show();
 
+    QTreeWidgetItem *rootItem = 0;
+    QTreeWidgetItem *childItem = 0;
+
+    rootItem = new QTreeWidgetItem(&tw, QStringList("a"));
+    childItem = new QTreeWidgetItem(rootItem);
+    childItem->setText(2, "3");
+    childItem = new QTreeWidgetItem(rootItem);
+    childItem->setText(2, "1");
+    childItem = new QTreeWidgetItem(rootItem);
+    childItem->setText(2, "2");
+
+    tw.header()->resizeSections(QHeaderView::ResizeToContents);
+    tw.setCurrentItem(tw.topLevelItem(0));
+
+    QTreeWidgetItem * curItem = tw.currentItem();
+    int childCount = curItem->childCount() + 1;
+
+    QTreeWidgetItem * newItem = new QTreeWidgetItem(curItem);
+    newItem->setText(2, QString::number(childCount));
+    rootItem->sortChildren(2, Qt::AscendingOrder);
+    QVERIFY(1);
+}
 
 QTEST_MAIN(tst_QTreeWidget)
 #include "tst_qtreewidget.moc"
