@@ -4,20 +4,37 @@
 <context>
     <name>CloseButton</name>
     <message>
-        <location filename="../src/gui/widgets/qtabbar.cpp" line="+2319"/>
+        <location filename="../src/gui/widgets/qtabbar.cpp" line="+2322"/>
         <source>Close Tab</source>
         <translation>Užverti kortelę</translation>
     </message>
 </context>
 <context>
+    <name>Debugger::JSAgentWatchData</name>
+    <message>
+        <location filename="../src/declarative/debugger/qjsdebuggeragent.cpp" line="+118"/>
+        <source>[Array of length %1]</source>
+        <translation>[masyvas, kurio ilgis %1]</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>&lt;undefined&gt;</source>
+        <translation>&lt;neapibrėžta&gt;</translation>
+    </message>
+</context>
+<context>
     <name>FakeReply</name>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/tests/qwebframe/tst_qwebframe.cpp" line="+2279"/>
         <source>Fake error !</source>
+        <translation type="obsolete">Fiktyvi klaida!</translation>
+    </message>
+    <message>
+        <location filename="../src/3rdparty/webkit/Source/WebKit/qt/tests/qwebframe/tst_qwebframe.cpp" line="+2321"/>
+        <source>Fake error!</source>
         <translation>Fiktyvi klaida!</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+5"/>
         <source>Invalid URL</source>
         <translation>Netinkamas URL adresas</translation>
     </message>
@@ -25,7 +42,7 @@
 <context>
     <name>MAC_APPLICATION_MENU</name>
     <message>
-        <location filename="../src/gui/kernel/qapplication.cpp" line="+2415"/>
+        <location filename="../src/gui/kernel/qapplication.cpp" line="+2425"/>
         <source>Services</source>
         <translation>Tarnybos</translation>
     </message>
@@ -115,7 +132,7 @@
     <message>
         <location line="-3"/>
         <source>&lt;html&gt;Switching to the audio playback device &lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;which has higher preference or is specifically configured for this stream.&lt;/html&gt;</source>
-        <translation>&lt;html&gt;Bus naudojamas garso atkūrimo įrenginys &lt;b&gt;%1&lt;/b&gt;,&lt;br/&gt;turintis aukštesnį pripritetą arba sukonfigūruotas būtent šiam srautui atkurti.&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;Bus naudojamas garso atkūrimo įrenginys &lt;b&gt;%1&lt;/b&gt;,&lt;br/&gt;turintis aukštesnį prioritetą arba sukonfigūruotas būtent šiam srautui atkurti.&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -124,14 +141,14 @@
         <location filename="../src/3rdparty/phonon/gstreamer/backend.cpp" line="+188"/>
         <source>Warning: You do not seem to have the package gstreamer0.10-plugins-good installed.
           Some video features have been disabled.</source>
-        <translation>Dėmesio! Panašu, jog šiame įrenginyje neįdiegtas „gstreamer0.10-plugins-good“ paketas.
+        <translation>Dėmesio! Panašu, jog neįdiegtas „gstreamer0.10-plugins-good“ paketas.
           Kai kurios vaizdo galimybės išjungtos.</translation>
     </message>
     <message>
         <location line="+5"/>
         <source>Warning: You do not seem to have the base GStreamer plugins installed.
           All audio and video support has been disabled</source>
-        <translation>Dėmesio! Panašu, jog šiame įrenginyje neįdiegti baziniai „GStreamer“ papildiniai.
+        <translation>Dėmesio! Panašu, jog neįdiegti baziniai „GStreamer“ papildiniai.
           Visas garso ir vaizdo palaikymas išjungtas.</translation>
     </message>
 </context>
@@ -498,7 +515,7 @@ Patikrinkite „GStreamer“ įdiegtį ir įsitikinkite, jog yra
     <message>
         <location line="+5"/>
         <source>Reflections delay (ms)</source>
-        <extracomment>ReflectionsDelay: Amount of delay between the arrival the direct path from the source and the arrival of the first reflection.</extracomment>
+        <extracomment>ReflectionsDelay: Amount of delay between the arrival of the direct path from the source and the arrival of the first reflection.</extracomment>
         <translation>Atspindžių vėlavimas (ms)</translation>
     </message>
     <message>
@@ -516,7 +533,7 @@ Patikrinkite „GStreamer“ įdiegtį ir įsitikinkite, jog yra
     <message>
         <location line="+8"/>
         <source>Reverb level (mB)</source>
-        <extracomment>ReverbLevel Amplitude of reverberations. This value is corrected by the RoomLevel to give the final reverberation amplitude.</extracomment>
+        <extracomment>ReverbLevel: Amplitude of reverberations. This value is corrected by the RoomLevel to give the final reverberation amplitude.</extracomment>
         <translation>Aido lygis (mB)</translation>
     </message>
     <message>
@@ -592,8 +609,12 @@ Patikrinkite „GStreamer“ įdiegtį ir įsitikinkite, jog yra
         <location line="-159"/>
         <location line="+18"/>
         <location line="+54"/>
-        <source>Use this slider to adjust the volume. The leftmost position is 0%, the rightmost is %1%</source>
+        <source>Use this slider to adjust the volume. The leftmost position is 0%. The rightmost is %1%</source>
         <translation>Šio šliaužiklio pagalba galite keisti garsį. Kairiausioji pozicija lygi 0%, dešiniausioji – %1%</translation>
+    </message>
+    <message>
+        <source>Use this slider to adjust the volume. The leftmost position is 0%, the rightmost is %1%</source>
+        <translation type="obsolete">Šio šliaužiklio pagalba galite keisti garsį. Kairiausioji pozicija lygi 0%, dešiniausioji – %1%</translation>
     </message>
     <message>
         <location line="+67"/>
@@ -795,7 +816,7 @@ Patikrinkite „GStreamer“ įdiegtį ir įsitikinkite, jog yra
     <message>
         <location line="+1"/>
         <source>File</source>
-        <translation>failas</translation>
+        <translation>Failas</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -1030,7 +1051,7 @@ to
     <message>
         <location filename="../src/qt3support/widgets/q3mainwindow.cpp" line="+2051"/>
         <source>Line up</source>
-        <translation>Sutvarkyti</translation>
+        <translation>Sulygiuoti</translation>
     </message>
     <message>
         <location line="+2"/>
@@ -1282,22 +1303,22 @@ to
 <context>
     <name>QAbstractSocket</name>
     <message>
-        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="+657"/>
-        <location filename="../src/network/socket/qabstractsocket.cpp" line="+1815"/>
+        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="+678"/>
+        <location filename="../src/network/socket/qabstractsocket.cpp" line="+1833"/>
         <source>Socket operation timed out</source>
         <translation>Baigėsi operacijai su lizdu skirtas laikas</translation>
     </message>
     <message>
-        <location filename="../src/network/socket/qabstractsocket.cpp" line="-1266"/>
-        <location line="+843"/>
-        <location line="+220"/>
+        <location filename="../src/network/socket/qabstractsocket.cpp" line="-1281"/>
+        <location line="+837"/>
+        <location line="+225"/>
         <source>Operation on socket is not supported</source>
         <translation>Operacija su lizdu nepalaikoma</translation>
     </message>
     <message>
-        <location line="-692"/>
-        <location filename="../src/network/socket/qhttpsocketengine.cpp" line="+637"/>
-        <location filename="../src/network/socket/qsocks5socketengine.cpp" line="+661"/>
+        <location line="-689"/>
+        <location filename="../src/network/socket/qhttpsocketengine.cpp" line="+671"/>
+        <location filename="../src/network/socket/qsocks5socketengine.cpp" line="+668"/>
         <location line="+26"/>
         <source>Host not found</source>
         <translation>Mazgas nerastas</translation>
@@ -1315,7 +1336,7 @@ to
         <translation>Baigėsi ryšiui skirtas laikas</translation>
     </message>
     <message>
-        <location line="+1083"/>
+        <location line="+1153"/>
         <source>Socket is not connected</source>
         <translation>Lizdas neprijungtas</translation>
     </message>
@@ -1346,7 +1367,17 @@ to
 <context>
     <name>QAccessibleButton</name>
     <message>
-        <location filename="../src/plugins/accessible/widgets/simplewidgets.cpp" line="+250"/>
+        <location filename="../src/plugins/accessible/widgets/simplewidgets.cpp" line="+266"/>
+        <source>Uncheck</source>
+        <translation>Panaikinti žymėjimą</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Check</source>
+        <translation>Pažymėti</translation>
+    </message>
+    <message>
+        <location line="+3"/>
         <source>Press</source>
         <translation>Nuspausti</translation>
     </message>
@@ -1354,7 +1385,7 @@ to
 <context>
     <name>QApplication</name>
     <message>
-        <location filename="../src/gui/accessible/qaccessibleobject.cpp" line="+376"/>
+        <location filename="../src/gui/accessible/qaccessibleobject.cpp" line="+374"/>
         <source>Activate</source>
         <translation>Aktyvinti</translation>
     </message>
@@ -1406,7 +1437,7 @@ to
 <context>
     <name>QCheckBox</name>
     <message>
-        <location filename="../src/plugins/accessible/widgets/simplewidgets.cpp" line="-136"/>
+        <location filename="../src/plugins/accessible/widgets/simplewidgets.cpp" line="-150"/>
         <source>Uncheck</source>
         <translation>Panaikinti žymėjimą</translation>
     </message>
@@ -1492,8 +1523,8 @@ to
         <translation>Taip</translation>
     </message>
     <message>
-        <location filename="../src/plugins/accessible/widgets/complexwidgets.cpp" line="+1776"/>
-        <location line="+65"/>
+        <location filename="../src/plugins/accessible/widgets/complexwidgets.cpp" line="+1781"/>
+        <location line="+66"/>
         <source>Open</source>
         <translation>Atverti</translation>
     </message>
@@ -1506,7 +1537,7 @@ to
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../src/corelib/kernel/qsystemsemaphore_symbian.cpp" line="+65"/>
+        <location filename="../src/corelib/kernel/qsystemsemaphore_symbian.cpp" line="+68"/>
         <source>%1: already exists</source>
         <comment>QSystemSemaphore</comment>
         <translation>%1: jau egzistuoja</translation>
@@ -1536,13 +1567,14 @@ to
         <translation>%1: nežinoma klaida %2</translation>
     </message>
     <message>
-        <location filename="../src/corelib/kernel/qsystemsemaphore_unix.cpp" line="+119"/>
+        <location filename="../src/corelib/kernel/qsystemsemaphore_unix.cpp" line="+133"/>
+        <location line="+62"/>
         <source>%1: key is empty</source>
         <comment>QSystemSemaphore</comment>
         <translation>%1: raktas tuščias</translation>
     </message>
     <message>
-        <location line="+12"/>
+        <location line="-54"/>
         <source>%1: unable to make key</source>
         <comment>QSystemSemaphore</comment>
         <translation>%1: rakto sukurti nepavyko</translation>
@@ -1593,7 +1625,7 @@ to
     <message>
         <location line="+193"/>
         <source>Unable to bind variable</source>
-        <translation>Nepavyko susieti kintamojo</translation>
+        <translation type="unfinished">Nepavyko susieti kintamojo</translation>
     </message>
     <message>
         <location line="+89"/>
@@ -1614,7 +1646,7 @@ to
 <context>
     <name>QDateTimeEdit</name>
     <message>
-        <location filename="../src/gui/widgets/qdatetimeedit.cpp" line="+2274"/>
+        <location filename="../src/gui/widgets/qdatetimeedit.cpp" line="+2289"/>
         <source>AM</source>
         <translation>Priešpiet</translation>
     </message>
@@ -1656,7 +1688,7 @@ to
 <context>
     <name>QDeclarativeAnchorAnimation</name>
     <message>
-        <location filename="../src/declarative/util/qdeclarativeanimation.cpp" line="+2688"/>
+        <location filename="../src/declarative/util/qdeclarativeanimation.cpp" line="+2692"/>
         <source>Cannot set a duration of &lt; 0</source>
         <translation>Negalima nustatyti neigiamos trukmės</translation>
     </message>
@@ -1757,7 +1789,7 @@ to
 <context>
     <name>QDeclarativeBinding</name>
     <message>
-        <location filename="../src/declarative/qml/qdeclarativebinding.cpp" line="+457"/>
+        <location filename="../src/declarative/qml/qdeclarativebinding.cpp" line="+459"/>
         <source>Binding loop detected for property &quot;%1&quot;</source>
         <translation>Aptikta ciklinė savybės „%1“ susietis</translation>
     </message>
@@ -1765,7 +1797,7 @@ to
 <context>
     <name>QDeclarativeCompiledBindings</name>
     <message>
-        <location filename="../src/declarative/qml/qdeclarativecompiledbindings.cpp" line="+380"/>
+        <location filename="../src/declarative/qml/qdeclarativecompiledbindings.cpp" line="+396"/>
         <source>Binding loop detected for property &quot;%1&quot;</source>
         <translation>Aptikta ciklinė savybės „%1“ susietis</translation>
     </message>
@@ -1774,7 +1806,7 @@ to
     <name>QDeclarativeCompiler</name>
     <message>
         <location filename="../src/declarative/qml/qdeclarativecompiler.cpp" line="+185"/>
-        <location line="+1662"/>
+        <location line="+1668"/>
         <location line="+205"/>
         <location line="+81"/>
         <location line="+75"/>
@@ -1783,7 +1815,7 @@ to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-2596"/>
+        <location line="-2602"/>
         <source>Invalid property assignment: unknown enumeration</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1869,7 +1901,7 @@ to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+644"/>
+        <location line="+650"/>
         <source>Component elements may not contain properties other than id</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1968,7 +2000,7 @@ to
         <location line="+356"/>
         <location line="+3"/>
         <source>Cannot assign to non-existent property &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Negalima priskirti neegzistuojančiai savybei „%1“</translation>
     </message>
     <message>
         <location line="-329"/>
@@ -2212,17 +2244,17 @@ to
     <message>
         <location line="-54"/>
         <source>Connections: nested objects not allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>Connections: objektai objektuose neleidžiami</translation>
     </message>
     <message>
         <location line="+3"/>
         <source>Connections: syntax error</source>
-        <translation type="unfinished"></translation>
+        <translation>Connections: sintaksės klaida</translation>
     </message>
     <message>
         <location line="+8"/>
         <source>Connections: script expected</source>
-        <translation type="unfinished"></translation>
+        <translation>Connections: tikėtasi scenarijaus</translation>
     </message>
 </context>
 <context>
@@ -2248,12 +2280,12 @@ to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+23"/>
         <source>transaction: missing callback</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+59"/>
+        <location line="+60"/>
         <location line="+15"/>
         <source>SQL: database version mismatch</source>
         <translation type="unfinished"></translation>
@@ -2275,7 +2307,7 @@ to
 <context>
     <name>QDeclarativeImportDatabase</name>
     <message>
-        <location filename="../src/declarative/qml/qdeclarativeimport.cpp" line="+360"/>
+        <location filename="../src/declarative/qml/qdeclarativeimport.cpp" line="+361"/>
         <source>cannot load module &quot;%1&quot;: File name case mismatch for &quot;%2&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2353,7 +2385,7 @@ to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+324"/>
+        <location line="+336"/>
         <source>File name case mismatch for &quot;%2&quot;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2643,7 +2675,7 @@ to
 <context>
     <name>QDeclarativePauseAnimation</name>
     <message>
-        <location filename="../src/declarative/util/qdeclarativeanimation.cpp" line="-2111"/>
+        <location filename="../src/declarative/util/qdeclarativeanimation.cpp" line="-2115"/>
         <source>Cannot set a duration of &lt; 0</source>
         <translation>Negalima nustatyti neigiamos trukmės</translation>
     </message>
@@ -2671,7 +2703,7 @@ to
 <context>
     <name>QDeclarativePropertyAnimation</name>
     <message>
-        <location filename="../src/declarative/util/qdeclarativeanimation.cpp" line="+1234"/>
+        <location filename="../src/declarative/util/qdeclarativeanimation.cpp" line="+1238"/>
         <source>Cannot set a duration of &lt; 0</source>
         <translation>Negalima nustatyti neigiamos trukmės</translation>
     </message>
@@ -2686,7 +2718,7 @@ to
     <message>
         <location line="+168"/>
         <source>Cannot assign to non-existent property &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Negalima priskirti neegzistuojančiai savybei „%1“</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -2697,7 +2729,7 @@ to
 <context>
     <name>QDeclarativeTextInput</name>
     <message>
-        <location filename="../src/declarative/graphicsitems/qdeclarativetextinput.cpp" line="+965"/>
+        <location filename="../src/declarative/graphicsitems/qdeclarativetextinput.cpp" line="+962"/>
         <location line="+8"/>
         <source>Could not load cursor delegate</source>
         <translation type="unfinished"></translation>
@@ -2711,7 +2743,7 @@ to
 <context>
     <name>QDeclarativeTypeLoader</name>
     <message>
-        <location filename="../src/declarative/qml/qdeclarativetypeloader.cpp" line="+812"/>
+        <location filename="../src/declarative/qml/qdeclarativetypeloader.cpp" line="+827"/>
         <source>Script %1 unavailable</source>
         <translation>Scenarijus „%1“ nepasiekiamas</translation>
     </message>
@@ -2734,7 +2766,7 @@ to
 <context>
     <name>QDeclarativeVME</name>
     <message>
-        <location filename="../src/declarative/qml/qdeclarativevme.cpp" line="+208"/>
+        <location filename="../src/declarative/qml/qdeclarativevme.cpp" line="+231"/>
         <source>Unable to create object of type %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2809,7 +2841,7 @@ to
 <context>
     <name>QDeclarativeXmlRoleList</name>
     <message>
-        <location filename="../src/declarative/util/qdeclarativexmllistmodel.cpp" line="+716"/>
+        <location filename="../src/declarative/util/qdeclarativexmllistmodel.cpp" line="+826"/>
         <source>An XmlListModel query must start with &apos;/&apos; or &quot;//&quot;</source>
         <translation>„XmlListModel“ užklausa negali prasidėti simboliu „/“ arba „//“</translation>
     </message>
@@ -2817,7 +2849,7 @@ to
 <context>
     <name>QDial</name>
     <message>
-        <location filename="../src/plugins/accessible/widgets/rangecontrols.cpp" line="+951"/>
+        <location filename="../src/plugins/accessible/widgets/rangecontrols.cpp" line="+933"/>
         <source>QDial</source>
         <translation>QDial</translation>
     </message>
@@ -2850,7 +2882,7 @@ to
     <message>
         <location filename="../src/gui/dialogs/qmessagebox.cpp" line="+1937"/>
         <location line="+446"/>
-        <location filename="../src/gui/widgets/qdialogbuttonbox.cpp" line="+649"/>
+        <location filename="../src/gui/widgets/qdialogbuttonbox.cpp" line="+658"/>
         <source>OK</source>
         <translation>Gerai</translation>
     </message>
@@ -3003,7 +3035,7 @@ to
 <context>
     <name>QDockWidget</name>
     <message>
-        <location filename="../src/plugins/accessible/widgets/qaccessiblewidgets.cpp" line="+1239"/>
+        <location filename="../src/plugins/accessible/widgets/qaccessiblewidgets.cpp" line="+1249"/>
         <source>Close</source>
         <translation>Užverti</translation>
     </message>
@@ -3021,7 +3053,7 @@ to
 <context>
     <name>QDoubleSpinBox</name>
     <message>
-        <location filename="../src/plugins/accessible/widgets/rangecontrols.cpp" line="-537"/>
+        <location filename="../src/plugins/accessible/widgets/rangecontrols.cpp" line="-525"/>
         <source>More</source>
         <translation>Daugiau</translation>
     </message>
@@ -3062,7 +3094,7 @@ to
 <context>
     <name>QFile</name>
     <message>
-        <location filename="../src/corelib/io/qfile.cpp" line="+703"/>
+        <location filename="../src/corelib/io/qfile.cpp" line="+736"/>
         <location line="+155"/>
         <source>Destination file exists</source>
         <translation>Paskirties failas jau egzistuoja</translation>
@@ -3096,6 +3128,11 @@ to
         <location line="+13"/>
         <source>Cannot create %1 for output</source>
         <translation>Nepavyko sukurti išvesties failo %1</translation>
+    </message>
+    <message>
+        <location line="+470"/>
+        <source>No file engine available or engine does not support UnMapExtension</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3179,7 +3216,7 @@ to
         <translation>Failų tipas:</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="+538"/>
+        <location filename="../src/gui/dialogs/qfiledialog.cpp" line="+541"/>
         <location filename="../src/gui/dialogs/qfiledialog_symbian.cpp" line="+192"/>
         <source>Find Directory</source>
         <translation>Ieškoti aplanko</translation>
@@ -3196,12 +3233,12 @@ to
     </message>
     <message>
         <location line="+15"/>
-        <location line="+481"/>
+        <location line="+541"/>
         <source>All Files (*)</source>
         <translation>Visi failai (*)</translation>
     </message>
     <message>
-        <location line="-471"/>
+        <location line="-531"/>
         <source>Show </source>
         <translation>Rodyti </translation>
     </message>
@@ -3227,13 +3264,13 @@ to
     </message>
     <message>
         <location line="+5"/>
-        <location line="+679"/>
+        <location line="+739"/>
         <source>Directory:</source>
         <translation>Aplankas:</translation>
     </message>
     <message>
-        <location line="-677"/>
-        <location line="+683"/>
+        <location line="-737"/>
+        <location line="+743"/>
         <source>File &amp;name:</source>
         <translation>&amp;Failo vardas:</translation>
     </message>
@@ -3310,12 +3347,12 @@ Ar vis tiek norite jį pašalinti?</translation>
         <translation>Nepavyko pašalinti aplanko.</translation>
     </message>
     <message>
-        <location line="+404"/>
+        <location line="+405"/>
         <source>Recent Places</source>
         <translation>Paskiausios vietos</translation>
     </message>
     <message>
-        <location filename="../src/gui/dialogs/qfiledialog_win.cpp" line="+148"/>
+        <location filename="../src/gui/dialogs/qfiledialog_win.cpp" line="+147"/>
         <source>All Files (*.*)</source>
         <translation>Visi failai (*.*)</translation>
     </message>
@@ -3409,7 +3446,7 @@ Ar vis tiek norite jį pašalinti?</translation>
     <message>
         <location line="+1"/>
         <source>&lt;b&gt;The name &quot;%1&quot; can not be used.&lt;/b&gt;&lt;p&gt;Try using another name, with fewer characters or no punctuations marks.</source>
-        <translation>&lt;b&gt;Vardas „%1“ neleistinas.&lt;/b&gt;&lt;p&gt;Pabandykite įvesti kitą vardą, pvz., turinį mažiau simbolių ar be skyrybos ženklų.</translation>
+        <translation>&lt;b&gt;Vardas „%1“ neleistinas.&lt;/b&gt;&lt;p&gt;Pabandykite įvesti kitą vardą, pvz., sudarytą iš mažiau simbolių ar be skyrybos ženklų.</translation>
     </message>
     <message>
         <location line="+64"/>
@@ -3457,56 +3494,56 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QFontDatabase</name>
     <message>
-        <location filename="../src/gui/text/qfontdatabase.cpp" line="+102"/>
-        <location line="+1349"/>
+        <location filename="../src/gui/text/qfontdatabase.cpp" line="+106"/>
+        <location line="+1432"/>
         <source>Normal</source>
         <translation>Normalusis</translation>
     </message>
     <message>
-        <location line="-1346"/>
+        <location line="-1429"/>
         <location line="+12"/>
-        <location line="+1322"/>
+        <location line="+1405"/>
         <source>Bold</source>
         <translation>Pastorintas</translation>
     </message>
     <message>
-        <location line="-1331"/>
-        <location line="+1333"/>
+        <location line="-1414"/>
+        <location line="+1416"/>
         <source>Demi Bold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-1330"/>
+        <location line="-1413"/>
         <location line="+18"/>
-        <location line="+1308"/>
+        <location line="+1391"/>
         <source>Black</source>
         <translation type="unfinished">Ryškus</translation>
     </message>
     <message>
-        <location line="-1318"/>
+        <location line="-1401"/>
         <source>Demi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+6"/>
-        <location line="+1318"/>
+        <location line="+1401"/>
         <source>Light</source>
         <translation type="unfinished">Lengvas</translation>
     </message>
     <message>
-        <location line="-1172"/>
-        <location line="+1175"/>
+        <location line="-1231"/>
+        <location line="+1234"/>
         <source>Italic</source>
         <translation>Kursyvas</translation>
     </message>
     <message>
-        <location line="-1172"/>
-        <location line="+1174"/>
+        <location line="-1231"/>
+        <location line="+1233"/>
         <source>Oblique</source>
         <translation>Pasvirasis</translation>
     </message>
     <message>
-        <location line="+704"/>
+        <location line="+729"/>
         <source>Any</source>
         <translation>Bet koks</translation>
     </message>
@@ -3681,7 +3718,7 @@ Ar vis tiek norite jį pašalinti?</translation>
     <message>
         <location filename="../src/gui/dialogs/qfontdialog.cpp" line="+183"/>
         <source>Select Font</source>
-        <translation>Šrifto parinkimas</translation>
+        <translation>Parinkite šriftą</translation>
     </message>
     <message>
         <location line="+585"/>
@@ -3727,7 +3764,7 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QFtp</name>
     <message>
-        <location filename="../src/network/access/qftp.cpp" line="+828"/>
+        <location filename="../src/network/access/qftp.cpp" line="+841"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="+683"/>
         <source>Not connected</source>
         <translation>Neužmegztas ryšys</translation>
@@ -3771,7 +3808,7 @@ Ar vis tiek norite jį pašalinti?</translation>
         <translation>Nežinoma klaida</translation>
     </message>
     <message>
-        <location line="+897"/>
+        <location line="+901"/>
         <location filename="../src/qt3support/network/q3ftp.cpp" line="+77"/>
         <source>Connecting to host failed:
 %1</source>
@@ -3873,12 +3910,12 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QHostInfo</name>
     <message>
-        <location filename="../src/network/kernel/qhostinfo.cpp" line="+171"/>
+        <location filename="../src/network/kernel/qhostinfo.cpp" line="+173"/>
         <source>No host name given</source>
         <translation>Nepateiktas mazgo vardas</translation>
     </message>
     <message>
-        <location filename="../src/network/kernel/qhostinfo_p.h" line="+103"/>
+        <location filename="../src/network/kernel/qhostinfo_p.h" line="+117"/>
         <source>Unknown error</source>
         <translation>Nežinoma klaida</translation>
     </message>
@@ -3886,19 +3923,23 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QHostInfoAgent</name>
     <message>
-        <location filename="../src/network/kernel/qhostinfo_unix.cpp" line="+198"/>
-        <location filename="../src/network/kernel/qhostinfo_win.cpp" line="+178"/>
+        <location filename="../src/network/kernel/qhostinfo_symbian.cpp" line="+137"/>
+        <location line="+150"/>
+        <location filename="../src/network/kernel/qhostinfo_unix.cpp" line="+196"/>
+        <location filename="../src/network/kernel/qhostinfo_win.cpp" line="+172"/>
         <source>No host name given</source>
         <translation>Nepateiktas mazgo vardas</translation>
     </message>
     <message>
-        <location line="+1"/>
+        <location line="-149"/>
+        <location line="+150"/>
+        <location filename="../src/network/kernel/qhostinfo_unix.cpp" line="+1"/>
         <location filename="../src/network/kernel/qhostinfo_win.cpp" line="+0"/>
         <source>Invalid hostname</source>
         <translation>Netinkamas mazgo vardas</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location filename="../src/network/kernel/qhostinfo_unix.cpp" line="+54"/>
         <location line="+39"/>
         <location filename="../src/network/kernel/qhostinfo_win.cpp" line="+30"/>
         <location line="+29"/>
@@ -3967,7 +4008,7 @@ Ar vis tiek norite jį pašalinti?</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="-10"/>
+        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="-9"/>
         <location filename="../src/qt3support/network/q3http.cpp" line="+41"/>
         <source>Host %1 not found</source>
         <translation>Mazgas %1 nerastas</translation>
@@ -4013,7 +4054,7 @@ Ar vis tiek norite jį pašalinti?</translation>
         <translation>Klaida siunčiant atsakymą į įrenginį</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="+4"/>
+        <location filename="../src/network/access/qhttpnetworkconnection.cpp" line="+3"/>
         <location filename="../src/qt3support/network/q3http.cpp" line="-162"/>
         <source>Connection refused</source>
         <translation>Ryšys atmestas</translation>
@@ -4239,27 +4280,31 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QIODevice</name>
     <message>
-        <location filename="../src/corelib/global/qglobal.cpp" line="+2140"/>
+        <location filename="../src/corelib/global/qglobal.cpp" line="+2103"/>
+        <location filename="../src/corelib/kernel/qsystemerror.cpp" line="+87"/>
         <source>Permission denied</source>
         <translation>Nepakanka teisių</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../src/corelib/kernel/qsystemerror.cpp" line="+3"/>
         <source>Too many open files</source>
         <translation>Per daug atvertų failų</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../src/corelib/kernel/qsystemerror.cpp" line="+3"/>
         <source>No such file or directory</source>
         <translation>Nėra tokio failo ar katalogo</translation>
     </message>
     <message>
         <location line="+3"/>
+        <location filename="../src/corelib/kernel/qsystemerror.cpp" line="+3"/>
         <source>No space left on device</source>
         <translation>Įrenginyje neliko laisvos vietos</translation>
     </message>
     <message>
-        <location filename="../src/corelib/io/qiodevice.cpp" line="+1621"/>
+        <location filename="../src/corelib/io/qiodevice.cpp" line="+1623"/>
         <source>Unknown error</source>
         <translation>Nežinoma klaida</translation>
     </message>
@@ -4279,22 +4324,22 @@ Ar vis tiek norite jį pašalinti?</translation>
     <message>
         <location line="+23"/>
         <source>XIM input method</source>
-        <translation type="unfinished">XIM įvesties būdas</translation>
+        <translation>XIM įvesties būdas</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Windows input method</source>
-        <translation type="unfinished">„Windows“ įvesties būdas</translation>
+        <translation>„Windows“ įvesties būdas</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>Mac OS X input method</source>
-        <translation type="unfinished">„Mac OS X“ įvesties būdas</translation>
+        <translation>„Mac OS X“ įvesties būdas</translation>
     </message>
     <message>
         <location line="+4"/>
         <source>S60 FEP input method</source>
-        <translation type="unfinished">S60 FEP įvesties būdas</translation>
+        <translation>S60 FEP įvesties būdas</translation>
     </message>
 </context>
 <context>
@@ -4308,13 +4353,13 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QLibrary</name>
     <message>
-        <location filename="../src/corelib/plugin/qlibrary.cpp" line="+378"/>
+        <location filename="../src/corelib/plugin/qlibrary.cpp" line="+402"/>
         <source>Plugin verification data mismatch in &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+215"/>
-        <location line="+138"/>
+        <location line="+277"/>
+        <location line="+146"/>
         <location filename="../src/corelib/plugin/qpluginloader.cpp" line="+343"/>
         <source>The shared library was not found.</source>
         <translation>Bendroji biblioteka nerasta.</translation>
@@ -4330,7 +4375,7 @@ Ar vis tiek norite jį pašalinti?</translation>
         <translation>Papildinys „%1“ naudoja nesuderinamą „Qt“ bibliotekos versiją (%2.%3.%4) [%5]</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+26"/>
         <source>The plugin &apos;%1&apos; uses incompatible Qt library. Expected build key &quot;%2&quot;, got &quot;%3&quot;</source>
         <translation>Papildinys „%1“ naudoja nesuderinamą „Qt“. Tikėtasi darinio rakto „%2“, tačiau gautas „%3“</translation>
     </message>
@@ -4345,7 +4390,7 @@ Ar vis tiek norite jį pašalinti?</translation>
         <translation>Nežinoma klaida</translation>
     </message>
     <message>
-        <location filename="../src/corelib/plugin/qlibrary_unix.cpp" line="+236"/>
+        <location filename="../src/corelib/plugin/qlibrary_unix.cpp" line="+244"/>
         <location filename="../src/corelib/plugin/qlibrary_win.cpp" line="+87"/>
         <source>Cannot load library %1: %2</source>
         <translation>Nepavyko įkelti bibliotekos %1: %2</translation>
@@ -4362,11 +4407,36 @@ Ar vis tiek norite jį pašalinti?</translation>
         <source>Cannot resolve symbol &quot;%1&quot; in %2: %3</source>
         <translation>Nepavyko rasti simbolio „%1“ bibliotekoje %2: %3</translation>
     </message>
+    <message>
+        <location filename="../src/corelib/plugin/qelfparser_p.cpp" line="+77"/>
+        <source>&apos;%1&apos; is not an ELF object (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>&apos;%1&apos; is not an ELF object</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location line="+10"/>
+        <location line="+6"/>
+        <location line="+20"/>
+        <location line="+12"/>
+        <location line="+11"/>
+        <location line="+15"/>
+        <location line="+11"/>
+        <location line="+22"/>
+        <location line="+14"/>
+        <location line="+13"/>
+        <source>&apos;%1&apos; is an invalid ELF object (%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QLineEdit</name>
     <message>
-        <location filename="../src/gui/widgets/qlineedit.cpp" line="+2087"/>
+        <location filename="../src/gui/widgets/qlineedit.cpp" line="+2126"/>
         <source>&amp;Undo</source>
         <translation>&amp;Atšaukti</translation>
     </message>
@@ -4443,7 +4513,7 @@ Ar vis tiek norite jį pašalinti?</translation>
         <location line="+3"/>
         <location filename="../src/network/socket/qlocalsocket_unix.cpp" line="+3"/>
         <location filename="../src/network/socket/qlocalsocket_win.cpp" line="+79"/>
-        <location line="+59"/>
+        <location line="+64"/>
         <source>%1: Invalid name</source>
         <translation>%1: netinkamas vardas</translation>
     </message>
@@ -4474,7 +4544,7 @@ Ar vis tiek norite jį pašalinti?</translation>
     <message>
         <location line="+3"/>
         <location filename="../src/network/socket/qlocalsocket_unix.cpp" line="+3"/>
-        <location filename="../src/network/socket/qlocalsocket_win.cpp" line="-64"/>
+        <location filename="../src/network/socket/qlocalsocket_win.cpp" line="-69"/>
         <source>%1: Connection error</source>
         <translation>%1: ryšio klaida</translation>
     </message>
@@ -4491,9 +4561,14 @@ Ar vis tiek norite jį pašalinti?</translation>
     </message>
     <message>
         <location filename="../src/network/socket/qlocalsocket_unix.cpp" line="+4"/>
-        <location filename="../src/network/socket/qlocalsocket_win.cpp" line="+10"/>
+        <location filename="../src/network/socket/qlocalsocket_win.cpp" line="+15"/>
         <source>%1: Unknown error %2</source>
         <translation>%1: nežinoma klaida %2</translation>
+    </message>
+    <message>
+        <location filename="../src/network/socket/qlocalsocket_win.cpp" line="-5"/>
+        <source>%1: Access denied</source>
+        <translation>%1: prieiga uždrausta</translation>
     </message>
 </context>
 <context>
@@ -4697,13 +4772,14 @@ Ar vis tiek norite jį pašalinti?</translation>
     <message>
         <location line="-224"/>
         <location line="+225"/>
+        <location line="+54"/>
         <source>Open</source>
         <translation>Atverti</translation>
     </message>
     <message>
-        <location line="-223"/>
+        <location line="-277"/>
         <location line="+225"/>
-        <location line="+51"/>
+        <location line="+53"/>
         <source>Execute</source>
         <translation>Vykdyti</translation>
     </message>
@@ -4711,9 +4787,14 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QMenuBar</name>
     <message>
-        <location filename="../src/gui/widgets/qmenu_symbian.cpp" line="+456"/>
+        <location filename="../src/gui/widgets/qmenu_symbian.cpp" line="+457"/>
         <source>Actions</source>
         <translation>Veiksmai</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/widgets/qmenubar.cpp" line="+1927"/>
+        <source>Corner Toolbar</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4762,7 +4843,7 @@ Ar vis tiek norite jį pašalinti?</translation>
     <message>
         <location filename="../src/plugins/inputmethods/imsw-multi/qmultiinputcontext.cpp" line="+88"/>
         <source>Select IM</source>
-        <translation type="unfinished">Įvesties būdo pasirinkimas</translation>
+        <translation>Įvesties būdo pasirinkimas</translation>
     </message>
 </context>
 <context>
@@ -4770,18 +4851,18 @@ Ar vis tiek norite jį pašalinti?</translation>
     <message>
         <location filename="../src/plugins/inputmethods/imsw-multi/qmultiinputcontextplugin.cpp" line="+95"/>
         <source>Multiple input method switcher</source>
-        <translation type="unfinished">Skirtingų įvesties būtų perjungiklis</translation>
+        <translation>Skirtingų įvesties būtų perjungiklis</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Multiple input method switcher that uses the context menu of the text widgets</source>
-        <translation type="unfinished">Skirtingų įvesties būdų perjungiklis, esantis teksto laukų kontekstiniame meniu</translation>
+        <translation>Skirtingų įvesties būdų perjungiklis, esantis teksto laukų kontekstiniame meniu</translation>
     </message>
 </context>
 <context>
     <name>QNativeSocketEngine</name>
     <message>
-        <location filename="../src/network/socket/qnativesocketengine.cpp" line="+200"/>
+        <location filename="../src/network/socket/qnativesocketengine.cpp" line="+201"/>
         <source>Unable to initialize non-blocking socket</source>
         <translation>Nepavyko inicijuoti neblokuojamo lizdo</translation>
     </message>
@@ -4922,12 +5003,11 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QNetworkAccessDataBackend</name>
     <message>
-        <location filename="../src/network/access/qnetworkaccessdatabackend.cpp" line="+76"/>
         <source>Operation not supported on %1</source>
-        <translation>Operacija nepalaikoma su %1</translation>
+        <translation type="obsolete">Operacija nepalaikoma su %1</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location filename="../src/network/access/qnetworkreplydataimpl.cpp" line="+94"/>
         <source>Invalid URI: %1</source>
         <translation>Netinkamas universalusis ištekliaus identifikatorius (URI): %1</translation>
     </message>
@@ -4937,7 +5017,7 @@ Ar vis tiek norite jį pašalinti?</translation>
     <message>
         <location filename="../src/network/access/qnetworkaccessdebugpipebackend.cpp" line="+195"/>
         <source>Write error writing to %1: %2</source>
-        <translation>Rašymo klaida rašant %1: %2</translation>
+        <translation>Rašymo klaida rašant į %1: %2</translation>
     </message>
     <message>
         <location line="+60"/>
@@ -4953,25 +5033,25 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QNetworkAccessFileBackend</name>
     <message>
-        <location filename="../src/network/access/qfilenetworkreply.cpp" line="+85"/>
-        <location filename="../src/network/access/qnetworkaccessfilebackend.cpp" line="+100"/>
+        <location filename="../src/network/access/qnetworkaccessfilebackend.cpp" line="+108"/>
+        <location filename="../src/network/access/qnetworkreplyfileimpl.cpp" line="+79"/>
         <source>Request for opening non-local file %1</source>
         <translation>Prašoma atverti nevietinį failą %1</translation>
     </message>
     <message>
-        <location line="+23"/>
-        <location filename="../src/network/access/qnetworkaccessfilebackend.cpp" line="+125"/>
+        <location line="+125"/>
+        <location filename="../src/network/access/qnetworkreplyfileimpl.cpp" line="+23"/>
         <source>Cannot open %1: Path is a directory</source>
         <translation>Nepavyko atverti %1: tai katalogo kelias</translation>
     </message>
     <message>
-        <location line="+13"/>
-        <location filename="../src/network/access/qnetworkaccessfilebackend.cpp" line="-80"/>
+        <location line="-80"/>
+        <location filename="../src/network/access/qnetworkreplyfileimpl.cpp" line="+13"/>
         <source>Error opening %1: %2</source>
         <translation>Klaida atveriant %1: %2</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qnetworkaccessfilebackend.cpp" line="+38"/>
+        <location line="+38"/>
         <source>Write error writing to %1: %2</source>
         <translation>Rašymo klaida rašant %1: %2</translation>
     </message>
@@ -4994,7 +5074,7 @@ Ar vis tiek norite jį pašalinti?</translation>
         <translation>Nepavyko atverti %1: tai yra katalogas</translation>
     </message>
     <message>
-        <location line="+95"/>
+        <location line="+99"/>
         <source>Logging in to %1 failed: authentication required</source>
         <translation>Registracija į seansą su %1 nepavyko: būtinas tapatumo nustatymas</translation>
     </message>
@@ -5012,8 +5092,7 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QNetworkAccessHttpBackend</name>
     <message>
-        <location filename="../src/network/access/qnetworkaccesshttpbackend.cpp" line="+652"/>
-        <location line="+5"/>
+        <location filename="../src/network/access/qnetworkaccesshttpbackend.cpp" line="+429"/>
         <source>No suitable proxy found</source>
         <translation>Nerastas tinkamas įgaliotasis serveris</translation>
     </message>
@@ -5021,7 +5100,7 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QNetworkAccessManager</name>
     <message>
-        <location filename="../src/network/access/qnetworkreplyimpl.cpp" line="+975"/>
+        <location filename="../src/network/access/qnetworkreplyimpl.cpp" line="+1101"/>
         <source>Network access is disabled.</source>
         <translation>Prieiga prie tinklo išjungta.</translation>
     </message>
@@ -5029,22 +5108,29 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QNetworkReply</name>
     <message>
-        <location filename="../src/network/access/qnetworkaccesshttpbackend.cpp" line="+90"/>
+        <location filename="../src/network/access/qhttpthreaddelegate.cpp" line="+386"/>
+        <location line="+20"/>
         <source>Error downloading %1 - server replied: %2</source>
         <translation>Klaida parsiunčiant %1. Serveris atsakė: %2</translation>
     </message>
     <message>
-        <location filename="../src/network/access/qnetworkreplyimpl.cpp" line="-893"/>
+        <location filename="../src/network/access/qnetworkreplyimpl.cpp" line="-1013"/>
         <source>Protocol &quot;%1&quot; is unknown</source>
         <translation>Protokolas „%1“ nežinomas</translation>
     </message>
     <message>
-        <location line="+196"/>
+        <location line="+26"/>
+        <location line="+191"/>
         <source>Network session error.</source>
         <translation>Tinklo seanso klaida.</translation>
     </message>
     <message>
-        <location line="+379"/>
+        <location line="-184"/>
+        <source>backend start error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+642"/>
         <source>Temporary network failure.</source>
         <translation>Laikina problema su tinklu.</translation>
     </message>
@@ -5052,7 +5138,7 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QNetworkReplyImpl</name>
     <message>
-        <location line="+120"/>
+        <location line="+119"/>
         <location line="+30"/>
         <source>Operation canceled</source>
         <translation>Operacija atšaukta</translation>
@@ -5061,7 +5147,7 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QNetworkSession</name>
     <message>
-        <location filename="../src/network/bearer/qnetworksession.cpp" line="+453"/>
+        <location filename="../src/network/bearer/qnetworksession.cpp" line="+456"/>
         <source>Invalid configuration.</source>
         <translation>Neleistina sąranka.</translation>
     </message>
@@ -5080,8 +5166,8 @@ Ar vis tiek norite jį pašalinti?</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location filename="../src/plugins/bearer/qnetworksession_impl.cpp" line="+278"/>
-        <location filename="../src/plugins/bearer/symbian/qnetworksession_impl.cpp" line="+312"/>
+        <location filename="../src/plugins/bearer/qnetworksession_impl.cpp" line="+260"/>
+        <location filename="../src/plugins/bearer/symbian/qnetworksession_impl.cpp" line="+306"/>
         <source>The specified configuration cannot be used.</source>
         <translation>Nurodyta konfigūracija negali būti naudojama.</translation>
     </message>
@@ -5192,7 +5278,7 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QODBCDriver</name>
     <message>
-        <location filename="../src/sql/drivers/odbc/qsql_odbc.cpp" line="+1888"/>
+        <location filename="../src/sql/drivers/odbc/qsql_odbc.cpp" line="+1879"/>
         <source>Unable to connect</source>
         <translation>Nepavyko užmegzti ryšio</translation>
     </message>
@@ -5225,17 +5311,10 @@ Ar vis tiek norite jį pašalinti?</translation>
 <context>
     <name>QODBCResult</name>
     <message>
-        <location filename="../src/sql/drivers/db2/qsql_db2.cpp" line="+189"/>
-        <location filename="../src/sql/drivers/odbc/qsql_odbc.cpp" line="-1083"/>
-        <location line="+578"/>
-        <source>Unable to fetch last</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/sql/drivers/odbc/qsql_odbc.cpp" line="-748"/>
+        <location line="-1253"/>
         <location line="+351"/>
         <source>QODBCResult::reset: Unable to set &apos;SQL_CURSOR_STATIC&apos; as statement attribute. Please check your ODBC driver configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>QODBCResult::reset: nepavyko nustatyti sakinio atributo „SQL_CURSOR_STATIC“. Patikrinkite ODBC tvarkyklės sąranką</translation>
     </message>
     <message>
         <location line="-334"/>
@@ -5246,7 +5325,7 @@ Ar vis tiek norite jį pašalinti?</translation>
     <message>
         <location line="-568"/>
         <source>Unable to fetch</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepavyko gauti įrašo</translation>
     </message>
     <message>
         <location line="+22"/>
@@ -5271,7 +5350,14 @@ Ar vis tiek norite jį pašalinti?</translation>
     <message>
         <location line="+267"/>
         <source>Unable to bind variable</source>
-        <translation type="unfinished"></translation>
+        <translation>Nepavyko susieti kintamojo</translation>
+    </message>
+    <message>
+        <location filename="../src/sql/drivers/db2/qsql_db2.cpp" line="+189"/>
+        <location filename="../src/sql/drivers/odbc/qsql_odbc.cpp" line="-466"/>
+        <location line="+578"/>
+        <source>Unable to fetch last</source>
+        <translation>Nepavyko gauti paskutinio įrašo</translation>
     </message>
 </context>
 <context>
@@ -5283,15 +5369,20 @@ Ar vis tiek norite jį pašalinti?</translation>
         <translation>„PulseAudio“ garso serveris</translation>
     </message>
     <message>
-        <location filename="../src/declarative/util/qdeclarativexmllistmodel.cpp" line="-249"/>
+        <location filename="../src/declarative/util/qdeclarativexmllistmodel.cpp" line="-245"/>
         <source>&quot;%1&quot; duplicates a previous role name and will be disabled.</source>
         <translation>„%1“ dubliuoja ankstesnės rolės vardą, todėl bus išjungtas.</translation>
     </message>
     <message>
-        <location line="+531"/>
+        <location line="+524"/>
         <location line="+4"/>
         <source>invalid query: &quot;%1&quot;</source>
         <translation>netinkama užklausa: „%1“</translation>
+    </message>
+    <message>
+        <location filename="../src/network/kernel/qhostinfo_symbian.cpp" line="-215"/>
+        <source>Host not found</source>
+        <translation>Mazgas nerastas</translation>
     </message>
 </context>
 <context>
@@ -5621,7 +5712,7 @@ Ar vis tiek norite jį pašalinti?</translation>
     <message>
         <location line="+1"/>
         <source>Tabloid</source>
-        <translation></translation>
+        <translation>Tabloid</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5878,7 +5969,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location filename="../src/gui/dialogs/qprintdialog_win.cpp" line="+1"/>
         <source>The &apos;From&apos; value cannot be greater than the &apos;To&apos; value.</source>
-        <translation>„Nuo“ reikšmė negali būti didesnė už „iki“ reikšmę.</translation>
+        <translation>Reikšmė „nuo“ negali būti didesnė už reikšmę „iki“.</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -5886,7 +5977,7 @@ Ar norite jį perrašyti?</translation>
         <translation>Gerai</translation>
     </message>
     <message>
-        <location filename="../src/gui/painting/qprinterinfo_unix.cpp" line="+110"/>
+        <location filename="../src/gui/painting/qprinterinfo_unix.cpp" line="+135"/>
         <source>locally connected</source>
         <translation>prijungtas prie šio įrenginio</translation>
     </message>
@@ -6085,7 +6176,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location/>
         <source>Collate</source>
-        <translation type="unfinished">Sugrupuoti</translation>
+        <translation>Sugrupuoti</translation>
     </message>
     <message>
         <location/>
@@ -6125,12 +6216,12 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location/>
         <source>Long side</source>
-        <translation type="unfinished">Versti per ilgąją kraštinę</translation>
+        <translation>Versti per ilgąją kraštinę</translation>
     </message>
     <message>
         <location/>
         <source>Short side</source>
-        <translation type="unfinished">Versti per trumpąją kraštinę</translation>
+        <translation>Versti per trumpąją kraštinę</translation>
     </message>
 </context>
 <context>
@@ -6184,33 +6275,33 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QProcess</name>
     <message>
-        <location filename="../src/corelib/io/qprocess.cpp" line="+866"/>
+        <location filename="../src/corelib/io/qprocess.cpp" line="+887"/>
         <location line="+52"/>
-        <location filename="../src/corelib/io/qprocess_win.cpp" line="+578"/>
+        <location filename="../src/corelib/io/qprocess_win.cpp" line="+601"/>
         <location line="+50"/>
         <source>Error reading from process</source>
         <translation>Klaida skaitant iš proceso</translation>
     </message>
     <message>
         <location line="+47"/>
-        <location line="+870"/>
+        <location line="+868"/>
         <location filename="../src/corelib/io/qprocess_win.cpp" line="+140"/>
         <source>Error writing to process</source>
         <translation>Klaida rašant į procesą</translation>
     </message>
     <message>
-        <location line="-800"/>
+        <location line="-799"/>
         <source>Process crashed</source>
         <translation>Procesas užstrigo</translation>
     </message>
     <message>
-        <location line="+1002"/>
+        <location line="+1001"/>
         <source>No program defined</source>
         <translation>Nenurodyta programa</translation>
     </message>
     <message>
-        <location filename="../src/corelib/io/qprocess_unix.cpp" line="+406"/>
-        <location filename="../src/corelib/io/qprocess_win.cpp" line="-631"/>
+        <location filename="../src/corelib/io/qprocess_unix.cpp" line="+401"/>
+        <location filename="../src/corelib/io/qprocess_win.cpp" line="-653"/>
         <source>Could not open input redirection for reading</source>
         <translation>Nepavyko skaitymui atverti įvesties peradresavimo</translation>
     </message>
@@ -6221,16 +6312,16 @@ Ar norite jį perrašyti?</translation>
         <translation>Nepavyko rašymui atverti išvesties peradresavimo</translation>
     </message>
     <message>
-        <location line="+239"/>
+        <location line="+264"/>
         <source>Resource error (fork failure): %1</source>
         <translation>Ištekliaus klaida kuriant vaikinį procesą: %1</translation>
     </message>
     <message>
-        <location line="+258"/>
-        <location line="+52"/>
-        <location line="+74"/>
-        <location line="+66"/>
-        <location filename="../src/corelib/io/qprocess_win.cpp" line="+411"/>
+        <location line="+350"/>
+        <location line="+55"/>
+        <location line="+78"/>
+        <location line="+70"/>
+        <location filename="../src/corelib/io/qprocess_win.cpp" line="+433"/>
         <location line="+50"/>
         <location line="+75"/>
         <location line="+42"/>
@@ -6492,7 +6583,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+2"/>
         <source>Shift+F5</source>
-        <translation>Lyg2+F2</translation>
+        <translation>Shift+F5</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -6532,22 +6623,22 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+2"/>
         <source>Shift+F11</source>
-        <translation>Lyg2+F11</translation>
+        <translation>Shift+F11</translation>
     </message>
     <message>
         <location line="+15"/>
         <source>Run to Cursor</source>
-        <translation type="unfinished">Vykdyti iki žymeklio</translation>
+        <translation>Vykdyti iki žymeklio</translation>
     </message>
     <message>
         <location line="+2"/>
         <source>Ctrl+F10</source>
-        <translation>Vald+F10</translation>
+        <translation>Ctrl+F10</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Run to New Script</source>
-        <translation type="unfinished">Vykdyti iki naujo scenarijaus</translation>
+        <translation>Vykdyti iki naujo scenarijaus</translation>
     </message>
     <message>
         <location line="+15"/>
@@ -6582,7 +6673,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Ctrl+F</source>
-        <translation>Vald+F</translation>
+        <translation>Ctrl+F</translation>
     </message>
     <message>
         <location line="+17"/>
@@ -6602,12 +6693,12 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+2"/>
         <source>Shift+F3</source>
-        <translation>Vald+F3</translation>
+        <translation>Shift+F3</translation>
     </message>
     <message>
         <location line="+14"/>
         <source>Ctrl+G</source>
-        <translation>Vald+G</translation>
+        <translation>Ctrl+G</translation>
     </message>
     <message>
         <location line="+11"/>
@@ -6747,7 +6838,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+7"/>
         <source>View</source>
-        <translation type="unfinished">Rodymas</translation>
+        <translation>Rodymas</translation>
     </message>
     <message>
         <location line="+18"/>
@@ -6797,7 +6888,7 @@ Ar norite jį perrašyti?</translation>
     </message>
     <message>
         <location line="+0"/>
-        <location filename="../src/plugins/accessible/widgets/rangecontrols.cpp" line="+143"/>
+        <location filename="../src/plugins/accessible/widgets/rangecontrols.cpp" line="+139"/>
         <source>Page up</source>
         <translation>Puslapis aukštyn</translation>
     </message>
@@ -6851,18 +6942,18 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QSharedMemory</name>
     <message>
-        <location filename="../src/corelib/kernel/qsharedmemory.cpp" line="+223"/>
+        <location filename="../src/corelib/kernel/qsharedmemory.cpp" line="+268"/>
         <source>%1: unable to set key on lock</source>
         <translation>%1: užrakinant nepavyko nustatyti rakto</translation>
     </message>
     <message>
-        <location line="+81"/>
+        <location line="+84"/>
         <source>%1: create size is less then 0</source>
-        <translation type="unfinished">%1: bandomo kurti objekto dydis neigiamas</translation>
+        <translation>%1: bandomo kurti objekto dydis neigiamas</translation>
     </message>
     <message>
-        <location line="+164"/>
-        <location filename="../src/corelib/kernel/qsharedmemory_p.h" line="+155"/>
+        <location line="+176"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_p.h" line="+158"/>
         <source>%1: unable to lock</source>
         <translation>%1: nepavyko užrakinti</translation>
     </message>
@@ -6872,9 +6963,9 @@ Ar norite jį perrašyti?</translation>
         <translation>%1: nepavyko atrakinti</translation>
     </message>
     <message>
-        <location filename="../src/corelib/kernel/qsharedmemory_symbian.cpp" line="+67"/>
-        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="+85"/>
-        <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="+65"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_symbian.cpp" line="+70"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="+95"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="+71"/>
         <source>%1: already exists</source>
         <translation>%1: jau egzistuoja</translation>
     </message>
@@ -6885,57 +6976,58 @@ Ar norite jį perrašyti?</translation>
     </message>
     <message>
         <location line="+4"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="+16"/>
         <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="+13"/>
         <source>%1: invalid size</source>
-        <translation type="unfinished">%1: neleistinas dydis</translation>
+        <translation>%1: neleistinas dydis</translation>
     </message>
     <message>
         <location line="+4"/>
-        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="+10"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="-4"/>
         <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="+5"/>
         <source>%1: out of resources</source>
         <translation>%1: pritrūko išteklių</translation>
     </message>
     <message>
         <location line="+4"/>
-        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="-14"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="-16"/>
         <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="+4"/>
         <source>%1: permission denied</source>
         <translation>%1: nepakanka teisių</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="+18"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="+24"/>
         <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="+3"/>
         <source>%1: unknown error %2</source>
         <translation>%1: nežinoma klaida %2</translation>
     </message>
     <message>
-        <location line="+29"/>
-        <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="+51"/>
         <source>%1: key error</source>
-        <translation>%1: rakto klaida</translation>
+        <translation type="obsolete">%1: rakto klaida</translation>
     </message>
     <message>
-        <location line="+27"/>
-        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="+87"/>
-        <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="-36"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="+112"/>
         <source>%1: unable to make key</source>
         <translation>%1: rakto sukurti nepavyko</translation>
     </message>
     <message>
-        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="-97"/>
-        <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="-31"/>
+        <location line="-128"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="-16"/>
         <source>%1: doesn&apos;t exist</source>
         <translation>%1: neegzistuoja</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_symbian.cpp" line="+14"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="+39"/>
+        <location line="+26"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="+31"/>
+        <location line="+28"/>
         <source>%1: key is empty</source>
         <translation>%1: raktas tuščias</translation>
     </message>
     <message>
-        <location line="+8"/>
+        <location filename="../src/corelib/kernel/qsharedmemory_unix.cpp" line="-19"/>
         <source>%1: UNIX key file doesn&apos;t exist</source>
         <translation>%1: UNIX rakto failas neegzistuoja</translation>
     </message>
@@ -6945,17 +7037,23 @@ Ar norite jį perrašyti?</translation>
         <translation>%1: nepavyko ftok()</translation>
     </message>
     <message>
-        <location line="+71"/>
+        <location line="+93"/>
         <source>%1: system-imposed size restrictions</source>
         <translation>%1: dydį ribojama sistema</translation>
     </message>
     <message>
-        <location line="+50"/>
-        <source>%1: not attached</source>
-        <translation type="unfinished">%1: nesusieta</translation>
+        <location line="+23"/>
+        <location line="+62"/>
+        <source>%1: bad name</source>
+        <translation>%1: netinkamas pavadinimas</translation>
     </message>
     <message>
-        <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="+99"/>
+        <location line="+42"/>
+        <source>%1: not attached</source>
+        <translation>%1: nesusieta</translation>
+    </message>
+    <message>
+        <location filename="../src/corelib/kernel/qsharedmemory_win.cpp" line="+29"/>
         <source>%1: size query failed</source>
         <translation>%1: dydžio užklausa nepavyko</translation>
     </message>
@@ -7338,7 +7436,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Eject</source>
-        <translation type="unfinished">Išstumti</translation>
+        <translation>Išstumti</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7353,7 +7451,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Sleep</source>
-        <translation type="unfinished">Užmigdyti</translation>
+        <translation>Užmigdyti</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7363,7 +7461,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Shop</source>
-        <translation type="unfinished">Apsipirkti</translation>
+        <translation>Apsipirkti</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7373,7 +7471,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Add Favorite</source>
-        <translation type="unfinished">Įtraukti į adresyną</translation>
+        <translation>Įtraukti į adresyną</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7433,7 +7531,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>Išvalyti</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7468,7 +7566,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Documents</source>
-        <translation type="unfinished">Dokumentų rengyklė</translation>
+        <translation>Dokumentų rengyklė</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7558,7 +7656,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Reload</source>
-        <translation type="unfinished"></translation>
+        <translation>Atsiųsti iš naujo</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7578,7 +7676,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Įrašyti</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7623,7 +7721,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Video</source>
-        <translation type="unfinished"></translation>
+        <translation>Video</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7673,12 +7771,12 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Music</source>
-        <translation type="unfinished"></translation>
+        <translation>Muzika</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Battery</source>
-        <translation type="unfinished"></translation>
+        <translation>Baterija</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7729,12 +7827,12 @@ Ar norite jį perrašyti?</translation>
         <location line="+1"/>
         <location line="+22"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Rinktis</translation>
     </message>
     <message>
         <location line="-21"/>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodymas</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7779,7 +7877,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Number Lock</source>
-        <translation type="unfinished">Skaitmenys</translation>
+        <translation>Skaitmenys</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -7804,7 +7902,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>System Request</source>
-        <translation type="unfinished">Sisteminė užklausa</translation>
+        <translation>Sisteminė užklausa</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -7857,7 +7955,7 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>Flip</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+2"/>
@@ -8034,7 +8132,7 @@ Ar norite jį perrašyti?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+602"/>
+        <location line="+601"/>
         <location line="+135"/>
         <source>Ctrl</source>
         <translation>Vald</translation>
@@ -8071,7 +8169,7 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QSlider</name>
     <message>
-        <location filename="../src/plugins/accessible/widgets/rangecontrols.cpp" line="+151"/>
+        <location filename="../src/plugins/accessible/widgets/rangecontrols.cpp" line="+147"/>
         <source>Page left</source>
         <translation>Puslapis kairėn</translation>
     </message>
@@ -8164,7 +8262,7 @@ Ar norite jį perrašyti?</translation>
         <translation>Nežinomas SOCKSv5 įgaliotojo serverio klaidos kodas 0x%1</translation>
     </message>
     <message>
-        <location line="+691"/>
+        <location line="+694"/>
         <source>Network operation timed out</source>
         <translation>Baigėsi tinklo operacijai skirtas laikas</translation>
     </message>
@@ -8172,8 +8270,12 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QSoftKeyManager</name>
     <message>
-        <location filename="../src/gui/kernel/qsoftkeymanager.cpp" line="+67"/>
         <source>Ok</source>
+        <translation type="obsolete">Gerai</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/kernel/qsoftkeymanager.cpp" line="+64"/>
+        <source>OK</source>
         <translation>Gerai</translation>
     </message>
     <message>
@@ -8197,7 +8299,7 @@ Ar norite jį perrašyti?</translation>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../src/gui/kernel/qsoftkeymanager_s60.cpp" line="+358"/>
+        <location filename="../src/gui/kernel/qsoftkeymanager_s60.cpp" line="+368"/>
         <source>Exit</source>
         <translation>Baigti</translation>
     </message>
@@ -8205,7 +8307,7 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QSpinBox</name>
     <message>
-        <location filename="../src/plugins/accessible/widgets/rangecontrols.cpp" line="-574"/>
+        <location filename="../src/plugins/accessible/widgets/rangecontrols.cpp" line="-562"/>
         <source>More</source>
         <translation>Daugiau</translation>
     </message>
@@ -8275,7 +8377,7 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QSslSocket</name>
     <message>
-        <location filename="../src/network/ssl/qsslerror.cpp" line="+213"/>
+        <location filename="../src/network/ssl/qsslerror.cpp" line="+214"/>
         <source>No error</source>
         <translation>Klaidų nėra</translation>
     </message>
@@ -8385,22 +8487,22 @@ Ar norite jį perrašyti?</translation>
         <translation>Mazgo vardas nesutampa su nė vienu šiam liudijimui tinkamu mazgo vardu</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+9"/>
         <source>Unknown error</source>
         <translation>Nežinoma klaida</translation>
     </message>
     <message>
-        <location filename="../src/network/ssl/qsslsocket_openssl.cpp" line="+273"/>
+        <location filename="../src/network/ssl/qsslsocket_openssl.cpp" line="+282"/>
         <source>Error creating SSL context (%1)</source>
         <translation>Klaida sukuriant SSL kontekstą (%1)</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+29"/>
         <source>Invalid or empty cipher list (%1)</source>
         <translation>Netinkamas arba tuščias šifrų sąrašas (%1)</translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+44"/>
         <source>Cannot provide a certificate with no key, %1</source>
         <translation>Negalima pateikti liudijimo, neturint rakto; %1</translation>
     </message>
@@ -8425,12 +8527,12 @@ Ar norite jį perrašyti?</translation>
         <translation>Klaida kuriant SSL sesiją; %1</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+38"/>
         <source>Error creating SSL session: %1</source>
         <translation>Klaida kuriant SSL sesiją: %1</translation>
     </message>
     <message>
-        <location line="+531"/>
+        <location line="+537"/>
         <source>Unable to write data: %1</source>
         <translation>Nepavyko rašyti duomenų: %1</translation>
     </message>
@@ -8451,7 +8553,7 @@ Ar norite jį perrašyti?</translation>
         <translation>Klaida SSL pasisveikinimo metu: %1</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location filename="../src/network/ssl/qsslerror.cpp" line="-3"/>
         <source>The peer certificate is blacklisted</source>
         <translation>Partnerinio kompiuterio liudijimas įtrauktas į juodąjį sąrašą</translation>
     </message>
@@ -8461,17 +8563,17 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location filename="../src/corelib/statemachine/qstatemachine.cpp" line="+1028"/>
         <source>Missing initial state in compound state &apos;%1&apos;</source>
-        <translation type="unfinished">Sudėtinėje būsenoje „%1“ trūksta pradinės būsenos</translation>
+        <translation>Sudėtinėje būsenoje „%1“ trūksta pradinės būsenos</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Missing default state in history state &apos;%1&apos;</source>
-        <translation type="unfinished">Žurnalinėje būsenoje „%1“ trūksta numatytosios būsenos</translation>
+        <translation>Žurnalinėje būsenoje „%1“ trūksta numatytosios būsenos</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>No common ancestor for targets and source of transition from state &apos;%1&apos;</source>
-        <translation type="unfinished">Perėjimo iš būsenos „%1“ šaltinis ir paskirtis neturi bendrų protėvių</translation>
+        <translation>Perėjimo iš būsenos „%1“ šaltinis ir paskirtis neturi bendrų protėvių</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8480,10 +8582,237 @@ Ar norite jį perrašyti?</translation>
     </message>
 </context>
 <context>
+    <name>QSymSQLDriver</name>
+    <message>
+        <location filename="../src/sql/drivers/symsql/qsql_symsql.cpp" line="+975"/>
+        <location line="+16"/>
+        <source>Invalid option: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-6"/>
+        <location line="+17"/>
+        <source>Error opening database</source>
+        <translation>Klaida atveriant duomenų bazę</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>POLICY_DB_DEFAULT must be defined before any other POLICY definitions can be used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <source>Unable to begin transaction</source>
+        <translation>Nepavyko pradėti transakcijos</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Unable to commit transaction</source>
+        <translation>Nepavyko užbaigti transakcijos</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Unable to rollback transaction</source>
+        <translation>Nepavyko anuliuoti transakcijos</translation>
+    </message>
+</context>
+<context>
+    <name>QSymSQLResult</name>
+    <message>
+        <location line="-852"/>
+        <source>Error retrieving column count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Error retrieving column name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+13"/>
+        <source>Error retrieving column type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+36"/>
+        <location line="+8"/>
+        <source>Unable to fetch row</source>
+        <translation>Nepavyko gauti eilutės</translation>
+    </message>
+    <message>
+        <location line="+44"/>
+        <source>Unable to execute statement</source>
+        <translation>Nepavyko įvykdyti sakinio</translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Statement is not prepared</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Unable to reset statement</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+48"/>
+        <source>Unable to bind parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Parameter count mismatch</source>
+        <translation>Nesutampa parametrų skaičius</translation>
+    </message>
+</context>
+<context>
+    <name>QSymbianSocketEngine</name>
+    <message>
+        <location filename="../src/network/socket/qsymbiansocketengine.cpp" line="+1354"/>
+        <source>Unable to initialize non-blocking socket</source>
+        <translation>Nepavyko inicijuoti neblokuojamo lizdo</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unable to initialize broadcast socket</source>
+        <translation>Nepavyko inicijuoti lizdo transliavimui</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Attempt to use IPv6 socket on a platform with no IPv6 support</source>
+        <translation>Bandoma naudoti IPv6 lizdą platformoje, kurioje IPv6 protokolas nepalaikomas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The remote host closed the connection</source>
+        <translation>Nutolęs mazgas užbaigė ryšį</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Network operation timed out</source>
+        <translation>Baigėsi tinklo operacijai skirtas laikas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Out of resources</source>
+        <translation>Pritrūko išteklių</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unsupported socket operation</source>
+        <translation>Nepalaikoma operacija su lizdu</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Protocol type not supported</source>
+        <translation>Nepalaikomas protokolo tipas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Invalid socket descriptor</source>
+        <translation>Netinkamas lizdo deskriptorius</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Host unreachable</source>
+        <translation>Mazgas nepasiekiamas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Network unreachable</source>
+        <translation>Tinklas nepasiekiamas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Permission denied</source>
+        <translation>Nepakanka teisių</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Connection timed out</source>
+        <translation>Baigėsi ryšiui skirtas laikas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Connection refused</source>
+        <translation>Ryšys atmestas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The bound address is already in use</source>
+        <translation>Bandomas naudoti adresas jau yra naudojamas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The address is not available</source>
+        <translation>Adresas neleidžiamas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The address is protected</source>
+        <translation>Adresas apsaugotas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Datagram was too large to send</source>
+        <translation>Duomenų paketas per didelis, kad galėtų būti išsiųstas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unable to send a message</source>
+        <translation>Nepavyko išsiųsti pranešimo</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unable to receive a message</source>
+        <translation>Nepavyko gauti pranešimo</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unable to write</source>
+        <translation>Rašymas nepavyko</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Network error</source>
+        <translation>Tinklo klaida</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Another socket is already listening on the same port</source>
+        <translation>Tą patį prievadą klausymui jau naudoja kitas lizdas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Operation on non-socket</source>
+        <translation>Operacija ne su lizdu</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The proxy type is invalid for this operation</source>
+        <translation>Įgaliotojo serverio tipas netinkamas šiai operacijai</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The address is invalid for this operation</source>
+        <translation>Adresas šiai operacijai netinkamas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>The specified network session is not opened</source>
+        <translation>Nurodytas tinklo seansas neatvertas</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>Unknown error</source>
+        <translation>Nežinoma klaida</translation>
+    </message>
+</context>
+<context>
     <name>QSystemSemaphore</name>
     <message>
-        <location filename="../src/corelib/kernel/qsystemsemaphore_unix.cpp" line="-54"/>
-        <location filename="../src/corelib/kernel/qsystemsemaphore_win.cpp" line="+70"/>
+        <location filename="../src/corelib/kernel/qsystemsemaphore_unix.cpp" line="-63"/>
+        <location filename="../src/corelib/kernel/qsystemsemaphore_win.cpp" line="+72"/>
         <source>%1: permission denied</source>
         <translation>%1: nepakanka teisių</translation>
     </message>
@@ -8498,10 +8827,15 @@ Ar norite jį perrašyti?</translation>
         <translation>%1: neegzistuoja</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+9"/>
         <location filename="../src/corelib/kernel/qsystemsemaphore_win.cpp" line="-4"/>
         <source>%1: out of resources</source>
         <translation>%1: pritrūko išteklių</translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1: name error</source>
+        <translation>%1: vardo klaida</translation>
     </message>
     <message>
         <location line="+4"/>
@@ -8526,7 +8860,7 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QTabBar</name>
     <message>
-        <location filename="../src/plugins/accessible/widgets/complexwidgets.cpp" line="-330"/>
+        <location filename="../src/plugins/accessible/widgets/complexwidgets.cpp" line="-332"/>
         <source>Scroll Left</source>
         <translation>Slinkti kairėn</translation>
     </message>
@@ -8540,6 +8874,7 @@ Ar norite jį perrašyti?</translation>
     <name>QTcpServer</name>
     <message>
         <location filename="../src/network/socket/qtcpserver.cpp" line="+292"/>
+        <location line="+129"/>
         <source>Operation on socket is not supported</source>
         <translation>Operacija su lizdu nepalaikoma</translation>
     </message>
@@ -8590,7 +8925,7 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QToolButton</name>
     <message>
-        <location filename="../src/plugins/accessible/widgets/simplewidgets.cpp" line="+310"/>
+        <location filename="../src/plugins/accessible/widgets/simplewidgets.cpp" line="+321"/>
         <location line="+6"/>
         <source>Press</source>
         <translation>Nuspausti</translation>
@@ -8605,7 +8940,7 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QUdpSocket</name>
     <message>
-        <location filename="../src/network/socket/qudpsocket.cpp" line="+189"/>
+        <location filename="../src/network/socket/qudpsocket.cpp" line="+199"/>
         <source>This platform does not support IPv6</source>
         <translation>Šioje platformoje IPv6 protokolas nepalaikomas</translation>
     </message>
@@ -8613,13 +8948,33 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QUndoGroup</name>
     <message>
-        <location filename="../src/gui/util/qundogroup.cpp" line="+385"/>
         <source>Undo</source>
+        <translation type="obsolete">Atšaukti</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation type="obsolete">Atstatyti</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/util/qundogroup.cpp" line="+388"/>
+        <source>Undo %1</source>
+        <translation>Atšaukti „%1“</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Undo</source>
+        <comment>Default text for undo action</comment>
         <translation>Atšaukti</translation>
     </message>
     <message>
-        <location line="+28"/>
+        <location line="+31"/>
+        <source>Redo %1</source>
+        <translation>Atstatyti „%1“</translation>
+    </message>
+    <message>
+        <location line="+0"/>
         <source>Redo</source>
+        <comment>Default text for redo action</comment>
         <translation>Atstatyti</translation>
     </message>
 </context>
@@ -8634,13 +8989,33 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QUndoStack</name>
     <message>
-        <location filename="../src/gui/util/qundostack.cpp" line="+832"/>
         <source>Undo</source>
+        <translation type="obsolete">Atšaukti</translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation type="obsolete">Atstatyti</translation>
+    </message>
+    <message>
+        <location filename="../src/gui/util/qundostack.cpp" line="+877"/>
+        <source>Undo %1</source>
+        <translation>Atšaukti „%1“</translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>Undo</source>
+        <comment>Default text for undo action</comment>
         <translation>Atšaukti</translation>
     </message>
     <message>
-        <location line="+27"/>
+        <location line="+30"/>
+        <source>Redo %1</source>
+        <translation>Atstatyti „%1“</translation>
+    </message>
+    <message>
+        <location line="+0"/>
         <source>Redo</source>
+        <comment>Default text for redo action</comment>
         <translation>Atstatyti</translation>
     </message>
 </context>
@@ -8705,50 +9080,65 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QWebFrame</name>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp" line="+756"/>
+        <location filename="../src/3rdparty/webkit/Source/WebKit2/WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp" line="+55"/>
         <source>Request cancelled</source>
         <translation>Užklausos atsisakyta</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location filename="../src/3rdparty/webkit/Source/WebKit/qt/WebCoreSupport/FrameLoaderClientQt.cpp" line="+921"/>
+        <source>Request canceled</source>
+        <translation>Užklausos atsisakyta</translation>
+    </message>
+    <message>
+        <location line="+20"/>
+        <location filename="../src/3rdparty/webkit/Source/WebKit2/WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp" line="+8"/>
         <source>Request blocked</source>
         <translation>Užklausa uždrausta</translation>
     </message>
     <message>
         <location line="+7"/>
+        <location filename="../src/3rdparty/webkit/Source/WebKit2/WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp" line="+6"/>
         <source>Cannot show URL</source>
         <translation>URL parodyti nepavyko</translation>
     </message>
     <message>
         <location line="+6"/>
+        <location filename="../src/3rdparty/webkit/Source/WebKit2/WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp" line="+6"/>
         <source>Frame load interrupted by policy change</source>
         <translation>Kadro įkėlimas nutrauktas dėl politikos pakeitimo</translation>
     </message>
     <message>
         <location line="+6"/>
+        <location filename="../src/3rdparty/webkit/Source/WebKit2/WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp" line="+6"/>
         <source>Cannot show mimetype</source>
         <translation>Šio MIME tipo parodyti negalima</translation>
     </message>
     <message>
         <location line="+6"/>
+        <location filename="../src/3rdparty/webkit/Source/WebKit2/WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp" line="+6"/>
         <source>File does not exist</source>
         <translation>Failas neegzistuoja</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <location filename="../src/3rdparty/webkit/Source/WebKit2/WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp" line="+6"/>
+        <source>Loading is handled by the media engine</source>
+        <translation>Įkėlimą vykdo mediją apdorojantis komponentas</translation>
     </message>
 </context>
 <context>
     <name>QWebPage</name>
     <message>
-        <location filename="../src/3rdparty/webkit/WebCore/platform/network/qt/QNetworkReplyHandler.cpp" line="+355"/>
+        <location filename="../src/3rdparty/webkit/Source/WebCore/platform/network/qt/QNetworkReplyHandler.cpp" line="+540"/>
         <source>Redirection limit reached</source>
         <translation>Pasiekta peradresavimų kiekio riba</translation>
     </message>
     <message>
-        <location line="+121"/>
         <source>Bad HTTP request</source>
-        <translation>Bloga HTTP užklausa</translation>
+        <translation type="obsolete">Bloga HTTP užklausa</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/3rdparty/webkit/WebCore/platform/qt/FileChooserQt.cpp" line="+45"/>
+        <location filename="../src/3rdparty/webkit/Source/WebCore/platform/qt/FileChooserQt.cpp" line="+45"/>
         <source>%n file(s)</source>
         <comment>number of chosen file</comment>
         <translation>
@@ -8758,13 +9148,13 @@ Ar norite jį perrašyti?</translation>
         </translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebCore/platform/qt/Localizations.cpp" line="+44"/>
+        <location filename="../src/3rdparty/webkit/Source/WebKit/qt/WebCoreSupport/WebPlatformStrategies.cpp" line="+167"/>
         <source>Submit</source>
         <comment>default label for Submit buttons in forms on web pages</comment>
         <translation>Pateikti</translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="-15"/>
         <source>Submit</source>
         <comment>Submit (input element) alt text for &lt;input&gt; elements with no alt, title, or value</comment>
         <translation>Pateikti</translation>
@@ -8776,13 +9166,13 @@ Ar norite jį perrašyti?</translation>
         <translation>Atstatyti</translation>
     </message>
     <message>
-        <location line="+11"/>
+        <location line="+5"/>
         <source>This is a searchable index. Enter search keywords: </source>
         <comment>text that appears at the start of nearly-obsolete web pages in the form of a &apos;searchable index&apos;</comment>
         <translation>Tai – sąrašas, kuriame galite vykdyti paiešką. Įveskite reikšminius paieškos žodžius: </translation>
     </message>
     <message>
-        <location line="+5"/>
+        <location line="+10"/>
         <source>Choose File</source>
         <comment>title for file button used in HTML forms</comment>
         <translation>Parinkti failą</translation>
@@ -8792,6 +9182,12 @@ Ar norite jį perrašyti?</translation>
         <source>No file selected</source>
         <comment>text to display in file button used in HTML forms when no file is selected</comment>
         <translation>Failas nepasirinktas</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Details</source>
+        <comment>text to display in &lt;details&gt; tag when it has no &lt;summary&gt; child</comment>
+        <translation>Išsamiau</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8828,6 +9224,72 @@ Ar norite jį perrašyti?</translation>
         <source>Copy Image</source>
         <comment>Copy Link context menu item</comment>
         <translation>Kopijuoti paveikslą</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Copy Image Address</source>
+        <comment>Copy Image Address menu item</comment>
+        <translation>Kopijuoti paveikslo adresą</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Open Video</source>
+        <comment>Open Video in New Window</comment>
+        <translation>Atverti vaizdo įrašą</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Open Audio</source>
+        <comment>Open Audio in New Window</comment>
+        <translation>Atverti garso įrašą</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Copy Video</source>
+        <comment>Copy Video Link Location</comment>
+        <translation>Kopijuoti vaizdo įrašą</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Copy Audio</source>
+        <comment>Copy Audio Link Location</comment>
+        <translation>Kopijuoti garso įrašą</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Toggle Controls</source>
+        <comment>Toggle Media Controls</comment>
+        <translation>Rodyti / nerodyti mygtukus</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Toggle Loop</source>
+        <comment>Toggle Media Loop Playback</comment>
+        <translation>Įjungti / išjungti kartojimą</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Enter Fullscreen</source>
+        <comment>Switch Video to Fullscreen</comment>
+        <translation>Rodyti visame ekrane</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Play</source>
+        <comment>Play</comment>
+        <translation>Groti</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Pause</source>
+        <comment>Pause</comment>
+        <translation>Pristabdyti</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Mute</source>
+        <comment>Mute</comment>
+        <translation>Išjungti garsą</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8876,6 +9338,12 @@ Ar norite jį perrašyti?</translation>
         <source>Paste</source>
         <comment>Paste context menu item</comment>
         <translation>Įdėti</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Select All</source>
+        <comment>Select All context menu item</comment>
+        <translation>Pažymėti viską</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -8929,13 +9397,13 @@ Ar norite jį perrašyti?</translation>
         <location line="+5"/>
         <source>Show Spelling and Grammar</source>
         <comment>menu item title</comment>
-        <translation type="unfinished">Rodyti rašybą ir gramatiką</translation>
+        <translation>Rodyti rašybą ir gramatiką</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>Hide Spelling and Grammar</source>
         <comment>menu item title</comment>
-        <translation type="unfinished">Nerodyti rašybos ir gramatikos</translation>
+        <translation>Nerodyti rašybos ir gramatikos</translation>
     </message>
     <message>
         <location line="+5"/>
@@ -9040,13 +9508,13 @@ Ar norite jį perrašyti?</translation>
         <translation>Išvalyti paskiausių paieškų sąrašą</translation>
     </message>
     <message>
-        <location line="+80"/>
+        <location line="+95"/>
         <source>Missing Plug-in</source>
         <comment>Label text to be used when a plug-in is missing</comment>
         <translation>Trūksta papildinio</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+17"/>
         <source>Unknown</source>
         <comment>Unknown filesize FTP directory listing item</comment>
         <translation>Nežinomas</translation>
@@ -9274,25 +9742,25 @@ Ar norite jį perrašyti?</translation>
         <translation>%1 d. %2 val. %3 min. %4 sek.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>%1 hours %2 minutes %3 seconds</source>
         <comment>Media time description</comment>
         <translation>%1 val. %2 min. %3 sek.</translation>
     </message>
     <message>
-        <location line="+4"/>
+        <location line="+3"/>
         <source>%1 minutes %2 seconds</source>
         <comment>Media time description</comment>
         <translation>%1 min. %2 sek.</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="+2"/>
         <source>%1 seconds</source>
         <comment>Media time description</comment>
         <translation>%1 sek.</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebCore/platform/qt/ScrollbarQt.cpp" line="+58"/>
+        <location filename="../src/3rdparty/webkit/Source/WebCore/platform/qt/ScrollbarQt.cpp" line="+59"/>
         <source>Scroll here</source>
         <translation>Slinkti čia</translation>
     </message>
@@ -9357,7 +9825,7 @@ Ar norite jį perrašyti?</translation>
         <translation>Slinkti žemyn</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/Api/qwebpage.cpp" line="+2088"/>
+        <location filename="../src/3rdparty/webkit/Source/WebKit/qt/Api/qwebpage.cpp" line="+2114"/>
         <source>JavaScript Alert - %1</source>
         <translation>„JavaScript“ įspėjimas – %1</translation>
     </message>
@@ -9382,7 +9850,7 @@ Ar norite jį perrašyti?</translation>
         <translation>Panašu, jog šiame tinklalapyje veikiantis scenarijus susidūrė su problema. Ar norite nutraukti scenarijaus vykdymą?</translation>
     </message>
     <message>
-        <location line="+395"/>
+        <location line="+649"/>
         <source>Move the cursor to the next character</source>
         <translation>Perkelti žymeklį ties tolesniu simboliu</translation>
     </message>
@@ -9442,9 +9910,8 @@ Ar norite jį perrašyti?</translation>
         <translation>Perkelti žymeklį į dokumento pabaigą</translation>
     </message>
     <message>
-        <location line="+3"/>
         <source>Select all</source>
-        <translation>Pažymėti viską</translation>
+        <translation type="obsolete">Pažymėti viską</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -9592,7 +10059,7 @@ Ar norite jį perrašyti?</translation>
         <translation>Lygiuoti kairįjį kraštą</translation>
     </message>
     <message>
-        <location filename="../src/3rdparty/webkit/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp" line="+256"/>
+        <location filename="../src/3rdparty/webkit/Source/WebKit/qt/WebCoreSupport/InspectorClientQt.cpp" line="+372"/>
         <source>Web Inspector - %2</source>
         <translation>Saityno tyriklis – %2</translation>
     </message>
@@ -9608,7 +10075,7 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QWidget</name>
     <message>
-        <location filename="../src/gui/kernel/qwidget.cpp" line="+5995"/>
+        <location filename="../src/gui/kernel/qwidget.cpp" line="+6049"/>
         <source>*</source>
         <translation>*</translation>
     </message>
@@ -9616,7 +10083,7 @@ Ar norite jį perrašyti?</translation>
 <context>
     <name>QWizard</name>
     <message>
-        <location filename="../src/gui/dialogs/qwizard.cpp" line="+689"/>
+        <location filename="../src/gui/dialogs/qwizard.cpp" line="+688"/>
         <source>Go Back</source>
         <translation>Grįžti atgal</translation>
     </message>
@@ -9725,7 +10192,7 @@ Ar norite jį perrašyti?</translation>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+1059"/>
+        <location line="+1058"/>
         <source>Sh&amp;ade</source>
         <translation>&amp;Suvynioti</translation>
     </message>
@@ -9831,17 +10298,17 @@ Ar norite jį perrašyti?</translation>
     <message>
         <location line="+1"/>
         <source>internal general entity reference not allowed in DTD</source>
-        <translation type="unfinished">nuorodos į vidines bendrines esybes DTD apibrėžtyse neleidžiamos</translation>
+        <translation>nuorodos į vidines bendrines esybes DTD apibrėžtyse neleidžiamos</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>external parsed general entity reference not allowed in attribute value</source>
-        <translation type="unfinished">nuorodos į išorines išanalizuotas bendrines esybes atributų reikšmėse neleidžiamos</translation>
+        <translation>nuorodos į išorines išanalizuotas bendrines esybes atributų reikšmėse neleidžiamos</translation>
     </message>
     <message>
         <location line="+1"/>
         <source>external parsed general entity reference not allowed in DTD</source>
-        <translation type="unfinished">nuorodos į išorines išanalizuotas bendrines esybes DTD apibrėžtyse neleidžiamos</translation>
+        <translation>nuorodos į išorines išanalizuotas bendrines esybes DTD apibrėžtyse neleidžiamos</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -9896,7 +10363,7 @@ Ar norite jį perrašyti?</translation>
         <translation>Papildomas turinys dokumento pabaigoje.</translation>
     </message>
     <message>
-        <location line="+271"/>
+        <location line="+276"/>
         <source>Invalid entity value.</source>
         <translation>Netinkama esybės reikšmė.</translation>
     </message>
@@ -10070,6 +10537,113 @@ Ar norite jį perrašyti?</translation>
         <location line="+40"/>
         <source>Invalid character reference.</source>
         <translation>Netinkama nuoroda į simbolį.</translation>
+    </message>
+</context>
+<context>
+    <name>QmlJSDebugger::LiveSelectionTool</name>
+    <message>
+        <location filename="../src/plugins/qmltooling/qmldbg_inspector/editor/liveselectiontool.cpp" line="+143"/>
+        <source>Items</source>
+        <translation>Elementai</translation>
+    </message>
+</context>
+<context>
+    <name>QmlJSDebugger::QmlToolBar</name>
+    <message>
+        <location filename="../src/plugins/qmltooling/qmldbg_inspector/editor/qmltoolbar.cpp" line="+65"/>
+        <source>Inspector Mode</source>
+        <translation>Tyrimo veiksena</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Play/Pause Animations</source>
+        <translation>Pristabdyti / leisti animacijas</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Select</source>
+        <translation>Žymėti</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Select (Marquee)</source>
+        <translation type="unfinished">Žymėti (stačiakampį)</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zoom</source>
+        <translation>Mastelis</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Color Picker</source>
+        <translation>Spalvų parinkiklis</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Apply Changes to QML Viewer</source>
+        <translation>Pritaikyti paketimus QML žiūryklei</translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Apply Changes to Document</source>
+        <translation>Pritaikyti pakeitimus dokumentui</translation>
+    </message>
+    <message>
+        <location line="+10"/>
+        <source>Tools</source>
+        <translation>Priemonės</translation>
+    </message>
+    <message>
+        <location line="+26"/>
+        <source>1x</source>
+        <translation>1x</translation>
+    </message>
+    <message>
+        <location line="+6"/>
+        <source>0.5x</source>
+        <translation>0,5x</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>0.25x</source>
+        <translation>0,25x</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>0.125x</source>
+        <translation>0,125x</translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>0.1x</source>
+        <translation>0,1x</translation>
+    </message>
+</context>
+<context>
+    <name>QmlJSDebugger::ToolBarColorBox</name>
+    <message>
+        <location filename="../src/plugins/qmltooling/qmldbg_inspector/editor/toolbarcolorbox.cpp" line="+65"/>
+        <source>Copy Color</source>
+        <translation>Kopijuoti spalvą</translation>
+    </message>
+</context>
+<context>
+    <name>QmlJSDebugger::ZoomTool</name>
+    <message>
+        <location filename="../src/plugins/qmltooling/qmldbg_inspector/editor/zoomtool.cpp" line="+63"/>
+        <source>Zoom to &amp;100%</source>
+        <translation>&amp;Atstatyti mastelį</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zoom In</source>
+        <translation>Padidinti</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Zoom Out</source>
+        <translation>Sumažinti</translation>
     </message>
 </context>
 <context>
@@ -10467,7 +11041,7 @@ Ar norite jį perrašyti?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/functions/qsequencegeneratingfns.cpp" line="+266"/>
+        <location filename="../src/xmlpatterns/functions/qsequencegeneratingfns.cpp" line="+282"/>
         <source>The default collection is undefined</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10650,7 +11224,7 @@ Ar norite jį perrašyti?</translation>
     </message>
     <message>
         <location line="+9"/>
-        <source>The namespace for a user defined function cannot be empty (try the predefined prefix %1 which exists for cases like this)</source>
+        <source>The namespace for a user defined function cannot be empty (try the predefined prefix %1, which exists for cases like this)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11773,7 +12347,7 @@ Ar norite jį perrašyti?</translation>
     </message>
     <message>
         <location line="+286"/>
-        <source>Content model of complex type %1 contains %2 element so it cannot be derived by extension from a non-empty type.</source>
+        <source>Content model of complex type %1 contains %2 element, so it cannot be derived by extension from a non-empty type.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11877,7 +12451,7 @@ Ar norite jį perrašyti?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/xmlpatterns/schema/qxsdtypechecker.cpp" line="+234"/>
+        <location filename="../src/xmlpatterns/schema/qxsdtypechecker.cpp" line="+235"/>
         <location line="+7"/>
         <location line="+21"/>
         <source>%1 is not valid according to %2.</source>
@@ -11999,7 +12573,7 @@ Ar norite jį perrašyti?</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+18"/>
+        <location line="+26"/>
         <source>Double content is not listed in the enumeration facet.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12296,7 +12870,7 @@ Ar norite jį perrašyti?</translation>
     </message>
     <message>
         <location line="+18"/>
-        <source>Element %1 cannot contain other elements, as it has a fixed content.</source>
+        <source>Element %1 cannot contain other elements, as it has fixed content.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
