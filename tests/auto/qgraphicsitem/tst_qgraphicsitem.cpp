@@ -477,6 +477,7 @@ private slots:
     void QTBUG_13473_sceneposchange();
     void QTBUG_16374_crashInDestructor();
     void QTBUG_20699_focusScopeCrash();
+    void QTBUG_12966_deactivateInactivePanel();
 
 private:
     QList<QGraphicsItem *> paintedItems;
@@ -11446,6 +11447,34 @@ void tst_QGraphicsItem::QTBUG_20699_focusScopeCrash()
     fi->setParentItem(fi2);
     fi->setFocus();
     fs.setFocus();
+}
+
+void tst_QGraphicsItem::QTBUG_12966_deactivateInactivePanel()
+{
+    QGraphicsScene scene;
+
+    QGraphicsRectItem *e = new QGraphicsRectItem;
+    e->setFlag(QGraphicsItem::ItemIsPanel);
+    QGraphicsRectItem *f = new QGraphicsRectItem;
+    f->setFlag(QGraphicsItem::ItemIsPanel);
+
+    scene.addItem(e);
+    scene.addItem(f);
+
+    QEvent activate(QEvent::WindowActivate);
+    QApplication::sendEvent(&scene, &activate);
+
+    e->setActive(true);
+    Q_ASSERT(e->isActive());
+    Q_ASSERT(!f->isActive());
+
+    f->setActive(true);
+    Q_ASSERT(!e->isActive());
+    Q_ASSERT(f->isActive());
+
+    e->setActive(false);
+    Q_ASSERT(!e->isActive());
+    Q_ASSERT(f->isActive()); // << Activation of f should not change
 }
 
 QTEST_MAIN(tst_QGraphicsItem)

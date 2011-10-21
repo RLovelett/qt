@@ -3486,13 +3486,17 @@ bool QGraphicsScene::event(QEvent *event)
         break;
     case QEvent::WindowActivate:
         if (!d->activationRefCount++) {
-            if (d->lastActivePanel) {
-                // Activate the last panel.
-                d->setActivePanelHelper(d->lastActivePanel, true);
-            } else if (d->tabFocusFirst && d->tabFocusFirst->isPanel()) {
-                // Activate the panel of the first item in the tab focus
-                // chain.
-                d->setActivePanelHelper(d->tabFocusFirst, true);
+            QGraphicsItem *activateCandidate = d->lastActivePanel;
+            if (!activateCandidate && d->tabFocusFirst && d->tabFocusFirst->isPanel())
+                 activateCandidate = d->tabFocusFirst;
+
+            if (activateCandidate) {
+                // Activate last active panel or first focusable panel
+                // if not explicitly deactivated.
+                bool explicitlyDeactivated = activateCandidate->d_ptr->explicitActivate
+                        && !activateCandidate->d_ptr->wantsActive;
+                if (!explicitlyDeactivated)
+                    d->setActivePanelHelper(activateCandidate, true);
             } else {
                 // Activate all toplevel items.
                 QEvent event(QEvent::WindowActivate);

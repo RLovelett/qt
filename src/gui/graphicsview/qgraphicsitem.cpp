@@ -3207,22 +3207,24 @@ void QGraphicsItem::setActive(bool active)
 {
     d_ptr->explicitActivate = 1;
     d_ptr->wantsActive = active;
-    if (d_ptr->scene) {
-        if (active) {
-            // Activate this item.
-            d_ptr->scene->setActivePanel(this);
-        } else {
-            // Deactivate this item, and reactivate the parent panel,
-            // or the last active panel (if any).
-            QGraphicsItem *nextToActivate = 0;
-            if (d_ptr->parent)
-                nextToActivate = d_ptr->parent->panel();
-            if (!nextToActivate)
-                nextToActivate = d_ptr->scene->d_func()->lastActivePanel;
-            if (nextToActivate == this || isAncestorOf(nextToActivate))
-                nextToActivate = 0;
-            d_ptr->scene->setActivePanel(nextToActivate != this ? nextToActivate : 0);
-        }
+    if (!d_ptr->scene)
+        return;
+    if (active == isActive())
+        return;
+    if (active) {
+        // Activate this item.
+        d_ptr->scene->setActivePanel(this);
+    } else {
+        // Deactivate this item, and reactivate the parent panel,
+        // or the last active panel (if any).
+        QGraphicsItem *nextToActivate = 0;
+        if (d_ptr->parent)
+            nextToActivate = d_ptr->parent->panel();
+        if (!nextToActivate)
+            nextToActivate = d_ptr->scene->d_func()->lastActivePanel;
+        if (nextToActivate == this || isAncestorOf(nextToActivate))
+            nextToActivate = 0;
+        d_ptr->scene->setActivePanel(nextToActivate != this ? nextToActivate : 0);
     }
 }
 
