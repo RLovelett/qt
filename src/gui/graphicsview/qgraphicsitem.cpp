@@ -2262,7 +2262,8 @@ bool QGraphicsItem::isVisibleTo(const QGraphicsItem *parent) const
     Sets this item's visibility to \a newVisible. If \a explicitly is true,
     this item will be "explicitly" \a newVisible; otherwise, it.. will not be.
 */
-void QGraphicsItemPrivate::setVisibleHelper(bool newVisible, bool explicitly, bool update)
+void QGraphicsItemPrivate::setVisibleHelper(bool newVisible, bool explicitly,
+                                            bool update, bool hiddenByPanel)
 {
     Q_Q(QGraphicsItem);
 
@@ -2323,7 +2324,7 @@ void QGraphicsItemPrivate::setVisibleHelper(bool newVisible, bool explicitly, bo
                 } while ((focusItem = focusItem->parentWidget()) && !focusItem->isPanel());
             }
             if (clear)
-                clearFocusHelper(/* giveFocusToParent = */ false);
+                clearFocusHelper(/* giveFocusToParent = */ false, hiddenByPanel);
         }
         if (q_ptr->isSelected())
             q_ptr->setSelected(false);
@@ -2346,7 +2347,7 @@ void QGraphicsItemPrivate::setVisibleHelper(bool newVisible, bool explicitly, bo
     const bool updateChildren = update && !(flags & QGraphicsItem::ItemClipsChildrenToShape);
     foreach (QGraphicsItem *child, children) {
         if (!newVisible || !child->d_ptr->explicitlyHidden)
-            child->d_ptr->setVisibleHelper(newVisible, false, updateChildren);
+            child->d_ptr->setVisibleHelper(newVisible, false, updateChildren, hiddenByPanel);
     }
 
     // Update activation
@@ -2444,7 +2445,10 @@ void QGraphicsItemPrivate::setVisibleHelper(bool newVisible, bool explicitly, bo
 */
 void QGraphicsItem::setVisible(bool visible)
 {
-    d_ptr->setVisibleHelper(visible, /* explicit = */ true);
+    d_ptr->setVisibleHelper(visible,
+                            /* explicit = */ true,
+                            /* update = */ true,
+                            /* hiddenByPanel = */ isPanel());
 }
 
 /*!
@@ -3208,10 +3212,16 @@ void QGraphicsItem::setActive(bool active)
             // Activate this item.
             d_ptr->scene->setActivePanel(this);
         } else {
-            // Deactivate this item, and reactivate the last active item
-            // (if any).
-            QGraphicsItem *lastActive = d_ptr->scene->d_func()->lastActivePanel;
-            d_ptr->scene->setActivePanel(lastActive != this ? lastActive : 0);
+            // Deactivate this item, and reactivate the parent panel,
+            // or the last active panel (if any).
+            QGraphicsItem *nextToActivate = 0;
+            if (d_ptr->parent)
+                nextToActivate = d_ptr->parent->panel();
+            if (!nextToActivate)
+                nextToActivate = d_ptr->scene->d_func()->lastActivePanel;
+            if (nextToActivate == this || isAncestorOf(nextToActivate))
+                nextToActivate = 0;
+            d_ptr->scene->setActivePanel(nextToActivate != this ? nextToActivate : 0);
         }
     }
 }
@@ -3305,7 +3315,7 @@ void QGraphicsItemPrivate::setFocusHelper(Qt::FocusReason focusReason, bool clim
 
     // Update the child focus chain.
     QGraphicsItem *commonAncestor = 0;
-    if (scene && scene->focusItem()) {
+    if (scene && scene->focusItem() && scene->focusItem()->panel() == q_ptr->panel()) {
         commonAncestor = scene->focusItem()->commonAncestorItem(f);
         scene->focusItem()->d_ptr->clearSubFocus(scene->focusItem(), commonAncestor);
     }
@@ -3335,13 +3345,14 @@ void QGraphicsItemPrivate::setFocusHelper(Qt::FocusReason focusReason, bool clim
 */
 void QGraphicsItem::clearFocus()
 {
-    d_ptr->clearFocusHelper(/* giveFocusToParent = */ true);
+    d_ptr->clearFocusHelper(/* giveFocusToParent = */ true,
+                            /* hiddenByParentPanel = */ false);
 }
 
 /*!
     \internal
 */
-void QGraphicsItemPrivate::clearFocusHelper(bool giveFocusToParent)
+void QGraphicsItemPrivate::clearFocusHelper(bool giveFocusToParent, bool hiddenByParentPanel)
 {
     if (giveFocusToParent) {
         // Pass focus to the closest parent focus scope
@@ -3366,7 +3377,8 @@ void QGraphicsItemPrivate::clearFocusHelper(bool giveFocusToParent)
 
     if (q_ptr->hasFocus()) {
         // Invisible items with focus must explicitly clear subfocus.
-        clearSubFocus(q_ptr);
+        if (!hiddenByParentPanel)
+            clearSubFocus(q_ptr);
 
         // If this item has the scene's input focus, clear it.
         scene->setFocusItem(0);
