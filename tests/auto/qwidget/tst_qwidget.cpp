@@ -418,6 +418,10 @@ private slots:
 
     void nativeChildFocus();
 
+#ifdef Q_WS_QWS
+    void taskQTBUG_20152_unnecessaryPaintEvent();
+#endif
+
 private:
     bool ensureScreenSize(int width, int height);
     QWidget *testWidget;
@@ -10691,6 +10695,72 @@ void tst_QWidget::nativeChildFocus()
     QCOMPARE(QApplication::activeWindow(), &w);
     QCOMPARE(QApplication::focusWidget(), static_cast<QWidget*>(p1));
 }
+
+#ifdef Q_WS_QWS
+class BGWidget : public QLabel
+{
+    Q_OBJECT
+
+public:
+    BGWidget(QWidget *parent = 0)
+        : QLabel(parent), paintEventsCount(0), timerEventsCount(0)
+    {
+        startTimer(100);
+    }
+
+    void timerEvent(QTimerEvent *)
+    {
+        setText(QString::number(timerEventsCount));
+        switch (timerEventsCount++) {
+        case 10:
+            emit done();
+            break;
+        }
+    }
+
+    int paintEventsCount;
+    int timerEventsCount;
+
+protected:
+    void paintEvent(QPaintEvent *event) {
+        QLabel::paintEvent(event);
+        paintEventsCount++;
+    }
+signals:
+    void done();
+};
+
+void tst_QWidget::taskQTBUG_20152_unnecessaryPaintEvent()
+{
+    QTest::qWait(50);
+    QWidget *parent = new QWidget(0);
+    BGWidget *child = new BGWidget(parent);
+    child->setGeometry(20,20,50,50);
+    parent->show();
+
+    QTest::qWaitForWindowShown(child);
+    QCOMPARE(child->paintEventsCount, 1);
+
+    QEventLoop eventLoop;
+    connect(child, SIGNAL(done()), &eventLoop, SLOT(quit()));
+    QApplication::processEvents();
+
+    QDialog dialog;
+    dialog.setModal(true);
+    dialog.setGeometry(0,0,100,100);
+    dialog.show();
+    QTest::qWaitForWindowShown(&dialog);
+    eventLoop.exec();
+
+    QApplication::processEvents();
+    QCOMPARE(child->paintEventsCount, 2);
+
+    dialog.hide();
+    QApplication::processEvents();
+    QCOMPARE(child->paintEventsCount, 3);
+    QCOMPARE(child->text(), QString("10"));
+}
+#endif
 
 QTEST_MAIN(tst_QWidget)
 #include "tst_qwidget.moc"

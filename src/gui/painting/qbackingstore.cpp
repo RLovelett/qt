@@ -352,7 +352,7 @@ void QWidgetBackingStore::beginPaint(QRegion &toClean, QWidget *widget, QWindowS
         return;
     }
 
-    if (surfaceWidget->isWindow()) {
+    if (surfaceWidget->isWindow() && surfaceWidget->window()->isActiveWindow()) {
         if (toCleanUnclipped != toClean) {
             dirtyFromPreviousSync += (toCleanUnclipped - surface->clipRegion());
             hasDirtyFromPreviousSync = true;
