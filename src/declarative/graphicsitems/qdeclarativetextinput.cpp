@@ -1131,7 +1131,7 @@ void QDeclarativeTextInput::mousePressEvent(QGraphicsSceneMouseEvent *event)
     Q_D(QDeclarativeTextInput);
     if (d->sendMouseEventToInputContext(event, QEvent::MouseButtonPress))
         return;
-    if(d->focusOnPress){
+    if(d->focusOnPress) {
         bool hadActiveFocus = hasActiveFocus();
         forceActiveFocus();
         if (d->showInputPanelOnFocus) {
@@ -1144,6 +1144,8 @@ void QDeclarativeTextInput::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 d->clickCausedFocus = true;
             }
         }
+    } else { // close input panel that is maybe open
+        closeSoftwareInputPanel();
     }
     if (d->selectByMouse) {
         setKeepMouseGrab(false);
@@ -1824,10 +1826,10 @@ void QDeclarativeTextInput::closeSoftwareInputPanel()
 void QDeclarativeTextInput::focusInEvent(QFocusEvent *event)
 {
     Q_D(const QDeclarativeTextInput);
-    if (d->showInputPanelOnFocus) {
-        if (d->focusOnPress && !isReadOnly()) {
-            openSoftwareInputPanel();
-        }
+    if (d->showInputPanelOnFocus && !isReadOnly() && d->focusOnPress) {
+        openSoftwareInputPanel();
+    } else { // close input panel that is maybe open
+        closeSoftwareInputPanel();
     }
     QDeclarativePaintedItem::focusInEvent(event);
 }

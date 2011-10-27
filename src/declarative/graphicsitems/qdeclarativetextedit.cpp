@@ -1366,8 +1366,9 @@ void QDeclarativeTextEdit::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 d->clickCausedFocus = true;
             }
         }
+    } else { // close input panel that is maybe open
+        closeSoftwareInputPanel();
     }
-
     d->control->processEvent(event, QPointF(0, -d->yoff));
     if (!event->isAccepted())
         QDeclarativePaintedItem::mousePressEvent(event);
@@ -1876,10 +1877,10 @@ void QDeclarativeTextEdit::closeSoftwareInputPanel()
 void QDeclarativeTextEdit::focusInEvent(QFocusEvent *event)
 {
     Q_D(const QDeclarativeTextEdit);
-    if (d->showInputPanelOnFocus) {
-        if (d->focusOnPress && !isReadOnly()) {
-            openSoftwareInputPanel();
-        }
+    if (d->showInputPanelOnFocus && !isReadOnly() && d->focusOnPress) {
+        openSoftwareInputPanel();
+    } else { // close input panel that is maybe open
+        closeSoftwareInputPanel();
     }
     QDeclarativePaintedItem::focusInEvent(event);
 }
