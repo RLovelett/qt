@@ -265,8 +265,8 @@ void QAbstractEventDispatcherPrivate::releaseTimerId(int timerId)
 
     QAbstractEventDispatcher also allows the integration of an
     external event loop with the Qt event loop. For example, the
-    \l{Qt Solutions}{Motif Extension Qt Solution} includes a
-    reimplementation of QAbstractEventDispatcher that merges Qt and
+    \l{ftp://ftp.qt.nokia.com/pub/qt/solutions/lgpl/qtmotifextension-2.7_1-opensource.tar.gz}{Motif Extension}
+    includes a reimplementation of QAbstractEventDispatcher that merges Qt and
     Motif events together.
 
     \sa QEventLoop, QCoreApplication
