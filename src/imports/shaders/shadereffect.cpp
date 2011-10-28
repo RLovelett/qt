@@ -63,7 +63,12 @@ void ShaderEffect::prepareBufferedDraw(QPainter *painter)
 {
     // This workaround needed because QGraphicsEffect seems to always utilize default painters worldtransform
     // instead of the active painters worldtransform.
-    const ShaderEffectBuffer *effectBuffer = dynamic_cast<ShaderEffectBuffer*> (painter->device());
+    const ShaderEffectBuffer *effectBuffer =
+#ifndef QT_NO_DYNAMIC_CAST
+        dynamic_cast<ShaderEffectBuffer*>(painter->device());
+#else
+        static_cast<ShaderEffectBuffer*>(painter->device());
+#endif
     if (effectBuffer) {
         savedWorldTransform = painter->worldTransform() * savedWorldTransform;
         painter->setWorldTransform(savedWorldTransform);
