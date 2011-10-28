@@ -45,7 +45,6 @@
 #include "qfactoryinterface.h"
 #include "qmap.h"
 #include <qdir.h>
-#include <qsettings.h>
 #include <qdebug.h>
 #include "qmutex.h"
 #include "qplugin.h"
@@ -127,7 +126,7 @@ QFactoryLoader::QFactoryLoader(const char *iid,
 }
 
 
-void QFactoryLoader::updateDir(const QString &pluginDir, QSettings& settings)
+void QFactoryLoader::updateDir(const QString &pluginDir)
 {
     Q_D(QFactoryLoader);
     QString path = pluginDir + d->suffix;
@@ -143,7 +142,7 @@ void QFactoryLoader::updateDir(const QString &pluginDir, QSettings& settings)
             qDebug() << "QFactoryLoader::QFactoryLoader() looking at" << fileName;
         }
         library = QLibraryPrivate::findOrCreate(QFileInfo(fileName).canonicalFilePath());
-        if (!library->isPlugin(&settings)) {
+        if (!library->isPlugin()) {
             if (qt_debug_component()) {
                 qDebug() << library->errorString;
                 qDebug() << "         not a plugin";
@@ -151,44 +150,27 @@ void QFactoryLoader::updateDir(const QString &pluginDir, QSettings& settings)
             library->release();
             continue;
         }
-        QString regkey = QString::fromLatin1("Qt Factory Cache %1.%2/%3:/%4")
-                         .arg((QT_VERSION & 0xff0000) >> 16)
-                         .arg((QT_VERSION & 0xff00) >> 8)
-                         .arg(QLatin1String(d->iid))
-                         .arg(fileName);
-        QStringList reg, keys;
-        reg = settings.value(regkey).toStringList();
-        if (reg.count() && library->lastModified == reg[0]) {
-            keys = reg;
-            keys.removeFirst();
-        } else {
-            if (!library->loadPlugin()) {
-                if (qt_debug_component()) {
-                    qDebug() << library->errorString;
-                    qDebug() << "           could not load";
-                }
-                library->release();
-                continue;
+        QStringList keys;
+        if (!library->loadPlugin()) {
+            if (qt_debug_component()) {
+                qDebug() << library->errorString;
+                qDebug() << "           could not load";
             }
-            QObject *instance = library->instance();
-            if (!instance) {
-                library->release();
-                // ignore plugins that have a valid signature but cannot be loaded.
-                continue;
-            }
-            QFactoryInterface *factory = qobject_cast<QFactoryInterface*>(instance);
-            if (instance && factory && instance->qt_metacast(d->iid))
-                keys = factory->keys();
-            if (keys.isEmpty())
-                library->unload();
-            reg.clear();
-            reg << library->lastModified;
-            reg += keys;
-            settings.setValue(regkey, reg);
+            library->release();
+            continue;
         }
-        if (qt_debug_component()) {
-            qDebug() << "keys" << keys;
+        QObject *instance = library->instance();
+        if (!instance) {
+            library->release();
+            // ignore plugins that have a valid signature but cannot be loaded.
+            continue;
         }
+
+        QFactoryInterface *factory = qobject_cast<QFactoryInterface*>(instance);
+        if (instance && factory && instance->qt_metacast(d->iid))
+            keys = factory->keys();
+        if (keys.isEmpty())
+            library->unload();
 
         if (keys.isEmpty()) {
             library->release();
@@ -223,14 +205,13 @@ void QFactoryLoader::update()
 #ifdef QT_SHARED
     Q_D(QFactoryLoader);
     QStringList paths = QCoreApplication::libraryPaths();
-    QSettings settings(QSettings::UserScope, QLatin1String("Trolltech"));
     for (int i = 0; i < paths.count(); ++i) {
         const QString &pluginDir = paths.at(i);
         // Already loaded, skip it...
         if (d->loadedPaths.contains(pluginDir))
             continue;
         d->loadedPaths << pluginDir;
-        updateDir(pluginDir, settings);
+        updateDir(pluginDir);
     }
 #else
     Q_D(QFactoryLoader);
@@ -344,8 +325,7 @@ void QSymbianSystemPluginWatcher::handlePathChanged(QNotifyChangeEvent *e)
     QList<QFactoryLoader *> *loaders = qt_factory_loaders();
     for (QList<QFactoryLoader *>::const_iterator it = loaders->constBegin();
          it != loaders->constEnd(); ++it) {
-        QSettings settings(QSettings::UserScope, QLatin1String("Trolltech"));
-        (*it)->updateDir(dirName, settings);
+        (*it)->updateDir(dirName);
     }
 }
 

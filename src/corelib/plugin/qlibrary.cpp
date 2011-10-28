@@ -50,8 +50,6 @@
 #include <qfileinfo.h>
 #include <qmutex.h>
 #include <qmap.h>
-#include <qsettings.h>
-#include <qdatetime.h>
 #include <private/qcoreapplication_p.h>
 #ifdef Q_OS_MAC
 #  include <private/qcore_mac_p.h>
@@ -657,7 +655,7 @@ bool qt_get_verificationdata(QtPluginQueryVerificationDataFunction pfn, uint *qt
 #endif
 }
 
-bool QLibraryPrivate::isPlugin(QSettings *settings)
+bool QLibraryPrivate::isPlugin()
 {
     errorString.clear();
     if (pluginState != MightBeAPlugin)
@@ -682,45 +680,6 @@ bool QLibraryPrivate::isPlugin(QSettings *settings)
     }
 #endif
 
-    QFileInfo fileinfo(fileName);
-
-#ifndef QT_NO_DATESTRING
-    lastModified  = fileinfo.lastModified().toString(Qt::ISODate);
-#endif
-    QString regkey = QString::fromLatin1("Qt Plugin Cache %1.%2.%3/%4")
-                     .arg((QT_VERSION & 0xff0000) >> 16)
-                     .arg((QT_VERSION & 0xff00) >> 8)
-                     .arg(QLIBRARY_AS_DEBUG ? QLatin1String("debug") : QLatin1String("false"))
-                     .arg(fileName);
-#ifdef Q_WS_MAC
-    // On Mac, add the application arch to the reg key in order to
-    // cache plugin information separately for each arch. This prevents
-    // Qt from wrongly caching plugin load failures when the archs
-    // don't match.
-#if defined(__x86_64__)
-    regkey += QLatin1String("-x86_64");
-#elif defined(__i386__)
-    regkey += QLatin1String("-i386");
-#elif defined(__ppc64__)
-    regkey += QLatin1String("-ppc64");
-#elif defined(__ppc__)
-    regkey += QLatin1String("-ppc");
-#endif
-#endif // Q_WS_MAC
-
-    QStringList reg;
-#ifndef QT_NO_SETTINGS
-    if (!settings) {
-        settings = QCoreApplicationPrivate::trolltechConf();
-    }
-    reg = settings->value(regkey).toStringList();
-#endif
-    if (reg.count() == 4 && lastModified == reg.at(3)) {
-        qt_version = reg.at(0).toUInt(0, 16);
-        debug = bool(reg.at(1).toInt());
-        key = reg.at(2).toLatin1();
-        success = qt_version != 0;
-    } else {
 #if defined(Q_OS_UNIX) && !defined(Q_OS_MAC) && !defined(Q_OS_SYMBIAN)
         if (!pHnd) {
             // use unix shortcut to avoid loading the library
@@ -808,16 +767,6 @@ bool QLibraryPrivate::isPlugin(QSettings *settings)
 
         // Qt 4.5 compatibility: stl doesn't affect binary compatibility
         key.replace(" no-stl", "");
-
-#ifndef QT_NO_SETTINGS
-        QStringList queried;
-        queried << QString::number(qt_version,16)
-                << QString::number((int)debug)
-                << QLatin1String(key)
-                << lastModified;
-        settings->setValue(regkey, queried);
-#endif
-    }
 
     if (!success) {
         if (errorString.isEmpty()){
