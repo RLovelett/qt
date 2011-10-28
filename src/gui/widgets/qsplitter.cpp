@@ -238,7 +238,7 @@ void QSplitterHandle::resizeEvent(QResizeEvent *event)
     // and ensures that handles are drawn on top of widgets
     // We simply use the contents margins for draggin and only
     // paint the mask area
-    bool useTinyMode = (d->s->handleWidth() == 1);
+    bool useTinyMode = (d->s->handleWidth() <= 1);
     setAttribute(Qt::WA_MouseNoMask, useTinyMode);
     if (useTinyMode) {
         if (orientation() == Qt::Horizontal)
@@ -1697,7 +1697,7 @@ void QSplitter::setSizes(const QList<int> &list)
 int QSplitter::handleWidth() const
 {
     Q_D(const QSplitter);
-    if (d->handleWidth > 0) {
+    if (d->handleWidth >= 0) {
         return d->handleWidth;
     } else {
         return style()->pixelMetric(QStyle::PM_SplitterWidth, 0, this);
