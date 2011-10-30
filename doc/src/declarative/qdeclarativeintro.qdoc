@@ -357,6 +357,53 @@ Item {
 }
 \endqml
 
+\section3 Limitations
+
+Currently an attached property cannot be directly accessed in the children elements
+of the element that has the attached property, but instead it's only accesible
+within the scope of the element with the property.
+
+So the following code would be wrong:
+
+\qml
+Component {
+    id: myDelegate
+    Row {
+        id: myRow
+        Text {
+            text: display
+        }
+        Text {
+            text: "Hello"
+            // ListView: wrong, won't be visible here, only directly in myRow scope
+            color: ListView.isCurrentItem ? "red" : "blue"
+        }
+    }
+}
+\endqml
+
+This is a common problem when developing a QML delegate that you should take into
+account. The following code would be correct and solve the issue:
+
+\qml
+Component {
+    id: myDelegate
+    Row {
+        id: myRow
+        Text {
+            text: display
+        }
+        Text {
+            text: "Hello"
+            // parent.ListView is correct
+            color: parent.ListView.isCurrentItem ? "red" : "blue"
+            // The following would also be ok
+            // color: myRow.ListView.isCurrentItem ? "red" : "blue"
+        }
+    }
+}
+\endqml
+
 \section1 Signal Handlers
 
 Signal handlers allow JavaScript code to be executed in response to an event. For

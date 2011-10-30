@@ -404,6 +404,11 @@ property \e{fruit_color} of the view.
 
 \snippet doc/src/snippets/declarative/models/views-models-delegates.qml rectangle
 
+ListView is an attached property of the delegate's root element,
+and attached properties cannot be directly accessed in the child
+elements. That's why in the code above we had to resort to using
+parent.Listview or fruitRow.Listview.
+
 Another important case is when some action (e.g. mouse click) in the
 delegate should update data in the model. In this case you can define
 a function in the model, e.g.:
