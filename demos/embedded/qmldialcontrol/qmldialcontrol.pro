@@ -9,3 +9,4 @@ symbian {
     include($$QT_SOURCE_TREE/demos/symbianpkgrules.pri)
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 }
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)

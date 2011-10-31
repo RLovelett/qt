@@ -10,3 +10,4 @@ symbian {
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
     LIBS += -lcone -leikcore -lavkon # Screen orientation
 }
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)

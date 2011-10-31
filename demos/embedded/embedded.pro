@@ -21,7 +21,7 @@ contains(QT_CONFIG, webkit) {
 
 contains(QT_CONFIG, declarative) {
     # Qml demos require DEPLOYMENT support. Therefore, only symbian.
-    symbian:SUBDIRS += qmlcalculator qmlclocks qmldialcontrol qmleasing qmlflickr qmlphotoviewer qmltwitter
+    symbian:wince*:SUBDIRS += qmlcalculator qmlclocks qmldialcontrol qmleasing qmlflickr qmlphotoviewer qmltwitter
 }
 
 # install
@@ -30,3 +30,4 @@ sources.path = $$[QT_INSTALL_DEMOS]/embedded
 INSTALLS += sources
 
 symbian: include($$QT_SOURCE_TREE/demos/symbianpkgrules.pri)
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)

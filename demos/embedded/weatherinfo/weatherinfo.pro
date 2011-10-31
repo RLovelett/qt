@@ -9,6 +9,7 @@ symbian {
     include($$QT_SOURCE_TREE/demos/symbianpkgrules.pri)
     TARGET.CAPABILITY = NetworkServices
 }
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)
 
 target.path = $$[QT_INSTALL_DEMOS]/embedded/weatherinfo
 sources.files = $$SOURCES $$HEADERS $$RESOURCES $$FORMS *.pro

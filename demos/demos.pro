@@ -70,6 +70,7 @@ sources.path = $$[QT_INSTALL_DEMOS]
 INSTALLS += sources
 
 symbian: include($$QT_SOURCE_TREE/demos/symbianpkgrules.pri)
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)
 
 demos_chip.subdir = chip
 demos_embeddeddialogs.subdir = embeddeddialogs

@@ -114,5 +114,5 @@ symbian {
         }
     }
 }
-
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)
 

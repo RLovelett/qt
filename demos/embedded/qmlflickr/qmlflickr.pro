@@ -11,3 +11,4 @@ symbian {
     # Maximum heap size set to 128 MB in order to allow loading large images.
     TARGET.EPOCHEAPSIZE = 0x20000 0x8000000
 }
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)

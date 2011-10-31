@@ -19,6 +19,7 @@ sources.path = $$[QT_INSTALL_DEMOS]/sqlbrowser
 INSTALLS += target sources
 
 symbian: include($$QT_SOURCE_TREE/demos/symbianpkgrules.pri)
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)
 
 wince*: {
     DEPLOYMENT_PLUGIN += qsqlite

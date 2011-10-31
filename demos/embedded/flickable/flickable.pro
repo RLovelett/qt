@@ -5,6 +5,7 @@ symbian {
     TARGET.UID3 = 0xA000CF73
     include($$QT_SOURCE_TREE/demos/symbianpkgrules.pri)
 }
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)
 
 target.path = $$[QT_INSTALL_DEMOS]/embedded/flickable
 sources.files = $$SOURCES $$HEADERS $$RESOURCES *.pro

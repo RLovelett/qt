@@ -261,3 +261,5 @@ symbian {
 
     TARGET.EPOCHEAPSIZE = 100000 20000000
 }
+
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)

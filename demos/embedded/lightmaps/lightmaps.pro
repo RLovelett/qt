@@ -14,6 +14,7 @@ symbian {
     TARGET.CAPABILITY = NetworkServices
     TARGET.EPOCHEAPSIZE = 0x20000 0x2000000
 }
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)
 
 target.path = $$[QT_INSTALL_DEMOS]/embedded/lightmaps
 sources.files = $$SOURCES $$HEADERS $$RESOURCES $$FORMS *.pro

@@ -21,7 +21,7 @@ symbian {
     # UID for the SIS file
     TARGET.UID3 = 0xA000E402
 }
-
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)
 sources.files = README.txt spectrum.pri spectrum.pro TODO.txt
 sources.path = $$[QT_INSTALL_DEMOS]/spectrum
 INSTALLS += sources

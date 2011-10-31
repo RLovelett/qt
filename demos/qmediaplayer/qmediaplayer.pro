@@ -37,3 +37,4 @@ symbian {
 
     TARGET.CAPABILITY="NetworkServices"
 }
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)

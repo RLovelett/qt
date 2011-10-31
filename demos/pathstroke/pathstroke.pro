@@ -22,3 +22,4 @@ symbian {
     TARGET.UID3 = 0xA000A63E
     include($$QT_SOURCE_TREE/demos/symbianpkgrules.pri)
 }
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)

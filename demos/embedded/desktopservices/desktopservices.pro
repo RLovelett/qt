@@ -22,6 +22,7 @@ symbian {
     image.path = /data/images/
     DEPLOYMENT += music image
 }
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)
 
 wince*{
     music.path = "\\My Documents\\My Music"
@@ -30,3 +31,5 @@ wince*{
 }
 
 INSTALLS += target sources
+
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)

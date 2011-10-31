@@ -26,7 +26,7 @@ sources.path = $$[QT_INSTALL_EXAMPLES]/opengl/hellogl_es2
 INSTALLS += target sources
 
 symbian: include($$QT_SOURCE_TREE/examples/symbianpkgrules.pri)
-
+wince*: include($$QT_SOURCE_TREE/examples/wincepkgrules.pri)
 maemo5 {
     # Debian package name may not contain numbers or special characters
     # such as '_', lets change this in Maemo.

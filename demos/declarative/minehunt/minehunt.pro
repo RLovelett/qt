@@ -20,4 +20,4 @@ symbian:{
     qmlminehuntfiles.files = MinehuntCore minehunt.qml
     DEPLOYMENT += qmlminehuntfiles
 }
- 
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)

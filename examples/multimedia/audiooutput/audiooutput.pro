@@ -15,4 +15,5 @@ symbian {
     include($$QT_SOURCE_TREE/examples/symbianpkgrules.pri)
 }
 maemo5: include($$QT_SOURCE_TREE/examples/maemo5pkgrules.pri)
+wince*: include($$QT_SOURCE_TREE/examples/wincepkgrules.pri)
 maemo5: warning(This example might not fully work on Maemo platform)

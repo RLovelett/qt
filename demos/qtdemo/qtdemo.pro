@@ -72,6 +72,7 @@ QMAKE_INFO_PLIST = Info_mac.plist
 }
 
 symbian: include($$QT_SOURCE_TREE/demos/symbianpkgrules.pri)
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)
 
 # install
 target.path = $$[QT_INSTALL_BINS]

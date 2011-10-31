@@ -18,6 +18,7 @@ sources.path = $$[QT_INSTALL_DEMOS]/composition
 INSTALLS += target sources
 
 symbian: include($$QT_SOURCE_TREE/demos/symbianpkgrules.pri)
+wince*: include($$QT_SOURCE_TREE/demos/wincepkgrules.pri)
 
 win32-msvc* {
     QMAKE_CXXFLAGS += /Zm500
