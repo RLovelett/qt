@@ -893,6 +893,8 @@ StNormal:
             if (codec) {
                 stringResult += codec->toUnicode(str.constData() + i, j - i);
             } else
+#else
+            Q_UNUSED(codec);
 #endif
             {
                 int n = stringResult.size();
