@@ -1811,12 +1811,11 @@ void QDeclarativeTextEditPrivate::updateDefaultTextOption()
 */
 void QDeclarativeTextEdit::openSoftwareInputPanel()
 {
-    QEvent event(QEvent::RequestSoftwareInputPanel);
     if (qApp) {
-        if (QGraphicsView * view = qobject_cast<QGraphicsView*>(qApp->focusWidget())) {
-            if (view->scene() && view->scene() == scene()) {
-                QApplication::sendEvent(view, &event);
-            }
+        QGraphicsView* view = qobject_cast<QGraphicsView*>(qApp->focusWidget());
+        if (view && view->scene() && view->scene() == scene()) {
+            QEvent event(QEvent::RequestSoftwareInputPanel);
+            QApplication::sendEvent(view, &event);
         }
     }
 }
@@ -1862,12 +1861,11 @@ void QDeclarativeTextEdit::openSoftwareInputPanel()
 */
 void QDeclarativeTextEdit::closeSoftwareInputPanel()
 {
-    QEvent event(QEvent::CloseSoftwareInputPanel);
     if (qApp) {
-        if (QGraphicsView * view = qobject_cast<QGraphicsView*>(qApp->focusWidget())) {
-            if (view->scene() && view->scene() == scene()) {
-                QApplication::sendEvent(view, &event);
-            }
+        QGraphicsView* view = qobject_cast<QGraphicsView*>(qApp->focusWidget());
+        if (view && view->scene() && view->scene() == scene()) {
+            QEvent event(QEvent::CloseSoftwareInputPanel);
+            QApplication::sendEvent(view, &event);
         }
     }
 }
