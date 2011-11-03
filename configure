@@ -3363,7 +3363,7 @@ fi
 
 #auto-detect DWARF2 on the mac
 if [ "$PLATFORM_MAC" = "yes" ] && [ "$CFG_MAC_DWARF2" = "auto" ]; then
-    if "$mactests/dwarf2.test" "$TEST_COMPILER" "$OPT_VERBOSE" "$mactests" ; then
+    if "$mactests/dwarf2.test" "$TEST_COMPILER" "$OPT_VERBOSE" "$mactests" $MAC_CONFIG_TEST_COMMANDLINE; then
         CFG_MAC_DWARF2=no
     else
         CFG_MAC_DWARF2=yes
@@ -3461,7 +3461,7 @@ fi
 if [ "$PLATFORM_MAC" = "yes" ] && [ '!' -z "$CFG_SDK" ]; then
     # get the darwin version. 10.0.0 and up means snow leopard.
     VERSION=`uname -r | tr '.' ' ' | awk '{print $1}'`
-    if [ "$VERSION" -gt 9 ] && [ "$CFG_SDK" == "/Developer/SDKs/MacOSX10.4u.sdk/" ] && [ "$PLATFORM" == "macx-g++" ]; then
+    if [ "$VERSION" -gt 9 ] && [ `basename $CFG_SDK` == "MacOSX10.4u.sdk" ] && [ "$PLATFORM" == "macx-g++" ]; then
         echo
         echo "WARNING: The 10.4u SDK does not support gcc 4.2. Configure with -platform macx-g++40. "
         echo
@@ -4961,7 +4961,7 @@ fi # Build qmake
 #-------------------------------------------------------------------------------
 
 # detect availability of float math.h functions
-if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/floatmath "floatmath" $L_FLAGS $I_FLAGS $l_FLAGS; then
+if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/floatmath "floatmath" $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE; then
     CFG_USE_FLOATMATH=yes
 else
     CFG_USE_FLOATMATH=no
@@ -4969,7 +4969,7 @@ fi
 
 # detect mmx support
 if [ "${CFG_MMX}" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/mmx "mmx" $L_FLAGS $I_FLAGS $l_FLAGS "-mmmx"; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/mmx "mmx" $L_FLAGS $I_FLAGS $l_FLAGS "-mmmx" $MAC_CONFIG_TEST_COMMANDLINE; then
 	CFG_MMX=yes
     else
 	CFG_MMX=no
@@ -4978,7 +4978,7 @@ fi
 
 # detect 3dnow support
 if [ "${CFG_3DNOW}" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/3dnow "3dnow" $L_FLAGS $I_FLAGS $l_FLAGS "-m3dnow"; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/3dnow "3dnow" $L_FLAGS $I_FLAGS $l_FLAGS "-m3dnow" $MAC_CONFIG_TEST_COMMANDLINE; then
 	CFG_3DNOW=yes
     else
 	CFG_3DNOW=no
@@ -4987,7 +4987,7 @@ fi
 
 # detect sse support
 if [ "${CFG_SSE}" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/sse "sse" $L_FLAGS $I_FLAGS $l_FLAGS "-msse"; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/sse "sse" $L_FLAGS $I_FLAGS $l_FLAGS "-msse" $MAC_CONFIG_TEST_COMMANDLINE; then
 	CFG_SSE=yes
     else
 	CFG_SSE=no
@@ -4996,7 +4996,7 @@ fi
 
 # detect sse2 support
 if [ "${CFG_SSE2}" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/sse2 "sse2" $L_FLAGS $I_FLAGS $l_FLAGS "-msse2"; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/sse2 "sse2" $L_FLAGS $I_FLAGS $l_FLAGS "-msse2" $MAC_CONFIG_TEST_COMMANDLINE; then
        CFG_SSE2=yes
     else
        CFG_SSE2=no
@@ -5005,7 +5005,7 @@ fi
 
 # detect sse3 support
 if [ "${CFG_SSE3}" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/sse3 "sse3" $L_FLAGS $I_FLAGS $l_FLAGS "-msse3"; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/sse3 "sse3" $L_FLAGS $I_FLAGS $l_FLAGS "-msse3" $MAC_CONFIG_TEST_COMMANDLINE; then
        CFG_SSE3=yes
     else
        CFG_SSE3=no
@@ -5014,7 +5014,7 @@ fi
 
 # detect ssse3 support
 if [ "${CFG_SSSE3}" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/ssse3 "ssse3" $L_FLAGS $I_FLAGS $l_FLAGS "-mssse3"; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/ssse3 "ssse3" $L_FLAGS $I_FLAGS $l_FLAGS "-mssse3" $MAC_CONFIG_TEST_COMMANDLINE; then
        CFG_SSSE3=yes
     else
        CFG_SSSE3=no
@@ -5023,7 +5023,7 @@ fi
 
 # detect sse4.1 support
 if [ "${CFG_SSE4_1}" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/sse4_1 "sse4_1" $L_FLAGS $I_FLAGS $l_FLAGS "-msse4.1"; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/sse4_1 "sse4_1" $L_FLAGS $I_FLAGS $l_FLAGS "-msse4.1" $MAC_CONFIG_TEST_COMMANDLINE; then
        CFG_SSE4_1=yes
     else
        CFG_SSE4_1=no
@@ -5032,7 +5032,7 @@ fi
 
 # detect sse4.2 support
 if [ "${CFG_SSE4_2}" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/sse4_2 "sse4_2" $L_FLAGS $I_FLAGS $l_FLAGS "-msse4.2"; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/sse4_2 "sse4_2" $L_FLAGS $I_FLAGS $l_FLAGS "-msse4.2" $MAC_CONFIG_TEST_COMMANDLINE; then
        CFG_SSE4_2=yes
     else
        CFG_SSE4_2=no
@@ -5041,7 +5041,7 @@ fi
 
 # detect avx support
 if [ "${CFG_AVX}" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/avx "avx" $L_FLAGS $I_FLAGS $l_FLAGS "-mavx"; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/avx "avx" $L_FLAGS $I_FLAGS $l_FLAGS "-mavx" $MAC_CONFIG_TEST_COMMANDLINE; then
        CFG_AVX=yes
     else
        CFG_AVX=no
@@ -5050,7 +5050,7 @@ fi
 
 # check iWMMXt support
 if [ "$CFG_IWMMXT" = "yes" ]; then
-    "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/iwmmxt "iwmmxt" $L_FLAGS $I_FLAGS $l_FLAGS "-mcpu=iwmmxt"
+    "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/iwmmxt "iwmmxt" $L_FLAGS $I_FLAGS $l_FLAGS "-mcpu=iwmmxt" $MAC_CONFIG_TEST_COMMANDLINE
     if [ $? != "0" ]; then
         echo "The iWMMXt functionality test failed!"
 	echo " Please make sure your compiler supports iWMMXt intrinsics!"
@@ -5060,7 +5060,7 @@ fi
 
 # detect neon support
 if [ "$CFG_ARCH" = "arm" ] && [ "${CFG_NEON}" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/neon "neon" $L_FLAGS $I_FLAGS $l_FLAGS "-mfpu=neon"; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/neon "neon" $L_FLAGS $I_FLAGS $l_FLAGS "-mfpu=neon" $MAC_CONFIG_TEST_COMMANDLINE; then
 	CFG_NEON=yes
     else
 	CFG_NEON=no
@@ -5616,7 +5616,7 @@ fi
 # This should mean that you really *can* load two Qt's and have our custom
 # Carbon events work.
 if [ "$PLATFORM_MAC" = "yes" -a ! -z "$QT_NAMESPACE" ]; then
-    QT_NAMESPACE_MAC_CRC=`"$mactests/crc.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/mac/crc $QT_NAMESPACE $L_FLAGS $I_FLAGS $l_FLAGS`
+    QT_NAMESPACE_MAC_CRC=`"$mactests/crc.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/mac/crc $QT_NAMESPACE $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE`
 fi
 
 # X11/QWS/Lighthouse
@@ -6584,7 +6584,7 @@ if [ "$CFG_DOUBLEFORMAT" = "auto" ]; then
 fi
 
 HAVE_STL=no
-if [ "$XPLATFORM_SYMBIAN" = "yes" ] || "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/stl "STL" $L_FLAGS $I_FLAGS $l_FLAGS; then
+if [ "$XPLATFORM_SYMBIAN" = "yes" ] || "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/stl "STL" $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE; then
     HAVE_STL=yes
 fi
 
@@ -6626,7 +6626,7 @@ fi
 
 # detect POSIX clock_gettime()
 if [ "$CFG_CLOCK_GETTIME" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/clock-gettime "POSIX clock_gettime()" $L_FLAGS $I_FLAGS $l_FLAGS; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/clock-gettime "POSIX clock_gettime()" $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE; then
 	CFG_CLOCK_GETTIME=yes
     else
 	CFG_CLOCK_GETTIME=no
@@ -6635,7 +6635,7 @@ fi
 
 # detect POSIX monotonic clocks
 if [ "$CFG_CLOCK_GETTIME" = "yes" ] && [ "$CFG_CLOCK_MONOTONIC" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/clock-monotonic "POSIX Monotonic Clock" $L_FLAGS $I_FLAGS $l_FLAGS; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/clock-monotonic "POSIX Monotonic Clock" $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE; then
 	CFG_CLOCK_MONOTONIC=yes
     else
 	CFG_CLOCK_MONOTONIC=no
@@ -6646,7 +6646,7 @@ fi
 
 # detect mremap
 if [ "$CFG_MREMAP" = "auto" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/mremap "mremap" $L_FLAGS $I_FLAGS $l_FLAGS; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/mremap "mremap" $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE; then
 	CFG_MREMAP=yes
     else
 	CFG_MREMAP=no
@@ -6655,7 +6655,7 @@ fi
 
 # find if the platform provides getaddrinfo (ipv6 dns lookups)
 if [ "$CFG_GETADDRINFO" != "no" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/getaddrinfo "getaddrinfo" $L_FLAGS $I_FLAGS $l_FLAGS; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/getaddrinfo "getaddrinfo" $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE; then
         CFG_GETADDRINFO=yes
     else
 	if [ "$CFG_GETADDRINFO" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
@@ -6672,7 +6672,7 @@ fi
 
 # find if the platform provides inotify
 if [ "$CFG_INOTIFY" != "no" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/inotify "inotify" $L_FLAGS $I_FLAGS $l_FLAGS; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/inotify "inotify" $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE; then
         CFG_INOTIFY=yes
     else
 	if [ "$CFG_INOTIFY" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
@@ -6689,7 +6689,7 @@ fi
 
 # find if the platform provides if_nametoindex (ipv6 interface name support)
 if [ "$CFG_IPV6IFNAME" != "no" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/ipv6ifname "IPv6 interface name" $L_FLAGS $I_FLAGS $l_FLAGS; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/ipv6ifname "IPv6 interface name" $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE; then
         CFG_IPV6IFNAME=yes
     else
         if [ "$CFG_IPV6IFNAME" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
@@ -6706,7 +6706,7 @@ fi
 
 # find if the platform provides getifaddrs (network interface enumeration)
 if [ "$CFG_GETIFADDRS" != "no" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/getifaddrs "getifaddrs" $L_FLAGS $I_FLAGS $l_FLAGS; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/getifaddrs "getifaddrs" $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE; then
         CFG_GETIFADDRS=yes
     else
         if [ "$CFG_GETIFADDRS" = "yes" ] && [ "$CFG_CONFIGURE_EXIT_ON_ERROR" = "yes" ]; then
@@ -6747,21 +6747,21 @@ fi
 
 # detect OpenVG support
 if [ "$CFG_OPENVG" != "no" ] && [ "$XPLATFORM_SYMBIAN_SBSV2" = "no" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" "config.tests/unix/openvg" "OpenVG" $L_FLAGS $I_FLAGS $l_FLAGS $CONFIG_ARG; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" "config.tests/unix/openvg" "OpenVG" $L_FLAGS $I_FLAGS $l_FLAGS $CONFIG_ARG $MAC_CONFIG_TEST_COMMANDLINE; then
         if [ "$CFG_OPENVG" = "auto" ]; then
             CFG_OPENVG=yes
         fi
-    elif "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG openvg_on_opengl" $OPT_VERBOSE "$relpath" "$outpath" "config.tests/unix/openvg" "OpenVG" $L_FLAGS $I_FLAGS $l_FLAGS $CONFIG_ARG; then
+    elif "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG openvg_on_opengl" $OPT_VERBOSE "$relpath" "$outpath" "config.tests/unix/openvg" "OpenVG" $L_FLAGS $I_FLAGS $l_FLAGS $CONFIG_ARG $MAC_CONFIG_TEST_COMMANDLINE; then
         if [ "$CFG_OPENVG" = "auto" ]; then
             CFG_OPENVG=yes
         fi
         CFG_OPENVG_ON_OPENGL=yes
-    elif "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG lower_case_includes" $OPT_VERBOSE "$relpath" "$outpath" "config.tests/unix/openvg" "OpenVG (lc includes)" $L_FLAGS $I_FLAGS $l_FLAGS $CONFIG_ARG; then
+    elif "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG lower_case_includes" $OPT_VERBOSE "$relpath" "$outpath" "config.tests/unix/openvg" "OpenVG (lc includes)" $L_FLAGS $I_FLAGS $l_FLAGS $CONFIG_ARG $MAC_CONFIG_TEST_COMMANDLINE; then
         if [ "$CFG_OPENVG" = "auto" ]; then
             CFG_OPENVG=yes
         fi
         CFG_OPENVG_LC_INCLUDES=yes
-    elif "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG openvg_on_opengl lower_case_includes" $OPT_VERBOSE "$relpath" "$outpath" "config.tests/unix/openvg" "OpenVG (lc includes)" $L_FLAGS $I_FLAGS $l_FLAGS $CONFIG_ARG; then
+    elif "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG openvg_on_opengl lower_case_includes" $OPT_VERBOSE "$relpath" "$outpath" "config.tests/unix/openvg" "OpenVG (lc includes)" $L_FLAGS $I_FLAGS $l_FLAGS $CONFIG_ARG $MAC_CONFIG_TEST_COMMANDLINE; then
         if [ "$CFG_OPENVG" = "auto" ]; then
             CFG_OPENVG=yes
         fi
@@ -6778,7 +6778,7 @@ if [ "$CFG_OPENVG" != "no" ] && [ "$XPLATFORM_SYMBIAN_SBSV2" = "no" ]; then
             CFG_OPENVG=no
         fi
     fi
-    if [ "$CFG_OPENVG" = "yes" ] && "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" "config.tests/unix/shivavg" "ShivaVG" $L_FLAGS $I_FLAGS $l_FLAGS $CONFIG_ARG; then
+    if [ "$CFG_OPENVG" = "yes" ] && "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" "config.tests/unix/shivavg" "ShivaVG" $L_FLAGS $I_FLAGS $l_FLAGS $CONFIG_ARG $MAC_CONFIG_TEST_COMMANDLINE; then
         CFG_OPENVG_SHIVA=yes
     fi
 fi
@@ -6804,7 +6804,7 @@ if [ "$CFG_PTMALLOC" != "no" ]; then
 fi
 
 if [ "$CFG_ALSA" = "auto" ] && [ "$XPLATFORM_SYMBIAN_SBSV2" = "no" ]; then
-    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/alsa "alsa" $L_FLAGS $I_FLAGS $l_FLAGS; then
+    if "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/alsa "alsa" $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE; then
         CFG_ALSA=yes
     else
         CFG_ALSA=no
@@ -6955,8 +6955,8 @@ if [ "$PLATFORM_MAC" = "yes" ]; then
 fi
 
 # select Carbon when using the 10.4u SDK
-if [ "$PLATFORM_MAC" = "yes" ]; then
-    if [ "TEST$CFG_SDK" = "TEST/Developer/SDKs/MacOSX10.4u.sdk/" ]; then
+if [ "$PLATFORM_MAC" = "yes" ] && [ ! -z "$CFG_SDK" ]; then
+    if [ `basename $CFG_SDK` == "MacOSX10.4u.sdk" ]; then
         echo "Carbon on";
         CFG_MAC_COCOA="no";
         CFG_MAC_CARBON="yes";
@@ -7429,7 +7429,7 @@ canBuildWebKit="$HAVE_STL"
 canBuildQtConcurrent="yes"
 
 # WebKit requires stdint.h
-"$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/stdint "Stdint" $L_FLAGS $I_FLAGS $l_FLAGS
+"$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/stdint "Stdint" $L_FLAGS $I_FLAGS $l_FLAGS $MAC_CONFIG_TEST_COMMANDLINE
 if [ $? != "0" ]; then
     canBuildWebKit="no"
 fi
