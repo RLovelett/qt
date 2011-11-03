@@ -157,10 +157,7 @@ QInputContext::~QInputContext()
 
 /*!
     Returns the widget that has an input focus for this input
-    context.
-
-    The return value may differ from holderWidget() if the input
-    context is shared between several text widgets.
+    context, or 0 if no widget is assigned.
 
     \warning To ensure platform independence and support flexible
     configuration of widgets, ordinary input methods should not call
