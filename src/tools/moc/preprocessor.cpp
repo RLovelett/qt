@@ -157,14 +157,14 @@ bool Preprocessor::skipBranch()
 }
 
 
-enum TokenizeMode { TokenizeCpp, TokenizePreprocessor, PreparePreprocessorStatement, TokenizePreprocessorStatement, TokenizeInclude };
+enum TokenizeMode { TokenizeCpp, TokenizePreprocessor, PreparePreprocessorStatement, TokenizePreprocessorStatement, TokenizeInclude, PrepareDefine, TokenizePreprocessorDefine, TokenizeDefine };
 static Symbols tokenize(const QByteArray &input, int lineNum = 1, TokenizeMode mode = TokenizeCpp)
 {
     Symbols symbols;
     const char *begin = input;
     const char *data = begin;
     while (*data) {
-        if (mode == TokenizeCpp) {
+        if (mode == TokenizeCpp || mode == TokenizeDefine) {
             int column = 0;
 
             const char *lexem = data;
@@ -278,6 +278,10 @@ static Symbols tokenize(const QByteArray &input, int lineNum = 1, TokenizeMode m
                     break;
                 case NEWLINE:
                     ++lineNum;
+                    if (mode == TokenizeDefine) {//need the NEWLINE token to find end of macro definition when parsing
+                       mode = TokenizeCpp;
+                       break;
+                    }
                     continue;
                 case BACKSLASH:
                 {
@@ -375,6 +379,13 @@ static Symbols tokenize(const QByteArray &input, int lineNum = 1, TokenizeMode m
             case NOTOKEN:
                 ++data;
                 break;
+            case PP_DEFINE:
+                mode = PrepareDefine;
+                break;
+            case PP_LPAREN:
+               if (mode == TokenizePreprocessorDefine)
+                   mode = TokenizePreprocessor;
+               break;
             case PP_IFDEF:
                 symbols += Symbol(lineNum, PP_IF);
                 symbols += Symbol(lineNum, PP_DEFINED);
@@ -441,6 +452,8 @@ static Symbols tokenize(const QByteArray &input, int lineNum = 1, TokenizeMode m
                 while (is_ident_char(*data))
                     ++data;
                 token = PP_IDENTIFIER;
+                if (mode == PrepareDefine)
+                    mode = TokenizePreprocessorDefine;
                 break;
             case PP_C_COMMENT:
                 if (*data) {
@@ -463,6 +476,10 @@ static Symbols tokenize(const QByteArray &input, int lineNum = 1, TokenizeMode m
             case PP_WHITESPACE:
                 while (*data && (*data == ' ' || *data == '\t'))
                     ++data;
+                if (mode == TokenizePreprocessorDefine) {
+                    mode = TokenizeDefine;
+                    break; // need whitespace to differentiate from function macro definition!
+                }
                 continue; // the preprocessor needs no whitespace
             case PP_CPP_COMMENT:
                 while (*data && *data != '\n')
@@ -823,9 +840,11 @@ void Preprocessor::preprocess(const QByteArray &filename, Symbols &preprocessed)
                 continue;
             include = fi.canonicalFilePath().toLocal8Bit();
 
+            /* repeated includes should be covered by a macro anyway!
             if (Preprocessor::preprocessedIncludes.contains(include))
                 continue;
             Preprocessor::preprocessedIncludes.insert(include);
+            */
 
             QFile file(QString::fromLocal8Bit(include));
             if (!file.open(QFile::ReadOnly))
@@ -861,13 +880,18 @@ void Preprocessor::preprocess(const QByteArray &filename, Symbols &preprocessed)
         {
             next(IDENTIFIER);
             QByteArray name = lexem();
-            int start = index;
-            until(PP_NEWLINE);
-            Macro macro;
-            macro.symbols.reserve(index - start - 1);
-            for (int i = start; i < index - 1; ++i)
-                macro.symbols += symbols.at(i);
-            macros.insert(name, macro);
+            if (test(LPAREN)) {//skip function macros
+               until(PP_NEWLINE);
+            } else {
+               test(WHITESPACE);// remove the leading whitespace that was added for differentiation from function macros
+               int start = index;
+               until(PP_NEWLINE);
+               Macro macro;
+               macro.symbols.reserve(index - start - 1);
+               for (int i = start; i < index - 1; ++i)
+                  macro.symbols += symbols.at(i);
+               macros.insert(name, macro);
+            }
             continue;
         }
         case PP_UNDEF: {
@@ -890,6 +914,26 @@ void Preprocessor::preprocess(const QByteArray &filename, Symbols &preprocessed)
                 continue;
             }
             */
+
+            if (macros.contains (lexem ())) {
+                Symbols substituted;
+                substituteMacro (lexem (), substituted);
+                int i = 0;
+                while (i < substituted.size ()) {
+                    Symbol & sym = substituted [i++];
+                    switch (sym.token) {//beautify output (adapt lineNum) and expand if available
+                    case PP_NEWLINE:
+                    case PP_WHITESPACE:
+                        continue;
+                    default:
+                        sym.lineNum = symbol ().lineNum;
+                        preprocessed += substituted;
+                        i = substituted.size ();
+                        break;
+                    }
+                }
+                continue;
+            }
             break;
         case PP_HASH:
             until(PP_NEWLINE);

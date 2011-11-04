@@ -52,6 +52,7 @@
 #include "backslash-newlines.h"
 #include "slots-with-void-template.h"
 #include "pure-virtual-signals.h"
+#include "macro-substitution.h"
 #include "qinvokable.h"
 // msvc and friends crap out on it
 #if !defined(Q_CC_GNU) || defined(Q_OS_IRIX) || defined(Q_OS_WIN)
@@ -190,7 +191,8 @@ void StructQObject::foo(struct ForwardDeclaredStruct *)
 }
 
 class TestClass : public MyNamespace::TestSuperClass, public DONT_CONFUSE_MOC(MyStruct),
-                  public DONT_CONFUSE_MOC_EVEN_MORE(MyStruct2, dummy, ignored)
+                  public DONT_CONFUSE_MOC_EVEN_MORE(MyStruct2, dummy, ignored),
+                  public MacroTestClass
 {
     Q_OBJECT
     Q_CLASSINFO("help", QT_TR_NOOP("Opening this will let you configure something"))
@@ -202,6 +204,10 @@ class TestClass : public MyNamespace::TestSuperClass, public DONT_CONFUSE_MOC(My
     Q_PROPERTY(signed long int signedLongIntProperty READ signedLongIntProperty)
     Q_PROPERTY(long double longDoubleProperty READ longDoubleProperty)
     Q_PROPERTY(myNS::Points points READ points WRITE setPoints)
+
+    MACRO_TEST_PROPERTIES
+
+    MACRO_TEST_CLASSINFO
 
     Q_CLASSINFO("Multi"
                 "line",
@@ -498,6 +504,7 @@ private slots:
     void warnings_data();
     void warnings();
     void privateClass();
+    void macroSubstitution ();
 
 signals:
     void sigWithUnsignedArg(unsigned foo);
@@ -723,7 +730,7 @@ void tst_Moc::trNoopInClassInfo()
     TestClass t;
     const QMetaObject *mobj = t.metaObject();
     QVERIFY(mobj);
-    QCOMPARE(mobj->classInfoCount(), 3);
+    QCOMPARE(mobj->classInfoCount(), 4);
     QCOMPARE(mobj->indexOfClassInfo("help"), 0);
     QCOMPARE(QString(mobj->classInfo(0).value()), QString("Opening this will let you configure something"));
 }
@@ -1667,6 +1674,28 @@ void tst_Moc::privateClass()
     QVERIFY(PrivateClass::staticMetaObject.indexOfSignal("someSignal()") > 0);
 }
 
+void tst_Moc::macroSubstitution ()
+{
+    TestClass t;
+    const QMetaObject *mobj = t.metaObject();
+    QVERIFY(mobj);
+    QCOMPARE(mobj->indexOfClassInfo("macrotest"), 1);
+    QCOMPARE(QString(mobj->classInfo(1).value()), QString("true"));
+
+    int idx = mobj->indexOfProperty("macroIntProperty");
+    QVERIFY(idx != -1);
+    idx = mobj->indexOfProperty("macroStringProperty");
+    QVERIFY(idx != -1);
+
+    QVERIFY(t.macroIntProperty() == 0);
+
+    const QVariant v = t.property("macroStringProperty");
+    QVERIFY(v.isValid());
+    QCOMPARE(v.toString (), QString::fromLatin1("tEsTvAlUe"));
+    const QVariant o = "AnOtHeR sTrInG";
+    QVERIFY(t.setProperty("macroStringProperty", o));
+    QVERIFY(t.macroStringProperty() == o.toString ());
+}
 
 QTEST_APPLESS_MAIN(tst_Moc)
 #include "tst_moc.moc"
