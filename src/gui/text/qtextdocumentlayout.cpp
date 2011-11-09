@@ -1250,7 +1250,7 @@ void QTextDocumentLayoutPrivate::drawBlock(const QPointF &offset, QPainter *pain
                                            const QAbstractTextDocumentLayout::PaintContext &context,
                                            QTextBlock bl, bool inRootFrame) const
 {
-    const QTextLayout *tl = bl.layout();
+    QTextLayout *tl = bl.layout();
     QRectF r = tl->boundingRect();
     r.translate(offset + tl->position());
     if (context.clip.isValid() && (r.bottom() < context.clip.y() || r.top() > context.clip.bottom()))
@@ -1375,6 +1375,7 @@ void QTextDocumentLayoutPrivate::drawListItem(const QPointF &offset, QPainter *p
             pos.rx() += textRect.width();
     }
 
+    // Select size for the list item decoration
     switch (style) {
     case QTextListFormat::ListDecimal:
     case QTextListFormat::ListLowerAlpha:
@@ -1403,7 +1404,20 @@ void QTextDocumentLayoutPrivate::drawListItem(const QPointF &offset, QPainter *p
     qreal xoff = fontMetrics.width(QLatin1Char(' '));
     if (dir == Qt::LeftToRight)
         xoff = -xoff - size.width();
-    r.translate( xoff, (fontMetrics.height() / 2 - size.height() / 2));
+    r.translate(xoff, (fontMetrics.height() / 2) - (size.height() / 2));
+
+    // Prevent clipping the left side of the list decorator (on left to right layouts) and
+    // clipping the right side of the list decorator (on right to left layouts)
+    if ((r.left() < 0) && (dir == Qt::LeftToRight)) {
+        int verticalOffset = -r.left();
+        r.translate(verticalOffset, 0);
+        layout->setPosition(layout->position() + QPointF(verticalOffset, 0));
+    }
+    else if ((r.right() > document->pageSize().width()) && (dir == Qt::RightToLeft)) {
+        int verticalOffset = r.right() - document->pageSize().width();
+        r.translate(-verticalOffset, 0);
+        layout->setPosition(layout->position() - QPointF(verticalOffset, 0));
+    }
 
     painter->save();
 
@@ -1421,6 +1435,7 @@ void QTextDocumentLayoutPrivate::drawListItem(const QPointF &offset, QPainter *p
 
     QBrush brush = context.palette.brush(QPalette::Text);
 
+    // Draw list item decoration
     switch (style) {
     case QTextListFormat::ListDecimal:
     case QTextListFormat::ListLowerAlpha:
