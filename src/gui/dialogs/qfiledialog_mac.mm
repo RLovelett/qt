@@ -118,7 +118,6 @@ QT_USE_NAMESPACE
 - (NSString *)strip:(const QString &)label;
 - (BOOL)panel:(id)sender shouldShowFilename:(NSString *)filename;
 - (void)filterChanged:(id)sender;
-- (void)showModelessPanel;
 - (BOOL)runApplicationModalPanel;
 - (void)showWindowModalSheet:(QWidget *)docWidget;
 - (void)updateProperties;
@@ -154,7 +153,6 @@ QT_USE_NAMESPACE
         mOpenPanel = 0;
     }
 
-    [mSavePanel setLevel:NSModalPanelWindowLevel];
     [mSavePanel setDelegate:self];
     mQDirFilter = new QT_PREPEND_NAMESPACE(QDir::Filters)(qDirFilter);
     mFileOptions = new QT_PREPEND_NAMESPACE(QFileDialog::Options)(fileOptions);
@@ -185,8 +183,9 @@ QT_USE_NAMESPACE
 
     if (mPriv){
         [mSavePanel setPrompt:[self strip:mPriv->acceptLabel]];
-        if (mPriv->fileNameLabelExplicitlySat)
+        if (mPriv->fileNameLabelExplicitlySat) {
             [mSavePanel setNameFieldLabel:[self strip:mPriv->qFileDialogUi->fileNameLabel->text()]];
+        }
     }
 
     [self updateProperties];
@@ -204,7 +203,6 @@ QT_USE_NAMESPACE
     delete mSelectedNameFilter;
     delete mCurrentSelection;
 
-    [mSavePanel orderOut:mSavePanel];
     [mSavePanel setAccessoryView:nil];
     [mPopUpButton release];
     [mTextField release];
@@ -224,25 +222,6 @@ QT_USE_NAMESPACE
 - (void)closePanel
 {
     *mCurrentSelection = QT_PREPEND_NAMESPACE(qt_mac_NSStringToQString)([mSavePanel filename]);
-    [mSavePanel close];
-}
-
-- (void)showModelessPanel
-{
-    if (mOpenPanel){
-        QFileInfo info(*mCurrentSelection);
-        NSString *filename = QT_PREPEND_NAMESPACE(qt_mac_QStringToNSString)(info.fileName());
-        NSString *filepath = QT_PREPEND_NAMESPACE(qt_mac_QStringToNSString)(info.filePath());
-        bool selectable = (mAcceptMode == QFileDialog::AcceptSave)
-            || [self panel:nil shouldShowFilename:filepath];
-        [mOpenPanel 
-            beginForDirectory:mCurrentDir
-            file:selectable ? filename : nil
-            types:nil
-            modelessDelegate:self
-            didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:)
-            contextInfo:nil];
-    }
 }
 
 - (BOOL)runApplicationModalPanel
@@ -252,9 +231,10 @@ QT_USE_NAMESPACE
     NSString *filepath = QT_PREPEND_NAMESPACE(qt_mac_QStringToNSString)(info.filePath());
     bool selectable = (mAcceptMode == QFileDialog::AcceptSave)
         || [self panel:nil shouldShowFilename:filepath];
+    // note: runModalForDirectory doesn't like to have zero length file names in sandbox mode.
     mReturnCode = [mSavePanel 
         runModalForDirectory:mCurrentDir
-        file:selectable ? filename : @"untitled"];
+        file:(selectable && filename != nil && [filename length] > 0) ? filename : @"Untitled"];
 
     QAbstractEventDispatcher::instance()->interrupt();
     return (mReturnCode == NSOKButton);
@@ -273,9 +253,10 @@ QT_USE_NAMESPACE
     NSString *filepath = QT_PREPEND_NAMESPACE(qt_mac_QStringToNSString)(info.filePath());
     bool selectable = (mAcceptMode == QFileDialog::AcceptSave)
         || [self panel:nil shouldShowFilename:filepath];
+    // note: beginSheetForDirectory doesn't like to have zero length file names in sandbox mode.
     [mSavePanel 
         beginSheetForDirectory:mCurrentDir
-        file:selectable ? filename : nil
+        file:(selectable && filename != nil && [filename length] > 0) ? filename : @"Untitled"
 #ifdef QT_MAC_USE_COCOA
         modalForWindow:QT_PREPEND_NAMESPACE(qt_mac_window_for)(docWidget)
 #else
@@ -349,8 +330,9 @@ QT_USE_NAMESPACE
         }
         [mPopUpButton selectItemAtIndex:0];
         [mSavePanel setAccessoryView:mAccessoryView];
-    } else
+    } else {
         [mSavePanel setAccessoryView:nil];
+    }
 
     [self filterChanged:self];
 }
@@ -361,7 +343,7 @@ QT_USE_NAMESPACE
     Q_UNUSED(sender);
     QString selection = mNameFilterDropDownList->value([mPopUpButton indexOfSelectedItem]);
     *mSelectedNameFilter = [self findStrippedFilterWithVisualFilterName:selection];
-    [mSavePanel validateVisibleColumns];
+    // [mSavePanel validateVisibleColumns]; // This is disabled due to a bug in sandbox mode.
     [self updateProperties];
     if (mPriv)
         mPriv->QNSOpenSavePanelDelegate_filterSelected([mPopUpButton indexOfSelectedItem]);
@@ -375,8 +357,11 @@ QT_USE_NAMESPACE
 - (QStringList)selectedFiles
 {
     if (mOpenPanel)
+    {
         return QT_PREPEND_NAMESPACE(qt_mac_NSArrayToQStringList)([mOpenPanel filenames]);
-    else{
+    }
+    else
+    {
         QStringList result;
         QString filename = QT_PREPEND_NAMESPACE(qt_mac_NSStringToQString)([mSavePanel filename]);
         result << filename.remove(QLatin1String("___qt_very_unlikely_prefix_"));
@@ -406,8 +391,7 @@ QT_USE_NAMESPACE
         ext.prepend(mPriv->defaultSuffix);
     [mSavePanel setAllowedFileTypes:ext.isEmpty() ? nil : QT_PREPEND_NAMESPACE(qt_mac_QStringListToNSMutableArray(ext))];
 
-    if ([mSavePanel isVisible])
-        [mOpenPanel validateVisibleColumns];
+    // [mOpenPanel validateVisibleColumns]; // This is disabled due to a bug in sandbox mode.
 }
 
 - (void)panelSelectionDidChange:(id)sender
@@ -1082,8 +1066,7 @@ bool QFileDialogPrivate::showCocoaFilePanel()
     QT_MANGLE_NAMESPACE(QNSOpenSavePanelDelegate) *delegate = static_cast<QT_MANGLE_NAMESPACE(QNSOpenSavePanelDelegate) *>(mDelegate);
     if (qt_mac_is_macsheet(q))
         [delegate showWindowModalSheet:q->parentWidget()];
-    else
-        [delegate showModelessPanel];
+    // if its not a sheet, it will be shown using the mac_nativeDialogModalHelp() slot
     return true;
 }
 
