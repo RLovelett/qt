@@ -2185,7 +2185,7 @@ QMakeProject::doProjectExpand(QString func, QList<QStringList> args_list,
                 for(int i = 0; i < (int)qdir.count(); ++i) {
                     if(qdir[i] == "." || qdir[i] == "..")
                         continue;
-                    QString fname = dir + qdir[i];
+                    QString fname = QDir::fromNativeSeparators(dir + qdir[i]);
                     if(QFileInfo(fname).isDir()) {
                         if(recursive)
                             dirs.append(fname);
