@@ -4288,6 +4288,10 @@ static void _q_paintItem(QGraphicsItem *item, QPainter *painter,
     }
     QGraphicsWidget *widgetItem = static_cast<QGraphicsWidget *>(item);
     QGraphicsProxyWidget *proxy = qobject_cast<QGraphicsProxyWidget *>(widgetItem);
+
+    // Ensure that any outstanding layouting is done before we paint
+    QMetaObject::invokeMethod(widgetItem, "_q_relayout", Qt::DirectConnection);
+
     const qreal windowOpacity = (proxy && proxy->widget() && useWindowOpacity)
                                 ? proxy->widget()->windowOpacity() : 1.0;
     const qreal oldPainterOpacity = painter->opacity();

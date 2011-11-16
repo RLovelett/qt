@@ -350,6 +350,7 @@ void QGraphicsWidget::setGeometry(const QRectF &rect)
     QRectF newGeom = rect;
     QPointF oldPos = d->geom.topLeft();
     if (!wd->inSetPos) {
+        wd->needSetGeometryCall = false; //When this flag is set, we require a full setGeometry to bind the size, not just a position change
         setAttribute(Qt::WA_Resized);
         newGeom.setSize(rect.size().expandedTo(effectiveSizeHint(Qt::MinimumSize))
                                    .boundedTo(effectiveSizeHint(Qt::MaximumSize)));
@@ -1085,8 +1086,10 @@ void QGraphicsWidget::updateGeometry()
              */
             if (QGraphicsLayout::instantInvalidatePropagation()) {
                 Q_D(QGraphicsWidget);
-                ++d->refCountInvokeRelayout;
-                QMetaObject::invokeMethod(this, "_q_relayout", Qt::QueuedConnection);
+                if (!d->needSetGeometryCall) {
+                    d->needSetGeometryCall = true;
+                    QMetaObject::invokeMethod(this, "_q_relayout", Qt::QueuedConnection);
+                }
             }
         }
         if (!QGraphicsLayout::instantInvalidatePropagation()) {

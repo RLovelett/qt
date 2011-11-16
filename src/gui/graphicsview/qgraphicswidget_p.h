@@ -77,11 +77,11 @@ public:
           layout(0),
           inheritedPaletteResolveMask(0),
           inheritedFontResolveMask(0),
+          needSetGeometryCall(false),
           inSetGeometry(0),
           polished(0),
           inSetPos(0),
           autoFillBackground(0),
-          refCountInvokeRelayout(0),
           focusPolicy(Qt::NoFocus),
           focusNext(0),
           focusPrev(0),
@@ -181,14 +181,13 @@ public:
             return false;
         return (attributes & (1 << bit)) != 0;
     }
-    // 32 bits
-    quint32 refCountInvokeRelayout : 16;
+
+    quint32 needSetGeometryCall : 1;
     quint32 attributes : 10;
     quint32 inSetGeometry : 1;
     quint32 polished: 1;
     quint32 inSetPos : 1;
     quint32 autoFillBackground : 1;
-    quint32 padding : 2;    // feel free to use
 
     // Focus
     Qt::FocusPolicy focusPolicy;

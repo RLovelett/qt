@@ -235,11 +235,11 @@ void QGraphicsWidgetPrivate::resolveLayoutDirection()
 /* private slot */
 void QGraphicsWidgetPrivate::_q_relayout()
 {
-    --refCountInvokeRelayout;
-    if (refCountInvokeRelayout == 0) {
-        Q_Q(QGraphicsWidget);
+    Q_Q(QGraphicsWidget);
+
+    if (needSetGeometryCall) {
         bool wasResized = q->testAttribute(Qt::WA_Resized);
-        q->resize(q->size()); // this will restrict the size
+        q->resize(q->size()); // this will restrict the size and cause a relayout if needed
         q->setAttribute(Qt::WA_Resized, wasResized);
     }
 }
