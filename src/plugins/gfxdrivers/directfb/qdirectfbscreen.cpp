@@ -1098,6 +1098,9 @@ bool QDirectFBScreen::connect(const QString &displaySpec)
             DirectFBError("QDirectFBScreen: error initializing DirectFB",
                           result);
         }
+        for (int i = 0; i < argc; ++i)
+            delete[] argv[i];
+
         delete[] argv;
     }
 
