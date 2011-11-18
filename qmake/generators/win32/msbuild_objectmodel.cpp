@@ -251,6 +251,7 @@ const char _WarnAsError[]                       = "WarnAsError";
 const char _WarningLevel[]                      = "WarningLevel";
 const char _WholeProgramOptimization[]          = "WholeProgramOptimization";
 const char _XMLDocumentationFileName[]          = "XMLDocumentationFileName";
+const char _PlatformToolset[]                   = "PlatformToolset";
 
 
 // XmlOutput stream functions ------------------------------
@@ -1545,8 +1546,10 @@ void VCXProjectWriter::write(XmlOutput &xml, const VCConfiguration &tool)
             << attrTagT(_ATLMinimizesCRunTimeLibraryUsage, tool.ATLMinimizesCRunTimeLibraryUsage)
             << attrTagT(_BuildBrowserInformation, tool.BuildBrowserInformation)
             << attrTagS(_CharacterSet, toString(tool.CharacterSet))
-            << attrTagS(_ConfigurationType, toString(tool.ConfigurationType))
-            << attrTagS(_DeleteExtensionsOnClean, tool.DeleteExtensionsOnClean)
+            << attrTagS(_ConfigurationType, toString(tool.ConfigurationType));
+            if (tool.CompilerVersion == NET2011) // Visual Studio 11 toolset requires this
+                xml << attrTagS(_PlatformToolset, "v110");
+        xml << attrTagS(_DeleteExtensionsOnClean, tool.DeleteExtensionsOnClean)
             << attrTagS(_ImportLibrary, tool.ImportLibrary)
             << attrTagS(_IntermediateDirectory, tool.IntermediateDirectory)
             << attrTagS(_PrimaryOutput, tool.PrimaryOutput)
