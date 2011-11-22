@@ -205,6 +205,7 @@ private:
     QDBusSignature toSignatureUnchecked();
     QStringList toStringListUnchecked();
     QStringList toStringListChecked();
+    QByteArray toByteArrayUnchecked();
 };
 
 inline QDBusMarshaller *QDBusArgumentPrivate::marshaller()
