@@ -1816,7 +1816,8 @@ void QWidgetPrivate::determineWindowClass()
         wclass = kDrawerWindowClass;
     else if (q->testAttribute(Qt::WA_ShowModal) && flags & Qt::CustomizeWindowHint)
         wclass = kDocumentWindowClass;
-    else if(popup || (QSysInfo::MacintoshVersion >= QSysInfo::MV_10_5 && type == Qt::SplashScreen))
+    else if (popup || (QSysInfo::MacintoshVersion >= QSysInfo::MV_10_5 && type == Qt::SplashScreen)
+            || (type == Qt::Dialog && q->testAttribute(Qt::WA_ShowModal)))
         wclass = kModalWindowClass;
     else if(q->testAttribute(Qt::WA_ShowModal))
         wclass = kMovableModalWindowClass;
@@ -1967,7 +1968,8 @@ void QWidgetPrivate::determineWindowClass()
         wclass = kDrawerWindowClass;
     else if (q->testAttribute(Qt::WA_ShowModal) && flags & Qt::CustomizeWindowHint)
         wclass = kDocumentWindowClass;
-    else if(popup || (QSysInfo::MacintoshVersion >= QSysInfo::MV_10_5 && type == Qt::SplashScreen))
+    else if (popup || (QSysInfo::MacintoshVersion >= QSysInfo::MV_10_5 && type == Qt::SplashScreen)
+            || (type == Qt::Dialog && q->testAttribute(Qt::WA_ShowModal)))
         wclass = kModalWindowClass;
     else if(type == Qt::Dialog)
         wclass = kMovableModalWindowClass;
