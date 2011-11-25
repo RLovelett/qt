@@ -101,6 +101,10 @@ QT_BEGIN_NAMESPACE
     items. For a grid layout, the order of insertion does not affect the layout in
     any way, but for a linear layout, the order is essential. When writing your own
     layout subclass, you are free to choose the API that best suits your layout.
+    
+    For adding layout items to the custom layout, the QGraphicsLayout provides 
+    convenience function addChildLayoutItem(). The function will take care of 
+    automatically reparenting graphics items, if needed.
 
     \section1 Activating the Layout
 
