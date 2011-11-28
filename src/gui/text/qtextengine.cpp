@@ -1432,6 +1432,13 @@ void QTextEngine::validate() const
     }
     if (specialData && specialData->preeditPosition != -1)
         layoutData->string.insert(specialData->preeditPosition, specialData->preeditText);
+    //FIXME: At time of writing, Qt's version of harfbuzz does not normalize the text.  The result
+    //is that various strings are rendered incorrectly.  For example: Ầ should show the tone marks
+    //not overlapping.  So we have to normalize manually.  This should be removed when Qt switches
+    //to harfbuzz-ng which does normalize.
+    //We use KC (compatibility) because this also fixes the string: ซ้ำ  where the tone mark ("o")
+    //should be on top.
+    layoutData->string = layoutData->string.normalized(QString::NormalizationForm_KC);
 }
 
 void QTextEngine::itemize() const
