@@ -3498,18 +3498,21 @@ void QDeclarativeListView::itemsMoved(int from, int to, int count)
     int remaining = count;
     int endIndex = d->visibleIndex;
     it = d->visibleItems.begin();
+    int inserted = 0;
     while (it != d->visibleItems.end()) {
         FxListItem *item = *it;
-        if (remaining && item->index >= to && item->index < to + count) {
+        int indexOfInserted = item->index < 0 ? item->index : (item->index+inserted);
+        if (remaining && indexOfInserted >= to && indexOfInserted < to + count) {
             // place items in the target position, reusing any existing items
-            FxListItem *movedItem = moved.take(item->index);
+            FxListItem *movedItem = moved.take(indexOfInserted);
             if (!movedItem)
-                movedItem = d->createItem(item->index);
-            if (item->index <= firstVisible->index)
+                movedItem = d->createItem(indexOfInserted);
+            if (indexOfInserted < firstVisible->index)
                 moveBy -= movedItem->size();
             it = d->visibleItems.insert(it, movedItem);
             ++it;
             --remaining;
+            ++inserted;
         } else {
             if (item->index != -1) {
                 if (item->index >= to) {
