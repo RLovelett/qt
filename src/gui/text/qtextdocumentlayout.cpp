@@ -2595,7 +2595,6 @@ void QTextDocumentLayoutPrivate::layoutBlock(const QTextBlock &bl, int blockPosi
                     left += text_indent;
                 else
                     right -= text_indent;
-                firstLine = false;
             }
 //         qDebug() << "layout line y=" << currentYPos << "left=" << left << "right=" <<right;
 
@@ -2648,7 +2647,10 @@ void QTextDocumentLayoutPrivate::layoutBlock(const QTextBlock &bl, int blockPosi
             QFixed lineHeight = (lineHeightMode == QTextDocumentLayout::FixedHeight)
                     ? QFixed::fromReal(lineH) : QFixed::fromReal(line.height() * lineH);
 
-            if (layoutStruct->pageHeight > 0 && layoutStruct->absoluteY() + lineHeight > layoutStruct->pageBottom) {
+            const bool createNewPage = layoutStruct->pageHeight > 0 &&
+                                       layoutStruct->absoluteY() + lineHeight > layoutStruct->pageBottom &&
+                                       !firstLine;
+            if (createNewPage) {
                 layoutStruct->newPage();
 
                 floatMargins(layoutStruct->y, layoutStruct, &left, &right);
@@ -2671,6 +2673,8 @@ void QTextDocumentLayoutPrivate::layoutBlock(const QTextBlock &bl, int blockPosi
                 positionFloat(f);
             }
             layoutStruct->pendingFloats.clear();
+
+            firstLine = false;
         }
         tl->endLayout();
     } else {

@@ -72,6 +72,7 @@ private slots:
     void inlineImage();
     void clippedTableCell();
     void floatingTablePageBreak();
+    void firstLinePageBreak();
 
 private:
     QTextDocument *doc;
@@ -270,6 +271,17 @@ void tst_QTextDocumentLayout::floatingTablePageBreak()
     QCOMPARE(doc->pageCount(), 2);
 }
 
+// see https://bugreports.qt.nokia.com/browse/QTBUG-22823
+void tst_QTextDocumentLayout::firstLinePageBreak()
+{
+    doc->setHtml("Some text");
+
+    QSizeF documentSize = doc->size();
+    documentSize.rheight() /= 2.0;
+    doc->setPageSize(documentSize);
+
+    QCOMPARE(doc->pageCount(), 2);
+}
 
 QTEST_MAIN(tst_QTextDocumentLayout)
 #include "tst_qtextdocumentlayout.moc"
