@@ -116,12 +116,21 @@ inline QString QDBusDemarshaller::toStringUnchecked()
     return QString::fromUtf8(qIterGet<char *>(&iterator));
 }
 
+inline bool QDBusDemarshaller::toStringChecked(QString &s)
+{
+    if (isCurrentTypeStringLike()) {
+        s = toStringUnchecked();
+        return true;
+    } else {
+        return false;
+    }
+}
+
 inline QString QDBusDemarshaller::toString()
 {
-    if (isCurrentTypeStringLike())
-        return toStringUnchecked();
-    else
-        return QString();
+    QString s;
+    toStringChecked(s);
+    return s;
 }
 
 inline QDBusObjectPath QDBusDemarshaller::toObjectPathUnchecked()
@@ -244,7 +253,7 @@ QVariant QDBusDemarshaller::toVariantInternal()
             // QByteArray
             return toByteArray();
         case DBUS_TYPE_STRING:
-            return toStringList();
+            return toStringListUnchecked();
         case DBUS_TYPE_DICT_ENTRY:
             return qVariantFromValue(duplicate());
 
@@ -282,7 +291,7 @@ bool QDBusDemarshaller::isCurrentTypeStringLike()
     }
 }
 
-QStringList QDBusDemarshaller::toStringList()
+QStringList QDBusDemarshaller::toStringListUnchecked()
 {
     QStringList list;
 
@@ -293,6 +302,44 @@ QStringList QDBusDemarshaller::toStringList()
         list.append(sub.toStringUnchecked());
 
     return list;
+}
+
+QStringList QDBusDemarshaller::toStringListChecked()
+{
+    QStringList list;
+
+    QDBusDemarshaller sub;
+    q_dbus_message_iter_recurse(&iterator, &sub.iterator);
+    q_dbus_message_iter_next(&iterator);
+    while (!sub.atEnd()) {
+        QString s;
+        if (sub.toStringChecked(s))
+            list.append(s);
+        else
+            return QStringList(); // Abort on conversion problem
+    }
+
+    return list;
+}
+
+QStringList QDBusDemarshaller::toStringList()
+{
+    switch (q_dbus_message_iter_get_arg_type(&iterator)) {
+    case DBUS_TYPE_ARRAY:
+        if (q_dbus_message_iter_get_element_type(&iterator) == DBUS_TYPE_STRING)
+            return toStringListUnchecked();
+        break;
+
+    // Support for extracting a QStringList from a DBus struct of all string type fields.
+    // This is a backwards compatibility feature.
+    // Previously QStringList extraction did not check the DBus data it was
+    // extracting, which results to structs with string fields to be extractable
+    // as QStringList. This branch ensures this functionality will remain supported.
+    // ### Qt5: Remove support for DBus struct to QStringList demarshalling
+    case DBUS_TYPE_STRUCT:
+        return toStringListChecked();
+    }
+    return QStringList();
 }
 
 QByteArray QDBusDemarshaller::toByteArray()

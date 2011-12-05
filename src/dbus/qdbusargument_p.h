@@ -200,8 +200,11 @@ public:
 private:
     Q_DISABLE_COPY(QDBusDemarshaller)
     QString toStringUnchecked();
+    bool toStringChecked(QString &s);
     QDBusObjectPath toObjectPathUnchecked();
     QDBusSignature toSignatureUnchecked();
+    QStringList toStringListUnchecked();
+    QStringList toStringListChecked();
 };
 
 inline QDBusMarshaller *QDBusArgumentPrivate::marshaller()

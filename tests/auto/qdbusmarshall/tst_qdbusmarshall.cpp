@@ -95,6 +95,12 @@ private slots:
     void demarshallStrings_data();
     void demarshallStrings();
 
+    void demarshallStringListFromStruct_data();
+    void demarshallStringListFromStruct();
+
+    void demarshallInvalidStringList_data();
+    void demarshallInvalidStringList();
+
 private:
     QProcess proc;
 };
@@ -1184,6 +1190,100 @@ void tst_QDBusMarshall::demarshallStrings()
     QVariant receiveValue = demarshallAsString(receiveArg, targetSig);
     QVERIFY2(receiveValue.isValid(), "Invalid targetSig in demarshallStrings_data()");
     QVERIFY(compare(receiveValue, expectedValue));
+
+    receiveArg.endStructure();
+    QVERIFY(receiveArg.atEnd());
+}
+
+void tst_QDBusMarshall::demarshallStringListFromStruct_data()
+{
+    QTest::addColumn<QVariantList>("structValue");
+    QTest::addColumn<QStringList>("expectedValue");
+
+    // DBus does not support empty structures so do not test those
+
+    QStringList sl = QStringList() << QString("one");
+    QTest::newRow("struct with one string")
+            << (QVariantList() << QString("one"))
+            << (QStringList()  << QString("one"));
+
+    QTest::newRow("struct with multiple strings")
+            << (QVariantList() << QString("first") << QString() << QString("") << QString("last"))
+            << (QStringList()  << QString("first") << QString() << QString("") << QString("last"));
+    QTest::newRow("struct with other types and strings")
+            << (QVariantList() << QString("one") << int(42) << QString("") << bool(true))
+            << QStringList();
+    QTest::newRow("struct without string types")
+            << (QVariantList() << int(42) << bool(true))
+            << QStringList();
+}
+
+// This is a regression test for released functionality.
+// Previously QStringList extraction did not check the DBus data it was
+// extracting, which results to structs with string fields to be extractable
+// as QStringList. This test ensures this functionality will remain supported.
+// ### Qt5: Remove support for DBus struct to QStringList demarshalling
+void tst_QDBusMarshall::demarshallStringListFromStruct()
+{
+    QFETCH(QVariantList, structValue);
+    QFETCH(QStringList, expectedValue);
+
+    QDBusConnection con = QDBusConnection::sessionBus();
+
+    QVERIFY(con.isConnected());
+
+    QDBusMessage msg = QDBusMessage::createMethodCall(serviceName, objectPath,
+                                                      interfaceName, "ping");
+    QDBusArgument sendArg;
+    sendArg.beginStructure();
+    foreach(const QVariant& var, structValue) {
+        sendArg.appendVariant(var);
+    }
+    sendArg.endStructure();
+    msg.setArguments(QVariantList() << qVariantFromValue(sendArg));
+    QDBusMessage reply = con.call(msg);
+
+    const QDBusArgument receiveArg = qvariant_cast<QDBusArgument>(reply.arguments().at(0));
+    QStringList receiveValue;
+    receiveArg >> receiveValue;
+    QCOMPARE(receiveValue, expectedValue);
+}
+
+void tst_QDBusMarshall::demarshallInvalidStringList_data()
+{
+    // None of the basic types should demarshall to a string list
+    sendBasic_data();
+
+    // Arrays of non-string type should not demarshall to a string list
+    QList<bool> bools;
+    QTest::newRow("emptyboollist") << qVariantFromValue(bools);
+    bools << false << true << false;
+    QTest::newRow("boollist") << qVariantFromValue(bools);
+}
+
+void tst_QDBusMarshall::demarshallInvalidStringList()
+{
+    QFETCH(QVariant, value);
+
+    QDBusConnection con = QDBusConnection::sessionBus();
+
+    QVERIFY(con.isConnected());
+
+    QDBusMessage msg = QDBusMessage::createMethodCall(serviceName, objectPath,
+                                                      interfaceName, "ping");
+    QDBusArgument sendArg;
+    sendArg.beginStructure();
+    sendArg.appendVariant(value);
+    sendArg.endStructure();
+    msg.setArguments(QVariantList() << qVariantFromValue(sendArg));
+    QDBusMessage reply = con.call(msg);
+
+    const QDBusArgument receiveArg = qvariant_cast<QDBusArgument>(reply.arguments().at(0));
+    receiveArg.beginStructure();
+
+    QStringList receiveValue;
+    receiveArg >> receiveValue;
+    QCOMPARE(receiveValue, QStringList());
 
     receiveArg.endStructure();
     QVERIFY(receiveArg.atEnd());
