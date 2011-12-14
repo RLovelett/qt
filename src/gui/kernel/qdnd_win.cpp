@@ -706,6 +706,11 @@ QOleDropTarget::DragOver(DWORD grfKeyState, POINTL pt, LPDWORD pdwEffect)
         return NOERROR;
     }
 
+    if (!dragOverWidget->acceptDrops()) {
+        *pdwEffect = DROPEFFECT_NONE;
+        return NOERROR;
+    }
+
     QPoint tmpPoint = dragOverWidget->mapFromGlobal(QPoint(pt.x, pt.y));
     // see if we should compress this event
     if ((tmpPoint == lastPoint || answerRect.contains(tmpPoint)) && lastKeyState == grfKeyState) {
