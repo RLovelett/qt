@@ -135,6 +135,9 @@ class QGLOverlayWidget;
 #endif
 class QGLWidgetPrivate;
 class QGLContextPrivate;
+#if !defined(QT_NO_EGL) && defined(QT_QWS_DIRECTFBGL)
+class QEglContext;
+#endif
 
 // Namespace class:
 namespace QGL
@@ -332,6 +335,9 @@ public:
 
     virtual void swapBuffers() const;
 
+#if !defined(QT_NO_EGL) && defined(QT_QWS_DIRECTFBGL)
+    virtual void setEglContext(QEglContext* eglContext);
+#endif
     enum BindOption {
         NoBindOption                            = 0x0000,
         InvertedYBindOption                     = 0x0001,
