@@ -1106,13 +1106,16 @@ public:
     inline QDBusDefaultConnection(BusType type, const char *name)
         : QDBusConnection(connectToBus(type, QString::fromLatin1(name))), ownName(name)
     {
-        // make sure this connection is running on the main thread
-        QCoreApplication *instance = QCoreApplication::instance();
-        if (!instance) {
-            qWarning("QDBusConnection: %s D-Bus connection created before QCoreApplication. Application may misbehave.",
-                     type == SessionBus ? "session" : type == SystemBus ? "system" : "generic");
-        } else {
-            QDBusConnectionPrivate::d(*this)->moveToThread(instance->thread());
+        QDBusConnectionPrivate *dd = QDBusConnectionPrivate::d(*this);
+        if (dd) {
+            // make sure this connection is running on the main thread
+            QCoreApplication *instance = QCoreApplication::instance();
+            if (!instance) {
+                qWarning("QDBusConnection: %s D-Bus connection created before QCoreApplication. Application may misbehave.",
+                         type == SessionBus ? "session" : type == SystemBus ? "system" : "generic");
+            } else {
+                dd->moveToThread(instance->thread());
+            }
         }
     }
 
