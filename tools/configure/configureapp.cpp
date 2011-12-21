@@ -2080,7 +2080,6 @@ QString Configure::defaultTo(const QString &option)
         && (!QFile::exists(sourcePath + "/bin/syncqt") ||
             !QFile::exists(sourcePath + "/bin/syncqt.bat")))
         return "no";
-
     return "yes";
 }
 
@@ -3616,8 +3615,11 @@ void Configure::generateHeaders()
                 dictionary["DONE"] = "error";
             }
         } else {
-            cout << "Perl not found in environment - cannot run syncqt." << endl;
-            dictionary["DONE"] = "error";
+            QDir incDir(buildPath + "/include");
+            if (!incDir.exists()) {
+                cout << "Perl not found in environment - cannot run syncqt." << endl;
+                dictionary["DONE"] = "error";
+            }
         }
     }
 }
