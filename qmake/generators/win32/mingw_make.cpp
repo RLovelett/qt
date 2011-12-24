@@ -400,7 +400,7 @@ void MingwMakefileGenerator::writeObjectsPart(QTextStream &t)
     if (project->values("OBJECTS").count() < var("QMAKE_LINK_OBJECT_MAX").toInt()) {
         objectsLinkLine = "$(OBJECTS)";
     } else if (project->isActiveConfig("staticlib") && project->first("TEMPLATE") == "lib") {
-	QString ar_script_file = var("QMAKE_LINK_OBJECT_SCRIPT") + "." + var("TARGET");
+	QString ar_script_file = var("QMAKE_LINK_OBJECT_SCRIPT") + "." + var("TARGET").replace(QRegExp("\\s+"), "_");
 	if (!var("BUILD_NAME").isEmpty()) {
 	    ar_script_file += "." + var("BUILD_NAME");
 	}
@@ -420,7 +420,7 @@ void MingwMakefileGenerator::writeObjectsPart(QTextStream &t)
             objectsLinkLine = ar_cmd + " -M < " + ar_script_file;
         }
     } else {
-        QString ld_script_file = var("QMAKE_LINK_OBJECT_SCRIPT") + "." + var("TARGET");
+        QString ld_script_file = var("QMAKE_LINK_OBJECT_SCRIPT") + "." + var("TARGET").replace(QRegExp("\\s+"), "_");
 	if (!var("BUILD_NAME").isEmpty()) {
 	    ld_script_file += "." + var("BUILD_NAME");
 	}
