@@ -97,9 +97,6 @@ QEglFSScreen::QEglFSScreen(EGLNativeDisplayType display)
 #endif
 
     EGLint major, minor;
-#ifdef QEGL_EXTRA_DEBUG
-    EGLint index;
-#endif
     if (!eglBindAPI(EGL_OPENGL_ES_API)) {
         qWarning("Could not bind GL_ES API\n");
         qFatal("EGL error");
@@ -184,7 +181,7 @@ void QEglFSScreen::createAndSetPlatformContext()
 #ifdef QEGL_EXTRA_DEBUG
     qWarning("Configuration %d matches requirements\n", (int)config);
 
-    for (index = 0; attrs[index].attr != -1; ++index) {
+    for (EGLint index = 0; attrs[index].attr != -1; ++index) {
         EGLint value;
         if (eglGetConfigAttrib(m_dpy, config, attrs[index].attr, &value)) {
             qWarning("\t%s: %d\n", attrs[index].name, (int)value);

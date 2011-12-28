@@ -48,6 +48,15 @@
 
 #include <EGL/egl.h>
 
+#ifdef QEGL_EXTRA_DEBUG
+#if defined(QT_OPENGL_ES_2)
+#   include <GLES2/gl2.h>
+#else
+#   include <GLES/gl.h>
+#endif
+
+#endif
+
 QEGLPlatformContext::QEGLPlatformContext(EGLDisplay display, EGLConfig config, EGLint contextAttrs[], EGLSurface surface, EGLenum eglApi, QEGLPlatformContext *shareContext)
     : QPlatformGLContext()
     , m_eglDisplay(display)
@@ -108,9 +117,10 @@ void QEGLPlatformContext::makeCurrent()
         str = (const char*)glGetString(GL_VERSION);
         qWarning("Version %s\n", str);
 
+#if defined(QT_OPENGL_ES_2)
         str = (const char*)glGetString(GL_SHADING_LANGUAGE_VERSION);
         qWarning("Extensions %s\n",str);
-
+#endif
         str = (const char*)glGetString(GL_EXTENSIONS);
         qWarning("Extensions %s\n", str);
 
