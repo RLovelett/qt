@@ -359,9 +359,11 @@ void QDirectFBPixmapData::copy(const QPixmapData *data, const QRect &rect)
 
     if (alpha) {
         dfbSurface->Clear(dfbSurface, 0, 0, 0, 0);
-        dfbSurface->SetBlittingFlags(dfbSurface, DSBLIT_BLEND_ALPHACHANNEL);
+        dfbSurface->SetPorterDuff(dfbSurface, DSPD_SRC_OVER);
+        dfbSurface->SetBlittingFlags(dfbSurface, (DSBLIT_BLEND_ALPHACHANNEL | DSBLIT_SRC_PREMULTIPLY));
     } else {
         dfbSurface->SetBlittingFlags(dfbSurface, DSBLIT_NOFX);
+        dfbSurface->SetPorterDuff(dfbSurface, DSPD_SRC);
     }
     const DFBRectangle blitRect = { rect.x(), rect.y(),
                                     rect.width(), rect.height() };
@@ -455,13 +457,16 @@ QPixmap QDirectFBPixmapData::transformed(const QTransform &transform,
     DFBSurfaceBlittingFlags flags = DSBLIT_NOFX;
     data->alpha = alpha;
     if (alpha) {
-        flags = DSBLIT_BLEND_ALPHACHANNEL;
+        flags = DSBLIT_BLEND_ALPHACHANNEL | DSBLIT_SRC_PREMULTIPLY;
     }
     data->dfbSurface = screen->createDFBSurface(size,
                                                 imageFormat,
                                                 QDirectFBScreen::TrackSurface);
     if (flags & DSBLIT_BLEND_ALPHACHANNEL) {
         data->dfbSurface->Clear(data->dfbSurface, 0, 0, 0, 0);
+        dfbSurface->SetPorterDuff(dfbSurface, DSPD_SRC_OVER);
+    } else {
+        dfbSurface->SetPorterDuff(dfbSurface, DSPD_SRC);
     }
     data->dfbSurface->SetBlittingFlags(data->dfbSurface, flags);
 
@@ -545,7 +550,7 @@ bool QDirectFBPixmapData::scroll(int dx, int dy, const QRect &rect)
         DirectFBError("QDirectFBPixmapData::scroll", result);
         return false;
     }
-    result = dfbSurface->SetPorterDuff(dfbSurface, DSPD_NONE);
+    result = dfbSurface->SetPorterDuff(dfbSurface, DSPD_SRC);
     if (result != DFB_OK) {
         DirectFBError("QDirectFBPixmapData::scroll", result);
         return false;

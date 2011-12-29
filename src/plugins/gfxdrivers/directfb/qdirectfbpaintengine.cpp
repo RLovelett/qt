@@ -1117,8 +1117,14 @@ void QDirectFBPaintEnginePrivate::prepareForBlit(uint flags)
         blittingFlags |= DSBLIT_FLIP_VERTICAL;
 #endif
 
-    if (flags & HasAlpha)
-        blittingFlags |= DSBLIT_BLEND_ALPHACHANNEL;
+/*
+ *  Adding the DSBLIT_SRC_PREMULTIPLY  when we have alpha
+ *  because the porterduff rules assumes that the colors are premultiplied.
+ *  but what happens for surfaces already premultiplied ??
+ */
+    if (flags & HasAlpha) {
+        blittingFlags |= (DSBLIT_BLEND_ALPHACHANNEL | DSBLIT_SRC_PREMULTIPLY);
+    }
 
     if (opacity != 255) {
         blittingFlags |= DSBLIT_BLEND_COLORALPHA;
@@ -1134,6 +1140,7 @@ void QDirectFBPaintEnginePrivate::prepareForBlit(uint flags)
     }
 
     surface->SetBlittingFlags(surface, blittingFlags);
+    surface->SetPorterDuff(surface, DSPD_SRC_OVER);
 }
 
 static inline uint ALPHA_MUL(uint x, uint a)

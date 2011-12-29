@@ -241,10 +241,15 @@ IDirectFBSurface *QDirectFBScreen::copyDFBSurface(IDirectFBSurface *src,
     src->GetSize(src, &size.rwidth(), &size.rheight());
     IDirectFBSurface *surface = createDFBSurface(size, format, options, result);
     DFBSurfaceBlittingFlags flags = QDirectFBScreen::hasAlphaChannel(surface)
-                                    ? DSBLIT_BLEND_ALPHACHANNEL
+                                    ? (DSBLIT_BLEND_ALPHACHANNEL | DSBLIT_SRC_PREMULTIPLY)
                                     : DSBLIT_NOFX;
-    if (flags & DSBLIT_BLEND_ALPHACHANNEL)
+    if (flags & DSBLIT_BLEND_ALPHACHANNEL) {
         surface->Clear(surface, 0, 0, 0, 0);
+        surface->SetPorterDuff(surface, DSPD_SRC_OVER);
+    } else {
+        surface->SetPorterDuff(surface, DSPD_SRC);
+    }
+
 
     surface->SetBlittingFlags(surface, flags);
     surface->Blit(surface, src, 0, 0, 0);

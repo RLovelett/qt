@@ -180,6 +180,18 @@ void QDirectFBWindowSurface::createWindow(const QRect &rect)
 
     Q_ASSERT(!dfbSurface);
     dfbWindow->GetSurface(dfbWindow, &dfbSurface);
+/*
+ * Is this really required ?
+ * Need to check when  the "DWOP_ALPHACHANNEL" flag is set
+ * would the "DSBLIT_BLEND_ALPHACHANNEL" be too? 
+ */
+    if (!(surfaceFlags() & Opaque)) {
+        dfbSurface->SetBlittingFlags(dfbSurface, (DSBLIT_BLEND_ALPHACHANNEL | DSBLIT_SRC_PREMULTIPLY));
+        dfbSurface->SetPorterDuff(dfbSurface, DSPD_SRC_OVER);
+    } else {
+        dfbSurface->SetBlittingFlags(dfbSurface, DSBLIT_NOFX);
+        dfbSurface->SetPorterDuff(dfbSurface, DSPD_SRC);
+    }
 }
 
 static DFBResult setWindowGeometry(IDirectFBWindow *dfbWindow, const QRect &old, const QRect &rect)
