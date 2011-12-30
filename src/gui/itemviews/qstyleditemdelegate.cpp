@@ -643,10 +643,26 @@ bool QStyledItemDelegate::eventFilter(QObject *object, QEvent *event)
     if (event->type() == QEvent::KeyPress) {
         switch (static_cast<QKeyEvent *>(event)->key()) {
         case Qt::Key_Tab:
+#ifndef QT_NO_LINEEDIT
+            if (QLineEdit *e = qobject_cast<QLineEdit*>(editor))
+                if (!e->hasAcceptableInput()) {
+                    emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
+                    return true;
+                }
+#endif // QT_NO_LINEEDIT
+
             emit commitData(editor);
             emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
             return true;
         case Qt::Key_Backtab:
+#ifndef QT_NO_LINEEDIT
+            if (QLineEdit *e = qobject_cast<QLineEdit*>(editor))
+                if (!e->hasAcceptableInput()) {
+                    emit closeEditor(editor, QAbstractItemDelegate::EditPreviousItem);
+                    return true;
+                }
+#endif // QT_NO_LINEEDIT
+
             emit commitData(editor);
             emit closeEditor(editor, QAbstractItemDelegate::EditPreviousItem);
             return true;
@@ -692,6 +708,13 @@ bool QStyledItemDelegate::eventFilter(QObject *object, QEvent *event)
             if (QDragManager::self() && QDragManager::self()->object != 0)
                 return false;
 #endif
+#ifndef QT_NO_LINEEDIT
+            if (QLineEdit *e = qobject_cast<QLineEdit*>(editor))
+                if (!e->hasAcceptableInput()) {
+                    emit closeEditor(editor, NoHint);
+                    return true;
+                }
+#endif // QT_NO_LINEEDIT
 
             emit commitData(editor);
             emit closeEditor(editor, NoHint);
